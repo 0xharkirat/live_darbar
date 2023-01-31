@@ -40,6 +40,7 @@ dependencies:
   audioplayers: ^2.0.0
   google_fonts: ^4.0.1
   font_awesome_flutter: ^10.3.0
+  audio_wave: ^0.1.4
 
 
 dev_dependencies:

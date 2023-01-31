@@ -23,6 +23,13 @@
             </list>
           </value>
         </entry>
+        <entry key="audio_wave">
+          <value>
+            <list>
+              <option value="$PROJECT_DIR$/../../../../src/flutter/flutter/.pub-cache/hosted/pub.dartlang.org/audio_wave-0.1.4/lib" />
+            </list>
+          </value>
+        </entry>
         <entry key="audioplayers">
           <value>
             <list>
@@ -463,6 +470,7 @@
       <root url="file://$PROJECT_DIR$/../../../../src/flutter/flutter/.pub-cache/hosted/pub.dartlang.org/archive-3.3.6/lib" />
       <root url="file://$PROJECT_DIR$/../../../../src/flutter/flutter/.pub-cache/hosted/pub.dartlang.org/args-2.3.2/lib" />
       <root url="file://$PROJECT_DIR$/../../../../src/flutter/flutter/.pub-cache/hosted/pub.dartlang.org/async-2.9.0/lib" />
+      <root url="file://$PROJECT_DIR$/../../../../src/flutter/flutter/.pub-cache/hosted/pub.dartlang.org/audio_wave-0.1.4/lib" />
       <root url="file://$PROJECT_DIR$/../../../../src/flutter/flutter/.pub-cache/hosted/pub.dartlang.org/audioplayers-2.0.0/lib" />
       <root url="file://$PROJECT_DIR$/../../../../src/flutter/flutter/.pub-cache/hosted/pub.dartlang.org/audioplayers_android-1.1.4/lib" />
       <root url="file://$PROJECT_DIR$/../../../../src/flutter/flutter/.pub-cache/hosted/pub.dartlang.org/audioplayers_darwin-2.0.0/lib" />
