@@ -18,8 +18,8 @@ class MyApp extends StatelessWidget {
       theme: ThemeData().copyWith(
         colorScheme: ColorScheme.fromSwatch().copyWith(
           primary: Color(0xFF3E3B5D)
-        )
-      // scaffoldBackgroundColor: Color(0xFFACCCED),
+        ),
+      scaffoldBackgroundColor: Color(0xFFDADAF0),
       ),
     );
   }
