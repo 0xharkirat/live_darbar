@@ -5,6 +5,13 @@ import 'package:live_darbar/components/reusable_card.dart';
 
 import '../components/round_icon_button.dart';
 
+enum Channel {
+  liveKirtan,
+  mukhwak,
+  mukhwakKatha
+
+}
+
 class HomePage extends StatefulWidget {
 
 
@@ -13,6 +20,32 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+
+  Channel? selectedChannel;
+  bool isPlaying = false;
+
+  void toggleChannel(Channel clicked){
+
+
+    setState(() {
+      //  logic for pressing the different button
+      if (clicked != selectedChannel){
+        isPlaying = true;
+      }
+      // logic for pressing same button
+      else{
+        isPlaying = !isPlaying;
+      }
+      selectedChannel = clicked;
+
+    });
+
+
+
+
+
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,8 +67,9 @@ class _HomePageState extends State<HomePage> {
               colour: Color(0xFF5132D7),
               cardChild: CardContent(
                 roundIconButton:  RoundIconButton(
-                    icon: FontAwesomeIcons.play,
+                    icon: selectedChannel == Channel.liveKirtan && isPlaying ? FontAwesomeIcons.pause : FontAwesomeIcons.play,
                     onPressed: (){
+                      toggleChannel(Channel.liveKirtan);
                     }),
                 label: 'Live Kirtan',
                 labelColor: Colors.white,
@@ -47,8 +81,12 @@ class _HomePageState extends State<HomePage> {
               colour: Color(0xFF76C9ED),
               cardChild: CardContent(
                 roundIconButton:  RoundIconButton(
-                    icon: FontAwesomeIcons.play,
+                    icon:  selectedChannel == Channel.mukhwak && isPlaying ? FontAwesomeIcons.pause : FontAwesomeIcons.play,
                     onPressed: (){
+                      toggleChannel(Channel.mukhwak);
+                      // setState(() {
+                      //   isPlaying = !isPlaying;
+                      // });
                     }),
                 label: 'Today\'s Mukhwak',
                 labelColor: Colors.black,
@@ -59,8 +97,9 @@ class _HomePageState extends State<HomePage> {
               colour: Color(0xFF5132D7),
               cardChild: CardContent(
                 roundIconButton:  RoundIconButton(
-                    icon: FontAwesomeIcons.play,
+                    icon: selectedChannel == Channel.mukhwakKatha && isPlaying ? FontAwesomeIcons.pause : FontAwesomeIcons.play,
                     onPressed: (){
+                     toggleChannel(Channel.mukhwakKatha);
                     }),
                 label: 'Mukhwak Katha',
                 labelColor: Colors.white,
