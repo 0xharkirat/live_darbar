@@ -1,3 +1,4 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:live_darbar/components/card_content.dart';
@@ -24,6 +25,8 @@ class _HomePageState extends State<HomePage> {
   Channel? selectedChannel;
   bool isPlaying = false;
 
+  final audio = AudioPlayer();
+
   void toggleChannel(Channel clicked){
 
 
@@ -40,7 +43,28 @@ class _HomePageState extends State<HomePage> {
 
     });
 
+    playAudio();
 
+  }
+
+  void playAudio() async {
+
+
+
+    audio.stop();
+    String url = '';
+
+    if (selectedChannel == Channel.liveKirtan){
+      url = "https://live.sgpc.net:8443/;nocache=889869audio_file.mp3";
+    }
+    else if (selectedChannel == Channel.mukhwak){
+      url = 'https://old.sgpc.net/hukumnama/jpeg%20hukamnama/hukamnama.mp3';
+    }
+    else if (selectedChannel == Channel.mukhwakKatha){
+      url = "https://old.sgpc.net/hukumnama/jpeg hukamnama/katha.mp3";
+    }
+
+    await audio.play(UrlSource(url));
 
 
 
