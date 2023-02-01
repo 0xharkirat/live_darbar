@@ -66,7 +66,9 @@ class _HomePageState extends State<HomePage> {
             Expanded(child: ReusableCard(
               colour: Color(0xFF5132D7),
               cardChild: CardContent(
+                isVisible: selectedChannel == Channel.liveKirtan && isPlaying,
                 roundIconButton:  RoundIconButton(
+
                     icon: selectedChannel == Channel.liveKirtan && isPlaying ? FontAwesomeIcons.pause : FontAwesomeIcons.play,
                     onPressed: (){
                       toggleChannel(Channel.liveKirtan);
@@ -80,6 +82,7 @@ class _HomePageState extends State<HomePage> {
             Expanded(child: ReusableCard(
               colour: Color(0xFF76C9ED),
               cardChild: CardContent(
+                isVisible: selectedChannel == Channel.mukhwak && isPlaying,
                 roundIconButton:  RoundIconButton(
                     icon:  selectedChannel == Channel.mukhwak && isPlaying ? FontAwesomeIcons.pause : FontAwesomeIcons.play,
                     onPressed: (){
@@ -96,6 +99,7 @@ class _HomePageState extends State<HomePage> {
             Expanded(child: ReusableCard(
               colour: Color(0xFF5132D7),
               cardChild: CardContent(
+                isVisible: selectedChannel == Channel.mukhwakKatha && isPlaying ,
                 roundIconButton:  RoundIconButton(
                     icon: selectedChannel == Channel.mukhwakKatha && isPlaying ? FontAwesomeIcons.pause : FontAwesomeIcons.play,
                     onPressed: (){

@@ -5,11 +5,12 @@ import 'package:live_darbar/components/round_icon_button.dart';
 
 class CardContent extends StatelessWidget {
 
-  CardContent({required this.roundIconButton, required this.label, required this.labelColor});
+  CardContent({required this.roundIconButton, required this.label, required this.labelColor, required this.isVisible});
 
   final RoundIconButton roundIconButton;
   final String label;
   final Color labelColor;
+  final bool isVisible;
 
 
   @override
@@ -35,29 +36,32 @@ class CardContent extends StatelessWidget {
         SizedBox(
           height: 10.0,
         ),
-        AudioWave(
-          height: 27.0,
-          width: 88.0,
-          spacing: 2.5,
-          bars: [
-            AudioWaveBar(heightFactor: 0.1, color: Colors.black),
-            AudioWaveBar(heightFactor: 0.3, color: Colors.white),
-            AudioWaveBar(heightFactor: 0.7, color: Colors.black),
-            AudioWaveBar(heightFactor: 0.4, color: Colors.white),
-            AudioWaveBar(heightFactor: 0.2, color: Colors.black),
-            AudioWaveBar(heightFactor: 0.1, color: Colors.black),
-            AudioWaveBar(heightFactor: 0.3, color: Colors.white),
-            AudioWaveBar(heightFactor: 0.7, color: Colors.black),
-            AudioWaveBar(heightFactor: 0.4, color: Colors.white),
-            AudioWaveBar(heightFactor: 0.2, color: Colors.black),
-            AudioWaveBar(heightFactor: 0.1, color: Colors.black),
-            AudioWaveBar(heightFactor: 0.3, color: Colors.white),
-            AudioWaveBar(heightFactor: 0.7, color: Colors.black),
-            AudioWaveBar(heightFactor: 0.4, color: Colors.white),
-            AudioWaveBar(heightFactor: 0.2, color: Colors.black),
+        Visibility(
+          visible: isVisible,
+          child: AudioWave(
+            height: 27.0,
+            width: 88.0,
+            spacing: 2.5,
+            bars: [
+              AudioWaveBar(heightFactor: 0.1, color: Colors.black),
+              AudioWaveBar(heightFactor: 0.3, color: Colors.white),
+              AudioWaveBar(heightFactor: 0.7, color: Colors.black),
+              AudioWaveBar(heightFactor: 0.4, color: Colors.white),
+              AudioWaveBar(heightFactor: 0.2, color: Colors.black),
+              AudioWaveBar(heightFactor: 0.1, color: Colors.black),
+              AudioWaveBar(heightFactor: 0.3, color: Colors.white),
+              AudioWaveBar(heightFactor: 0.7, color: Colors.black),
+              AudioWaveBar(heightFactor: 0.4, color: Colors.white),
+              AudioWaveBar(heightFactor: 0.2, color: Colors.black),
+              AudioWaveBar(heightFactor: 0.1, color: Colors.black),
+              AudioWaveBar(heightFactor: 0.3, color: Colors.white),
+              AudioWaveBar(heightFactor: 0.7, color: Colors.black),
+              AudioWaveBar(heightFactor: 0.4, color: Colors.white),
+              AudioWaveBar(heightFactor: 0.2, color: Colors.black),
 
 
-          ],
+            ],
+          ),
         ),
 
       ],
