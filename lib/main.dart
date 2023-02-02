@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:audioplayers/audioplayers.dart';
-import 'package:live_darbar/constants/theme.dart';
 import 'package:live_darbar/screens/homepage.dart';
 
 void main() {

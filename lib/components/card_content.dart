@@ -7,7 +7,7 @@ class CardContent extends StatelessWidget {
 
   CardContent({required this.roundIconButton, required this.label, required this.labelColor, required this.isVisible});
 
-  final RoundIconButton roundIconButton;
+  final ValueListenableBuilder roundIconButton;
   final String label;
   final Color labelColor;
   final bool isVisible;
