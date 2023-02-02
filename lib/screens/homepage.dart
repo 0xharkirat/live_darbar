@@ -102,31 +102,16 @@ class _HomePageState extends State<HomePage> {
       //   ),
       // ),
       body: SafeArea(
+
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget> [
             Expanded(child: ReusableCard(
+              onPress: () => _pageManager.play(0),
               colour: Color(0xFF5132D7),
               cardChild: CardContent(
                 isVisible: selectedChannel == Channel.liveKirtan && isPlaying,
-                roundIconButton:  ValueListenableBuilder<ButtonState>(
-                  valueListenable: _pageManager.buttonNotifier,
-                  builder: (_, value, __) {
-                    switch (value) {
-                      case ButtonState.loading:
-                        return Container(
-                          margin: const EdgeInsets.all(8.0),
-                          width: 32.0,
-                          height: 32.0,
-                          child: const CircularProgressIndicator(),
-                        );
-                      case ButtonState.paused:
-                        return RoundIconButton(icon: FontAwesomeIcons.play, onPressed: () => _pageManager.play(0));
-                      case ButtonState.playing:
-                        return RoundIconButton(icon: FontAwesomeIcons.pause, onPressed: _pageManager.pause);
-                    }
-                  },
-                ),
+
                 label: 'Live Kirtan',
                 labelColor: Colors.white,
 
@@ -134,59 +119,52 @@ class _HomePageState extends State<HomePage> {
             ),
             ),
             Expanded(child: ReusableCard(
+              onPress: () => _pageManager.play(1),
               colour: Color(0xFF76C9ED),
               cardChild: CardContent(
                 isVisible: selectedChannel == Channel.mukhwak && isPlaying,
-                roundIconButton: ValueListenableBuilder<ButtonState>(
-                  valueListenable: _pageManager.buttonNotifier,
-                  builder: (_, value, __) {
-                    switch (value) {
-                      case ButtonState.loading:
-                        return Container(
-                          margin: const EdgeInsets.all(8.0),
-                          width: 32.0,
-                          height: 32.0,
-                          child: const CircularProgressIndicator(),
-                        );
-                      case ButtonState.paused:
-                        return RoundIconButton(icon: FontAwesomeIcons.play, onPressed: () => _pageManager.play(1));
-                      case ButtonState.playing:
-                        return RoundIconButton(icon: FontAwesomeIcons.pause, onPressed: _pageManager.pause);
-                    }
-                  },
-                ),
                 label: 'Today\'s Mukhwak',
                 labelColor: Colors.black,
               ),
             ),
             ),
             Expanded(child: ReusableCard(
+              onPress: () => _pageManager.play(2),
               colour: Color(0xFF5132D7),
               cardChild: CardContent(
                 isVisible: selectedChannel == Channel.mukhwakKatha && isPlaying ,
-                roundIconButton:  ValueListenableBuilder<ButtonState>(
-                  valueListenable: _pageManager.buttonNotifier,
-                  builder: (_, value, __) {
-                    switch (value) {
-                      case ButtonState.loading:
-                        return Container(
-                          margin: const EdgeInsets.all(8.0),
-                          width: 32.0,
-                          height: 32.0,
-                          child: const CircularProgressIndicator(),
-                        );
-                      case ButtonState.paused:
-                        return RoundIconButton(icon: FontAwesomeIcons.play, onPressed: () => _pageManager.play(2));
-                      case ButtonState.playing:
-                        return RoundIconButton(icon: FontAwesomeIcons.pause, onPressed: _pageManager.pause);
-                    }
-                  },
-                ),
                 label: 'Mukhwak Katha',
                 labelColor: Colors.white,
               ),
             ),
-            )
+            ),
+            Expanded(
+
+                child: ReusableCard(
+              colour: Colors.grey,
+              cardChild: ValueListenableBuilder<ButtonState>(
+                valueListenable: _pageManager.buttonNotifier,
+                builder: (_, value, __) {
+                  switch (value) {
+                    case ButtonState.loading:
+                      return Container(
+                        margin: const EdgeInsets.all(8.0),
+                        width: 32.0,
+                        height: 32.0,
+                        child: const CircularProgressIndicator(
+                          color: Colors.black54,
+                        ),
+                      );
+                    case ButtonState.paused:
+                      return RoundIconButton(icon: FontAwesomeIcons.play, onPressed: () => _pageManager.play(1));
+                    case ButtonState.playing:
+                      return RoundIconButton(icon: FontAwesomeIcons.pause, onPressed: _pageManager.pause);
+                  }
+                },
+              ),
+
+
+            ))
           ],
         ),
       )

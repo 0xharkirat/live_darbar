@@ -5,9 +5,9 @@ import 'package:live_darbar/components/round_icon_button.dart';
 
 class CardContent extends StatelessWidget {
 
-  CardContent({required this.roundIconButton, required this.label, required this.labelColor, required this.isVisible});
+  CardContent({required this.label, required this.labelColor, required this.isVisible});
 
-  final ValueListenableBuilder roundIconButton;
+
   final String label;
   final Color labelColor;
   final bool isVisible;
@@ -18,10 +18,7 @@ class CardContent extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget> [
-        roundIconButton,
-        SizedBox(
-          height: 20.0,
-        ),
+
         Text(
           label,
           style: TextStyle(
