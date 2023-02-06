@@ -37,11 +37,10 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
   flutter_native_splash: ^2.2.17
-#  audioplayers: ^2.0.0
   just_audio: ^0.9.31
   google_fonts: ^4.0.1
   font_awesome_flutter: ^10.3.0
-  audio_wave: ^0.1.4
+  audio_video_progress_bar: ^0.9.0
 
 
 dev_dependencies:

@@ -1,4 +1,4 @@
-import 'package:audio_wave/audio_wave.dart';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:live_darbar/components/round_icon_button.dart';
