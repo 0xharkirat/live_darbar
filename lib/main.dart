@@ -13,12 +13,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: HomePage(),
-      theme: ThemeData().copyWith(
-        colorScheme: ColorScheme.fromSwatch().copyWith(
-          primary: Color(0xFF3E3B5D)
-        ),
-      scaffoldBackgroundColor: Color(0xFFDADAF0),
-      ),
+
     );
   }
 }

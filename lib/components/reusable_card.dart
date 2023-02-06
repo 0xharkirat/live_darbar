@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-const margin = EdgeInsets.symmetric(vertical: 5.0, horizontal: 10.0);
+const margin = EdgeInsets.symmetric( horizontal: 5.0);
 
 class ReusableCard extends StatelessWidget {
 
@@ -21,7 +21,7 @@ class ReusableCard extends StatelessWidget {
         padding: EdgeInsets.all(30.0),
         decoration: BoxDecoration(
           color: colour,
-          borderRadius: BorderRadius.circular(45.0),
+          borderRadius: BorderRadius.circular(5.0),
         ),
         child: cardChild,
       ),

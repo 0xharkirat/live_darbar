@@ -3,6 +3,7 @@ import 'package:just_audio/just_audio.dart';
 
 class PageManager {
   final buttonNotifier = ValueNotifier<ButtonState>(ButtonState.paused);
+  final currentSongTitleNotifier = ValueNotifier<String>('');
 
   static const liveKirtan = 'https://live.sgpc.net:8443/;nocache=889869audio_file.mp3';
   static const mukhwak = 'https://old.sgpc.net/hukumnama/jpeg%20hukamnama/hukamnama.mp3';
@@ -14,9 +15,9 @@ class PageManager {
   void _setInitialPlaylist() async {
     
     _playlist = ConcatenatingAudioSource(children: [
-      AudioSource.uri(Uri.parse(liveKirtan)),
-      AudioSource.uri(Uri.parse(mukhwak)),
-      AudioSource.uri(Uri.parse(mukhwakKatha)),
+      AudioSource.uri(Uri.parse(liveKirtan), tag: 'Live Kirtan'),
+      AudioSource.uri(Uri.parse(mukhwak), tag: 'Mukhwak'),
+      AudioSource.uri(Uri.parse(mukhwakKatha), tag: 'Mukhwak Katha'),
     ]);
     await _audioPlayer.setAudioSource(_playlist);
   }
@@ -30,7 +31,8 @@ class PageManager {
   void _init() async {
     _audioPlayer = AudioPlayer();
     _setInitialPlaylist();
-    _listenForChangesInPlayerState();
+
+    _listenForChangesInSequenceState();
   }
 
   void _listenForChangesInPlayerState() {
@@ -48,11 +50,24 @@ class PageManager {
     });
   }
 
+  void _listenForChangesInSequenceState() {
+    _audioPlayer.sequenceStateStream.listen((sequenceState) {
+      if (sequenceState == null) return;
+      final currentItem = sequenceState.currentSource;
+      final title = currentItem?.tag as String?;
+      currentSongTitleNotifier.value = title ?? '';
+    });
+  }
+
+
   void play(int index) async {
 
 
     _audioPlayer.setAudioSource(_playlist, initialIndex: index);
+    _listenForChangesInPlayerState();
+
     await _audioPlayer.play();
+
   }
 
   void pause(){
@@ -63,9 +78,19 @@ class PageManager {
     _audioPlayer.dispose();
   }
 
+
+
+
+
 }
 
 enum ButtonState {
   paused, playing, loading
+}
+
+enum Channel {
+  liveKirtan,
+  mukhwak,
+  mukhwakKatha
 }
 

@@ -7,12 +7,6 @@ import 'package:live_darbar/logics/page_manager.dart';
 
 import '../components/round_icon_button.dart';
 
-enum Channel {
-  liveKirtan,
-  mukhwak,
-  mukhwakKatha
-
-}
 
 class HomePage extends StatefulWidget {
 
@@ -21,9 +15,80 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
+
+late final PageManager _pageManager;
 class _HomePageState extends State<HomePage> {
 
-  late final PageManager _pageManager;
+  String? selectedChannel;
+  int selectedChannelIndex = 0;
+
+  Widget miniPlayer(){
+    Size deviceSize = MediaQuery.of(context).size;
+    return AnimatedContainer(duration: Duration(milliseconds: 500),
+      padding: EdgeInsets.all(10.0),
+      color: Color(0xFFD6DCE6),
+      width: deviceSize.width,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children:<Widget> [
+      ValueListenableBuilder<String>(
+      valueListenable: _pageManager.currentSongTitleNotifier,
+        builder: (_, title, __) {
+
+        selectedChannel = title;
+
+          return Text(title,
+            style: TextStyle(
+              fontFamily: 'Rubik',
+              fontSize: 30.0,
+              color: Color(0xFF040508),
+              fontWeight: FontWeight.bold,
+
+            ),
+            );
+          },
+        ),
+          ValueListenableBuilder<ButtonState>(
+            valueListenable: _pageManager.buttonNotifier,
+            builder: (_, value, __) {
+              switch (value) {
+                case ButtonState.loading:
+                  return Container(
+                    width: 52.0,
+                    height: 52.0,
+                    child: const CircularProgressIndicator(
+                      color: Color(0xFF040508),
+                    ),
+                  );
+                case ButtonState.paused:
+                  return RoundIconButton(icon: FontAwesomeIcons.play, onPressed: () => _pageManager.play(getIndex()));
+                case ButtonState.playing:
+                  return RoundIconButton(icon: FontAwesomeIcons.pause, onPressed: _pageManager.pause);
+              }
+            },
+          ),
+
+        ],
+      ),
+    );
+  }
+
+  int getIndex(){
+    if (selectedChannel != ''){
+      if (selectedChannel == 'Live Kirtan'){
+        selectedChannelIndex = 0;
+      }
+      else if (selectedChannel == 'Mukhwak'){
+        selectedChannelIndex = 1;
+      }
+      else if (selectedChannel == 'Mukhwak Katha'){
+        selectedChannelIndex = 2;
+      }
+
+    }
+    return selectedChannelIndex;
+  }
+
 
   @override
   void initState() {
@@ -40,135 +105,84 @@ class _HomePageState extends State<HomePage> {
     super.dispose();
   }
 
-  Channel? selectedChannel;
-  bool isPlaying = false;
-
-  // final audio = AudioPlayer();
-
-  // void toggleChannel(Channel clicked){
-  //
-  //
-  //   setState(() {
-  //     //  logic for pressing the different button
-  //     if (clicked != selectedChannel){
-  //       isPlaying = true;
-  //     }
-  //     // logic for pressing same button
-  //     else{
-  //       isPlaying = !isPlaying;
-  //     }
-  //     selectedChannel = clicked;
-  //
-  //   });
-  //
-  //   // playAudio();
-  //
-  // }
-
-  // void playAudio() async {
-  //
-  //
-  //
-  //   audio.stop();
-  //   String url = '';
-  //
-  //   if (selectedChannel == Channel.liveKirtan){
-  //     url = "https://live.sgpc.net:8443/;nocache=889869audio_file.mp3";
-  //   }
-  //   else if (selectedChannel == Channel.mukhwak){
-  //     url = 'https://old.sgpc.net/hukumnama/jpeg%20hukamnama/hukamnama.mp3';
-  //   }
-  //   else if (selectedChannel == Channel.mukhwakKatha){
-  //     url = "https://old.sgpc.net/hukumnama/jpeg hukamnama/katha.mp3";
-  //   }
-  //
-  //   await audio.play(UrlSource(url));
-  //
-  //
-  //
-  // }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      // appBar: AppBar(
-      //   title: Text( "Live Darbar",
-      //   ),
-      //   backgroundColor: Color(0xFFACCCED),
-      //   titleTextStyle: TextStyle(
-      //     color: Color(0xFF3E3B5D),
-      //     fontSize: 20.0,
-      //
-      //   ),
-      // ),
-      body: SafeArea(
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: Color(0xFF040508),
+        body: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget> [
+                  ReusableCard(
+                    onPress: () => _pageManager.play(0),
+                    colour: Color(0xFF1F2633),
+                    cardChild: CardContent(
+                      label: 'Live Kirtan',
+                      labelColor: Color(0xFFD6DCE6),
 
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget> [
-            Expanded(child: ReusableCard(
-              onPress: () => _pageManager.play(0),
-              colour: Color(0xFF5132D7),
-              cardChild: CardContent(
-                isVisible: selectedChannel == Channel.liveKirtan && isPlaying,
-
-                label: 'Live Kirtan',
-                labelColor: Colors.white,
-
+                    ),
+                  ),
+                  SizedBox(
+                    height: 5.0,
+                  ),
+                  ReusableCard(
+                    onPress: () => _pageManager.play(1),
+                    colour: Color(0xFF1F2633),
+                    cardChild: CardContent(
+                      label: 'Today\'s Mukhwak',
+                      labelColor: Color(0xFFD6DCE6),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 5.0,
+                  ),
+                  ReusableCard(
+                    onPress: () => _pageManager.play(2),
+                    colour: Color(0xFF1F2633),
+                    cardChild: CardContent(
+                      label: 'Mukhwak Katha',
+                      labelColor: Color(0xFFD6DCE6),
+                    ),
+                  ),
+                  // Expanded(
+                  //
+                  //     child: ReusableCard(
+                  //   colour: Colors.grey,
+                  //   cardChild: ValueListenableBuilder<ButtonState>(
+                  //     valueListenable: _pageManager.buttonNotifier,
+                  //     builder: (_, value, __) {
+                  //       switch (value) {
+                  //         case ButtonState.loading:
+                  //           return Container(
+                  //             margin: const EdgeInsets.all(8.0),
+                  //             width: 32.0,
+                  //             height: 32.0,
+                  //             child: const CircularProgressIndicator(
+                  //               color: Colors.black54,
+                  //             ),
+                  //           );
+                  //         case ButtonState.paused:
+                  //           return RoundIconButton(icon: FontAwesomeIcons.play, onPressed: () => _pageManager.play(1));
+                  //         case ButtonState.playing:
+                  //           return RoundIconButton(icon: FontAwesomeIcons.pause, onPressed: _pageManager.pause);
+                  //       }
+                  //     },
+                  //   ),
+                  //
+                  //
+                  // ))
+                ],
               ),
             ),
-            ),
-            Expanded(child: ReusableCard(
-              onPress: () => _pageManager.play(1),
-              colour: Color(0xFF76C9ED),
-              cardChild: CardContent(
-                isVisible: selectedChannel == Channel.mukhwak && isPlaying,
-                label: 'Today\'s Mukhwak',
-                labelColor: Colors.black,
-              ),
-            ),
-            ),
-            Expanded(child: ReusableCard(
-              onPress: () => _pageManager.play(2),
-              colour: Color(0xFF5132D7),
-              cardChild: CardContent(
-                isVisible: selectedChannel == Channel.mukhwakKatha && isPlaying ,
-                label: 'Mukhwak Katha',
-                labelColor: Colors.white,
-              ),
-            ),
-            ),
-            Expanded(
-
-                child: ReusableCard(
-              colour: Colors.grey,
-              cardChild: ValueListenableBuilder<ButtonState>(
-                valueListenable: _pageManager.buttonNotifier,
-                builder: (_, value, __) {
-                  switch (value) {
-                    case ButtonState.loading:
-                      return Container(
-                        margin: const EdgeInsets.all(8.0),
-                        width: 32.0,
-                        height: 32.0,
-                        child: const CircularProgressIndicator(
-                          color: Colors.black54,
-                        ),
-                      );
-                    case ButtonState.paused:
-                      return RoundIconButton(icon: FontAwesomeIcons.play, onPressed: () => _pageManager.play(1));
-                    case ButtonState.playing:
-                      return RoundIconButton(icon: FontAwesomeIcons.pause, onPressed: _pageManager.pause);
-                  }
-                },
-              ),
-
-
-            ))
+            miniPlayer(),
           ],
-        ),
-      )
+        )
+      ),
     );
   }
 }
-
