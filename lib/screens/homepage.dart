@@ -22,10 +22,10 @@ late final PageManager _pageManager;
 class _HomePageState extends State<HomePage> {
 
 
-
-
   Widget miniPlayer(){
     Size deviceSize = MediaQuery.of(context).size;
+
+
     return AnimatedContainer(duration: Duration(milliseconds: 500),
       padding: EdgeInsets.all(15.0),
       color: Color(0xFFD6DCE6),
@@ -33,7 +33,17 @@ class _HomePageState extends State<HomePage> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget> [
-          AudioProgressBar(),
+          ValueListenableBuilder<bool>(
+            valueListenable: _pageManager.progressShow,
+            builder: (_, value, __){
+              if (value == true){
+                return AudioProgressBar();
+              }
+              else {
+                return SizedBox();
+              }
+            }
+          ),
           SizedBox(
             height: 5.0,
           ),
@@ -162,6 +172,13 @@ class AudioProgressBar extends StatelessWidget {
       valueListenable: _pageManager.progressNotifier,
       builder: (_, value, __) {
         return ProgressBar(
+          baseBarColor: Color(0xFF040508),
+          progressBarColor: Color(0xFF51545C),
+          bufferedBarColor: Color(0xFF7A808E),
+          thumbColor: Color(0xFF51545C),
+          thumbGlowColor: Color(0x5A51545C),
+          timeLabelLocation: TimeLabelLocation.sides,
+
           progress: value.current,
           buffered: value.buffered,
           total: value.total,

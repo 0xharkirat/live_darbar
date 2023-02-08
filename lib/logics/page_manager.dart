@@ -6,6 +6,7 @@ class PageManager {
   final buttonNotifier = ValueNotifier<ButtonState>(ButtonState.paused);
   final currentSongTitleNotifier = ValueNotifier<String>('');
   final progressNotifier = ProgressNotifier();
+  final  progressShow = ValueNotifier<bool>(false);
 
   static const liveKirtan = 'https://live.sgpc.net:8443/;nocache=889869audio_file.mp3';
   static const mukhwak = 'https://old.sgpc.net/hukumnama/jpeg%20hukamnama/hukamnama.mp3';
@@ -106,6 +107,7 @@ class PageManager {
     _listenForChangesInPlayerState();
 
     await _audioPlayer.play();
+    progressShow.value = getIndex() != 0;
 
 
   }
@@ -113,7 +115,7 @@ class PageManager {
     _audioPlayer.seek(position);
   }
 
-  int getIndex() {
+  int getIndex()  {
     int selectedChannelIndex = 0;
     if (currentSongTitleNotifier.value != '') {
       if (currentSongTitleNotifier.value == 'Live Kirtan') {
@@ -129,7 +131,10 @@ class PageManager {
 
     return selectedChannelIndex;
 
+
+
   }
+
 
   void pause(){
     _audioPlayer.pause();
@@ -138,6 +143,7 @@ class PageManager {
   void dispose(){
     _audioPlayer.dispose();
   }
+
 
 
 
