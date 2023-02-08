@@ -6,7 +6,7 @@ class PageManager {
   final buttonNotifier = ValueNotifier<ButtonState>(ButtonState.paused);
   final currentSongTitleNotifier = ValueNotifier<String>('');
   final progressNotifier = ProgressNotifier();
-  final  progressShow = ValueNotifier<bool>(false);
+
 
   static const liveKirtan = 'https://live.sgpc.net:8443/;nocache=889869audio_file.mp3';
   static const mukhwak = 'https://old.sgpc.net/hukumnama/jpeg%20hukamnama/hukamnama.mp3';
@@ -22,7 +22,7 @@ class PageManager {
       AudioSource.uri(Uri.parse(mukhwak), tag: 'Mukhwak'),
       AudioSource.uri(Uri.parse(mukhwakKatha), tag: 'Mukhwak Katha'),
     ]);
-    await _audioPlayer.setAudioSource(_playlist);
+    await _audioPlayer.setAudioSource(_playlist, preload: true);
   }
 
   late AudioPlayer _audioPlayer;
@@ -37,7 +37,6 @@ class PageManager {
     _listenForChangesInPlayerPosition();
     _listenForChangesInBufferedPosition();
     _listenForChangesInTotalDuration();
-
     _listenForChangesInSequenceState();
   }
 
@@ -100,6 +99,8 @@ class PageManager {
   }
 
 
+
+
   void play(int index) async {
 
 
@@ -107,8 +108,13 @@ class PageManager {
     _listenForChangesInPlayerState();
 
     await _audioPlayer.play();
-    progressShow.value = getIndex() != 0;
 
+
+
+  }
+
+  void resume() async{
+    await _audioPlayer.play();
 
   }
   void seek(Duration position) {
@@ -130,7 +136,6 @@ class PageManager {
     }
 
     return selectedChannelIndex;
-
 
 
   }
@@ -155,9 +160,4 @@ enum ButtonState {
   paused, playing, loading
 }
 
-enum Channel {
-  liveKirtan,
-  mukhwak,
-  mukhwakKatha
-}
 

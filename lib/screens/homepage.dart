@@ -21,75 +21,69 @@ class HomePage extends StatefulWidget {
 late final PageManager _pageManager;
 class _HomePageState extends State<HomePage> {
 
+  Channel? selectedChannel;
+
+  bool visible = false;
+  bool bottomAnimation = false;
+
 
   Widget miniPlayer(){
     Size deviceSize = MediaQuery.of(context).size;
-
-
-    return AnimatedContainer(duration: Duration(milliseconds: 500),
-      padding: EdgeInsets.all(15.0),
-      color: Color(0xFFD6DCE6),
-      width: deviceSize.width,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget> [
-          ValueListenableBuilder<bool>(
-            valueListenable: _pageManager.progressShow,
-            builder: (_, value, __){
-              if (value == true){
-                return AudioProgressBar();
-              }
-              else {
-                return SizedBox();
-              }
-            }
-          ),
-          SizedBox(
-            height: 5.0,
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children:<Widget> [
-          ValueListenableBuilder<String>(
-          valueListenable: _pageManager.currentSongTitleNotifier,
-            builder: (_, title, __) {
-
-
-
-              return Text(title,
-                style: TextStyle(
-                  fontFamily: 'Rubik',
-                  fontSize: 30.0,
-                  color: Color(0xFF040508),
-                  fontWeight: FontWeight.bold,
-
-                ),
-                );
-              },
+    return AnimatedOpacity(
+      opacity: bottomAnimation ? 1.0: 0.0,
+      duration: Duration(milliseconds: 500),
+      child: Container(
+        padding: EdgeInsets.all(15.0),
+        color: Color(0xFFD6DCE6),
+        width: deviceSize.width,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget> [
+            Visibility(child: AudioProgressBar(), visible: visible,),
+            SizedBox(
+              height: 5.0,
             ),
-              ValueListenableBuilder<ButtonState>(
-                valueListenable: _pageManager.buttonNotifier,
-                builder: (_, value, __) {
-                  switch (value) {
-                    case ButtonState.loading:
-                      return Container(
-                        width: 52.0,
-                        height: 52.0,
-                        child: const CircularProgressIndicator(
-                          color: Color(0xFF040508),
-                        ),
-                      );
-                    case ButtonState.paused:
-                      return RoundIconButton(icon: FontAwesomeIcons.play, onPressed: () => _pageManager.play(_pageManager.getIndex()));
-                    case ButtonState.playing:
-                      return RoundIconButton(icon: FontAwesomeIcons.pause, onPressed: _pageManager.pause);
-                  }
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children:<Widget> [
+            ValueListenableBuilder<String>(
+            valueListenable: _pageManager.currentSongTitleNotifier,
+              builder: (_, title, __) {
+                return Text(title,
+                  style: TextStyle(
+                    fontFamily: 'Rubik',
+                    fontSize: 30.0,
+                    color: Color(0xFF040508),
+                    fontWeight: FontWeight.bold,
+
+                  ),
+                  );
                 },
               ),
+                ValueListenableBuilder<ButtonState>(
+                  valueListenable: _pageManager.buttonNotifier,
+                  builder: (_, value, __) {
+                    switch (value) {
+                      case ButtonState.loading:
+                        return Container(
+                          width: 52.0,
+                          height: 52.0,
+                          child: const CircularProgressIndicator(
+                            color: Color(0xFF040508),
+                          ),
+                        );
+                      case ButtonState.paused:
+                        return RoundIconButton(icon: FontAwesomeIcons.play, onPressed: () => _pageManager.resume());
+                      case ButtonState.playing:
+                        return RoundIconButton(icon: FontAwesomeIcons.pause, onPressed: _pageManager.pause);
+                    }
+                  },
+                ),
 
-            ],
-          ),
-        ],
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -124,8 +118,16 @@ class _HomePageState extends State<HomePage> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget> [
               ReusableCard(
-                onPress: () => _pageManager.play(0),
-                colour: Color(0xFF1F2633),
+                onPress: () {
+                  _pageManager.play(0);
+                  setState(() {
+                    selectedChannel = Channel.liveKirtan;
+                    visible = false;
+                    bottomAnimation = true;
+
+                  });
+                },
+                colour: selectedChannel == Channel.liveKirtan? Color(0xFF040508):Color(0xFF0E121A),
                 cardChild: CardContent(
                   label: 'Live Kirtan',
                   labelColor: Color(0xFFD6DCE6),
@@ -136,8 +138,16 @@ class _HomePageState extends State<HomePage> {
                 height: 5.0,
               ),
               ReusableCard(
-                onPress: () => _pageManager.play(1),
-                colour: Color(0xFF1F2633),
+                onPress: () {
+                  _pageManager.play(1);
+                  setState(() {
+                    selectedChannel = Channel.mukhwak;
+                    visible = true;
+                    bottomAnimation = true;
+
+                  });
+                },
+                colour: selectedChannel == Channel.mukhwak ? Color(0xFF040508):Color(0xFF0E121A),
                 cardChild: CardContent(
                   label: 'Today\'s Mukhwak',
                   labelColor: Color(0xFFD6DCE6),
@@ -147,8 +157,16 @@ class _HomePageState extends State<HomePage> {
                 height: 5.0,
               ),
               ReusableCard(
-                onPress: () => _pageManager.play(2),
-                colour: Color(0xFF1F2633),
+                onPress: () {
+                  _pageManager.play(2);
+                  setState(() {
+                    selectedChannel = Channel.mukhwakKatha;
+                    visible = true;
+                    bottomAnimation = true;
+
+                  });
+                },
+                colour: selectedChannel == Channel.mukhwakKatha ? Color(0xFF040508):Color(0xFF0E121A),
                 cardChild: CardContent(
                   label: 'Mukhwak Katha',
                   labelColor: Color(0xFFD6DCE6),
@@ -187,4 +205,10 @@ class AudioProgressBar extends StatelessWidget {
       },
     );
   }
+}
+
+enum Channel {
+  liveKirtan,
+  mukhwak,
+  mukhwakKatha
 }
