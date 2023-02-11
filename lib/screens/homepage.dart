@@ -6,12 +6,10 @@ import 'package:live_darbar/components/card_content.dart';
 import 'package:live_darbar/components/reusable_card.dart';
 import 'package:live_darbar/logics/page_manager.dart';
 import 'package:live_darbar/notifiers/progress_notifier.dart';
-
 import '../components/round_icon_button.dart';
 
 
 class HomePage extends StatefulWidget {
-
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -33,8 +31,13 @@ class _HomePageState extends State<HomePage> {
       opacity: bottomAnimation ? 1.0: 0.0,
       duration: Duration(milliseconds: 500),
       child: Container(
+        decoration: BoxDecoration(
+          color: Color(0xFFD6DCE6),
+          borderRadius: BorderRadius.only(topLeft: Radius.circular(10.0), topRight: Radius.circular(10.0)),
+          
+        ),
         padding: EdgeInsets.all(15.0),
-        color: Color(0xFFD6DCE6),
+        
         width: deviceSize.width,
         child: Column(
           mainAxisSize: MainAxisSize.min,
