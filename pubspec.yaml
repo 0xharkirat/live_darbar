@@ -42,6 +42,7 @@ dependencies:
   font_awesome_flutter: ^10.3.0
   audio_video_progress_bar: ^0.9.0
   audio_service: ^0.18.9
+  get_it: ^7.2.0
 
 
 dev_dependencies:
