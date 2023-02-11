@@ -49,5 +49,9 @@
 		<true/>
 		<key>UIStatusBarHidden</key>
 		<false/>
+		<key>UIBackgroundModes</key>
+        <array>
+          <string>audio</string>
+        </array>
 	</dict>
 </plist>

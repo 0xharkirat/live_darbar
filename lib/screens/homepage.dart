@@ -33,8 +33,13 @@ class _HomePageState extends State<HomePage> {
       opacity: bottomAnimation ? 1.0: 0.0,
       duration: Duration(milliseconds: 500),
       child: Container(
+        decoration: BoxDecoration(
+          color: Color(0xFFD6DCE6),
+          borderRadius: BorderRadius.only(topLeft: Radius.circular(10.0), topRight: Radius.circular(10.0)),
+          
+        ),
         padding: EdgeInsets.all(15.0),
-        color: Color(0xFFD6DCE6),
+        
         width: deviceSize.width,
         child: Column(
           mainAxisSize: MainAxisSize.min,
