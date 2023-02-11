@@ -6,12 +6,10 @@ import 'package:live_darbar/components/card_content.dart';
 import 'package:live_darbar/components/reusable_card.dart';
 import 'package:live_darbar/logics/page_manager.dart';
 import 'package:live_darbar/notifiers/progress_notifier.dart';
-
 import '../components/round_icon_button.dart';
 
 
 class HomePage extends StatefulWidget {
-
 
   @override
   State<HomePage> createState() => _HomePageState();

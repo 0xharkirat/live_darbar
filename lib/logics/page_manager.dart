@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:just_audio_background/just_audio_background.dart';
 import 'package:live_darbar/notifiers/progress_notifier.dart';
 
 class PageManager {
@@ -18,14 +19,33 @@ class PageManager {
   void _setInitialPlaylist() async {
     
     _playlist = ConcatenatingAudioSource(children: [
-      AudioSource.uri(Uri.parse(liveKirtan), tag: 'Live Kirtan'),
-      AudioSource.uri(Uri.parse(mukhwak), tag: 'Mukhwak'),
-      AudioSource.uri(Uri.parse(mukhwakKatha), tag: 'Mukhwak Katha'),
+      AudioSource.uri(
+        Uri.parse(liveKirtan),
+        tag: MediaItem(
+          id: '${_nextMediaId++}',
+          title: 'Live Kirtan',
+        ),
+      ),
+      AudioSource.uri(
+        Uri.parse(mukhwak),
+        tag: MediaItem(
+          id: '${_nextMediaId++}',
+          title: 'Mukhwak',
+        ),
+      ),
+      AudioSource.uri(
+        Uri.parse(mukhwakKatha),
+        tag: MediaItem(
+          id: '${_nextMediaId++}',
+          title: 'Mukhwak Katha',
+        ),
+      ),
     ]);
-    await _audioPlayer.setAudioSource(_playlist, preload: true);
+    await _audioPlayer.setAudioSource(_playlist);
   }
 
   late AudioPlayer _audioPlayer;
+  static int _nextMediaId = 0;
 
   PageManager(){
     _init();
@@ -92,8 +112,8 @@ class PageManager {
   void _listenForChangesInSequenceState() {
     _audioPlayer.sequenceStateStream.listen((sequenceState) {
       if (sequenceState == null) return;
-      final currentItem = sequenceState.currentSource;
-      final title = currentItem?.tag as String?;
+      final currentItem = sequenceState.currentSource!.tag as MediaItem;
+      final title = currentItem.title;
       currentSongTitleNotifier.value = title ?? '';
     });
   }
