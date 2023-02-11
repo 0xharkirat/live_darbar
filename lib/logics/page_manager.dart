@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:live_darbar/notifiers/progress_notifier.dart';
+import 'package:audio_service/audio_service.dart';
+import 'package:live_darbar/services/playlist_repository.dart';
+import 'package:live_darbar/services/service_locator.dart';
 
 class PageManager {
+
+  final _audioHandler = getIt<AudioHandler>();
+
   final buttonNotifier = ValueNotifier<ButtonState>(ButtonState.paused);
   final currentSongTitleNotifier = ValueNotifier<String>('');
+  final playlistNotifier = ValueNotifier<List<String>>([]);
   final progressNotifier = ProgressNotifier();
 
 
@@ -32,12 +39,36 @@ class PageManager {
   }
 
   void _init() async {
+    await _loadPlaylist();
+    _listenToChangesInPlaylist();
     _audioPlayer = AudioPlayer();
     _setInitialPlaylist();
     _listenForChangesInPlayerPosition();
     _listenForChangesInBufferedPosition();
     _listenForChangesInTotalDuration();
     _listenForChangesInSequenceState();
+  }
+
+  Future<void> _loadPlaylist() async {
+    final songRepository = getIt<PlaylistRepository>();
+    final playlist = await songRepository.fetchInitialPlaylist();
+    final mediaItems = playlist
+        .map((song) => MediaItem(
+      id: song['id'] ?? '',
+      title: song['title'] ?? '',
+      extras: {'url': song['url']},
+    ))
+        .toList();
+    _audioHandler.addQueueItems(mediaItems);
+  }
+
+
+  void _listenToChangesInPlaylist() {
+    _audioHandler.queue.listen((playlist) {
+      if (playlist.isEmpty) return;
+      final newList = playlist.map((item) => item.title).toList();
+      playlistNotifier.value = newList;
+    });
   }
 
 
