@@ -21,6 +21,7 @@ late final PageManager _pageManager;
 
 class _HomePageState extends State<HomePage> {
   BannerAd? banner;
+  InterstitialAd? interstitialAd;
 
   Channel? selectedChannel;
 
@@ -41,6 +42,27 @@ class _HomePageState extends State<HomePage> {
           ..load();
       });
     });
+  }
+
+  void _loadInterstitialAd() {
+    InterstitialAd.load(
+        adUnitId: AdState.interstitialAdUnitId,
+        request: const AdRequest(),
+        adLoadCallback: InterstitialAdLoadCallback(
+          onAdLoaded: (ad) {
+            ad.fullScreenContentCallback = FullScreenContentCallback(
+              onAdDismissedFullScreenContent: (ad) {
+                interstitialAd?.dispose();
+              },
+            );
+            setState(() {
+              interstitialAd = ad;
+            });
+          },
+          onAdFailedToLoad: (error) {
+            print('Failed to load an interstitial ad: ${error.message}');
+          },
+        ));
   }
 
   Widget miniPlayer() {
@@ -118,6 +140,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     _pageManager = PageManager();
+    _loadInterstitialAd();
   }
 
   @override
@@ -127,6 +150,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    _loadInterstitialAd();
     return SafeArea(
       child: Scaffold(
           bottomNavigationBar: miniPlayer(),
@@ -140,6 +164,7 @@ class _HomePageState extends State<HomePage> {
                     children: <Widget>[
                       ReusableCard(
                         onPress: () {
+                          interstitialAd?.show();
                           _pageManager.play(0);
                           setState(() {
                             selectedChannel = Channel.liveKirtan;
@@ -160,6 +185,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                       ReusableCard(
                         onPress: () {
+                          interstitialAd?.show();
                           _pageManager.play(1);
                           setState(() {
                             selectedChannel = Channel.mukhwak;
@@ -180,6 +206,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                       ReusableCard(
                         onPress: () {
+                          interstitialAd?.show();
                           _pageManager.play(2);
                           setState(() {
                             selectedChannel = Channel.mukhwakKatha;
@@ -200,15 +227,14 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
               if (banner == null)
-            const SizedBox(
-              height: 50,
-            )
-          else
-            SizedBox(
-              height: 50,
-              child: AdWidget(ad: banner!),
-            )
-              
+                const SizedBox(
+                  height: 50,
+                )
+              else
+                SizedBox(
+                  height: 50,
+                  child: AdWidget(ad: banner!),
+                )
             ],
           )),
     );
