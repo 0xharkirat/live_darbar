@@ -1,11 +1,10 @@
 
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:live_darbar/components/round_icon_button.dart';
+
 
 class CardContent extends StatelessWidget {
 
-  CardContent({required this.label, required this.labelColor});
+  const CardContent({super.key, required this.label, required this.labelColor});
 
 
   final String label;

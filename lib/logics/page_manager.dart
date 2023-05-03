@@ -114,7 +114,7 @@ class PageManager {
       if (sequenceState == null) return;
       final currentItem = sequenceState.currentSource!.tag as MediaItem;
       final title = currentItem.title;
-      currentSongTitleNotifier.value = title ?? '';
+      currentSongTitleNotifier.value = title;
     });
   }
 
