@@ -5,7 +5,7 @@ const margin = EdgeInsets.symmetric( horizontal: 5.0);
 class ReusableCard extends StatelessWidget {
 
 
-  ReusableCard({required this.colour, this.cardChild, this.onPress});
+  const ReusableCard({super.key, required this.colour, this.cardChild, this.onPress});
 
 
   final Color colour;
@@ -18,7 +18,7 @@ class ReusableCard extends StatelessWidget {
       onTap: onPress,
       child: Container(
         margin: margin,
-        padding: EdgeInsets.all(30.0),
+        padding: const EdgeInsets.all(30.0),
         decoration: BoxDecoration(
           color: colour,
           borderRadius: BorderRadius.circular(5.0),
