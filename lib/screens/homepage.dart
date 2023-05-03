@@ -4,7 +4,10 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:live_darbar/components/card_content.dart';
 import 'package:live_darbar/components/reusable_card.dart';
+import 'package:live_darbar/components/sleep_timer.dart';
+import 'package:live_darbar/data/timer_data.dart';
 import 'package:live_darbar/logics/page_manager.dart';
+import 'package:live_darbar/models/timer.dart';
 import 'package:live_darbar/notifiers/progress_notifier.dart';
 import 'package:live_darbar/utils/ad_state.dart';
 import 'package:provider/provider.dart';
@@ -89,7 +92,7 @@ class _HomePageState extends State<HomePage> {
               height: 5.0,
             ),
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              // mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 ValueListenableBuilder<String>(
                   valueListenable: _pageManager.currentSongTitleNotifier,
@@ -105,6 +108,7 @@ class _HomePageState extends State<HomePage> {
                     );
                   },
                 ),
+                const Spacer(),
                 ValueListenableBuilder<ButtonState>(
                   valueListenable: _pageManager.buttonNotifier,
                   builder: (_, value, __) {
@@ -128,12 +132,63 @@ class _HomePageState extends State<HomePage> {
                     }
                   },
                 ),
+                if (selectedChannel == Channel.liveKirtan)
+                  IconButton(
+                    onPressed: _openSleepTimerOverlay,
+                    icon: const Icon(FontAwesomeIcons.ellipsisVertical),
+                    color: const Color(0xFF040508),
+                  )
               ],
             ),
           ],
         ),
       ),
     );
+  }
+
+  void selectTimer(TimerModel time) {
+    final snackBar = SnackBar(
+      content: Text('Timer set for ${time.title}.'),
+    );
+    Navigator.pop(context);
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    Future.delayed(Duration(minutes: time.time), () {
+      _pageManager.pause();
+    });
+  }
+
+  void _openSleepTimerOverlay() {
+    showModalBottomSheet(
+        context: context,
+        builder: (ctx) {
+          return Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+                const Text(
+                  'Sleep Timer',
+                  style: TextStyle(
+                      color: Color(0xFFD6DCE6),
+                      fontFamily: 'Rubik',
+                      fontWeight: FontWeight.bold),
+                ),
+                Expanded(
+                  child: ListView.builder(
+                      itemCount: sleepTimer.length,
+                      itemBuilder: (context, index) {
+                        return SleepTimer(
+                          timerModel: sleepTimer[index],
+                          onSelectTimer: () {
+                            selectTimer(sleepTimer[index]);
+                          },
+                        );
+                      }),
+                )
+              ],
+            ),
+          );
+        },
+        backgroundColor: const Color(0xFF040508));
   }
 
   @override
@@ -146,6 +201,8 @@ class _HomePageState extends State<HomePage> {
   @override
   void dispose() {
     super.dispose();
+    banner?.dispose();
+    interstitialAd?.dispose();
   }
 
   @override
@@ -164,8 +221,8 @@ class _HomePageState extends State<HomePage> {
                     children: <Widget>[
                       ReusableCard(
                         onPress: () {
-                          interstitialAd?.show();
                           _pageManager.play(0);
+                          interstitialAd?.show();
                           setState(() {
                             selectedChannel = Channel.liveKirtan;
                             visible = false;
@@ -185,8 +242,8 @@ class _HomePageState extends State<HomePage> {
                       ),
                       ReusableCard(
                         onPress: () {
-                          interstitialAd?.show();
                           _pageManager.play(1);
+                          interstitialAd?.show();
                           setState(() {
                             selectedChannel = Channel.mukhwak;
                             visible = true;
@@ -206,8 +263,8 @@ class _HomePageState extends State<HomePage> {
                       ),
                       ReusableCard(
                         onPress: () {
-                          interstitialAd?.show();
                           _pageManager.play(2);
+                          interstitialAd?.show();
                           setState(() {
                             selectedChannel = Channel.mukhwakKatha;
                             visible = true;
