@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:live_darbar/components/card_content.dart';
+import 'package:live_darbar/components/mukhwak_dialog.dart';
 import 'package:live_darbar/components/reusable_card.dart';
 import 'package:live_darbar/components/sleep_timer.dart';
 import 'package:live_darbar/data/timer_data.dart';
@@ -23,50 +24,51 @@ class HomePage extends StatefulWidget {
 late final PageManager _pageManager;
 
 class _HomePageState extends State<HomePage> {
-  BannerAd? banner;
-  InterstitialAd? interstitialAd;
+  // BannerAd? banner;
+  // InterstitialAd? interstitialAd;
 
   Channel? selectedChannel;
 
   bool visible = false;
   bool bottomAnimation = false;
+  bool timerSet = false;
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    final adState = Provider.of<AdState>(context);
-    adState.initialization.then((status) {
-      setState(() {
-        banner = BannerAd(
-            size: AdSize.banner,
-            adUnitId: adState.bannerAdUnitId,
-            listener: adState.bannerAdListener,
-            request: const AdRequest())
-          ..load();
-      });
-    });
-  }
+  // @override
+  // void didChangeDependencies() {
+  //   super.didChangeDependencies();
+  //   final adState = Provider.of<AdState>(context);
+  //   adState.initialization.then((status) {
+  //     setState(() {
+  //       banner = BannerAd(
+  //           size: AdSize.banner,
+  //           adUnitId: adState.bannerAdUnitId,
+  //           listener: adState.bannerAdListener,
+  //           request: const AdRequest())
+  //         ..load();
+  //     });
+  //   });
+  // }
 
-  void _loadInterstitialAd() {
-    InterstitialAd.load(
-        adUnitId: AdState.interstitialAdUnitId,
-        request: const AdRequest(),
-        adLoadCallback: InterstitialAdLoadCallback(
-          onAdLoaded: (ad) {
-            ad.fullScreenContentCallback = FullScreenContentCallback(
-              onAdDismissedFullScreenContent: (ad) {
-                interstitialAd?.dispose();
-              },
-            );
-            setState(() {
-              interstitialAd = ad;
-            });
-          },
-          onAdFailedToLoad: (error) {
-            print('Failed to load an interstitial ad: ${error.message}');
-          },
-        ));
-  }
+  // void _loadInterstitialAd() {
+  //   InterstitialAd.load(
+  //       adUnitId: AdState.interstitialAdUnitId,
+  //       request: const AdRequest(),
+  //       adLoadCallback: InterstitialAdLoadCallback(
+  //         onAdLoaded: (ad) {
+  //           ad.fullScreenContentCallback = FullScreenContentCallback(
+  //             onAdDismissedFullScreenContent: (ad) {
+  //               interstitialAd?.dispose();
+  //             },
+  //           );
+  //           setState(() {
+  //             interstitialAd = ad;
+  //           });
+  //         },
+  //         onAdFailedToLoad: (error) {
+  //           print('Failed to load an interstitial ad: ${error.message}');
+  //         },
+  //       ));
+  // }
 
   Widget miniPlayer() {
     Size deviceSize = MediaQuery.of(context).size;
@@ -147,14 +149,17 @@ class _HomePageState extends State<HomePage> {
   }
 
   void selectTimer(TimerModel time) {
-    final snackBar = SnackBar(
-      content: Text('Timer set for ${time.title}.'),
-    );
-    Navigator.pop(context);
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
-    Future.delayed(Duration(minutes: time.time), () {
-      _pageManager.pause();
-    });
+    if (!timerSet) {
+      final snackBar = SnackBar(
+        content: Text('Timer set for ${time.title}.'),
+      );
+      Navigator.pop(context);
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      Future.delayed(Duration(minutes: time.time), () {
+        _pageManager.pause();
+      });
+      print('timer done');
+    } else {}
   }
 
   void _openSleepTimerOverlay() {
@@ -195,19 +200,19 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     _pageManager = PageManager();
-    _loadInterstitialAd();
+    // _loadInterstitialAd();
   }
 
   @override
   void dispose() {
     super.dispose();
-    banner?.dispose();
-    interstitialAd?.dispose();
+    // banner?.dispose();
+    // interstitialAd?.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    _loadInterstitialAd();
+    // _loadInterstitialAd();
     return SafeArea(
       child: Scaffold(
           bottomNavigationBar: miniPlayer(),
@@ -222,7 +227,7 @@ class _HomePageState extends State<HomePage> {
                       ReusableCard(
                         onPress: () {
                           _pageManager.play(0);
-                          interstitialAd?.show();
+                          // interstitialAd?.show();
                           setState(() {
                             selectedChannel = Channel.liveKirtan;
                             visible = false;
@@ -243,7 +248,7 @@ class _HomePageState extends State<HomePage> {
                       ReusableCard(
                         onPress: () {
                           _pageManager.play(1);
-                          interstitialAd?.show();
+                          // interstitialAd?.show();
                           setState(() {
                             selectedChannel = Channel.mukhwak;
                             visible = true;
@@ -264,7 +269,7 @@ class _HomePageState extends State<HomePage> {
                       ReusableCard(
                         onPress: () {
                           _pageManager.play(2);
-                          interstitialAd?.show();
+                          // interstitialAd?.show();
                           setState(() {
                             selectedChannel = Channel.mukhwakKatha;
                             visible = true;
@@ -279,19 +284,34 @@ class _HomePageState extends State<HomePage> {
                           labelColor: Color(0xFFD6DCE6),
                         ),
                       ),
+                      const SizedBox(
+                        height: 5.0,
+                      ),
+                      ReusableCard(
+                        onPress: () async {
+                          await showDialog(
+                              context: context,
+                              builder: (_) => const MukhwakDialog());
+                        },
+                        colour: const Color(0xFF0E121A),
+                        cardChild: const CardContent(
+                          label: "Read Mukhwak",
+                          labelColor: Color(0xFFD6DCE6),
+                        ),
+                      )
                     ],
                   ),
                 ),
               ),
-              if (banner == null)
-                const SizedBox(
-                  height: 50,
-                )
-              else
-                SizedBox(
-                  height: 50,
-                  child: AdWidget(ad: banner!),
-                )
+              // if (banner == null)
+              //   const SizedBox(
+              //     height: 50,
+              //   )
+              // else
+              //   SizedBox(
+              //     height: 50,
+              //     child: AdWidget(ad: banner!),
+              //   )
             ],
           )),
     );

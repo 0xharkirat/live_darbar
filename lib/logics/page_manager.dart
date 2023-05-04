@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
@@ -8,16 +10,17 @@ class PageManager {
   final currentSongTitleNotifier = ValueNotifier<String>('');
   final progressNotifier = ProgressNotifier();
 
-
-  static const liveKirtan = 'https://live.sgpc.net:8443/;nocache=889869audio_file.mp3';
-  static const mukhwak = 'https://old.sgpc.net/hukumnama/jpeg%20hukamnama/hukamnama.mp3';
-  static const mukhwakKatha = 'https://old.sgpc.net/hukumnama/jpeg hukamnama/katha.mp3';
+  static const liveKirtan =
+      'https://live.sgpc.net:8443/;nocache=889869audio_file.mp3';
+  static const mukhwak =
+      'https://old.sgpc.net/hukumnama/jpeg%20hukamnama/hukamnama.mp3';
+  static const mukhwakKatha =
+      'https://old.sgpc.net/hukumnama/jpeg hukamnama/katha.mp3';
 
   late ConcatenatingAudioSource _playlist;
 
   // Define the playlist
   void _setInitialPlaylist() async {
-
     _playlist = ConcatenatingAudioSource(children: [
       AudioSource.uri(
         Uri.parse(liveKirtan),
@@ -47,7 +50,7 @@ class PageManager {
   late AudioPlayer _audioPlayer;
   static int _nextMediaId = 0;
 
-  PageManager(){
+  PageManager() {
     _init();
   }
 
@@ -58,11 +61,18 @@ class PageManager {
     _listenForChangesInBufferedPosition();
     _listenForChangesInTotalDuration();
     _listenForChangesInSequenceState();
+    // _listenForChangesInPlayerState();
+    // _listenForChangesInCurrentSong();
   }
-
 
   void _listenForChangesInPlayerPosition() {
     _audioPlayer.positionStream.listen((position) {
+      _audioPlayer.playbackEventStream.listen((event) {
+        if (position == event.duration) {
+          _audioPlayer.pause();
+          print("finished playing mukhwak");
+        }
+      });
       final oldState = progressNotifier.value;
       progressNotifier.value = ProgressBarState(
         current: position,
@@ -95,9 +105,13 @@ class PageManager {
   }
 
   void _listenForChangesInPlayerState() {
-    _audioPlayer.playerStateStream.listen((playerState) {
+    _audioPlayer.playerStateStream.listen((playerState) async {
       final isPlaying = playerState.playing;
       final processingState = playerState.processingState;
+      if (processingState == ProcessingState.completed) {
+        // await _audioPlayer.pause();
+        print('paused after mukhwak');
+      }
       if (processingState == ProcessingState.loading ||
           processingState == ProcessingState.buffering) {
         buttonNotifier.value = ButtonState.loading;
@@ -105,6 +119,14 @@ class PageManager {
         buttonNotifier.value = ButtonState.paused;
       } else if (processingState != ProcessingState.completed) {
         buttonNotifier.value = ButtonState.playing;
+      }
+    });
+  }
+
+  void _listenForChangesInCurrentSong() {
+    _audioPlayer.playbackEventStream.listen((event) {
+      if (event.updatePosition == event.duration) {
+        print('mukhwak finished');
       }
     });
   }
@@ -118,66 +140,44 @@ class PageManager {
     });
   }
 
-
-
-
   void play(int index) async {
-
-
     _audioPlayer.setAudioSource(_playlist, initialIndex: index);
     _listenForChangesInPlayerState();
+    _listenForChangesInCurrentSong();
 
     await _audioPlayer.play();
-
-
-
   }
 
-  void resume() async{
+  void resume() async {
     await _audioPlayer.play();
-
   }
+
   void seek(Duration position) {
     _audioPlayer.seek(position);
   }
 
-  int getIndex()  {
+  int getIndex() {
     int selectedChannelIndex = 0;
     if (currentSongTitleNotifier.value != '') {
       if (currentSongTitleNotifier.value == 'Live Kirtan') {
         selectedChannelIndex = 0;
-      }
-      else if (currentSongTitleNotifier.value == 'Mukhwak') {
+      } else if (currentSongTitleNotifier.value == 'Mukhwak') {
         selectedChannelIndex = 1;
-      }
-      else if (currentSongTitleNotifier.value == 'Mukhwak Katha') {
+      } else if (currentSongTitleNotifier.value == 'Mukhwak Katha') {
         selectedChannelIndex = 2;
       }
     }
 
     return selectedChannelIndex;
-
-
   }
 
-
-  void pause(){
+  void pause() {
     _audioPlayer.pause();
   }
 
-  void dispose(){
+  void dispose() {
     _audioPlayer.dispose();
   }
-
-
-
-
-
-
 }
 
-enum ButtonState {
-  paused, playing, loading
-}
-
-
+enum ButtonState { paused, playing, loading }
