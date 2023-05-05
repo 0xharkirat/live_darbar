@@ -55,5 +55,12 @@
 		</array>
 		<key>GADApplicationIdentifier</key>
 		<string>ca-app-pub-4044023931058018~8365653487</string>
+		<key>LSApplicationQueriesSchemes</key>
+		<array>
+		<string>https</string>
+		</array>
+		<key>io.flutter.embedded_views_preview</key>
+		<true/>
+
 	</dict>
 </plist>

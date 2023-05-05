@@ -8,6 +8,7 @@ import 'package:live_darbar/components/card_content.dart';
 import 'package:live_darbar/components/mukhwak_dialog.dart';
 import 'package:live_darbar/components/reusable_card.dart';
 import 'package:live_darbar/components/sleep_timer.dart';
+import 'package:live_darbar/components/webview_dialog.dart';
 import 'package:live_darbar/data/timer_data.dart';
 import 'package:live_darbar/logics/page_manager.dart';
 import 'package:live_darbar/models/timer.dart';
@@ -86,24 +87,6 @@ class _HomePageState extends State<HomePage> {
   //       ));
   // }
 
-  void _getData() async {
-    final timingUrl = Uri.https(
-        'live-darbar-default-rtdb.firebaseio.com', 'Current_timings.json');
-
-    final response = await http.get(timingUrl);
-    final listData = json.decode(response.body);
-    final List<String> currentTimings = [];
-    for (final timing in listData.entries) {
-      currentTimings.add(timing.value);
-    }
-    print(currentTimings);
-    setState(() {
-      startingTime = currentTimings[0];
-      endTime = currentTimings[1];
-    });
-
-    // print(listData);
-  }
 
   Widget miniPlayer() {
     Size deviceSize = MediaQuery.of(context).size;
@@ -225,9 +208,10 @@ class _HomePageState extends State<HomePage> {
                 const Text(
                   'Sleep Timer',
                   style: TextStyle(
-                      color: Color(0xFFD6DCE6),
-                      fontFamily: 'Rubik',
-                      fontWeight: FontWeight.bold,),
+                    color: Color(0xFFD6DCE6),
+                    fontFamily: 'Rubik',
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 Expanded(
                   child: ListView.builder(
@@ -251,7 +235,6 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    _getData();
     _pageManager = PageManager();
     ist = DateTime.now().toUtc().add(const Duration(hours: 5, minutes: 30));
     _timeString = _formatDateTime(ist);
@@ -398,17 +381,91 @@ class _HomePageState extends State<HomePage> {
                       const SizedBox(
                         height: 5.0,
                       ),
-                      ReusableCard(
-                        onPress: () async {
-                          await showDialog(
-                              context: context,
-                              builder: (_) => const MukhwakDialog());
-                        },
-                        colour: const Color(0xFF0E121A),
-                        cardChild: const CardContent(
-                          label: "Read Mukhwak",
-                          labelColor: Color(0xFFD6DCE6),
-                        ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          ElevatedButton(
+                            onPressed: () async {
+                              await showDialog(
+                                  context: context,
+                                  builder: (_) => const WebViewApp(
+                                        url:
+                                            'https://old.sgpc.net/hukumnama/jpeg%20hukamnama/hukamnama.gif',
+                                      ));
+                            },
+                            style: const ButtonStyle(
+                                padding: MaterialStatePropertyAll(
+                                    EdgeInsets.all(15)),
+                                shape: MaterialStatePropertyAll(
+                                    RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(5)))),
+                                backgroundColor: MaterialStatePropertyAll(
+                                    Color(0xFF0E121A))),
+                            child: const Text(
+                              'Read Mukhwak',
+                              style: TextStyle(
+                                fontFamily: 'Rubik',
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xFFD6DCE6),
+                              ),
+                            ),
+                          ),
+                          ElevatedButton(
+                            onPressed: () async {
+                              await showDialog(
+                                  context: context,
+                                  builder: (_) => const WebViewApp(
+                                        url:
+                                            'https://sgpc.net/wp-content/uploads/2014/04/maryada_11.jpg',
+                                      ));
+                            },
+                            style: const ButtonStyle(
+                                padding: MaterialStatePropertyAll(
+                                    EdgeInsets.all(15)),
+                                shape: MaterialStatePropertyAll(
+                                    RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(5)))),
+                                backgroundColor: MaterialStatePropertyAll(
+                                    Color(0xFF0E121A))),
+                            child: const Text(
+                              'Daily Routine',
+                              style: TextStyle(
+                                fontFamily: 'Rubik',
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xFFD6DCE6),
+                              ),
+                            ),
+                          ),
+                          ElevatedButton(
+                            onPressed: () async {
+                              await showDialog(
+                                  context: context,
+                                  builder: (_) => const WebViewApp(
+                                    url: 'http://docs.google.com/viewer?url=https://old.sgpc.net/Ragi%20List_Eng.pdf',
+                                      ));
+
+                            },
+                            style: const ButtonStyle(
+                                padding: MaterialStatePropertyAll(
+                                    EdgeInsets.all(15)),
+                                shape: MaterialStatePropertyAll(
+                                    RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(5)))),
+                                backgroundColor: MaterialStatePropertyAll(
+                                    Color(0xFF0E121A))),
+                            child: const Text(
+                              'Ragi Duties',
+                              style: TextStyle(
+                                fontFamily: 'Rubik',
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xFFD6DCE6),
+                              ),
+                            ),
+                          ),
+                        ],
                       )
                     ],
                   ),
@@ -454,3 +511,5 @@ class AudioProgressBar extends StatelessWidget {
 }
 
 enum Channel { liveKirtan, mukhwak, mukhwakKatha }
+
+

@@ -48,6 +48,10 @@ dependencies:
   intl: ^0.18.1
   text_scroll: ^0.2.0
   http: ^0.13.6
+  webview_flutter: ^4.2.0
+  pdf_viewer_plugin: ^2.0.1
+  path_provider: ^2.0.14
+
 
 
 
