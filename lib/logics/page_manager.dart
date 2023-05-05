@@ -17,34 +17,36 @@ class PageManager {
   static const mukhwakKatha =
       'https://old.sgpc.net/hukumnama/jpeg hukamnama/katha.mp3';
 
-  late ConcatenatingAudioSource _playlist;
+  late List _playlist;
+
+  final items = [
+    AudioSource.uri(
+      Uri.parse(liveKirtan),
+      tag: MediaItem(
+        id: '${_nextMediaId++}',
+        title: 'Live Kirtan',
+      ),
+    ),
+    AudioSource.uri(
+      Uri.parse(mukhwak),
+      tag: MediaItem(
+        id: '${_nextMediaId++}',
+        title: 'Mukhwak',
+      ),
+    ),
+    AudioSource.uri(
+      Uri.parse(mukhwakKatha),
+      tag: MediaItem(
+        id: '${_nextMediaId++}',
+        title: 'Mukhwak Katha',
+      ),
+    ),
+  ];
 
   // Define the playlist
   void _setInitialPlaylist() async {
-    _playlist = ConcatenatingAudioSource(children: [
-      AudioSource.uri(
-        Uri.parse(liveKirtan),
-        tag: MediaItem(
-          id: '${_nextMediaId++}',
-          title: 'Live Kirtan',
-        ),
-      ),
-      AudioSource.uri(
-        Uri.parse(mukhwak),
-        tag: MediaItem(
-          id: '${_nextMediaId++}',
-          title: 'Mukhwak',
-        ),
-      ),
-      AudioSource.uri(
-        Uri.parse(mukhwakKatha),
-        tag: MediaItem(
-          id: '${_nextMediaId++}',
-          title: 'Mukhwak Katha',
-        ),
-      ),
-    ]);
-    await _audioPlayer.setAudioSource(_playlist);
+    _playlist = items;
+    await _audioPlayer.setAudioSource(_playlist[0]);
   }
 
   late AudioPlayer _audioPlayer;
@@ -67,12 +69,6 @@ class PageManager {
 
   void _listenForChangesInPlayerPosition() {
     _audioPlayer.positionStream.listen((position) {
-      _audioPlayer.playbackEventStream.listen((event) {
-        if (position == event.duration) {
-          _audioPlayer.pause();
-          print("finished playing mukhwak");
-        }
-      });
       final oldState = progressNotifier.value;
       progressNotifier.value = ProgressBarState(
         current: position,
@@ -108,10 +104,6 @@ class PageManager {
     _audioPlayer.playerStateStream.listen((playerState) async {
       final isPlaying = playerState.playing;
       final processingState = playerState.processingState;
-      if (processingState == ProcessingState.completed) {
-        // await _audioPlayer.pause();
-        print('paused after mukhwak');
-      }
       if (processingState == ProcessingState.loading ||
           processingState == ProcessingState.buffering) {
         buttonNotifier.value = ButtonState.loading;
@@ -119,14 +111,10 @@ class PageManager {
         buttonNotifier.value = ButtonState.paused;
       } else if (processingState != ProcessingState.completed) {
         buttonNotifier.value = ButtonState.playing;
-      }
-    });
-  }
-
-  void _listenForChangesInCurrentSong() {
-    _audioPlayer.playbackEventStream.listen((event) {
-      if (event.updatePosition == event.duration) {
-        print('mukhwak finished');
+      } else if (processingState == ProcessingState.completed) {
+        buttonNotifier.value = ButtonState.paused;
+        _audioPlayer.seek(Duration.zero);
+        _audioPlayer.pause();
       }
     });
   }
@@ -141,9 +129,8 @@ class PageManager {
   }
 
   void play(int index) async {
-    _audioPlayer.setAudioSource(_playlist, initialIndex: index);
+    _audioPlayer.setAudioSource(_playlist[index]);
     _listenForChangesInPlayerState();
-    _listenForChangesInCurrentSong();
 
     await _audioPlayer.play();
   }
