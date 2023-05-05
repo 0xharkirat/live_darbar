@@ -50,9 +50,9 @@
 		<key>UIStatusBarHidden</key>
 		<false/>
 		<key>UIBackgroundModes</key>
-        <array>
-          <string>audio</string>
-        </array>
+		<array>
+			<string>audio</string>
+		</array>
 		<key>GADApplicationIdentifier</key>
 		<string>ca-app-pub-4044023931058018~8365653487</string>
 	</dict>

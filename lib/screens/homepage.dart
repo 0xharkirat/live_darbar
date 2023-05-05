@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -13,6 +15,10 @@ import 'package:live_darbar/notifiers/progress_notifier.dart';
 import 'package:live_darbar/utils/ad_state.dart';
 import 'package:provider/provider.dart';
 import '../components/round_icon_button.dart';
+import 'package:intl/intl.dart';
+import 'package:text_scroll/text_scroll.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -24,6 +30,12 @@ class HomePage extends StatefulWidget {
 late final PageManager _pageManager;
 
 class _HomePageState extends State<HomePage> {
+  String startingTime = '';
+  String endTime = '';
+  late DateTime ist;
+
+  late String _timeString;
+  late Timer timer;
   // BannerAd? banner;
   // InterstitialAd? interstitialAd;
 
@@ -32,6 +44,8 @@ class _HomePageState extends State<HomePage> {
   bool visible = false;
   bool bottomAnimation = false;
   bool timerSet = false;
+
+  // late bool liveStarted;
 
   // @override
   // void didChangeDependencies() {
@@ -69,6 +83,25 @@ class _HomePageState extends State<HomePage> {
   //         },
   //       ));
   // }
+
+  void _getData() async {
+    final timingUrl = Uri.https(
+        'live-darbar-default-rtdb.firebaseio.com', 'Current_timings.json');
+
+    final response = await http.get(timingUrl);
+    final listData = json.decode(response.body);
+    final List<String> currentTimings = [];
+    for (final timing in listData.entries) {
+      currentTimings.add(timing.value);
+    }
+    print(currentTimings);
+    setState(() {
+      startingTime = currentTimings[0];
+      endTime = currentTimings[1];
+    });
+
+    // print(listData);
+  }
 
   Widget miniPlayer() {
     Size deviceSize = MediaQuery.of(context).size;
@@ -199,15 +232,53 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+    _getData();
     _pageManager = PageManager();
+    ist = DateTime.now().toUtc().add(const Duration(hours: 5, minutes: 30));
+    _timeString = _formatDateTime(ist);
+
+    // isliveStarted(ist);
+
+    timer = Timer.periodic(const Duration(seconds: 1), (Timer t) => _getTime());
     // _loadInterstitialAd();
   }
 
   @override
   void dispose() {
     super.dispose();
+    timer.cancel();
     // banner?.dispose();
     // interstitialAd?.dispose();
+  }
+
+  String _formatDateTime(DateTime dateTime) {
+    return DateFormat('MM/dd/yyyy hh:mm:ss').format(dateTime);
+  }
+
+  // void isliveStarted(DateTime now) {
+  //   final DateTime startTime = DateTime(now.year, now.month, now.day, 11, 35);
+  //   final DateTime endTime = DateTime(now.year, now.month, now.day, 22, 30);
+  //   // print('start time bool: ${now.isAfter(startTime)}');
+  //   // print('end time bool: ${endTime.isAfter(now)}');
+  //   if (now.isAfter(startTime) && endTime.isAfter(now)) {
+  //     print('live started');
+  //     // return true;
+  //   } else {
+  //     print('live not Started');
+  //     // return false;
+  //   }
+  // }
+
+  void _getTime() {
+    ist = DateTime.now().toUtc().add(const Duration(hours: 5, minutes: 30));
+
+    final String formattedDateTime =
+        DateFormat('MM/dd/yyyy hh:mm:ss').format(ist);
+
+    setState(() {
+      _timeString = formattedDateTime;
+      // isliveStarted(ist);
+    });
   }
 
   @override
@@ -215,10 +286,31 @@ class _HomePageState extends State<HomePage> {
     // _loadInterstitialAd();
     return SafeArea(
       child: Scaffold(
+          appBar: AppBar(
+            title: Text(
+              'Time in Amritsar, IND: $_timeString',
+              style: const TextStyle(
+                  color: Color(0xFFD6DCE6), fontFamily: 'Rubik', fontSize: 16),
+            ),
+            backgroundColor: const Color.fromARGB(255, 9, 11, 18),
+          ),
           bottomNavigationBar: miniPlayer(),
           backgroundColor: const Color(0xFF040508),
           body: Column(
             children: [
+               const Padding(
+                padding: EdgeInsets.all(8.0),
+                child: TextScroll(
+                  "The Live Kirtan may not be started yet. Refer to starting and ending times in the app.",
+                  velocity: Velocity(pixelsPerSecond: Offset(30, 0)),
+                  // delayBefore: Duration(seconds: 1),
+                  intervalSpaces: 60,
+                  style: TextStyle(
+                    color: Color(0xFFD6DCE6),
+                    fontFamily: 'Rubik',
+                  ),
+                ),
+              ),
               Expanded(
                 child: SingleChildScrollView(
                   child: Column(

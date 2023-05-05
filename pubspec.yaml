@@ -45,6 +45,9 @@ dependencies:
   google_mobile_ads: ^3.0.0
   provider: ^6.0.5
   transparent_image: ^2.0.1
+  intl: ^0.18.1
+  text_scroll: ^0.2.0
+  http: ^0.13.6
 
 
 
@@ -91,8 +94,10 @@ flutter:
 
 flutter_native_splash:
   color: "#040508"
-  image: images/logo.png
+  image: images/sikhism.png
+  # branding: images/banner.png
 
   android_12:
     color: '#040508'
-    image: images/logo.png
+    image: images/sikhism.png
+    # branding: images/banner.png
