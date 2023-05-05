@@ -30,8 +30,6 @@ class HomePage extends StatefulWidget {
 late final PageManager _pageManager;
 
 class _HomePageState extends State<HomePage> {
-  String startingTime = '';
-  String endTime = '';
   late DateTime ist;
 
   late String _timeString;
@@ -292,7 +290,6 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    // _loadInterstitialAd();
     return SafeArea(
       child: Scaffold(
           appBar: AppBar(
@@ -321,170 +318,172 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
               Expanded(
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: <Widget>[
-                      ReusableCard(
-                        onPress: () {
-                          _pageManager.play(0);
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: <Widget>[
+                    ReusableCard(
+                      onPress: () {
+                        _pageManager.play(0);
 
-                          setState(() {
-                            selectedChannel = Channel.liveKirtan;
-                            visible = false;
-                            bottomAnimation = true;
-                          });
+                        setState(() {
+                          selectedChannel = Channel.liveKirtan;
+                          visible = false;
+                          bottomAnimation = true;
+                        });
 
-                          interstitialAd?.show();
-                          _loadInterstitialAd();
-                        },
-                        colour: selectedChannel == Channel.liveKirtan
-                            ? const Color(0xFF040508)
-                            : const Color(0xFF0E121A),
-                        cardChild: const CardContent(
-                          label: 'Live Kirtan',
-                          labelColor: Color(0xFFD6DCE6),
-                        ),
+                        interstitialAd?.show();
+                        _loadInterstitialAd();
+                      },
+                      colour: selectedChannel == Channel.liveKirtan
+                          ? const Color(0xFF040508)
+                          : const Color(0xFF0E121A),
+                      cardChild: const CardContent(
+                        label: 'Live Kirtan',
+                        labelColor: Color(0xFFD6DCE6),
                       ),
-                      const SizedBox(
-                        height: 5.0,
-                      ),
-                      ReusableCard(
-                        onPress: () {
-                          _pageManager.play(1);
+                    ),
+                    const SizedBox(
+                      height: 5.0,
+                    ),
+                    ReusableCard(
+                      onPress: () {
+                        _pageManager.play(1);
 
-                          setState(() {
-                            selectedChannel = Channel.mukhwak;
-                            visible = true;
-                            bottomAnimation = true;
-                          });
-                          interstitialAd?.show();
-                          _loadInterstitialAd();
-                        },
-                        colour: selectedChannel == Channel.mukhwak
-                            ? const Color(0xFF040508)
-                            : const Color(0xFF0E121A),
-                        cardChild: const CardContent(
-                          label: 'Today\'s Mukhwak',
-                          labelColor: Color(0xFFD6DCE6),
-                        ),
+                        setState(() {
+                          selectedChannel = Channel.mukhwak;
+                          visible = true;
+                          bottomAnimation = true;
+                        });
+                        interstitialAd?.show();
+                        _loadInterstitialAd();
+                      },
+                      colour: selectedChannel == Channel.mukhwak
+                          ? const Color(0xFF040508)
+                          : const Color(0xFF0E121A),
+                      cardChild: const CardContent(
+                        label: 'Today\'s Mukhwak',
+                        labelColor: Color(0xFFD6DCE6),
                       ),
-                      const SizedBox(
-                        height: 5.0,
-                      ),
-                      ReusableCard(
-                        onPress: () {
-                          _pageManager.play(2);
-                      
+                    ),
+                    const SizedBox(
+                      height: 5.0,
+                    ),
+                    ReusableCard(
+                      onPress: () {
+                        _pageManager.play(2);
+                    
 
-                          setState(() {
-                            selectedChannel = Channel.mukhwakKatha;
-                            visible = true;
-                            bottomAnimation = true;
-                          });
-                          
-                          interstitialAd?.show();
-                          _loadInterstitialAd();
-                        },
-                        colour: selectedChannel == Channel.mukhwakKatha
-                            ? const Color(0xFF040508)
-                            : const Color(0xFF0E121A),
-                        cardChild: const CardContent(
-                          label: 'Mukhwak Katha',
-                          labelColor: Color(0xFFD6DCE6),
-                        ),
+                        setState(() {
+                          selectedChannel = Channel.mukhwakKatha;
+                          visible = true;
+                          bottomAnimation = true;
+                        });
+                        
+                        interstitialAd?.show();
+                        _loadInterstitialAd();
+                      },
+                      colour: selectedChannel == Channel.mukhwakKatha
+                          ? const Color(0xFF040508)
+                          : const Color(0xFF0E121A),
+                      cardChild: const CardContent(
+                        label: 'Mukhwak Katha',
+                        labelColor: Color(0xFFD6DCE6),
                       ),
-                      const SizedBox(
-                        height: 5.0,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          ElevatedButton(
-                            onPressed: () async {
-                              await showDialog(
-                                  context: context,
-                                  builder: (_) => const WebViewApp(
-                                        url:
-                                            'https://old.sgpc.net/hukumnama/jpeg%20hukamnama/hukamnama.gif',
-                                      ));
-                            },
-                            style: const ButtonStyle(
-                                padding: MaterialStatePropertyAll(
-                                    EdgeInsets.all(15)),
-                                shape: MaterialStatePropertyAll(
-                                    RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(5)))),
-                                backgroundColor: MaterialStatePropertyAll(
-                                    Color(0xFF0E121A))),
-                            child: const Text(
-                              'Read Mukhwak',
-                              style: TextStyle(
-                                fontFamily: 'Rubik',
-                                fontWeight: FontWeight.bold,
-                                color: Color(0xFFD6DCE6),
-                              ),
+                    ),
+                    const SizedBox(
+                      height: 5.0,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        ElevatedButton(
+                          onPressed: () async {
+                            await showDialog(
+                                context: context,
+                                builder: (_) => const WebViewApp(
+                             
+                                      url:
+                                          'https://old.sgpc.net/hukumnama/jpeg%20hukamnama/hukamnama.gif',
+                                    ));
+                          },
+                          style: const ButtonStyle(
+                              padding: MaterialStatePropertyAll(
+                                  EdgeInsets.all(15)),
+                              shape: MaterialStatePropertyAll(
+                                  RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(5)))),
+                              backgroundColor: MaterialStatePropertyAll(
+                                  Color(0xFF0E121A))),
+                          child: const Text(
+                            'Read Mukhwak',
+                            style: TextStyle(
+                              fontFamily: 'Rubik',
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFFD6DCE6),
                             ),
                           ),
-                          ElevatedButton(
-                            onPressed: () async {
-                              await showDialog(
-                                  context: context,
-                                  builder: (_) => const WebViewApp(
-                                        url:
-                                            'https://sgpc.net/wp-content/uploads/2014/04/maryada_11.jpg',
-                                      ));
-                            },
-                            style: const ButtonStyle(
-                                padding: MaterialStatePropertyAll(
-                                    EdgeInsets.all(15)),
-                                shape: MaterialStatePropertyAll(
-                                    RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(5)))),
-                                backgroundColor: MaterialStatePropertyAll(
-                                    Color(0xFF0E121A))),
-                            child: const Text(
-                              'Daily Routine',
-                              style: TextStyle(
-                                fontFamily: 'Rubik',
-                                fontWeight: FontWeight.bold,
-                                color: Color(0xFFD6DCE6),
-                              ),
+                        ),
+                        ElevatedButton(
+                          onPressed: () async {
+                            await showDialog(
+                                context: context,
+                                builder: (_) => const WebViewApp(
+                               
+                                      url:
+                                          'https://sgpc.net/wp-content/uploads/2014/04/maryada_11.jpg',
+                                    ));
+                          },
+                          style: const ButtonStyle(
+                              padding: MaterialStatePropertyAll(
+                                  EdgeInsets.all(15)),
+                              shape: MaterialStatePropertyAll(
+                                  RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(5)))),
+                              backgroundColor: MaterialStatePropertyAll(
+                                  Color(0xFF0E121A))),
+                          child: const Text(
+                            'Daily Routine',
+                            style: TextStyle(
+                              fontFamily: 'Rubik',
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFFD6DCE6),
                             ),
                           ),
-                          ElevatedButton(
-                            onPressed: () async {
-                              await showDialog(
-                                  context: context,
-                                  builder: (_) => const WebViewApp(
-                                        url:
-                                            'http://docs.google.com/viewer?url=https://old.sgpc.net/Ragi%20List_Eng.pdf',
-                                      ));
-                            },
-                            style: const ButtonStyle(
-                                padding: MaterialStatePropertyAll(
-                                    EdgeInsets.all(15)),
-                                shape: MaterialStatePropertyAll(
-                                    RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(5)))),
-                                backgroundColor: MaterialStatePropertyAll(
-                                    Color(0xFF0E121A))),
-                            child: const Text(
-                              'Ragi Duties',
-                              style: TextStyle(
-                                fontFamily: 'Rubik',
-                                fontWeight: FontWeight.bold,
-                                color: Color(0xFFD6DCE6),
-                              ),
+                        ),
+                        ElevatedButton(
+                          onPressed: () async {
+                            await showDialog(
+                                context: context,
+                                builder: (_) => const WebViewApp(
+                                  
+                                      url:
+
+                                          'http://docs.google.com/viewer?url=https://old.sgpc.net/Ragi%20List_Eng.pdf',
+                                    ));
+                          },
+                          style: const ButtonStyle(
+                              padding: MaterialStatePropertyAll(
+                                  EdgeInsets.all(15)),
+                              shape: MaterialStatePropertyAll(
+                                  RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(5)))),
+                              backgroundColor: MaterialStatePropertyAll(
+                                  Color(0xFF0E121A))),
+                          child: const Text(
+                            'Ragi Duties',
+                            style: TextStyle(
+                              fontFamily: 'Rubik',
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFFD6DCE6),
                             ),
                           ),
-                        ],
-                      )
-                    ],
-                  ),
+                        ),
+                      ],
+                    )
+                  ],
                 ),
               ),
               if (banner == null)
