@@ -36,6 +36,9 @@ class _HomePageState extends State<HomePage> {
 
   late String _timeString;
   late Timer timer;
+  late Timer t;
+
+  bool sleepTimerSet = false;
   // BannerAd? banner;
   // InterstitialAd? interstitialAd;
 
@@ -43,7 +46,6 @@ class _HomePageState extends State<HomePage> {
 
   bool visible = false;
   bool bottomAnimation = false;
-  bool timerSet = false;
 
   // late bool liveStarted;
 
@@ -182,17 +184,34 @@ class _HomePageState extends State<HomePage> {
   }
 
   void selectTimer(TimerModel time) {
-    if (!timerSet) {
-      final snackBar = SnackBar(
-        content: Text('Timer set for ${time.title}.'),
-      );
-      Navigator.pop(context);
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-      Future.delayed(Duration(minutes: time.time), () {
+    final snackBar = SnackBar(
+      content: Text('Timer set for ${time.title}.'),
+      action: SnackBarAction(
+        label: "Undo",
+        onPressed: () {
+          t.cancel();
+          sleepTimerSet = false;
+        },
+      ),
+    );
+    Navigator.pop(context);
+    ScaffoldMessenger.of(context).removeCurrentSnackBar();
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+
+    if (!sleepTimerSet) {
+      sleepTimerSet = true;
+      t = Timer(Duration(seconds: time.time), () {
         _pageManager.pause();
+        sleepTimerSet = false;
       });
-      print('timer done');
-    } else {}
+    } else {
+      t.cancel();
+      sleepTimerSet = true;
+      t = Timer(Duration(seconds: time.time), () {
+        _pageManager.pause();
+        sleepTimerSet = false;
+      });
+    }
   }
 
   void _openSleepTimerOverlay() {
@@ -208,7 +227,7 @@ class _HomePageState extends State<HomePage> {
                   style: TextStyle(
                       color: Color(0xFFD6DCE6),
                       fontFamily: 'Rubik',
-                      fontWeight: FontWeight.bold),
+                      fontWeight: FontWeight.bold,),
                 ),
                 Expanded(
                   child: ListView.builder(
@@ -298,10 +317,10 @@ class _HomePageState extends State<HomePage> {
           backgroundColor: const Color(0xFF040508),
           body: Column(
             children: [
-               const Padding(
+              const Padding(
                 padding: EdgeInsets.all(8.0),
                 child: TextScroll(
-                  "The Live Kirtan may not be started yet. Refer to starting and ending times in the app.",
+                  "The Live Kirtan may not be started yet. Refer to daily routine time.",
                   velocity: Velocity(pixelsPerSecond: Offset(30, 0)),
                   // delayBefore: Duration(seconds: 1),
                   intervalSpaces: 60,
