@@ -188,7 +188,7 @@ class _HomePageState extends State<HomePage> {
 
     if (!sleepTimerSet) {
       sleepTimerSet = true;
-      t = Timer(Duration(seconds: time.time), () {
+      t = Timer(Duration(minutes: time.time), () {
         _pageManager.pause();
         sleepTimerSet = false;
       });
@@ -371,14 +371,13 @@ class _HomePageState extends State<HomePage> {
                     ReusableCard(
                       onPress: () {
                         _pageManager.play(2);
-                    
 
                         setState(() {
                           selectedChannel = Channel.mukhwakKatha;
                           visible = true;
                           bottomAnimation = true;
                         });
-                        
+
                         interstitialAd?.show();
                         _loadInterstitialAd();
                       },
@@ -401,20 +400,21 @@ class _HomePageState extends State<HomePage> {
                             await showDialog(
                                 context: context,
                                 builder: (_) => const WebViewApp(
-                             
                                       url:
                                           'https://old.sgpc.net/hukumnama/jpeg%20hukamnama/hukamnama.gif',
                                     ));
+                            interstitialAd?.show();
+                            _loadInterstitialAd();
                           },
                           style: const ButtonStyle(
-                              padding: MaterialStatePropertyAll(
-                                  EdgeInsets.all(15)),
+                              padding:
+                                  MaterialStatePropertyAll(EdgeInsets.all(15)),
                               shape: MaterialStatePropertyAll(
                                   RoundedRectangleBorder(
                                       borderRadius: BorderRadius.all(
                                           Radius.circular(5)))),
-                              backgroundColor: MaterialStatePropertyAll(
-                                  Color(0xFF0E121A))),
+                              backgroundColor:
+                                  MaterialStatePropertyAll(Color(0xFF0E121A))),
                           child: const Text(
                             'Read Mukhwak',
                             style: TextStyle(
@@ -429,20 +429,21 @@ class _HomePageState extends State<HomePage> {
                             await showDialog(
                                 context: context,
                                 builder: (_) => const WebViewApp(
-                               
                                       url:
                                           'https://sgpc.net/wp-content/uploads/2014/04/maryada_11.jpg',
                                     ));
+                            interstitialAd?.show();
+                            _loadInterstitialAd();
                           },
                           style: const ButtonStyle(
-                              padding: MaterialStatePropertyAll(
-                                  EdgeInsets.all(15)),
+                              padding:
+                                  MaterialStatePropertyAll(EdgeInsets.all(15)),
                               shape: MaterialStatePropertyAll(
                                   RoundedRectangleBorder(
                                       borderRadius: BorderRadius.all(
                                           Radius.circular(5)))),
-                              backgroundColor: MaterialStatePropertyAll(
-                                  Color(0xFF0E121A))),
+                              backgroundColor:
+                                  MaterialStatePropertyAll(Color(0xFF0E121A))),
                           child: const Text(
                             'Daily Routine',
                             style: TextStyle(
@@ -457,21 +458,21 @@ class _HomePageState extends State<HomePage> {
                             await showDialog(
                                 context: context,
                                 builder: (_) => const WebViewApp(
-                                  
                                       url:
-
                                           'http://docs.google.com/viewer?url=https://old.sgpc.net/Ragi%20List_Eng.pdf',
                                     ));
+                            interstitialAd?.show();
+                            _loadInterstitialAd();
                           },
                           style: const ButtonStyle(
-                              padding: MaterialStatePropertyAll(
-                                  EdgeInsets.all(15)),
+                              padding:
+                                  MaterialStatePropertyAll(EdgeInsets.all(15)),
                               shape: MaterialStatePropertyAll(
                                   RoundedRectangleBorder(
                                       borderRadius: BorderRadius.all(
                                           Radius.circular(5)))),
-                              backgroundColor: MaterialStatePropertyAll(
-                                  Color(0xFF0E121A))),
+                              backgroundColor:
+                                  MaterialStatePropertyAll(Color(0xFF0E121A))),
                           child: const Text(
                             'Ragi Duties',
                             style: TextStyle(
