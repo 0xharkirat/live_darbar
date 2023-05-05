@@ -32,8 +32,7 @@ class _WebViewAppState extends State<WebViewApp> {
         });
       }))
       ..loadRequest(
-        Uri.parse(
-            widget.url),
+        Uri.parse(widget.url),
       )
       ..setJavaScriptMode(JavaScriptMode.unrestricted);
   }
@@ -42,6 +41,7 @@ class _WebViewAppState extends State<WebViewApp> {
   void dispose() {
     // TODO: implement dispose
     super.dispose();
+    controller.clearCache();
   }
 
   @override

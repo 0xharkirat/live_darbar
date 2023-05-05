@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:live_darbar/components/card_content.dart';
-import 'package:live_darbar/components/mukhwak_dialog.dart';
 import 'package:live_darbar/components/reusable_card.dart';
 import 'package:live_darbar/components/sleep_timer.dart';
 import 'package:live_darbar/components/webview_dialog.dart';
@@ -18,8 +17,8 @@ import 'package:provider/provider.dart';
 import '../components/round_icon_button.dart';
 import 'package:intl/intl.dart';
 import 'package:text_scroll/text_scroll.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
+// import 'package:http/http.dart' as http;
+// import 'dart:convert';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -40,8 +39,8 @@ class _HomePageState extends State<HomePage> {
   late Timer t;
 
   bool sleepTimerSet = false;
-  // BannerAd? banner;
-  // InterstitialAd? interstitialAd;
+  BannerAd? banner;
+  InterstitialAd? interstitialAd;
 
   Channel? selectedChannel;
 
@@ -50,43 +49,51 @@ class _HomePageState extends State<HomePage> {
 
   // late bool liveStarted;
 
-  // @override
-  // void didChangeDependencies() {
-  //   super.didChangeDependencies();
-  //   final adState = Provider.of<AdState>(context);
-  //   adState.initialization.then((status) {
-  //     setState(() {
-  //       banner = BannerAd(
-  //           size: AdSize.banner,
-  //           adUnitId: adState.bannerAdUnitId,
-  //           listener: adState.bannerAdListener,
-  //           request: const AdRequest())
-  //         ..load();
-  //     });
-  //   });
-  // }
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final adState = Provider.of<AdState>(context);
+    adState.initialization.then((status) {
+      setState(() {
+        banner = BannerAd(
+            size: AdSize.banner,
+            adUnitId: adState.bannerAdUnitId,
+            listener: adState.bannerAdListener,
+            request: const AdRequest())
+          ..load();
+      });
+    });
+  }
 
-  // void _loadInterstitialAd() {
-  //   InterstitialAd.load(
-  //       adUnitId: AdState.interstitialAdUnitId,
-  //       request: const AdRequest(),
-  //       adLoadCallback: InterstitialAdLoadCallback(
-  //         onAdLoaded: (ad) {
-  //           ad.fullScreenContentCallback = FullScreenContentCallback(
-  //             onAdDismissedFullScreenContent: (ad) {
-  //               interstitialAd?.dispose();
-  //             },
-  //           );
-  //           setState(() {
-  //             interstitialAd = ad;
-  //           });
-  //         },
-  //         onAdFailedToLoad: (error) {
-  //           print('Failed to load an interstitial ad: ${error.message}');
-  //         },
-  //       ));
-  // }
-
+  void _loadInterstitialAd() {
+    InterstitialAd.load(
+        adUnitId: AdState.interstitialAdUnitId,
+        request: const AdRequest(),
+        adLoadCallback: InterstitialAdLoadCallback(
+          onAdLoaded: (ad) {
+            ad.fullScreenContentCallback = FullScreenContentCallback(
+              onAdFailedToShowFullScreenContent: (ad, err) {
+                // Dispose the ad here to free resources.
+                ad.dispose();
+              },
+              // Called when the ad dismissed full screen content.
+              onAdDismissedFullScreenContent: (ad) {
+                // Dispose the ad here to free resources.
+                ad.dispose();
+                // setState(() {
+                //   interstitialAd = null;
+                // });
+              },
+            );
+            setState(() {
+              interstitialAd = ad;
+            });
+          },
+          onAdFailedToLoad: (error) {
+            print('Failed to load an interstitial ad: ${error.message}');
+          },
+        ));
+  }
 
   Widget miniPlayer() {
     Size deviceSize = MediaQuery.of(context).size;
@@ -242,7 +249,7 @@ class _HomePageState extends State<HomePage> {
     // isliveStarted(ist);
 
     timer = Timer.periodic(const Duration(seconds: 1), (Timer t) => _getTime());
-    // _loadInterstitialAd();
+    _loadInterstitialAd();
   }
 
   @override
@@ -290,7 +297,7 @@ class _HomePageState extends State<HomePage> {
       child: Scaffold(
           appBar: AppBar(
             title: Text(
-              'Time in Amritsar, IND: $_timeString',
+              'Time in Amritsar: $_timeString',
               style: const TextStyle(
                   color: Color(0xFFD6DCE6), fontFamily: 'Rubik', fontSize: 16),
             ),
@@ -321,12 +328,15 @@ class _HomePageState extends State<HomePage> {
                       ReusableCard(
                         onPress: () {
                           _pageManager.play(0);
-                          // interstitialAd?.show();
+
                           setState(() {
                             selectedChannel = Channel.liveKirtan;
                             visible = false;
                             bottomAnimation = true;
                           });
+
+                          interstitialAd?.show();
+                          _loadInterstitialAd();
                         },
                         colour: selectedChannel == Channel.liveKirtan
                             ? const Color(0xFF040508)
@@ -342,12 +352,14 @@ class _HomePageState extends State<HomePage> {
                       ReusableCard(
                         onPress: () {
                           _pageManager.play(1);
-                          // interstitialAd?.show();
+
                           setState(() {
                             selectedChannel = Channel.mukhwak;
                             visible = true;
                             bottomAnimation = true;
                           });
+                          interstitialAd?.show();
+                          _loadInterstitialAd();
                         },
                         colour: selectedChannel == Channel.mukhwak
                             ? const Color(0xFF040508)
@@ -363,12 +375,16 @@ class _HomePageState extends State<HomePage> {
                       ReusableCard(
                         onPress: () {
                           _pageManager.play(2);
-                          // interstitialAd?.show();
+                      
+
                           setState(() {
                             selectedChannel = Channel.mukhwakKatha;
                             visible = true;
                             bottomAnimation = true;
                           });
+                          
+                          interstitialAd?.show();
+                          _loadInterstitialAd();
                         },
                         colour: selectedChannel == Channel.mukhwakKatha
                             ? const Color(0xFF040508)
@@ -443,9 +459,9 @@ class _HomePageState extends State<HomePage> {
                               await showDialog(
                                   context: context,
                                   builder: (_) => const WebViewApp(
-                                    url: 'http://docs.google.com/viewer?url=https://old.sgpc.net/Ragi%20List_Eng.pdf',
+                                        url:
+                                            'http://docs.google.com/viewer?url=https://old.sgpc.net/Ragi%20List_Eng.pdf',
                                       ));
-
                             },
                             style: const ButtonStyle(
                                 padding: MaterialStatePropertyAll(
@@ -471,15 +487,15 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
               ),
-              // if (banner == null)
-              //   const SizedBox(
-              //     height: 50,
-              //   )
-              // else
-              //   SizedBox(
-              //     height: 50,
-              //     child: AdWidget(ad: banner!),
-              //   )
+              if (banner == null)
+                const SizedBox(
+                  height: 50,
+                )
+              else
+                SizedBox(
+                  height: 50,
+                  child: AdWidget(ad: banner!),
+                )
             ],
           )),
     );
@@ -511,5 +527,3 @@ class AudioProgressBar extends StatelessWidget {
 }
 
 enum Channel { liveKirtan, mukhwak, mukhwakKatha }
-
-
