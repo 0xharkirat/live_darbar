@@ -12,7 +12,7 @@ class SleepTimer extends StatelessWidget {
       padding: const EdgeInsets.all(8),
       child: InkWell(
         onTap: onSelectTimer,
-        child: Text(timerModel.title, style: const TextStyle(color: Color(0xFFD6DCE6), fontSize: 16, fontWeight: FontWeight.bold, fontFamily: 'Rubik'),),
+        child: Text(timerModel.title, style: const TextStyle(color: Color(0xFFD6DCE6), fontSize: 24, fontWeight: FontWeight.bold, fontFamily: 'Rubik'),),
       ),
     );
   }
