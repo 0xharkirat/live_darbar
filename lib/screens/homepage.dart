@@ -10,6 +10,7 @@ import 'package:live_darbar/components/sleep_timer.dart';
 import 'package:live_darbar/components/webview_dialog.dart';
 import 'package:live_darbar/data/timer_data.dart';
 import 'package:live_darbar/logics/page_manager.dart';
+import 'package:live_darbar/models/duty.dart';
 import 'package:live_darbar/models/timer.dart';
 import 'package:live_darbar/notifiers/progress_notifier.dart';
 import 'package:live_darbar/utils/ad_state.dart';
@@ -17,8 +18,8 @@ import 'package:provider/provider.dart';
 import '../components/round_icon_button.dart';
 import 'package:intl/intl.dart';
 import 'package:text_scroll/text_scroll.dart';
-// import 'package:http/http.dart' as http;
-// import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -30,6 +31,8 @@ class HomePage extends StatefulWidget {
 late final PageManager _pageManager;
 
 class _HomePageState extends State<HomePage> {
+  List<Duty> _todayDuties = [];
+  Duty? _currentDuty;
   late DateTime ist;
 
   late String _timeString;
@@ -45,7 +48,7 @@ class _HomePageState extends State<HomePage> {
   bool visible = false;
   bool bottomAnimation = false;
 
-  // late bool liveStarted;
+  late bool liveStarted;
 
   @override
   void didChangeDependencies() {
@@ -109,10 +112,17 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            Visibility(
-              visible: visible,
-              child: const AudioProgressBar(),
-            ),
+            visible
+                ? const AudioProgressBar()
+                : liveStarted ? Text(
+                  _currentDuty?.ragi == null ?
+                    'Current Ragi: ${_currentDuty?.ragi}': '',
+                    style: const TextStyle(
+                      fontFamily: 'Rubik',
+                      color: Color(0xFF040508),
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ): Container(),
             const SizedBox(
               height: 5.0,
             ),
@@ -244,7 +254,8 @@ class _HomePageState extends State<HomePage> {
     ist = DateTime.now().toUtc().add(const Duration(hours: 5, minutes: 30));
     _timeString = _formatDateTime(ist);
 
-    // isliveStarted(ist);
+    isliveStarted(ist);
+    _getData();
 
     timer = Timer.periodic(const Duration(seconds: 1), (Timer t) => _getTime());
     _loadInterstitialAd();
@@ -262,19 +273,24 @@ class _HomePageState extends State<HomePage> {
     return DateFormat('MM/dd/yyyy hh:mm:ss').format(dateTime);
   }
 
-  // void isliveStarted(DateTime now) {
-  //   final DateTime startTime = DateTime(now.year, now.month, now.day, 11, 35);
-  //   final DateTime endTime = DateTime(now.year, now.month, now.day, 22, 30);
-  //   // print('start time bool: ${now.isAfter(startTime)}');
-  //   // print('end time bool: ${endTime.isAfter(now)}');
-  //   if (now.isAfter(startTime) && endTime.isAfter(now)) {
-  //     print('live started');
-  //     // return true;
-  //   } else {
-  //     print('live not Started');
-  //     // return false;
-  //   }
-  // }
+  void isliveStarted(DateTime now) {
+    final DateTime startTime =
+        DateTime.utc(now.year, now.month, now.day, 2, 15);
+    final DateTime endTime = DateTime.utc(now.year, now.month, now.day, 22, 30);
+    // print('start time bool: ${now.isAfter(startTime)}');
+    // print('end time bool: ${endTime.isAfter(now)}');
+    if (now.isBefore(startTime) || now.isAfter(endTime)) {
+      // print('live not started');
+      setState(() {
+        liveStarted = false;
+      });
+    } else {
+      // print('live started');
+      setState(() {
+        liveStarted = true;
+      });
+    }
+  }
 
   void _getTime() {
     ist = DateTime.now().toUtc().add(const Duration(hours: 5, minutes: 30));
@@ -282,10 +298,56 @@ class _HomePageState extends State<HomePage> {
     final String formattedDateTime =
         DateFormat('MM/dd/yyyy hh:mm:ss').format(ist);
 
+    isliveStarted(ist);
+    if (_todayDuties.isNotEmpty) {
+      for (final duty in _todayDuties) {
+        final DateTime dutyStart = DateTime.utc(
+            ist.year,
+            ist.month,
+            ist.day,
+            int.parse(duty.startTime.substring(0, 2)),
+            int.parse(duty.startTime.substring(3)));
+        final DateTime dutyEnd = DateTime.utc(
+            ist.year,
+            ist.month,
+            ist.day,
+            int.parse(duty.endTime.substring(0, 2)),
+            int.parse(duty.endTime.substring(3)));
+        if (ist.isAfter(dutyStart) && ist.isBefore(dutyEnd)) {
+          setState(() {
+            _currentDuty = duty;
+          });
+          break;
+        }
+      }
+    }
+
     setState(() {
       _timeString = formattedDateTime;
       // isliveStarted(ist);
     });
+  }
+
+  void _getData() async {
+    final duties = Uri.https(
+        'live-darbar-default-rtdb.firebaseio.com', 'kirtan_duties.json');
+
+    final response = await http.get(duties);
+
+    final List<dynamic> listData = json.decode(response.body);
+    final List<Duty> loadedDuties = [];
+    for (final duty in listData) {
+      loadedDuties.add(Duty(
+          ragi: duty['ragi'],
+          startTime: duty['duty_start'],
+          endTime: duty['duty_end']));
+    }
+
+    setState(() {
+      _todayDuties = loadedDuties;
+    });
+
+    // print(listData);
   }
 
   @override
@@ -304,19 +366,20 @@ class _HomePageState extends State<HomePage> {
           backgroundColor: const Color(0xFF040508),
           body: Column(
             children: [
-              const Padding(
-                padding: EdgeInsets.all(8.0),
-                child: TextScroll(
-                  "The Live Kirtan may not be started yet. Refer to daily routine time.",
-                  velocity: Velocity(pixelsPerSecond: Offset(30, 0)),
-                  // delayBefore: Duration(seconds: 1),
-                  intervalSpaces: 60,
-                  style: TextStyle(
-                    color: Color(0xFFD6DCE6),
-                    fontFamily: 'Rubik',
+              if (!liveStarted)
+                const Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: TextScroll(
+                    "The Live Kirtan may not be started yet. Refer to daily routine time.",
+                    velocity: Velocity(pixelsPerSecond: Offset(30, 0)),
+                    // delayBefore: Duration(seconds: 1),
+                    intervalSpaces: 60,
+                    style: TextStyle(
+                      color: Color(0xFFD6DCE6),
+                      fontFamily: 'Rubik',
+                    ),
                   ),
                 ),
-              ),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
