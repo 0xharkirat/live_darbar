@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:live_darbar/components/card_content.dart';
+import 'package:live_darbar/components/ragi_list_dialog.dart';
 import 'package:live_darbar/components/reusable_card.dart';
 import 'package:live_darbar/components/sleep_timer.dart';
 import 'package:live_darbar/components/webview_dialog.dart';
@@ -114,15 +115,18 @@ class _HomePageState extends State<HomePage> {
           children: <Widget>[
             visible
                 ? const AudioProgressBar()
-                : liveStarted ? Text(
-                  _currentDuty?.ragi == null ?
-                    'Current Ragi: ${_currentDuty?.ragi}': '',
-                    style: const TextStyle(
-                      fontFamily: 'Rubik',
-                      color: Color(0xFF040508),
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ): Container(),
+                : liveStarted
+                    ? Text(
+                        _currentDuty?.ragi != null
+                            ? 'Current Ragi: ${_currentDuty?.ragi}'
+                            : 'Path or Ardaas is going on',
+                        style: const TextStyle(
+                          fontFamily: 'Rubik',
+                          color: Color(0xFF040508),
+                          fontWeight: FontWeight.bold,
+                        ),
+                      )
+                    : Container(),
             const SizedBox(
               height: 5.0,
             ),
@@ -316,6 +320,7 @@ class _HomePageState extends State<HomePage> {
         if (ist.isAfter(dutyStart) && ist.isBefore(dutyEnd)) {
           setState(() {
             _currentDuty = duty;
+            // print(_currentDuty?.ragi);
           });
           break;
         }
@@ -520,9 +525,9 @@ class _HomePageState extends State<HomePage> {
                           onPressed: () async {
                             await showDialog(
                                 context: context,
-                                builder: (_) => const WebViewApp(
-                                      url:
-                                          'http://docs.google.com/viewer?url=https://old.sgpc.net/Ragi%20List_Eng.pdf',
+                                builder: (_) => RagiListDialog(
+                                      ragiList: _todayDuties,
+                                      current: _currentDuty
                                     ));
                             interstitialAd?.show();
                             _loadInterstitialAd();
