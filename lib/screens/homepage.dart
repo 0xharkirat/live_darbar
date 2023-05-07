@@ -274,7 +274,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   String _formatDateTime(DateTime dateTime) {
-    return DateFormat('MM/dd/yyyy hh:mm:ss').format(dateTime);
+    return DateFormat('MMMM dd, yyyy - hh:mm:ss').format(dateTime);
   }
 
   void isliveStarted(DateTime now) {
@@ -300,7 +300,7 @@ class _HomePageState extends State<HomePage> {
     ist = DateTime.now().toUtc().add(const Duration(hours: 5, minutes: 30));
 
     final String formattedDateTime =
-        DateFormat('MM/dd/yyyy hh:mm:ss').format(ist);
+        DateFormat('MMMM dd, yyyy - hh:mm:ss').format(ist);
 
     isliveStarted(ist);
     if (_todayDuties.isNotEmpty) {
@@ -526,9 +526,8 @@ class _HomePageState extends State<HomePage> {
                             await showDialog(
                                 context: context,
                                 builder: (_) => RagiListDialog(
-                                      ragiList: _todayDuties,
-                                      current: _currentDuty
-                                    ));
+                                    ragiList: _todayDuties,
+                                    current: _currentDuty));
                             interstitialAd?.show();
                             _loadInterstitialAd();
                           },
