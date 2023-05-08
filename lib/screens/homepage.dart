@@ -279,8 +279,8 @@ class _HomePageState extends State<HomePage> {
   void dispose() {
     super.dispose();
     timer.cancel();
-    // banner?.dispose();
-    // interstitialAd?.dispose();
+    banner?.dispose();
+    interstitialAd?.dispose();
   }
 
   String _formatDateTime(DateTime dateTime) {
