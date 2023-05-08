@@ -460,11 +460,13 @@ class _HomePageState extends State<HomePage> {
                   color: Color(0xFFD6DCE6), fontFamily: 'Rubik', fontSize: 16),
             ),
             backgroundColor: const Color.fromARGB(255, 9, 11, 18),
+            iconTheme: const IconThemeData(color: Color(0xFFD6DCE6)),
           ),
           bottomNavigationBar: miniPlayer(),
           drawer: Drawer(
             backgroundColor: const Color(0xFF040508),
             child: ListView(
+              
               padding: EdgeInsets.zero,
               children: [
                 const DrawerHeader(
@@ -486,6 +488,7 @@ class _HomePageState extends State<HomePage> {
                     interstitialAd?.show();
                     _loadInterstitialAd();
                   },
+                  leading: const Icon(FontAwesomeIcons.bookOpenReader, color: Color(0xFFD6DCE6),),
                   title: const Text(
                     'Read Mukhwak',
                     style: TextStyle(
@@ -506,6 +509,7 @@ class _HomePageState extends State<HomePage> {
                     interstitialAd?.show();
                     _loadInterstitialAd();
                   },
+                  leading: const Icon(FontAwesomeIcons.calendarDays, color: Color(0xFFD6DCE6),),
                   title: const Text(
                     'Daily Routine',
                     style: TextStyle(
@@ -524,6 +528,7 @@ class _HomePageState extends State<HomePage> {
                     interstitialAd?.show();
                     _loadInterstitialAd();
                   },
+                  leading: const Icon(FontAwesomeIcons.userClock, color: Color(0xFFD6DCE6),),
                   title: const Text(
                     'Ragi Duties',
                     style: TextStyle(
@@ -535,6 +540,7 @@ class _HomePageState extends State<HomePage> {
                 ),
                 if (!_downloading)
                   ListTile(
+                    leading: const Icon(FontAwesomeIcons.recordVinyl, color: Color(0xFFD6DCE6),),
                     title: const Text(
                       'Start Recording',
                       style: TextStyle(
@@ -550,6 +556,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                 if (_downloading)
                   ListTile(
+                    leading: const Icon(FontAwesomeIcons.circleStop, color: Color(0xFFD6DCE6),),
                     title: const Text(
                       'Stop/Save Recording',
                       style: TextStyle(
