@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:flutter/material.dart';
@@ -29,9 +30,21 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
+const streamUrl = 'https://live.sgpc.net:8443/;nocache=889869';
+
 late final PageManager _pageManager;
 
 class _HomePageState extends State<HomePage> {
+  late http.StreamedResponse _response;
+  late bool _downloading;
+  Color _color = Colors.red;
+  BorderRadiusGeometry _borderRadius = BorderRadius.circular(100);
+
+  var client;
+  bool loading = false;
+
+  Duration _elapsedTime = Duration.zero;
+
   List<Duty> _todayDuties = [];
   Duty? _currentDuty;
   late DateTime ist;
@@ -267,6 +280,7 @@ class _HomePageState extends State<HomePage> {
     _pageManager = PageManager();
     ist = DateTime.now().toUtc().add(const Duration(hours: 5, minutes: 30));
     _timeString = _formatDateTime(ist);
+    _downloading = false;
 
     isliveStarted(ist);
     _getData();
@@ -365,6 +379,76 @@ class _HomePageState extends State<HomePage> {
     // print(listData);
   }
 
+  String _formatDuration(Duration duration) {
+    String twoDigits(int n) {
+      if (n >= 10) return "$n";
+      return "0$n";
+    }
+
+    String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
+    String twoDigitSeconds = twoDigits(duration.inSeconds.remainder(60));
+    String twoDigitHours = twoDigits(duration.inHours);
+
+    return "$twoDigitHours:$twoDigitMinutes:$twoDigitSeconds";
+  }
+
+  void _stopDownload() async {
+    const snackBar = SnackBar(
+        content: Text('Recording Saved at: /storage/emulated/0/Music/'));
+    ScaffoldMessenger.of(context).removeCurrentSnackBar();
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    await client.close();
+    setState(() {
+      _elapsedTime = Duration.zero;
+      _downloading = false;
+    });
+  }
+
+  void _startDownload() async {
+    setState(() {
+      _color = Colors.red;
+      _borderRadius = BorderRadius.circular(100);
+      _downloading = true;
+      _elapsedTime = Duration.zero;
+      loading = true;
+    });
+
+    client = http.Client();
+    final request = http.Request('GET', Uri.parse(streamUrl));
+    _response = await client.send(request);
+
+    setState(() {
+      loading = false;
+      _color = Colors.white;
+      _borderRadius = BorderRadius.circular(50);
+    });
+
+    // final dir = await getTemporaryDirectory();
+    final timestamp = DateTime.now().microsecondsSinceEpoch;
+    final file = File('/storage/emulated/0/Music/live_darbar_$timestamp.mp3');
+
+    Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (!_downloading) {
+        timer.cancel();
+      } else {
+        setState(() {
+          _elapsedTime = Duration(seconds: _elapsedTime.inSeconds + 1);
+        });
+      }
+    });
+
+    await file.create();
+    await _response.stream.forEach((data) {
+      file.writeAsBytesSync(data, mode: FileMode.append);
+    });
+
+    setState(() {
+      _downloading = false;
+    });
+
+    // cancel the stream
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -378,6 +462,110 @@ class _HomePageState extends State<HomePage> {
             backgroundColor: const Color.fromARGB(255, 9, 11, 18),
           ),
           bottomNavigationBar: miniPlayer(),
+          drawer: Drawer(
+            backgroundColor: const Color(0xFF040508),
+            child: ListView(
+              padding: EdgeInsets.zero,
+              children: [
+                const DrawerHeader(
+                  decoration:
+                      BoxDecoration(color: Color.fromARGB(255, 9, 11, 18)),
+                  child: Text(
+                    'Advanced Features',
+                    style: TextStyle(color: Color(0xFFD6DCE6)),
+                  ),
+                ),
+                ListTile(
+                  onTap: () async {
+                    await showDialog(
+                        context: context,
+                        builder: (_) => const WebViewApp(
+                              url:
+                                  'https://old.sgpc.net/hukumnama/jpeg%20hukamnama/hukamnama.gif',
+                            ));
+                    interstitialAd?.show();
+                    _loadInterstitialAd();
+                  },
+                  title: const Text(
+                    'Read Mukhwak',
+                    style: TextStyle(
+                      fontFamily: 'Rubik',
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFFD6DCE6),
+                    ),
+                  ),
+                ),
+                ListTile(
+                  onTap: () async {
+                    await showDialog(
+                        context: context,
+                        builder: (_) => const WebViewApp(
+                              url:
+                                  'https://sgpc.net/wp-content/uploads/2014/04/maryada_11.jpg',
+                            ));
+                    interstitialAd?.show();
+                    _loadInterstitialAd();
+                  },
+                  title: const Text(
+                    'Daily Routine',
+                    style: TextStyle(
+                      fontFamily: 'Rubik',
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFFD6DCE6),
+                    ),
+                  ),
+                ),
+                ListTile(
+                  onTap: () async {
+                    await showDialog(
+                        context: context,
+                        builder: (_) => RagiListDialog(
+                            ragiList: _todayDuties, current: _currentDuty));
+                    interstitialAd?.show();
+                    _loadInterstitialAd();
+                  },
+                  title: const Text(
+                    'Ragi Duties',
+                    style: TextStyle(
+                      fontFamily: 'Rubik',
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFFD6DCE6),
+                    ),
+                  ),
+                ),
+                if (!_downloading)
+                  ListTile(
+                    title: const Text(
+                      'Start Recording',
+                      style: TextStyle(
+                        fontFamily: 'Rubik',
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFFD6DCE6),
+                      ),
+                    ),
+                    onTap: () {
+                      _startDownload();
+                      Navigator.pop(context);
+                    },
+                  ),
+                if (_downloading)
+                  ListTile(
+                    title: const Text(
+                      'Stop/Save Recording',
+                      style: TextStyle(
+                        fontFamily: 'Rubik',
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFFD6DCE6),
+                      ),
+                    ),
+                    onTap: () {
+                      _stopDownload();
+                      Navigator.pop(context);
+                    },
+                  ),
+              ],
+            ),
+          ),
           backgroundColor: const Color(0xFF040508),
           body: Column(
             children: [
@@ -470,97 +658,55 @@ class _HomePageState extends State<HomePage> {
                     const SizedBox(
                       height: 5.0,
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        ElevatedButton(
-                          onPressed: () async {
-                            await showDialog(
-                                context: context,
-                                builder: (_) => const WebViewApp(
-                                      url:
-                                          'https://old.sgpc.net/hukumnama/jpeg%20hukamnama/hukamnama.gif',
-                                    ));
-                            interstitialAd?.show();
-                            _loadInterstitialAd();
-                          },
-                          style: const ButtonStyle(
-                              padding:
-                                  MaterialStatePropertyAll(EdgeInsets.all(15)),
-                              shape: MaterialStatePropertyAll(
-                                  RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(5)))),
-                              backgroundColor:
-                                  MaterialStatePropertyAll(Color(0xFF0E121A))),
-                          child: const Text(
-                            'Read Mukhwak',
-                            style: TextStyle(
-                              fontFamily: 'Rubik',
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFFD6DCE6),
+                    Padding(
+                      padding: const EdgeInsets.only(right: 8),
+                      child: Align(
+                        alignment: Alignment.centerRight,
+                        child: AnimatedOpacity(
+                          opacity: _downloading ? 1 : 0,
+                          duration: const Duration(seconds: 1),
+                          child: AnimatedContainer(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: _color,
+                              borderRadius: _borderRadius,
                             ),
+                            // Define how long the animation should take.
+                            duration: const Duration(seconds: 1),
+                            // Provide an optional curve to make the animation feel smoother.
+                            curve: Curves.fastOutSlowIn,
+                            child: loading
+                                ? const CircularProgressIndicator(
+                                    color: Colors.white,
+                                  )
+                                : Padding(
+                                    padding: const EdgeInsets.all(4.0),
+                                    child: InkWell(
+                                      onTap: _stopDownload,
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          const Icon(
+                                            Icons.stop_circle_rounded,
+                                            color: Colors.red,
+                                          ),
+                                          Text(
+                                            _formatDuration(_elapsedTime),
+                                            style: const TextStyle(
+                                                color: Colors.red),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
                           ),
                         ),
-                        ElevatedButton(
-                          onPressed: () async {
-                            await showDialog(
-                                context: context,
-                                builder: (_) => const WebViewApp(
-                                      url:
-                                          'https://sgpc.net/wp-content/uploads/2014/04/maryada_11.jpg',
-                                    ));
-                            interstitialAd?.show();
-                            _loadInterstitialAd();
-                          },
-                          style: const ButtonStyle(
-                              padding:
-                                  MaterialStatePropertyAll(EdgeInsets.all(15)),
-                              shape: MaterialStatePropertyAll(
-                                  RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(5)))),
-                              backgroundColor:
-                                  MaterialStatePropertyAll(Color(0xFF0E121A))),
-                          child: const Text(
-                            'Daily Routine',
-                            style: TextStyle(
-                              fontFamily: 'Rubik',
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFFD6DCE6),
-                            ),
-                          ),
-                        ),
-                        ElevatedButton(
-                          onPressed: () async {
-                            await showDialog(
-                                context: context,
-                                builder: (_) => RagiListDialog(
-                                    ragiList: _todayDuties,
-                                    current: _currentDuty));
-                            interstitialAd?.show();
-                            _loadInterstitialAd();
-                          },
-                          style: const ButtonStyle(
-                              padding:
-                                  MaterialStatePropertyAll(EdgeInsets.all(15)),
-                              shape: MaterialStatePropertyAll(
-                                  RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(5)))),
-                              backgroundColor:
-                                  MaterialStatePropertyAll(Color(0xFF0E121A))),
-                          child: const Text(
-                            'Ragi Duties',
-                            style: TextStyle(
-                              fontFamily: 'Rubik',
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFFD6DCE6),
-                            ),
-                          ),
-                        ),
-                      ],
-                    )
+                      ),
+                    ),
                   ],
                 ),
               ),
