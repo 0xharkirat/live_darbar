@@ -116,16 +116,26 @@ class _HomePageState extends State<HomePage> {
             visible
                 ? const AudioProgressBar()
                 : liveStarted
-                    ? Text(
-                        _currentDuty?.ragi != null
-                            ? 'Current Ragi: ${_currentDuty?.ragi}'
-                            : 'Path or Ardaas is going on',
-                        style: const TextStyle(
-                          fontFamily: 'Rubik',
-                          color: Color(0xFF040508),
-                          fontWeight: FontWeight.bold,
-                        ),
-                      )
+                    ? _currentDuty?.ragi != null
+                        ? Text(
+                            'Current Ragi: ${_currentDuty?.ragi}',
+                            style: const TextStyle(
+                              fontFamily: 'Rubik',
+                              color: Color(0xFF040508),
+                              fontWeight: FontWeight.bold,
+                            ),
+                          )
+                        : const TextScroll(
+                            'Path or Ardas is going to start, or is currently going on, or change of Ragi duty according to the Timetable.',
+                            velocity: Velocity(pixelsPerSecond: Offset(30, 0)),
+                            // delayBefore: Duration(seconds: 1),
+                            intervalSpaces: 60,
+                            style: TextStyle(
+                              fontFamily: 'Rubik',
+                              color: Color(0xFF040508),
+                              fontWeight: FontWeight.bold,
+                            ),
+                          )
                     : Container(),
             const SizedBox(
               height: 5.0,
