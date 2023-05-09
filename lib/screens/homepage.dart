@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:flutter/material.dart';
@@ -33,6 +34,7 @@ class HomePage extends StatefulWidget {
 const streamUrl = 'https://live.sgpc.net:8443/;nocache=889869';
 
 late final PageManager _pageManager;
+late final Random random;
 
 class _HomePageState extends State<HomePage> {
   late http.StreamedResponse _response;
@@ -208,6 +210,15 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  void showInterstitialAdRandom() async {
+    final randomNumber = random.nextInt(10);
+    // print(randomNumber);
+    if (randomNumber == 0) {
+      await interstitialAd?.show();
+      _loadInterstitialAd();
+    }
+  }
+
   void selectTimer(TimerModel time) {
     final snackBar = SnackBar(
       content: Text('Timer set for ${time.title}.'),
@@ -281,6 +292,7 @@ class _HomePageState extends State<HomePage> {
     ist = DateTime.now().toUtc().add(const Duration(hours: 5, minutes: 30));
     _timeString = _formatDateTime(ist);
     _downloading = false;
+    random = Random();
 
     isliveStarted(ist);
     _getData();
@@ -294,6 +306,7 @@ class _HomePageState extends State<HomePage> {
     super.dispose();
     timer.cancel();
     banner?.dispose();
+    _pageManager.dispose();
     interstitialAd?.dispose();
   }
 
@@ -466,7 +479,6 @@ class _HomePageState extends State<HomePage> {
           drawer: Drawer(
             backgroundColor: const Color(0xFF040508),
             child: ListView(
-              
               padding: EdgeInsets.zero,
               children: [
                 const DrawerHeader(
@@ -485,10 +497,12 @@ class _HomePageState extends State<HomePage> {
                               url:
                                   'https://old.sgpc.net/hukumnama/jpeg%20hukamnama/hukamnama.gif',
                             ));
-                    interstitialAd?.show();
-                    _loadInterstitialAd();
+                    showInterstitialAdRandom();
                   },
-                  leading: const Icon(FontAwesomeIcons.bookOpenReader, color: Color(0xFFD6DCE6),),
+                  leading: const Icon(
+                    FontAwesomeIcons.bookOpenReader,
+                    color: Color(0xFFD6DCE6),
+                  ),
                   title: const Text(
                     'Read Mukhwak',
                     style: TextStyle(
@@ -506,10 +520,12 @@ class _HomePageState extends State<HomePage> {
                               url:
                                   'https://sgpc.net/wp-content/uploads/2014/04/maryada_11.jpg',
                             ));
-                    interstitialAd?.show();
-                    _loadInterstitialAd();
+                    showInterstitialAdRandom();
                   },
-                  leading: const Icon(FontAwesomeIcons.calendarDays, color: Color(0xFFD6DCE6),),
+                  leading: const Icon(
+                    FontAwesomeIcons.calendarDays,
+                    color: Color(0xFFD6DCE6),
+                  ),
                   title: const Text(
                     'Daily Routine',
                     style: TextStyle(
@@ -525,10 +541,12 @@ class _HomePageState extends State<HomePage> {
                         context: context,
                         builder: (_) => RagiListDialog(
                             ragiList: _todayDuties, current: _currentDuty));
-                    interstitialAd?.show();
-                    _loadInterstitialAd();
+                    showInterstitialAdRandom();
                   },
-                  leading: const Icon(FontAwesomeIcons.userClock, color: Color(0xFFD6DCE6),),
+                  leading: const Icon(
+                    FontAwesomeIcons.userClock,
+                    color: Color(0xFFD6DCE6),
+                  ),
                   title: const Text(
                     'Ragi Duties',
                     style: TextStyle(
@@ -540,7 +558,10 @@ class _HomePageState extends State<HomePage> {
                 ),
                 if (!_downloading)
                   ListTile(
-                    leading: const Icon(FontAwesomeIcons.recordVinyl, color: Color(0xFFD6DCE6),),
+                    leading: const Icon(
+                      FontAwesomeIcons.recordVinyl,
+                      color: Color(0xFFD6DCE6),
+                    ),
                     title: const Text(
                       'Start Recording',
                       style: TextStyle(
@@ -556,7 +577,10 @@ class _HomePageState extends State<HomePage> {
                   ),
                 if (_downloading)
                   ListTile(
-                    leading: const Icon(FontAwesomeIcons.circleStop, color: Color(0xFFD6DCE6),),
+                    leading: const Icon(
+                      FontAwesomeIcons.circleStop,
+                      color: Color(0xFFD6DCE6),
+                    ),
                     title: const Text(
                       'Stop/Save Recording',
                       style: TextStyle(
@@ -603,9 +627,7 @@ class _HomePageState extends State<HomePage> {
                           visible = false;
                           bottomAnimation = true;
                         });
-
-                        interstitialAd?.show();
-                        _loadInterstitialAd();
+                        showInterstitialAdRandom();
                       },
                       colour: selectedChannel == Channel.liveKirtan
                           ? const Color(0xFF040508)
@@ -627,8 +649,7 @@ class _HomePageState extends State<HomePage> {
                           visible = true;
                           bottomAnimation = true;
                         });
-                        interstitialAd?.show();
-                        _loadInterstitialAd();
+                        showInterstitialAdRandom();
                       },
                       colour: selectedChannel == Channel.mukhwak
                           ? const Color(0xFF040508)
@@ -651,8 +672,7 @@ class _HomePageState extends State<HomePage> {
                           bottomAnimation = true;
                         });
 
-                        interstitialAd?.show();
-                        _loadInterstitialAd();
+                        showInterstitialAdRandom();
                       },
                       colour: selectedChannel == Channel.mukhwakKatha
                           ? const Color(0xFF040508)
