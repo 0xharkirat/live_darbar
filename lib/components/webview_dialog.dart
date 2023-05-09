@@ -8,18 +8,21 @@ class WebViewApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
         backgroundColor: const Color(0xFF040508).withOpacity(0.80),
         insetPadding: const EdgeInsets.all(8),
         child: InteractiveViewer(
           child: Stack(
             alignment: Alignment.center,
             children: [
-              const Center(child: CircularProgressIndicator(color: Color(0xFFD6DCE6),)),
-              CachedNetworkImage(imageUrl: url,)
+              const Center(
+                  child: CircularProgressIndicator(
+                color: Color(0xFFD6DCE6),
+              )),
+              CachedNetworkImage(
+                imageUrl: url,
+              )
             ],
-            
-            
           ),
         ));
   }
