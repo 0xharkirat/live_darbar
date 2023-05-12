@@ -1,10 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'package:live_darbar/screens/homepage.dart';
 import 'package:live_darbar/utils/ad_state.dart';
 import 'package:provider/provider.dart';
+
+final theme = ThemeData(
+  useMaterial3: true,
+  colorScheme: ColorScheme.fromSeed(
+    brightness: Brightness.dark,
+    seedColor: const Color.fromARGB(255, 248, 217, 43),
+  ),
+  textTheme: GoogleFonts.rubikTextTheme(),
+);
 
 Future<void> main() async {
   await JustAudioBackground.init(
@@ -32,7 +42,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData(useMaterial3: true),
+      theme: theme,
       debugShowCheckedModeBanner: false,
       home: const HomePage(),
     );
