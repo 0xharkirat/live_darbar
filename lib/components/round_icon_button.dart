@@ -17,10 +17,10 @@ class RoundIconButton extends StatelessWidget {
         height: 52.0,
       ),
       shape: const CircleBorder(),
-      fillColor: isPlaying?Theme.of(context).colorScheme.onInverseSurface :Theme.of(context).colorScheme.secondaryContainer,
+      fillColor: isPlaying?Theme.of(context).colorScheme.onInverseSurface :Theme.of(context).colorScheme.inverseSurface,
       child: Icon(
         icon,
-        color: Theme.of(context).colorScheme.onPrimaryContainer,
+        color: isPlaying?Theme.of(context).colorScheme.secondary:Theme.of(context).colorScheme.onInverseSurface,
       ),
     );
   }

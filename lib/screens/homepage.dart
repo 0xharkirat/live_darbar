@@ -40,10 +40,10 @@ class _HomePageState extends State<HomePage>
   bool isPlaying = false;
   Duration? _duration;
   Duration? _position;
-  double _sliderValue = 0;
   late http.StreamedResponse _response;
   late bool _downloading;
   Color _color = Colors.red;
+  String _headerImagePath = 'images/live_kirtan.png';
   BorderRadiusGeometry _borderRadius = BorderRadius.circular(100);
 
   var client;
@@ -235,7 +235,7 @@ class _HomePageState extends State<HomePage>
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(60.0),
                 child: Image.asset(
-                  "images/live_kirtan.png",
+                  _headerImagePath,
                   width: 120.0,
                   height: 120.0,
                   fit: BoxFit.cover,
@@ -266,27 +266,49 @@ class _HomePageState extends State<HomePage>
                   const SizedBox(
                     height: 5.0,
                   ),
-                  liveStarted
-                      ? _currentDuty?.ragi != null
-                          ? Text(
-                              'Current Ragi: ${_currentDuty?.ragi}',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodySmall!
-                                  .copyWith(
-                                      color: isPlaying
-                                          ? Theme.of(context)
-                                              .colorScheme
-                                              .primaryContainer
-                                          : Theme.of(context)
-                                              .colorScheme
-                                              .inverseSurface),
-                            )
+                  visible
+                      ? AudioProgressBar(
+                          isPlaying: isPlaying,
+                        )
+                      : liveStarted
+                          ? _currentDuty?.ragi != null
+                              ? Text(
+                                  'Current Ragi: ${_currentDuty?.ragi}',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodySmall!
+                                      .copyWith(
+                                          color: isPlaying
+                                              ? Theme.of(context)
+                                                  .colorScheme
+                                                  .primaryContainer
+                                              : Theme.of(context)
+                                                  .colorScheme
+                                                  .inverseSurface),
+                                )
+                              : TextScroll(
+                                  'Path or Ardas is going to start, or is currently going on, or change of Ragi duty according to the Timetable.',
+                                  velocity: const Velocity(
+                                      pixelsPerSecond: Offset(30, 0)),
+                                  // delayBefore: Duration(seconds: 1),
+                                  intervalSpaces: 60,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodySmall!
+                                      .copyWith(
+                                          color: isPlaying
+                                              ? Theme.of(context)
+                                                  .colorScheme
+                                                  .primaryContainer
+                                              : Theme.of(context)
+                                                  .colorScheme
+                                                  .inverseSurface),
+                                )
                           : TextScroll(
-                              'Path or Ardas is going to start, or is currently going on, or change of Ragi duty according to the Timetable.',
+                              'The Live Kirtan may not be started yet. Refer to daily routine time.',
                               velocity: const Velocity(
-                                  pixelsPerSecond: Offset(30, 0)),
-                              // delayBefore: Duration(seconds: 1),
+                                pixelsPerSecond: Offset(30, 0),
+                              ),
                               intervalSpaces: 60,
                               style: Theme.of(context)
                                   .textTheme
@@ -299,8 +321,7 @@ class _HomePageState extends State<HomePage>
                                           : Theme.of(context)
                                               .colorScheme
                                               .inverseSurface),
-                            )
-                      : Container(),
+                            ),
                   const SizedBox(
                     height: 10.0,
                   ),
@@ -316,14 +337,18 @@ class _HomePageState extends State<HomePage>
                               width: 52.0,
                               height: 52.0,
                               child: CircularProgressIndicator(
-                                color: isPlaying?Theme.of(context).colorScheme.primaryContainer :Theme.of(context)
-                                    .colorScheme
-                                    .onSecondaryContainer,
+                                color: isPlaying
+                                    ? Theme.of(context)
+                                        .colorScheme
+                                        .primaryContainer
+                                    : Theme.of(context)
+                                        .colorScheme
+                                        .onSecondaryContainer,
                               ),
                             );
                           case ButtonState.paused:
                             return RoundIconButton(
-                              isPlaying: isPlaying,
+                                isPlaying: isPlaying,
                                 icon: FontAwesomeIcons.play,
                                 onPressed: () {
                                   _pageManager.resume();
@@ -334,7 +359,7 @@ class _HomePageState extends State<HomePage>
                                 });
                           case ButtonState.playing:
                             return RoundIconButton(
-                              isPlaying: isPlaying,
+                                isPlaying: isPlaying,
                                 icon: FontAwesomeIcons.pause,
                                 onPressed: () {
                                   _pageManager.pause();
@@ -792,6 +817,7 @@ class _HomePageState extends State<HomePage>
                             selectedChannel = Channel.liveKirtan;
                             isPlaying = true;
                             visible = false;
+                            _headerImagePath = 'images/live_kirtan.png';
                             _controller?.repeat();
                             bottomAnimation = true;
                           });
@@ -826,53 +852,96 @@ class _HomePageState extends State<HomePage>
                                 : const SizedBox(),
                       ),
                       const SizedBox(
-                        height: 5.0,
+                        height: 5,
                       ),
-                      // ReusableCard(
-                      //   onPress: () {
-                      //     _pageManager.play(1);
+                      ListTile(
+                        onTap: () {
+                          _pageManager.play(1);
 
-                      //     setState(() {
-                      //       selectedChannel = Channel.mukhwak;
-                      //       visible = true;
-                      //       bottomAnimation = true;
-                      //     });
-                      //     showInterstitialAdRandom();
-                      //   },
-                      //   colour: selectedChannel == Channel.mukhwak
-                      //       ? const Color(0xFF040508)
-                      //       : const Color(0xFF0E121A),
-                      //   cardChild: const CardContent(
-                      //     label: 'Today\'s Mukhwak',
-                      //     labelColor: Color(0xFFD6DCE6),
-                      //   ),
-                      // ),
+                          setState(() {
+                            selectedChannel = Channel.mukhwak;
+                            isPlaying = true;
+                            visible = true;
+                            _headerImagePath = 'images/mukhwak.jpg';
+                            _controller?.repeat();
+                            bottomAnimation = true;
+                          });
+                          showInterstitialAdRandom();
+                        },
+                        leading: Image.asset(
+                          "images/mukhwak.jpg",
+                          width: 60.0,
+                          fit: BoxFit.cover,
+                        ),
+                        title: Text(
+                          'Today\'s Mukhwak',
+                          style:
+                              Theme.of(context).textTheme.titleLarge!.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    color: selectedChannel == Channel.mukhwak
+                                        ? Theme.of(context)
+                                            .colorScheme
+                                            .onPrimaryContainer
+                                        : Theme.of(context)
+                                            .colorScheme
+                                            .inverseSurface,
+                                  ),
+                        ),
+                        trailing:
+                            selectedChannel == Channel.mukhwak && isPlaying
+                                ? Image.asset(
+                                    'images/bars.gif',
+                                  )
+                                : const SizedBox(),
+                      ),
                       const SizedBox(
-                        height: 5.0,
+                        height: 5,
                       ),
-                      // ReusableCard(
-                      //   onPress: () {
-                      //     _pageManager.play(2);
+                      ListTile(
+                        onTap: () {
+                          _pageManager.play(2);
 
-                      //     setState(() {
-                      //       selectedChannel = Channel.mukhwakKatha;
-                      //       visible = true;
-                      //       bottomAnimation = true;
-                      //     });
-
-                      //     showInterstitialAdRandom();
-                      //   },
-                      //   colour: selectedChannel == Channel.mukhwakKatha
-                      //       ? const Color(0xFF040508)
-                      //       : const Color(0xFF0E121A),
-                      //   cardChild: const CardContent(
-                      //     label: 'Mukhwak Katha',
-                      //     labelColor: Color(0xFFD6DCE6),
-                      //   ),
-                      // ),
-                      // const SizedBox(
-                      //   height: 5.0,
-                      // ),
+                          setState(() {
+                            selectedChannel = Channel.mukhwak;
+                            isPlaying = true;
+                            visible = true;
+                            _headerImagePath = 'images/katha.jpg';
+                            _controller?.repeat();
+                            bottomAnimation = true;
+                          });
+                          showInterstitialAdRandom();
+                        },
+                        leading: Image.asset(
+                          "images/katha.jpg",
+                          width: 60.0,
+                          fit: BoxFit.cover,
+                        ),
+                        title: Text(
+                          'Mukhwak Katha',
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleLarge!
+                              .copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: selectedChannel == Channel.mukhwakKatha
+                                    ? Theme.of(context)
+                                        .colorScheme
+                                        .onPrimaryContainer
+                                    : Theme.of(context)
+                                        .colorScheme
+                                        .inverseSurface,
+                              ),
+                        ),
+                        trailing:
+                            selectedChannel == Channel.mukhwakKatha && isPlaying
+                                ? Image.asset(
+                                    'images/bars.gif',
+                                  )
+                                : const SizedBox(),
+                      ),
+                      const SizedBox(
+                        height: 5,
+                      ),
                       Padding(
                         padding: const EdgeInsets.only(right: 8),
                         child: Align(
@@ -942,23 +1011,39 @@ class _HomePageState extends State<HomePage>
 }
 
 class AudioProgressBar extends StatelessWidget {
-  const AudioProgressBar({Key? key}) : super(key: key);
+  const AudioProgressBar({Key? key, required this.isPlaying}) : super(key: key);
+
+  final bool isPlaying;
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder<ProgressBarState>(
       valueListenable: _pageManager.progressNotifier,
       builder: (_, value, __) {
         return ProgressBar(
-          baseBarColor: const Color(0xFF040508),
-          progressBarColor: const Color(0xFF51545C),
-          bufferedBarColor: const Color(0xFF7A808E),
-          thumbColor: const Color(0xFF51545C),
-          thumbGlowColor: const Color(0x5A51545C),
+          baseBarColor: isPlaying
+              ? Theme.of(context).colorScheme.onInverseSurface
+              : Theme.of(context).colorScheme.inverseSurface,
+          progressBarColor: isPlaying
+              ? Theme.of(context).colorScheme.onTertiaryContainer
+              : Theme.of(context).colorScheme.tertiary,
+          bufferedBarColor: isPlaying
+              ? Theme.of(context).colorScheme.tertiaryContainer
+              : Theme.of(context).colorScheme.onTertiary,
+          thumbColor: isPlaying
+              ? Theme.of(context).colorScheme.secondaryContainer
+              : Theme.of(context).colorScheme.onSecondaryContainer,
+          thumbGlowColor: isPlaying
+              ? Theme.of(context).colorScheme.onSecondary
+              : Theme.of(context).colorScheme.secondary,
           timeLabelLocation: TimeLabelLocation.sides,
           progress: value.current,
           buffered: value.buffered,
           total: value.total,
           onSeek: _pageManager.seek,
+          timeLabelTextStyle: Theme.of(context).textTheme.labelMedium!.copyWith(
+              color: isPlaying
+                  ? Theme.of(context).colorScheme.onInverseSurface
+                  : Theme.of(context).colorScheme.inverseSurface),
         );
       },
     );
