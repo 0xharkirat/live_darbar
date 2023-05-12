@@ -267,9 +267,7 @@ class _HomePageState extends State<HomePage>
                     height: 5.0,
                   ),
                   visible
-                      ? AudioProgressBar(
-                          isPlaying: isPlaying,
-                        )
+                      ?  AudioProgressBar(isPlaying: isPlaying,)
                       : liveStarted
                           ? _currentDuty?.ragi != null
                               ? Text(
@@ -304,24 +302,7 @@ class _HomePageState extends State<HomePage>
                                                   .colorScheme
                                                   .inverseSurface),
                                 )
-                          : TextScroll(
-                              'The Live Kirtan may not be started yet. Refer to daily routine time.',
-                              velocity: const Velocity(
-                                pixelsPerSecond: Offset(30, 0),
-                              ),
-                              intervalSpaces: 60,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodySmall!
-                                  .copyWith(
-                                      color: isPlaying
-                                          ? Theme.of(context)
-                                              .colorScheme
-                                              .primaryContainer
-                                          : Theme.of(context)
-                                              .colorScheme
-                                              .inverseSurface),
-                            ),
+                          : Container(),
                   const SizedBox(
                     height: 10.0,
                   ),
@@ -788,6 +769,17 @@ class _HomePageState extends State<HomePage>
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
+                if (!liveStarted)
+                const TextScroll(
+                  "The Live Kirtan may not be started yet. Refer to daily routine time.",
+                  velocity: Velocity(pixelsPerSecond: Offset(30, 0)),
+                  // delayBefore: Duration(seconds: 1),
+                  intervalSpaces: 60,
+                  style: TextStyle(
+                    color: Color(0xFFD6DCE6),
+                    fontFamily: 'Rubik',
+                  ),
+                ),
                 AnimatedContainer(
                   height: 200,
                   padding: const EdgeInsets.all(10.0),
@@ -1020,30 +1012,19 @@ class AudioProgressBar extends StatelessWidget {
       valueListenable: _pageManager.progressNotifier,
       builder: (_, value, __) {
         return ProgressBar(
-          baseBarColor: isPlaying
-              ? Theme.of(context).colorScheme.onInverseSurface
-              : Theme.of(context).colorScheme.inverseSurface,
-          progressBarColor: isPlaying
-              ? Theme.of(context).colorScheme.onTertiaryContainer
-              : Theme.of(context).colorScheme.tertiary,
-          bufferedBarColor: isPlaying
-              ? Theme.of(context).colorScheme.tertiaryContainer
-              : Theme.of(context).colorScheme.onTertiary,
-          thumbColor: isPlaying
-              ? Theme.of(context).colorScheme.secondaryContainer
-              : Theme.of(context).colorScheme.onSecondaryContainer,
-          thumbGlowColor: isPlaying
-              ? Theme.of(context).colorScheme.onSecondary
-              : Theme.of(context).colorScheme.secondary,
+          baseBarColor: isPlaying? Theme.of(context).colorScheme.onInverseSurface: Theme.of(context).colorScheme.inverseSurface,
+          progressBarColor: isPlaying ? Theme.of(context).colorScheme.onTertiaryContainer: Theme.of(context).colorScheme.tertiary,
+          bufferedBarColor: isPlaying ? Theme.of(context).colorScheme.tertiaryContainer: Theme.of(context).colorScheme.onTertiary,
+          thumbColor: isPlaying ? Theme.of(context).colorScheme.secondaryContainer: Theme.of(context).colorScheme.onSecondaryContainer,
+          thumbGlowColor: isPlaying ? Theme.of(context).colorScheme.onSecondary: Theme.of(context).colorScheme.secondary,
           timeLabelLocation: TimeLabelLocation.sides,
           progress: value.current,
           buffered: value.buffered,
           total: value.total,
           onSeek: _pageManager.seek,
           timeLabelTextStyle: Theme.of(context).textTheme.labelMedium!.copyWith(
-              color: isPlaying
-                  ? Theme.of(context).colorScheme.onInverseSurface
-                  : Theme.of(context).colorScheme.inverseSurface),
+            color: isPlaying? Theme.of(context).colorScheme.onInverseSurface: Theme.of(context).colorScheme.inverseSurface
+          ),
         );
       },
     );
