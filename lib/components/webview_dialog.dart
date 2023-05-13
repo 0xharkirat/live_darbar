@@ -9,16 +9,16 @@ class WebViewApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return Dialog(
         shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
-        backgroundColor: const Color(0xFF040508).withOpacity(0.80),
+        
         insetPadding: const EdgeInsets.all(8),
         child: InteractiveViewer(
           child: Stack(
             alignment: Alignment.center,
             children: [
-              const Center(
+              Center(
                   child: CircularProgressIndicator(
-                color: Color(0xFFD6DCE6),
-              )),
+                color: Theme.of(context).colorScheme.onBackground,
+              ),),
               CachedNetworkImage(
                 imageUrl: url,
               )

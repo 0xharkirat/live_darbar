@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:live_darbar/models/timer.dart';
 
 class SleepTimer extends StatelessWidget {
-  const SleepTimer({super.key, required this.timerModel, required this.onSelectTimer});
+  const SleepTimer(
+      {super.key, required this.timerModel, required this.onSelectTimer});
   final TimerModel timerModel;
   final Function() onSelectTimer;
 
@@ -12,7 +13,14 @@ class SleepTimer extends StatelessWidget {
       padding: const EdgeInsets.all(8),
       child: InkWell(
         onTap: onSelectTimer,
-        child: Text(timerModel.title, style: const TextStyle(color: Color(0xFFD6DCE6), fontSize: 24, fontWeight: FontWeight.bold, fontFamily: 'Rubik'),),
+        splashColor: Theme.of(context).colorScheme.secondaryContainer,
+        child: Text(
+          timerModel.title,
+          style: Theme.of(context).textTheme.headlineMedium!.copyWith(
+                color: Theme.of(context).colorScheme.onBackground,
+                fontWeight: FontWeight.bold,
+              ),
+        ),
       ),
     );
   }

@@ -13,46 +13,50 @@ class RagiListDialog extends StatelessWidget {
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
       elevation: 1.5,
-      backgroundColor: const Color(0xFF040508),
+      backgroundColor: Theme.of(context).colorScheme.background,
       insetPadding: const EdgeInsets.all(8),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Padding(
-            padding: EdgeInsets.all(8.0),
-            child: Text(
-              'Today\'s Duties',
-              style: TextStyle(
-                color: Color(0xFFD6DCE6),
-                fontFamily: 'Rubik',
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text('Today\'s Duties',
+                style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).colorScheme.onBackground)),
           ),
           Expanded(
             child: ListView.builder(
                 itemCount: ragiList.length,
                 itemBuilder: (context, index) {
                   return ListTile(
-                    textColor: ragiList[index] == current
-                        ? const Color(0xFF040508)
-                        : const Color(0xFFD6DCE6),
                     trailing: ragiList[index] == current
-                        ? const Icon(Icons.arrow_left)
+                        ? Icon(
+                            Icons.arrow_left,
+                            color:
+                                Theme.of(context).colorScheme.onInverseSurface,
+                          )
                         : const SizedBox(),
                     selected: ragiList[index] == current ? true : false,
-                    selectedTileColor: const Color(0xFFD6DCE6),
+                    selectedTileColor:
+                        Theme.of(context).colorScheme.onPrimaryContainer,
                     leading: Text(
                       '${ragiList[index].startTime} - ${ragiList[index].endTime}',
-                      style: const TextStyle(
+                      style: TextStyle(
+                        color: ragiList[index] == current
+                            ? Theme.of(context).colorScheme.onInverseSurface
+                            : Theme.of(context).colorScheme.inverseSurface,
                         fontFamily: 'Rubik',
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     title: Text(
                       ragiList[index].ragi,
-                      style: const TextStyle(
+                      style: TextStyle(
+                        color: ragiList[index] == current
+                            ? Theme.of(context).colorScheme.onInverseSurface
+                            : Theme.of(context).colorScheme.inverseSurface,
                         fontFamily: 'Rubik',
                         fontWeight: FontWeight.bold,
                       ),
