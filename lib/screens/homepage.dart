@@ -38,13 +38,10 @@ class _HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
   AnimationController? _controller;
   bool isPlaying = false;
-  Duration? _duration;
-  Duration? _position;
   late http.StreamedResponse _response;
   late bool _downloading;
-  Color _color = Colors.red;
+
   String _headerImagePath = 'images/live_kirtan.jpg';
-  BorderRadiusGeometry _borderRadius = BorderRadius.circular(100);
 
   var client;
   bool loading = false;
@@ -101,9 +98,6 @@ class _HomePageState extends State<HomePage>
               onAdDismissedFullScreenContent: (ad) {
                 // Dispose the ad here to free resources.
                 ad.dispose();
-                // setState(() {
-                //   interstitialAd = null;
-                // });
               },
             );
             setState(() {
@@ -322,14 +316,13 @@ class _HomePageState extends State<HomePage>
     final snackBar = SnackBar(
       elevation: 8,
       behavior: SnackBarBehavior.floating,
-      backgroundColor: Theme.of(context).colorScheme.tertiaryContainer,
+      backgroundColor: Theme.of(context).colorScheme.onPrimaryContainer,
       content: Text(
         'Timer set for ${time.title}.',
-        style:
-            TextStyle(color: Theme.of(context).colorScheme.onTertiaryContainer),
+        style: TextStyle(color: Theme.of(context).colorScheme.onInverseSurface),
       ),
       action: SnackBarAction(
-        textColor: Theme.of(context).colorScheme.onError,
+        textColor: Theme.of(context).colorScheme.onInverseSurface,
         label: "Undo",
         onPressed: () {
           t.cancel();
@@ -517,8 +510,17 @@ class _HomePageState extends State<HomePage>
   }
 
   void _stopDownload() async {
-    const snackBar = SnackBar(
-        content: Text('Recording Saved at: /storage/emulated/0/Music/'));
+    final snackBar = SnackBar(
+      elevation: 8,
+      behavior: SnackBarBehavior.floating,
+      backgroundColor: Theme.of(context).colorScheme.onPrimaryContainer,
+      content: Text(
+        'Recording Saved at: /storage/emulated/0/Music/',
+        style: TextStyle(
+          color: Theme.of(context).colorScheme.onInverseSurface,
+        ),
+      ),
+    );
     ScaffoldMessenger.of(context).removeCurrentSnackBar();
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
     await client.close();
@@ -530,8 +532,6 @@ class _HomePageState extends State<HomePage>
 
   void _startDownload() async {
     setState(() {
-      _color = Colors.red;
-      _borderRadius = BorderRadius.circular(100);
       _downloading = true;
       _elapsedTime = Duration.zero;
       loading = true;
@@ -543,8 +543,6 @@ class _HomePageState extends State<HomePage>
 
     setState(() {
       loading = false;
-      _color = Colors.white;
-      _borderRadius = BorderRadius.circular(50);
     });
 
     // final dir = await getTemporaryDirectory();
@@ -577,16 +575,6 @@ class _HomePageState extends State<HomePage>
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        appBar: AppBar(
-          title: Text('Live Darbar',
-              style: Theme.of(context)
-                  .textTheme
-                  .titleMedium!
-                  .copyWith(color: Theme.of(context).colorScheme.onBackground)),
-          iconTheme: Theme.of(context)
-              .iconTheme
-              .copyWith(color: Theme.of(context).colorScheme.onBackground),
-        ),
         body: Container(
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height,
