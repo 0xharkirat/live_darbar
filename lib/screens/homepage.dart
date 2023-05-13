@@ -297,7 +297,7 @@ class _HomePageState extends State<HomePage>
         ),
         Text(
           'Time in Amritsar: $_timeString',
-          style: Theme.of(context).textTheme.titleMedium!.copyWith(
+          style: Theme.of(context).textTheme.titleSmall!.copyWith(
               color: isPlaying
                   ? Theme.of(context).colorScheme.primaryContainer
                   : Theme.of(context).colorScheme.inverseSurface),
@@ -540,7 +540,6 @@ class _HomePageState extends State<HomePage>
       _downloading = false;
     });
   }
-  
 
   void _startDownload() async {
     bool hasPermission = await PermissionHandler.checkStoragePermission();
@@ -648,7 +647,7 @@ class _HomePageState extends State<HomePage>
                       // tileColor: Theme.of(context).colorScheme.onInverseSurface,
                       leading: Image.asset(
                         "images/live_kirtan.jpg",
-                        width: 60.0,
+                        width: 50.0,
                         fit: BoxFit.cover,
                       ),
                       title: Text(
@@ -668,11 +667,12 @@ class _HomePageState extends State<HomePage>
                           selectedChannel == Channel.liveKirtan && isPlaying
                               ? Image.asset(
                                   'images/bars.gif',
+                                  width: 20.0,
                                 )
                               : const SizedBox(),
                     ),
                     const SizedBox(
-                      height: 5,
+                      height: 10,
                     ),
                     ListTile(
                       onTap: () {
@@ -690,7 +690,7 @@ class _HomePageState extends State<HomePage>
                       },
                       leading: Image.asset(
                         "images/mukhwak.jpg",
-                        width: 60.0,
+                        width: 50.0,
                         fit: BoxFit.cover,
                       ),
                       title: Text(
@@ -709,11 +709,12 @@ class _HomePageState extends State<HomePage>
                       trailing: selectedChannel == Channel.mukhwak && isPlaying
                           ? Image.asset(
                               'images/bars.gif',
+                              width: 20.0,
                             )
                           : const SizedBox(),
                     ),
                     const SizedBox(
-                      height: 5,
+                      height: 10,
                     ),
                     ListTile(
                       onTap: () {
@@ -731,7 +732,7 @@ class _HomePageState extends State<HomePage>
                       },
                       leading: Image.asset(
                         "images/katha.jpg",
-                        width: 60.0,
+                        width: 50.0,
                         fit: BoxFit.cover,
                       ),
                       title: Text(
@@ -751,11 +752,12 @@ class _HomePageState extends State<HomePage>
                           selectedChannel == Channel.mukhwakKatha && isPlaying
                               ? Image.asset(
                                   'images/bars.gif',
+                                  width: 20.0,
                                 )
                               : const SizedBox(),
                     ),
                     const SizedBox(
-                      height: 25,
+                      height: 20,
                     ),
                     Row(
                       children: [
@@ -787,13 +789,15 @@ class _HomePageState extends State<HomePage>
                                   ),
                                   title: Text(
                                     'Read Mukhwak',
-                                    style: TextStyle(
-                                      fontFamily: 'Rubik',
-                                      fontWeight: FontWeight.bold,
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .inverseSurface,
-                                    ),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .labelMedium!
+                                        .copyWith(
+                                          fontWeight: FontWeight.bold,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .inverseSurface,
+                                        ),
                                   ),
                                 ),
                               ),
@@ -821,13 +825,15 @@ class _HomePageState extends State<HomePage>
                                   ),
                                   title: Text(
                                     'Daily Routine',
-                                    style: TextStyle(
-                                      fontFamily: 'Rubik',
-                                      fontWeight: FontWeight.bold,
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .inverseSurface,
-                                    ),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .labelMedium!
+                                        .copyWith(
+                                          fontWeight: FontWeight.bold,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .inverseSurface,
+                                        ),
                                   ),
                                 ),
                               ),
@@ -860,13 +866,15 @@ class _HomePageState extends State<HomePage>
                                   ),
                                   title: Text(
                                     'Ragi Duties',
-                                    style: TextStyle(
-                                      fontFamily: 'Rubik',
-                                      fontWeight: FontWeight.bold,
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .inverseSurface,
-                                    ),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .labelMedium!
+                                        .copyWith(
+                                          fontWeight: FontWeight.bold,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .inverseSurface,
+                                        ),
                                   ),
                                 ),
                               ),
@@ -886,13 +894,15 @@ class _HomePageState extends State<HomePage>
                                     ),
                                     title: Text(
                                       'Record',
-                                      style: TextStyle(
-                                        fontFamily: 'Rubik',
-                                        fontWeight: FontWeight.bold,
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .inverseSurface,
-                                      ),
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .labelMedium!
+                                          .copyWith(
+                                            fontWeight: FontWeight.bold,
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .inverseSurface,
+                                          ),
                                     ),
                                     onTap: () {
                                       _startDownload();
@@ -927,11 +937,15 @@ class _HomePageState extends State<HomePage>
                                           )
                                         : Text(
                                             _formatDuration(_elapsedTime),
-                                            style: TextStyle(
-                                              color: Theme.of(context)
-                                                  .colorScheme
-                                                  .onInverseSurface,
-                                            ),
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .labelMedium!
+                                                .copyWith(
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .onInverseSurface,
+                                                ),
                                           ),
                                     onTap: loading
                                         ? null
