@@ -55,6 +55,7 @@ dependencies:
   cached_network_image: ^3.2.3
   percent_indicator: ^4.2.3
   permission_handler: ^10.2.0
+  open_file: ^3.3.1
 
 
 

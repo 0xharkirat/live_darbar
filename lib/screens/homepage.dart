@@ -16,6 +16,7 @@ import 'package:live_darbar/models/timer.dart';
 import 'package:live_darbar/notifiers/progress_notifier.dart';
 import 'package:live_darbar/utils/ad_state.dart';
 import 'package:live_darbar/utils/permission.dart';
+import 'package:open_file/open_file.dart';
 import 'package:provider/provider.dart';
 import '../components/round_icon_button.dart';
 import 'package:intl/intl.dart';
@@ -41,6 +42,7 @@ class _HomePageState extends State<HomePage>
   bool isPlaying = false;
   late http.StreamedResponse _response;
   late bool _downloading;
+  late String _localFilePath;
 
   String _headerImagePath = 'images/live_kirtan.jpg';
 
@@ -521,6 +523,14 @@ class _HomePageState extends State<HomePage>
           color: Theme.of(context).colorScheme.onInverseSurface,
         ),
       ),
+      action: SnackBarAction(
+        textColor: Theme.of(context).colorScheme.onInverseSurface,
+        label: "Open",
+        onPressed: () async {
+          await OpenFile.open('/storage/emulated/0/Music');
+          print('file opened $_localFilePath');
+        },
+      ),
     );
     ScaffoldMessenger.of(context).removeCurrentSnackBar();
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
@@ -530,6 +540,7 @@ class _HomePageState extends State<HomePage>
       _downloading = false;
     });
   }
+  
 
   void _startDownload() async {
     bool hasPermission = await PermissionHandler.checkStoragePermission();
@@ -552,6 +563,7 @@ class _HomePageState extends State<HomePage>
       // final dir = await getTemporaryDirectory();
       final timestamp = DateTime.now().microsecondsSinceEpoch;
       final file = File('/storage/emulated/0/Music/live_darbar_$timestamp.mp3');
+      _localFilePath = file.path;
 
       Timer.periodic(const Duration(seconds: 1), (timer) {
         if (!_downloading) {
