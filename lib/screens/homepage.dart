@@ -116,104 +116,6 @@ class _HomePageState extends State<HomePage>
         ));
   }
 
-  // Widget miniPlayer() {
-  //   Size deviceSize = MediaQuery.of(context).size;
-  //   return AnimatedOpacity(
-  //     opacity: bottomAnimation ? 1.0 : 0.0,
-  //     duration: const Duration(milliseconds: 500),
-  //     child: Container(
-  //       decoration: const BoxDecoration(
-  //         color: Color(0xFFD6DCE6),
-  //         borderRadius: BorderRadius.only(
-  //             topLeft: Radius.circular(10.0), topRight: Radius.circular(10.0)),
-  //       ),
-  //       padding: const EdgeInsets.all(15.0),
-  //       width: deviceSize.width,
-  //       child: Column(
-  //         mainAxisSize: MainAxisSize.min,
-  //         children: <Widget>[
-  //           visible
-  //               ? const AudioProgressBar()
-  //               : liveStarted
-  //                   ? _currentDuty?.ragi != null
-  //                       ? Text(
-  //                           'Current Ragi: ${_currentDuty?.ragi}',
-  //                           style: const TextStyle(
-  //                             fontFamily: 'Rubik',
-  //                             color: Color(0xFF040508),
-  //                             fontWeight: FontWeight.bold,
-  //                           ),
-  //                         )
-  //                       : const TextScroll(
-  //                           'Path or Ardas is going to start, or is currently going on, or change of Ragi duty according to the Timetable.',
-  //                           velocity: Velocity(pixelsPerSecond: Offset(30, 0)),
-  //                           // delayBefore: Duration(seconds: 1),
-  //                           intervalSpaces: 60,
-  //                           style: TextStyle(
-  //                             fontFamily: 'Rubik',
-  //                             color: Color(0xFF040508),
-  //                             fontWeight: FontWeight.bold,
-  //                           ),
-  //                         )
-  //                   : Container(),
-  //           const SizedBox(
-  //             height: 5.0,
-  //           ),
-  //           Row(
-  //             // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //             children: <Widget>[
-  //               ValueListenableBuilder<String>(
-  //                 valueListenable: _pageManager.currentSongTitleNotifier,
-  //                 builder: (_, title, __) {
-  //                   return Text(
-  //                     title,
-  //                     style: const TextStyle(
-  //                       fontFamily: 'Rubik',
-  //                       fontSize: 30.0,
-  //                       color: Color(0xFF040508),
-  //                       fontWeight: FontWeight.bold,
-  //                     ),
-  //                   );
-  //                 },
-  //               ),
-  //               const Spacer(),
-  //               ValueListenableBuilder<ButtonState>(
-  //                 valueListenable: _pageManager.buttonNotifier,
-  //                 builder: (_, value, __) {
-  //                   switch (value) {
-  //                     case ButtonState.loading:
-  //                       return const SizedBox(
-  //                         width: 52.0,
-  //                         height: 52.0,
-  //                         child: CircularProgressIndicator(
-  //                           color: Color(0xFF040508),
-  //                         ),
-  //                       );
-  //                     case ButtonState.paused:
-  //                       return RoundIconButton(
-  //                           icon: FontAwesomeIcons.play,
-  //                           onPressed: () => _pageManager.resume());
-  //                     case ButtonState.playing:
-  //                       return RoundIconButton(
-  //                           icon: FontAwesomeIcons.pause,
-  //                           onPressed: _pageManager.pause);
-  //                   }
-  //                 },
-  //               ),
-  //               if (selectedChannel == Channel.liveKirtan)
-  //                 IconButton(
-  //                   onPressed: _openSleepTimerOverlay,
-  //                   icon: const Icon(FontAwesomeIcons.ellipsisVertical),
-  //                   color: const Color(0xFF040508),
-  //                 )
-  //             ],
-  //           ),
-  //         ],
-  //       ),
-  //     ),
-  //   );
-  // }
-
   double getAngle() {
     var value = _controller?.value ?? 0;
     return value * 2 * pi;
@@ -421,9 +323,11 @@ class _HomePageState extends State<HomePage>
       elevation: 8,
       behavior: SnackBarBehavior.floating,
       backgroundColor: Theme.of(context).colorScheme.tertiaryContainer,
-      content: Text('Timer set for ${time.title}.', style: TextStyle(
-        color: Theme.of(context).colorScheme.onTertiaryContainer
-      ),),
+      content: Text(
+        'Timer set for ${time.title}.',
+        style:
+            TextStyle(color: Theme.of(context).colorScheme.onTertiaryContainer),
+      ),
       action: SnackBarAction(
         textColor: Theme.of(context).colorScheme.onError,
         label: "Undo",
@@ -461,14 +365,10 @@ class _HomePageState extends State<HomePage>
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
-              Text(
-                'Timer',
-                style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                  color: Theme.of(context).colorScheme.onBackground,
-                  fontWeight: FontWeight.bold
-
-                )
-              ),
+              Text('Timer',
+                  style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                      color: Theme.of(context).colorScheme.onBackground,
+                      fontWeight: FontWeight.bold)),
               const SizedBox(
                 height: 10,
               ),
@@ -677,372 +577,385 @@ class _HomePageState extends State<HomePage>
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-          appBar: AppBar(
-            title: Text('Live Darbar',
-                style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                    color: Theme.of(context).colorScheme.onBackground)),
-            iconTheme: Theme.of(context)
-                .iconTheme
-                .copyWith(color: Theme.of(context).colorScheme.onBackground),
-          ),
-          // bottomNavigationBar: miniPlayer(),
-          drawer: Drawer(
-            backgroundColor: const Color(0xFF040508),
-            child: ListView(
-              padding: EdgeInsets.zero,
-              children: [
-                const DrawerHeader(
-                  decoration:
-                      BoxDecoration(color: Color.fromARGB(255, 9, 11, 18)),
-                  child: Text(
-                    'Advanced Features',
-                    style: TextStyle(color: Color(0xFFD6DCE6)),
-                  ),
-                ),
-                ListTile(
-                  onTap: () async {
-                    await showDialog(
-                        context: context,
-                        builder: (_) => const WebViewApp(
-                              url:
-                                  'https://old.sgpc.net/hukumnama/jpeg%20hukamnama/hukamnama.gif',
-                            ));
-                    showInterstitialAdRandom();
-                  },
-                  leading: const Icon(
-                    FontAwesomeIcons.bookOpenReader,
+        appBar: AppBar(
+          title: Text('Live Darbar',
+              style: Theme.of(context)
+                  .textTheme
+                  .titleMedium!
+                  .copyWith(color: Theme.of(context).colorScheme.onBackground)),
+          iconTheme: Theme.of(context)
+              .iconTheme
+              .copyWith(color: Theme.of(context).colorScheme.onBackground),
+        ),
+        body: Container(
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height,
+          padding: const EdgeInsets.all(15),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              if (!liveStarted)
+                const TextScroll(
+                  "The Live Kirtan may not be started yet. Refer to daily routine time.",
+                  velocity: Velocity(pixelsPerSecond: Offset(30, 0)),
+                  // delayBefore: Duration(seconds: 1),
+                  intervalSpaces: 60,
+                  style: TextStyle(
                     color: Color(0xFFD6DCE6),
-                  ),
-                  title: const Text(
-                    'Read Mukhwak',
-                    style: TextStyle(
-                      fontFamily: 'Rubik',
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFFD6DCE6),
-                    ),
+                    fontFamily: 'Rubik',
                   ),
                 ),
-                ListTile(
-                  onTap: () async {
-                    await showDialog(
-                        context: context,
-                        builder: (_) => const WebViewApp(
-                              url:
-                                  'https://sgpc.net/wp-content/uploads/2014/04/maryada_11.jpg',
-                            ));
-                    showInterstitialAdRandom();
-                  },
-                  leading: const Icon(
-                    FontAwesomeIcons.calendarDays,
-                    color: Color(0xFFD6DCE6),
-                  ),
-                  title: const Text(
-                    'Daily Routine',
-                    style: TextStyle(
-                      fontFamily: 'Rubik',
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFFD6DCE6),
-                    ),
-                  ),
+              AnimatedContainer(
+                height: 200,
+                padding: const EdgeInsets.all(10.0),
+                duration: const Duration(seconds: 1),
+                decoration: BoxDecoration(
+                  color: isPlaying
+                      ? Theme.of(context).colorScheme.onPrimaryContainer
+                      : Theme.of(context).colorScheme.onInverseSurface,
+                  borderRadius: BorderRadius.circular(20.0),
                 ),
-                ListTile(
-                  onTap: () async {
-                    await showDialog(
-                        context: context,
-                        builder: (_) => RagiListDialog(
-                            ragiList: _todayDuties, current: _currentDuty));
-                    showInterstitialAdRandom();
-                  },
-                  leading: const Icon(
-                    FontAwesomeIcons.userClock,
-                    color: Color(0xFFD6DCE6),
-                  ),
-                  title: const Text(
-                    'Ragi Duties',
-                    style: TextStyle(
-                      fontFamily: 'Rubik',
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFFD6DCE6),
-                    ),
-                  ),
-                ),
-                if (!_downloading)
-                  ListTile(
-                    leading: const Icon(
-                      FontAwesomeIcons.recordVinyl,
-                      color: Color(0xFFD6DCE6),
-                    ),
-                    title: const Text(
-                      'Start Recording',
-                      style: TextStyle(
-                        fontFamily: 'Rubik',
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFFD6DCE6),
-                      ),
-                    ),
-                    onTap: () {
-                      _startDownload();
-                      Navigator.pop(context);
-                    },
-                  ),
-                if (_downloading)
-                  ListTile(
-                    leading: const Icon(
-                      FontAwesomeIcons.circleStop,
-                      color: Color(0xFFD6DCE6),
-                    ),
-                    title: const Text(
-                      'Stop/Save Recording',
-                      style: TextStyle(
-                        fontFamily: 'Rubik',
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFFD6DCE6),
-                      ),
-                    ),
-                    onTap: () {
-                      _stopDownload();
-                      Navigator.pop(context);
-                    },
-                  ),
-              ],
-            ),
-          ),
-          body: Container(
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height,
-            padding: const EdgeInsets.all(15),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                if (!liveStarted)
-                  const TextScroll(
-                    "The Live Kirtan may not be started yet. Refer to daily routine time.",
-                    velocity: Velocity(pixelsPerSecond: Offset(30, 0)),
-                    // delayBefore: Duration(seconds: 1),
-                    intervalSpaces: 60,
-                    style: TextStyle(
-                      color: Color(0xFFD6DCE6),
-                      fontFamily: 'Rubik',
-                    ),
-                  ),
-                AnimatedContainer(
-                  height: 200,
-                  padding: const EdgeInsets.all(10.0),
-                  duration: const Duration(seconds: 1),
-                  decoration: BoxDecoration(
-                    color: isPlaying
-                        ? Theme.of(context).colorScheme.onPrimaryContainer
-                        : Theme.of(context).colorScheme.onInverseSurface,
-                    borderRadius: BorderRadius.circular(20.0),
-                  ),
-                  curve: Curves.fastOutSlowIn,
-                  child: playerHeader(),
-                ),
+                curve: Curves.fastOutSlowIn,
+                child: playerHeader(),
+              ),
+              const SizedBox(
+                height: 20.0,
+              ),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    ListTile(
+                      onTap: () {
+                        _pageManager.play(0);
 
-                const SizedBox(
-                  height: 20.0,
-                ),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      ListTile(
-                        onTap: () {
-                          _pageManager.play(0);
+                        setState(() {
+                          selectedChannel = Channel.liveKirtan;
+                          isPlaying = true;
+                          visible = false;
+                          _headerImagePath = 'images/live_kirtan.jpg';
+                          _controller?.repeat();
+                          bottomAnimation = true;
+                        });
+                        showInterstitialAdRandom();
+                      },
 
-                          setState(() {
-                            selectedChannel = Channel.liveKirtan;
-                            isPlaying = true;
-                            visible = false;
-                            _headerImagePath = 'images/live_kirtan.jpg';
-                            _controller?.repeat();
-                            bottomAnimation = true;
-                          });
-                          showInterstitialAdRandom();
-                        },
+                      // tileColor: Theme.of(context).colorScheme.onInverseSurface,
+                      leading: Image.asset(
+                        "images/live_kirtan.jpg",
+                        width: 60.0,
+                        fit: BoxFit.cover,
+                      ),
+                      title: Text(
+                        'Live Kirtan',
+                        style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: selectedChannel == Channel.liveKirtan
+                                  ? Theme.of(context)
+                                      .colorScheme
+                                      .onPrimaryContainer
+                                  : Theme.of(context)
+                                      .colorScheme
+                                      .inverseSurface,
+                            ),
+                      ),
+                      trailing:
+                          selectedChannel == Channel.liveKirtan && isPlaying
+                              ? Image.asset(
+                                  'images/bars.gif',
+                                )
+                              : const SizedBox(),
+                    ),
+                    const SizedBox(
+                      height: 5,
+                    ),
+                    ListTile(
+                      onTap: () {
+                        _pageManager.play(1);
 
-                        // tileColor: Theme.of(context).colorScheme.onInverseSurface,
-                        leading: Image.asset(
-                          "images/live_kirtan.jpg",
-                          width: 60.0,
-                          fit: BoxFit.cover,
-                        ),
-                        title: Text(
-                          'Live Kirtan',
-                          style:
-                              Theme.of(context).textTheme.titleLarge!.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                    color: selectedChannel == Channel.liveKirtan
-                                        ? Theme.of(context)
-                                            .colorScheme
-                                            .onPrimaryContainer
-                                        : Theme.of(context)
-                                            .colorScheme
-                                            .inverseSurface,
-                                  ),
-                        ),
-                        trailing:
-                            selectedChannel == Channel.liveKirtan && isPlaying
-                                ? Image.asset(
-                                    'images/bars.gif',
-                                  )
-                                : const SizedBox(),
+                        setState(() {
+                          selectedChannel = Channel.mukhwak;
+                          isPlaying = true;
+                          visible = true;
+                          _headerImagePath = 'images/mukhwak.jpg';
+                          _controller?.repeat();
+                          bottomAnimation = true;
+                        });
+                        showInterstitialAdRandom();
+                      },
+                      leading: Image.asset(
+                        "images/mukhwak.jpg",
+                        width: 60.0,
+                        fit: BoxFit.cover,
                       ),
-                      const SizedBox(
-                        height: 5,
+                      title: Text(
+                        'Today\'s Mukhwak',
+                        style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: selectedChannel == Channel.mukhwak
+                                  ? Theme.of(context)
+                                      .colorScheme
+                                      .onPrimaryContainer
+                                  : Theme.of(context)
+                                      .colorScheme
+                                      .inverseSurface,
+                            ),
                       ),
-                      ListTile(
-                        onTap: () {
-                          _pageManager.play(1);
+                      trailing: selectedChannel == Channel.mukhwak && isPlaying
+                          ? Image.asset(
+                              'images/bars.gif',
+                            )
+                          : const SizedBox(),
+                    ),
+                    const SizedBox(
+                      height: 5,
+                    ),
+                    ListTile(
+                      onTap: () {
+                        _pageManager.play(2);
 
-                          setState(() {
-                            selectedChannel = Channel.mukhwak;
-                            isPlaying = true;
-                            visible = true;
-                            _headerImagePath = 'images/mukhwak.jpg';
-                            _controller?.repeat();
-                            bottomAnimation = true;
-                          });
-                          showInterstitialAdRandom();
-                        },
-                        leading: Image.asset(
-                          "images/mukhwak.jpg",
-                          width: 60.0,
-                          fit: BoxFit.cover,
-                        ),
-                        title: Text(
-                          'Today\'s Mukhwak',
-                          style:
-                              Theme.of(context).textTheme.titleLarge!.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                    color: selectedChannel == Channel.mukhwak
-                                        ? Theme.of(context)
-                                            .colorScheme
-                                            .onPrimaryContainer
-                                        : Theme.of(context)
-                                            .colorScheme
-                                            .inverseSurface,
-                                  ),
-                        ),
-                        trailing:
-                            selectedChannel == Channel.mukhwak && isPlaying
-                                ? Image.asset(
-                                    'images/bars.gif',
-                                  )
-                                : const SizedBox(),
+                        setState(() {
+                          selectedChannel = Channel.mukhwakKatha;
+                          isPlaying = true;
+                          visible = true;
+                          _headerImagePath = 'images/katha.jpg';
+                          _controller?.repeat();
+                          bottomAnimation = true;
+                        });
+                        showInterstitialAdRandom();
+                      },
+                      leading: Image.asset(
+                        "images/katha.jpg",
+                        width: 60.0,
+                        fit: BoxFit.cover,
                       ),
-                      const SizedBox(
-                        height: 5,
+                      title: Text(
+                        'Mukhwak Katha',
+                        style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: selectedChannel == Channel.mukhwakKatha
+                                  ? Theme.of(context)
+                                      .colorScheme
+                                      .onPrimaryContainer
+                                  : Theme.of(context)
+                                      .colorScheme
+                                      .inverseSurface,
+                            ),
                       ),
-                      ListTile(
-                        onTap: () {
-                          _pageManager.play(2);
-
-                          setState(() {
-                            selectedChannel = Channel.mukhwakKatha;
-                            isPlaying = true;
-                            visible = true;
-                            _headerImagePath = 'images/katha.jpg';
-                            _controller?.repeat();
-                            bottomAnimation = true;
-                          });
-                          showInterstitialAdRandom();
-                        },
-                        leading: Image.asset(
-                          "images/katha.jpg",
-                          width: 60.0,
-                          fit: BoxFit.cover,
-                        ),
-                        title: Text(
-                          'Mukhwak Katha',
-                          style: Theme.of(context)
-                              .textTheme
-                              .titleLarge!
-                              .copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: selectedChannel == Channel.mukhwakKatha
-                                    ? Theme.of(context)
-                                        .colorScheme
-                                        .onPrimaryContainer
-                                    : Theme.of(context)
+                      trailing:
+                          selectedChannel == Channel.mukhwakKatha && isPlaying
+                              ? Image.asset(
+                                  'images/bars.gif',
+                                )
+                              : const SizedBox(),
+                    ),
+                    const SizedBox(
+                      height: 25,
+                    ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Column(
+                            children: [
+                              Card(
+                                child: ListTile(
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(5)),
+                                  tileColor: Theme.of(context)
+                                      .colorScheme
+                                      .onInverseSurface,
+                                  onTap: () async {
+                                    await showDialog(
+                                      context: context,
+                                      builder: (_) => const WebViewApp(
+                                        url:
+                                            'https://old.sgpc.net/hukumnama/jpeg%20hukamnama/hukamnama.gif',
+                                      ),
+                                    );
+                                    showInterstitialAdRandom();
+                                  },
+                                  leading: Icon(
+                                    FontAwesomeIcons.bookOpenReader,
+                                    color: Theme.of(context)
                                         .colorScheme
                                         .inverseSurface,
-                              ),
-                        ),
-                        trailing:
-                            selectedChannel == Channel.mukhwakKatha && isPlaying
-                                ? Image.asset(
-                                    'images/bars.gif',
-                                  )
-                                : const SizedBox(),
-                      ),
-                      const SizedBox(
-                        height: 5,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(right: 8),
-                        child: Align(
-                          alignment: Alignment.centerRight,
-                          child: AnimatedOpacity(
-                            opacity: _downloading ? 1 : 0,
-                            duration: const Duration(seconds: 1),
-                            child: AnimatedContainer(
-                              padding: const EdgeInsets.all(8),
-                              decoration: BoxDecoration(
-                                color: _color,
-                                borderRadius: _borderRadius,
-                              ),
-                              // Define how long the animation should take.
-                              duration: const Duration(seconds: 1),
-                              // Provide an optional curve to make the animation feel smoother.
-                              curve: Curves.fastOutSlowIn,
-                              child: loading
-                                  ? const CircularProgressIndicator(
-                                      color: Colors.white,
-                                    )
-                                  : Padding(
-                                      padding: const EdgeInsets.all(4.0),
-                                      child: InkWell(
-                                        onTap: _stopDownload,
-                                        child: Column(
-                                          mainAxisSize: MainAxisSize.min,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            const Icon(
-                                              Icons.stop_circle_rounded,
-                                              color: Colors.red,
-                                            ),
-                                            Text(
-                                              _formatDuration(_elapsedTime),
-                                              style: const TextStyle(
-                                                  color: Colors.red),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
+                                  ),
+                                  title: Text(
+                                    'Read Mukhwak',
+                                    style: TextStyle(
+                                      fontFamily: 'Rubik',
+                                      fontWeight: FontWeight.bold,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .inverseSurface,
                                     ),
-                            ),
+                                  ),
+                                ),
+                              ),
+                              Card(
+                                child: ListTile(
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(5)),
+                                  tileColor: Theme.of(context)
+                                      .colorScheme
+                                      .onInverseSurface,
+                                  onTap: () async {
+                                    await showDialog(
+                                        context: context,
+                                        builder: (_) => const WebViewApp(
+                                              url:
+                                                  'https://sgpc.net/wp-content/uploads/2014/04/maryada_11.jpg',
+                                            ));
+                                    showInterstitialAdRandom();
+                                  },
+                                  leading: Icon(
+                                    FontAwesomeIcons.calendarDays,
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .inverseSurface,
+                                  ),
+                                  title: Text(
+                                    'Daily Routine',
+                                    style: TextStyle(
+                                      fontFamily: 'Rubik',
+                                      fontWeight: FontWeight.bold,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .inverseSurface,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                      ),
-                    ],
-                  ),
+                        Expanded(
+                          child: Column(
+                            children: [
+                              Card(
+                                child: ListTile(
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(5)),
+                                  tileColor: Theme.of(context)
+                                      .colorScheme
+                                      .onInverseSurface,
+                                  onTap: () async {
+                                    await showDialog(
+                                        context: context,
+                                        builder: (_) => RagiListDialog(
+                                            ragiList: _todayDuties,
+                                            current: _currentDuty));
+                                    showInterstitialAdRandom();
+                                  },
+                                  leading: Icon(
+                                    FontAwesomeIcons.userClock,
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .inverseSurface,
+                                  ),
+                                  title: Text(
+                                    'Ragi Duties',
+                                    style: TextStyle(
+                                      fontFamily: 'Rubik',
+                                      fontWeight: FontWeight.bold,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .inverseSurface,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              if (!_downloading)
+                                Card(
+                                  child: ListTile(
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(5)),
+                                    tileColor: Theme.of(context)
+                                        .colorScheme
+                                        .onInverseSurface,
+                                    leading: Icon(
+                                      FontAwesomeIcons.microphone,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .inverseSurface,
+                                    ),
+                                    title: Text(
+                                      'Record',
+                                      style: TextStyle(
+                                        fontFamily: 'Rubik',
+                                        fontWeight: FontWeight.bold,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .inverseSurface,
+                                      ),
+                                    ),
+                                    onTap: () {
+                                      _startDownload();
+                                    },
+                                  ),
+                                ),
+                              if (_downloading)
+                                Card(
+                                  child: ListTile(
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(5)),
+                                    tileColor: loading
+                                        ? Theme.of(context)
+                                            .colorScheme
+                                            .onInverseSurface
+                                        : Theme.of(context)
+                                            .colorScheme
+                                            .onPrimaryContainer,
+                                    leading: loading
+                                        ? null
+                                        : Icon(FontAwesomeIcons.microphoneSlash,
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .onInverseSurface),
+                                    title: loading
+                                        ? Center(
+                                            child: CircularProgressIndicator(
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .error,
+                                            ),
+                                          )
+                                        : Text(
+                                            _formatDuration(_elapsedTime),
+                                            style: TextStyle(
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .onInverseSurface,
+                                            ),
+                                          ),
+                                    onTap: loading
+                                        ? null
+                                        : () {
+                                            _stopDownload();
+                                          },
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
-                // if (banner == null)
-                //   const SizedBox(
-                //     height: 50,
-                //   )
-                // else
-                //   SizedBox(
-                //     height: 50,
-                //     child: AdWidget(ad: banner!),
-                //   )
-              ],
-            ),
-          )),
+              ),
+              if (banner == null)
+                const SizedBox(
+                  height: 50,
+                )
+              else
+                SizedBox(
+                  height: 50,
+                  child: AdWidget(ad: banner!),
+                )
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
