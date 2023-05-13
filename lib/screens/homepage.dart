@@ -326,7 +326,7 @@ class _HomePageState extends State<HomePage>
       ),
       action: SnackBarAction(
         textColor: Theme.of(context).colorScheme.onInverseSurface,
-        label: "Undo",
+        label: "Cancel",
         onPressed: () {
           t.cancel();
           sleepTimerSet = false;
@@ -606,7 +606,7 @@ class _HomePageState extends State<HomePage>
                   // delayBefore: Duration(seconds: 1),
                   intervalSpaces: 60,
                   style: TextStyle(
-                    color: Color(0xFFD6DCE6),
+                    color: Color(0xFFE9E1D9),
                     fontFamily: 'Rubik',
                   ),
                 ),
