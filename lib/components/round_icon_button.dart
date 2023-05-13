@@ -20,7 +20,7 @@ class RoundIconButton extends StatelessWidget {
       fillColor: isPlaying?Theme.of(context).colorScheme.onInverseSurface :Theme.of(context).colorScheme.inverseSurface,
       child: Icon(
         icon,
-        color: isPlaying?Theme.of(context).colorScheme.secondary:Theme.of(context).colorScheme.onInverseSurface,
+        color: isPlaying?Theme.of(context).colorScheme.onPrimaryContainer:Theme.of(context).colorScheme.onInverseSurface,
       ),
     );
   }

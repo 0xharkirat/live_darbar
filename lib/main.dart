@@ -11,7 +11,7 @@ final theme = ThemeData(
   useMaterial3: true,
   colorScheme: ColorScheme.fromSeed(
     brightness: Brightness.dark,
-    seedColor: const Color.fromARGB(255, 248, 217, 43),
+    seedColor: const Color.fromARGB(255, 255, 188, 0),
   ),
   textTheme: GoogleFonts.rubikTextTheme(),
 );

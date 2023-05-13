@@ -43,7 +43,7 @@ class _HomePageState extends State<HomePage>
   late http.StreamedResponse _response;
   late bool _downloading;
   Color _color = Colors.red;
-  String _headerImagePath = 'images/live_kirtan.png';
+  String _headerImagePath = 'images/live_kirtan.jpg';
   BorderRadiusGeometry _borderRadius = BorderRadius.circular(100);
 
   var client;
@@ -267,7 +267,9 @@ class _HomePageState extends State<HomePage>
                     height: 5.0,
                   ),
                   visible
-                      ?  AudioProgressBar(isPlaying: isPlaying,)
+                      ? AudioProgressBar(
+                          isPlaying: isPlaying,
+                        )
                       : liveStarted
                           ? _currentDuty?.ragi != null
                               ? Text(
@@ -306,53 +308,85 @@ class _HomePageState extends State<HomePage>
                   const SizedBox(
                     height: 10.0,
                   ),
-                  AnimatedOpacity(
-                    opacity: bottomAnimation ? 1.0 : 0,
-                    duration: const Duration(seconds: 1),
-                    child: ValueListenableBuilder<ButtonState>(
-                      valueListenable: _pageManager.buttonNotifier,
-                      builder: (_, value, __) {
-                        switch (value) {
-                          case ButtonState.loading:
-                            return SizedBox(
-                              width: 52.0,
-                              height: 52.0,
-                              child: CircularProgressIndicator(
-                                color: isPlaying
-                                    ? Theme.of(context)
-                                        .colorScheme
-                                        .primaryContainer
-                                    : Theme.of(context)
-                                        .colorScheme
-                                        .onSecondaryContainer,
-                              ),
-                            );
-                          case ButtonState.paused:
-                            return RoundIconButton(
-                                isPlaying: isPlaying,
-                                icon: FontAwesomeIcons.play,
-                                onPressed: () {
-                                  _pageManager.resume();
-                                  setState(() {
-                                    isPlaying = true;
-                                    _controller?.repeat();
-                                  });
-                                });
-                          case ButtonState.playing:
-                            return RoundIconButton(
-                                isPlaying: isPlaying,
-                                icon: FontAwesomeIcons.pause,
-                                onPressed: () {
-                                  _pageManager.pause();
-                                  setState(() {
-                                    isPlaying = false;
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      AnimatedOpacity(
+                        opacity: bottomAnimation ? 1.0 : 0,
+                        duration: const Duration(seconds: 1),
+                        child: ValueListenableBuilder<ButtonState>(
+                          valueListenable: _pageManager.buttonNotifier,
+                          builder: (_, value, __) {
+                            switch (value) {
+                              case ButtonState.loading:
+                                return SizedBox(
+                                  width: 52.0,
+                                  height: 52.0,
+                                  child: CircularProgressIndicator(
+                                    color: isPlaying
+                                        ? Theme.of(context)
+                                            .colorScheme
+                                            .primaryContainer
+                                        : Theme.of(context)
+                                            .colorScheme
+                                            .onSecondaryContainer,
+                                  ),
+                                );
+                              case ButtonState.paused:
+                                return RoundIconButton(
+                                    isPlaying: isPlaying,
+                                    icon: FontAwesomeIcons.play,
+                                    onPressed: bottomAnimation
+                                        ? () {
+                                            _pageManager.resume();
+                                            setState(() {
+                                              isPlaying = true;
+                                              _controller?.repeat();
+                                            });
+                                          }
+                                        : null);
+                              case ButtonState.playing:
+                                return RoundIconButton(
+                                    isPlaying: isPlaying,
+                                    icon: FontAwesomeIcons.pause,
+                                    onPressed: () {
+                                      _pageManager.pause();
+                                      setState(() {
+                                        isPlaying = false;
 
-                                    _controller?.reset();
-                                  });
-                                });
-                        }
-                      },
-                    ),
+                                        _controller?.reset();
+                                      });
+                                    });
+                            }
+                          },
+                        ),
+                      ),
+                      AnimatedOpacity(
+                        opacity: visible || !isPlaying ? 0 : 1,
+                        duration: const Duration(milliseconds: 500),
+                        child: ElevatedButton.icon(
+                          onPressed: visible || !isPlaying
+                              ? null
+                              : _openSleepTimerOverlay,
+                          icon: Icon(
+                            FontAwesomeIcons.clock,
+                            color: Theme.of(context)
+                                .colorScheme
+                                .onPrimaryContainer,
+                          ),
+                          label: Text(
+                            'Timer',
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyMedium!
+                                .copyWith(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onPrimaryContainer),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -384,8 +418,14 @@ class _HomePageState extends State<HomePage>
 
   void selectTimer(TimerModel time) {
     final snackBar = SnackBar(
-      content: Text('Timer set for ${time.title}.'),
+      elevation: 8,
+      behavior: SnackBarBehavior.floating,
+      backgroundColor: Theme.of(context).colorScheme.tertiaryContainer,
+      content: Text('Timer set for ${time.title}.', style: TextStyle(
+        color: Theme.of(context).colorScheme.onTertiaryContainer
+      ),),
       action: SnackBarAction(
+        textColor: Theme.of(context).colorScheme.onError,
         label: "Undo",
         onPressed: () {
           t.cancel();
@@ -415,37 +455,42 @@ class _HomePageState extends State<HomePage>
 
   void _openSleepTimerOverlay() {
     showModalBottomSheet(
-        context: context,
-        builder: (ctx) {
-          return Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              children: [
-                const Text(
-                  'Sleep Timer',
-                  style: TextStyle(
-                    color: Color(0xFFD6DCE6),
-                    fontFamily: 'Rubik',
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                Expanded(
-                  child: ListView.builder(
-                      itemCount: sleepTimer.length,
-                      itemBuilder: (context, index) {
-                        return SleepTimer(
-                          timerModel: sleepTimer[index],
-                          onSelectTimer: () {
-                            selectTimer(sleepTimer[index]);
-                          },
-                        );
-                      }),
+      context: context,
+      builder: (ctx) {
+        return Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              Text(
+                'Timer',
+                style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                  color: Theme.of(context).colorScheme.onBackground,
+                  fontWeight: FontWeight.bold
+
                 )
-              ],
-            ),
-          );
-        },
-        backgroundColor: const Color(0xFF040508));
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              Expanded(
+                child: ListView.builder(
+                    itemCount: sleepTimer.length,
+                    itemBuilder: (context, index) {
+                      return SleepTimer(
+                        timerModel: sleepTimer[index],
+                        onSelectTimer: () {
+                          selectTimer(sleepTimer[index]);
+                        },
+                      );
+                    }),
+              )
+            ],
+          ),
+        );
+      },
+      backgroundColor: Theme.of(context).colorScheme.background,
+      elevation: 2.0,
+    );
   }
 
   @override
@@ -770,16 +815,16 @@ class _HomePageState extends State<HomePage>
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 if (!liveStarted)
-                const TextScroll(
-                  "The Live Kirtan may not be started yet. Refer to daily routine time.",
-                  velocity: Velocity(pixelsPerSecond: Offset(30, 0)),
-                  // delayBefore: Duration(seconds: 1),
-                  intervalSpaces: 60,
-                  style: TextStyle(
-                    color: Color(0xFFD6DCE6),
-                    fontFamily: 'Rubik',
+                  const TextScroll(
+                    "The Live Kirtan may not be started yet. Refer to daily routine time.",
+                    velocity: Velocity(pixelsPerSecond: Offset(30, 0)),
+                    // delayBefore: Duration(seconds: 1),
+                    intervalSpaces: 60,
+                    style: TextStyle(
+                      color: Color(0xFFD6DCE6),
+                      fontFamily: 'Rubik',
+                    ),
                   ),
-                ),
                 AnimatedContainer(
                   height: 200,
                   padding: const EdgeInsets.all(10.0),
@@ -809,7 +854,7 @@ class _HomePageState extends State<HomePage>
                             selectedChannel = Channel.liveKirtan;
                             isPlaying = true;
                             visible = false;
-                            _headerImagePath = 'images/live_kirtan.png';
+                            _headerImagePath = 'images/live_kirtan.jpg';
                             _controller?.repeat();
                             bottomAnimation = true;
                           });
@@ -818,7 +863,7 @@ class _HomePageState extends State<HomePage>
 
                         // tileColor: Theme.of(context).colorScheme.onInverseSurface,
                         leading: Image.asset(
-                          "images/live_kirtan.png",
+                          "images/live_kirtan.jpg",
                           width: 60.0,
                           fit: BoxFit.cover,
                         ),
@@ -894,7 +939,7 @@ class _HomePageState extends State<HomePage>
                           _pageManager.play(2);
 
                           setState(() {
-                            selectedChannel = Channel.mukhwak;
+                            selectedChannel = Channel.mukhwakKatha;
                             isPlaying = true;
                             visible = true;
                             _headerImagePath = 'images/katha.jpg';
@@ -1012,19 +1057,30 @@ class AudioProgressBar extends StatelessWidget {
       valueListenable: _pageManager.progressNotifier,
       builder: (_, value, __) {
         return ProgressBar(
-          baseBarColor: isPlaying? Theme.of(context).colorScheme.onInverseSurface: Theme.of(context).colorScheme.inverseSurface,
-          progressBarColor: isPlaying ? Theme.of(context).colorScheme.onTertiaryContainer: Theme.of(context).colorScheme.tertiary,
-          bufferedBarColor: isPlaying ? Theme.of(context).colorScheme.tertiaryContainer: Theme.of(context).colorScheme.onTertiary,
-          thumbColor: isPlaying ? Theme.of(context).colorScheme.secondaryContainer: Theme.of(context).colorScheme.onSecondaryContainer,
-          thumbGlowColor: isPlaying ? Theme.of(context).colorScheme.onSecondary: Theme.of(context).colorScheme.secondary,
+          baseBarColor: isPlaying
+              ? Theme.of(context).colorScheme.onInverseSurface
+              : Theme.of(context).colorScheme.inverseSurface,
+          progressBarColor: isPlaying
+              ? Theme.of(context).colorScheme.onTertiaryContainer
+              : Theme.of(context).colorScheme.tertiary,
+          bufferedBarColor: isPlaying
+              ? Theme.of(context).colorScheme.tertiaryContainer
+              : Theme.of(context).colorScheme.onTertiary,
+          thumbColor: isPlaying
+              ? Theme.of(context).colorScheme.secondaryContainer
+              : Theme.of(context).colorScheme.onSecondaryContainer,
+          thumbGlowColor: isPlaying
+              ? Theme.of(context).colorScheme.onSecondary
+              : Theme.of(context).colorScheme.secondary,
           timeLabelLocation: TimeLabelLocation.sides,
           progress: value.current,
           buffered: value.buffered,
           total: value.total,
           onSeek: _pageManager.seek,
           timeLabelTextStyle: Theme.of(context).textTheme.labelMedium!.copyWith(
-            color: isPlaying? Theme.of(context).colorScheme.onInverseSurface: Theme.of(context).colorScheme.inverseSurface
-          ),
+              color: isPlaying
+                  ? Theme.of(context).colorScheme.onInverseSurface
+                  : Theme.of(context).colorScheme.inverseSurface),
         );
       },
     );
