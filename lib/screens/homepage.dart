@@ -15,6 +15,7 @@ import 'package:live_darbar/models/duty.dart';
 import 'package:live_darbar/models/timer.dart';
 import 'package:live_darbar/notifiers/progress_notifier.dart';
 import 'package:live_darbar/utils/ad_state.dart';
+import 'package:live_darbar/utils/permission.dart';
 import 'package:provider/provider.dart';
 import '../components/round_icon_button.dart';
 import 'package:intl/intl.dart';
@@ -531,42 +532,46 @@ class _HomePageState extends State<HomePage>
   }
 
   void _startDownload() async {
-    setState(() {
-      _downloading = true;
-      _elapsedTime = Duration.zero;
-      loading = true;
-    });
+    bool hasPermission = await PermissionHandler.checkStoragePermission();
 
-    client = http.Client();
-    final request = http.Request('GET', Uri.parse(streamUrl));
-    _response = await client.send(request);
+    if (hasPermission) {
+      setState(() {
+        _downloading = true;
+        _elapsedTime = Duration.zero;
+        loading = true;
+      });
 
-    setState(() {
-      loading = false;
-    });
+      client = http.Client();
+      final request = http.Request('GET', Uri.parse(streamUrl));
+      _response = await client.send(request);
 
-    // final dir = await getTemporaryDirectory();
-    final timestamp = DateTime.now().microsecondsSinceEpoch;
-    final file = File('/storage/emulated/0/Music/live_darbar_$timestamp.mp3');
+      setState(() {
+        loading = false;
+      });
 
-    Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (!_downloading) {
-        timer.cancel();
-      } else {
-        setState(() {
-          _elapsedTime = Duration(seconds: _elapsedTime.inSeconds + 1);
-        });
-      }
-    });
+      // final dir = await getTemporaryDirectory();
+      final timestamp = DateTime.now().microsecondsSinceEpoch;
+      final file = File('/storage/emulated/0/Music/live_darbar_$timestamp.mp3');
 
-    await file.create();
-    await _response.stream.forEach((data) {
-      file.writeAsBytesSync(data, mode: FileMode.append);
-    });
+      Timer.periodic(const Duration(seconds: 1), (timer) {
+        if (!_downloading) {
+          timer.cancel();
+        } else {
+          setState(() {
+            _elapsedTime = Duration(seconds: _elapsedTime.inSeconds + 1);
+          });
+        }
+      });
 
-    setState(() {
-      _downloading = false;
-    });
+      await file.create();
+      await _response.stream.forEach((data) {
+        file.writeAsBytesSync(data, mode: FileMode.append);
+      });
+
+      setState(() {
+        _downloading = false;
+      });
+    }
 
     // cancel the stream
   }

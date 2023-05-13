@@ -54,6 +54,7 @@ dependencies:
   scrolling_text: ^0.0.4
   cached_network_image: ^3.2.3
   percent_indicator: ^4.2.3
+  permission_handler: ^10.2.0
 
 
 
