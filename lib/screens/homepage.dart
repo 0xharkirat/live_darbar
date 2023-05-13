@@ -418,7 +418,7 @@ class _HomePageState extends State<HomePage>
   }
 
   String _formatDateTime(DateTime dateTime) {
-    return DateFormat('MMMM dd, yyyy - hh:mm:ss').format(dateTime);
+    return DateFormat('MMMM dd, yyyy - HH:mm:ss').format(dateTime);
   }
 
   void isliveStarted(DateTime now) {
@@ -444,7 +444,7 @@ class _HomePageState extends State<HomePage>
     ist = DateTime.now().toUtc().add(const Duration(hours: 5, minutes: 30));
 
     final String formattedDateTime =
-        DateFormat('MMMM dd, yyyy - hh:mm:ss').format(ist);
+        DateFormat('MMMM dd, yyyy - HH:mm:ss').format(ist);
 
     isliveStarted(ist);
     if (_todayDuties.isNotEmpty) {
