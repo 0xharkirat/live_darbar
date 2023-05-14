@@ -523,14 +523,7 @@ class _HomePageState extends State<HomePage>
           color: Theme.of(context).colorScheme.onInverseSurface,
         ),
       ),
-      action: SnackBarAction(
-        textColor: Theme.of(context).colorScheme.onInverseSurface,
-        label: "Open",
-        onPressed: () async {
-          await OpenFile.open('/storage/emulated/0/Music');
-          print('file opened $_localFilePath');
-        },
-      ),
+     
     );
     ScaffoldMessenger.of(context).removeCurrentSnackBar();
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
