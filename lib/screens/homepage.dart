@@ -44,7 +44,7 @@ class _HomePageState extends State<HomePage>
   late bool _downloading;
   late String _localFilePath;
 
-  String _headerImagePath = 'images/live_kirtan.jpg';
+  String _headerImagePath = 'images/player.jpg';
 
   var client;
   bool loading = false;
@@ -115,7 +115,7 @@ class _HomePageState extends State<HomePage>
 
   double getAngle() {
     var value = _controller?.value ?? 0;
-    return value * 2 * pi;
+    return -value * 2 * pi;
   }
 
   Widget playerHeader() {
@@ -637,7 +637,7 @@ class _HomePageState extends State<HomePage>
                           selectedChannel = Channel.liveKirtan;
                           isPlaying = true;
                           visible = false;
-                          _headerImagePath = 'images/live_kirtan.jpg';
+                          _headerImagePath = 'images/live_kirtan_player.jpg';
                           _controller?.repeat();
                           bottomAnimation = true;
                         });
@@ -682,7 +682,7 @@ class _HomePageState extends State<HomePage>
                           selectedChannel = Channel.mukhwak;
                           isPlaying = true;
                           visible = true;
-                          _headerImagePath = 'images/mukhwak.jpg';
+                          _headerImagePath = 'images/mukhwak_player.jpg';
                           _controller?.repeat();
                           bottomAnimation = true;
                         });
@@ -724,7 +724,7 @@ class _HomePageState extends State<HomePage>
                           selectedChannel = Channel.mukhwakKatha;
                           isPlaying = true;
                           visible = true;
-                          _headerImagePath = 'images/katha.jpg';
+                          _headerImagePath = 'images/katha_player.jpg';
                           _controller?.repeat();
                           bottomAnimation = true;
                         });
