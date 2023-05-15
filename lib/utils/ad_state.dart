@@ -23,7 +23,7 @@ class AdState {
     } else if (Platform.isIOS) {
       return "ca-app-pub-3940256099942544/4411468910";
     } else {
-      throw new UnsupportedError("Unsupported platform");
+      throw UnsupportedError("Unsupported platform");
     }
   }
 
@@ -39,5 +39,4 @@ class AdState {
     onAdOpened: (ad) => print('Ad opened: ${ad.adUnitId}.'),
     onAdClicked: (ad) => print('Ad clicked: ${ad.adUnitId}.'),
   );
-
 }
