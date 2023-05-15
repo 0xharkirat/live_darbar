@@ -45,12 +45,12 @@ class MyApp extends StatelessWidget {
     return FutureBuilder(
         future: Firebase.initializeApp(),
         builder: (context, snapshot) {
-           if (snapshot.hasError) {
+          if (snapshot.hasError) {
             return Text(
               'There was an error :(',
               style: Theme.of(context).textTheme.titleLarge!,
             );
-          }else if (snapshot.connectionState == ConnectionState.done) {
+          } else if (snapshot.connectionState == ConnectionState.done) {
             return MaterialApp(
               theme: theme,
               debugShowCheckedModeBanner: false,
