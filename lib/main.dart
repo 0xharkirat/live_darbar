@@ -1,3 +1,4 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -41,10 +42,24 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: theme,
-      debugShowCheckedModeBanner: false,
-      home: const HomePage(),
-    );
+    return FutureBuilder(
+        future: Firebase.initializeApp(),
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return Text(
+              'There was an error :(',
+              style: Theme.of(context).textTheme.titleLarge!,
+            );
+          } else if (snapshot.connectionState == ConnectionState.done) {
+            return MaterialApp(
+              theme: theme,
+              debugShowCheckedModeBanner: false,
+              home: const HomePage(),
+            );
+          }
+          return CircularProgressIndicator(
+            color: Theme.of(context).colorScheme.onBackground,
+          );
+        });
   }
 }
