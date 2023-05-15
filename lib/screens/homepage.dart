@@ -15,14 +15,13 @@ import 'package:live_darbar/models/duty.dart';
 import 'package:live_darbar/models/timer.dart';
 import 'package:live_darbar/notifiers/progress_notifier.dart';
 import 'package:live_darbar/utils/ad_state.dart';
+import 'package:live_darbar/utils/firestore.dart';
 import 'package:live_darbar/utils/permission.dart';
-import 'package:open_file/open_file.dart';
 import 'package:provider/provider.dart';
 import '../components/round_icon_button.dart';
 import 'package:intl/intl.dart';
 import 'package:text_scroll/text_scroll.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -42,7 +41,6 @@ class _HomePageState extends State<HomePage>
   bool isPlaying = false;
   late http.StreamedResponse _response;
   late bool _downloading;
-  late String _localFilePath;
 
   String _headerImagePath = 'images/player.jpg';
 
@@ -478,12 +476,8 @@ class _HomePageState extends State<HomePage>
   }
 
   void _getData() async {
-    final duties = Uri.https(
-        'live-darbar-default-rtdb.firebaseio.com', 'kirtan_duties.json');
-
-    final response = await http.get(duties);
-
-    final List<dynamic> listData = json.decode(response.body);
+    
+    final List<dynamic> listData = await FirestoreData.getData();
     final List<Duty> loadedDuties = [];
     for (final duty in listData) {
       loadedDuties.add(Duty(
@@ -523,7 +517,6 @@ class _HomePageState extends State<HomePage>
           color: Theme.of(context).colorScheme.onInverseSurface,
         ),
       ),
-     
     );
     ScaffoldMessenger.of(context).removeCurrentSnackBar();
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
@@ -555,7 +548,6 @@ class _HomePageState extends State<HomePage>
       // final dir = await getTemporaryDirectory();
       final timestamp = DateTime.now().microsecondsSinceEpoch;
       final file = File('/storage/emulated/0/Music/live_darbar_$timestamp.mp3');
-      _localFilePath = file.path;
 
       Timer.periodic(const Duration(seconds: 1), (timer) {
         if (!_downloading) {
