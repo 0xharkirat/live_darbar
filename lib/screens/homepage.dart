@@ -18,7 +18,7 @@ import 'package:live_darbar/utils/ad_state.dart';
 import 'package:live_darbar/utils/firestore.dart';
 import 'package:live_darbar/utils/permission.dart';
 import 'package:provider/provider.dart';
-import '../components/round_icon_button.dart';
+import 'package:live_darbar/components/round_icon_button.dart';
 import 'package:intl/intl.dart';
 import 'package:text_scroll/text_scroll.dart';
 import 'package:http/http.dart' as http;
