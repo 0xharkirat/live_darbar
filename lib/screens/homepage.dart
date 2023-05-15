@@ -340,13 +340,23 @@ class _HomePageState extends State<HomePage>
       t = Timer(Duration(minutes: time.time), () {
         _pageManager.pause();
         sleepTimerSet = false;
+        setState(() {
+          isPlaying = false;
+
+          _controller?.reset();
+        });
       });
     } else {
       t.cancel();
       sleepTimerSet = true;
-      t = Timer(Duration(seconds: time.time), () {
+      t = Timer(Duration(minutes: time.time), () {
         _pageManager.pause();
         sleepTimerSet = false;
+        setState(() {
+          isPlaying = false;
+
+          _controller?.reset();
+        });
       });
     }
   }
@@ -476,7 +486,6 @@ class _HomePageState extends State<HomePage>
   }
 
   void _getData() async {
-    
     final List<dynamic> listData = await FirestoreData.getData();
     final List<Duty> loadedDuties = [];
     for (final duty in listData) {
