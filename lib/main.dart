@@ -42,24 +42,30 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
+    return MaterialApp(
+      theme: theme,
+      debugShowCheckedModeBanner: false,
+      home: FutureBuilder(
         future: Firebase.initializeApp(),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
-            return Text(
-              'There was an error :(',
-              style: Theme.of(context).textTheme.titleLarge!,
+            return Scaffold(
+              body: Center(
+                child: Text(
+                  'There was an error :(',
+                  style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                      color: Theme.of(context).colorScheme.onBackground),
+                ),
+              ),
             );
           } else if (snapshot.connectionState == ConnectionState.done) {
-            return MaterialApp(
-              theme: theme,
-              debugShowCheckedModeBanner: false,
-              home: const HomePage(),
-            );
+            return const HomePage();
           }
-          return CircularProgressIndicator(
-            color: Theme.of(context).colorScheme.onBackground,
+          return const Scaffold(
+            body: Center(),
           );
-        });
+        },
+      ),
+    );
   }
 }
