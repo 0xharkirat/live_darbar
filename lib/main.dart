@@ -49,6 +49,7 @@ class MyApp extends StatelessWidget {
         future: Firebase.initializeApp(),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
+            print(snapshot.error);
             return Scaffold(
               body: Center(
                 child: Text(
