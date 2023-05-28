@@ -1,37 +1,26 @@
 {
   "project_info": {
-    "project_number": "271862582161",
-    "firebase_url": "https://live-darbar-default-rtdb.firebaseio.com",
-    "project_id": "live-darbar",
-    "storage_bucket": "live-darbar.appspot.com"
+    "project_number": "1053978993170",
+    "project_id": "live-darbar-a29ee",
+    "storage_bucket": "live-darbar-a29ee.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:271862582161:android:386866efd7776cbfe76830",
+        "mobilesdk_app_id": "1:1053978993170:android:cab26e6cf07b1e1681aecb",
         "android_client_info": {
           "package_name": "com.hsiharki.live_darbar"
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "271862582161-0rae46eun71e9clp29ejal4q5qukok2t.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
+      "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyBNmnfD4_TW_X6cDVyQnM2Vjm6jtHtaBaU"
+          "current_key": "AIzaSyCMgfaf7Rwr6BlFgKyME1bFvJJB71dXDqo"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "271862582161-0rae46eun71e9clp29ejal4q5qukok2t.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
+          "other_platform_oauth_client": []
         }
       }
     }
