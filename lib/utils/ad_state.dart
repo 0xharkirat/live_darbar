@@ -11,7 +11,7 @@ class AdState {
     if (Platform.isAndroid) {
       return 'ca-app-pub-4044023931058018/8808754038';
     } else if (Platform.isIOS) {
-      return 'ca-app-pub-3940256099942544/2934735716';
+      return 'ca-app-pub-4044023931058018/2475279973';
     } else {
       throw UnsupportedError('Unsupported platform');
     }
@@ -21,7 +21,7 @@ class AdState {
     if (Platform.isAndroid) {
       return "ca-app-pub-4044023931058018/4621300853";
     } else if (Platform.isIOS) {
-      return "ca-app-pub-3940256099942544/4411468910";
+      return "ca-app-pub-4044023931058018/7192420034";
     } else {
       throw UnsupportedError("Unsupported platform");
     }
