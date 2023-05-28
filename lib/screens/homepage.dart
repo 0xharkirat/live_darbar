@@ -17,6 +17,7 @@ import 'package:live_darbar/notifiers/progress_notifier.dart';
 import 'package:live_darbar/utils/ad_state.dart';
 import 'package:live_darbar/utils/firestore.dart';
 import 'package:live_darbar/utils/permission.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:live_darbar/components/round_icon_button.dart';
 import 'package:intl/intl.dart';
@@ -521,7 +522,9 @@ class _HomePageState extends State<HomePage>
       behavior: SnackBarBehavior.floating,
       backgroundColor: Theme.of(context).colorScheme.onPrimaryContainer,
       content: Text(
-        'Recording Saved at: /storage/emulated/0/Music/',
+        Platform.isAndroid
+            ? 'Recording Saved at: /storage/emulated/0/Music/'
+            : 'Recording Saved at: Files/Live Darbar/',
         style: TextStyle(
           color: Theme.of(context).colorScheme.onInverseSurface,
         ),
@@ -556,7 +559,16 @@ class _HomePageState extends State<HomePage>
 
       // final dir = await getTemporaryDirectory();
       final timestamp = DateTime.now().microsecondsSinceEpoch;
-      final file = File('/storage/emulated/0/Music/live_darbar_$timestamp.mp3');
+
+      File file;
+
+      if (Platform.isIOS) {
+        final documents = await getApplicationDocumentsDirectory();
+        file = File('${documents.path}/live_darbar_$timestamp.mp3');
+        // print(documents.path);
+      } else {
+        file = File('/storage/emulated/0/Music/live_darbar_$timestamp.mp3');
+      }
 
       Timer.periodic(const Duration(seconds: 1), (timer) {
         if (!_downloading) {
@@ -753,205 +765,200 @@ class _HomePageState extends State<HomePage>
                     const SizedBox(
                       height: 20,
                     ),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Column(
-                            children: [
-                              Card(
-                                child: ListTile(
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(5)),
-                                  tileColor: Theme.of(context)
-                                      .colorScheme
-                                      .onInverseSurface,
-                                  onTap: () async {
-                                    await showDialog(
-                                      context: context,
-                                      builder: (_) => const WebViewApp(
-                                        url:
-                                            'https://old.sgpc.net/hukumnama/jpeg%20hukamnama/hukamnama.gif',
-                                      ),
-                                    );
-                                    showInterstitialAdRandom();
-                                  },
-                                  leading: Icon(
-                                    FontAwesomeIcons.bookOpenReader,
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .inverseSurface,
+                    Expanded(
+                      child: GridView(
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 2,
+                                // mainAxisExtent: 32,
+                                childAspectRatio: 2.75),
+                        children: [
+                          Card(
+                            child: ListTile(
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(5)),
+                              tileColor: Theme.of(context)
+                                  .colorScheme
+                                  .onInverseSurface,
+                              onTap: () async {
+                                await showDialog(
+                                  context: context,
+                                  builder: (_) => const WebViewApp(
+                                    url:
+                                        'https://old.sgpc.net/hukumnama/jpeg%20hukamnama/hukamnama.gif',
                                   ),
-                                  title: Text(
-                                    'Read Mukhwak',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .labelMedium!
-                                        .copyWith(
-                                          fontWeight: FontWeight.bold,
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .inverseSurface,
-                                        ),
-                                  ),
-                                ),
+                                );
+                                showInterstitialAdRandom();
+                              },
+                              leading: Icon(
+                                FontAwesomeIcons.bookOpenReader,
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .inverseSurface,
                               ),
-                              Card(
-                                child: ListTile(
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(5)),
-                                  tileColor: Theme.of(context)
-                                      .colorScheme
-                                      .onInverseSurface,
-                                  onTap: () async {
-                                    await showDialog(
-                                        context: context,
-                                        builder: (_) => const WebViewApp(
-                                              url:
-                                                  'https://sgpc.net/wp-content/uploads/2014/04/maryada_11.jpg',
-                                            ));
-                                    showInterstitialAdRandom();
-                                  },
-                                  leading: Icon(
-                                    FontAwesomeIcons.calendarDays,
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .inverseSurface,
-                                  ),
-                                  title: Text(
-                                    'Daily Routine',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .labelMedium!
-                                        .copyWith(
-                                          fontWeight: FontWeight.bold,
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .inverseSurface,
-                                        ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Expanded(
-                          child: Column(
-                            children: [
-                              Card(
-                                child: ListTile(
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(5)),
-                                  tileColor: Theme.of(context)
-                                      .colorScheme
-                                      .onInverseSurface,
-                                  onTap: () async {
-                                    await showDialog(
-                                        context: context,
-                                        builder: (_) => RagiListDialog(
-                                            ragiList: _todayDuties,
-                                            current: _currentDuty));
-                                    showInterstitialAdRandom();
-                                  },
-                                  leading: Icon(
-                                    FontAwesomeIcons.userClock,
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .inverseSurface,
-                                  ),
-                                  title: Text(
-                                    'Ragi Duties',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .labelMedium!
-                                        .copyWith(
-                                          fontWeight: FontWeight.bold,
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .inverseSurface,
-                                        ),
-                                  ),
-                                ),
-                              ),
-                              if (!_downloading)
-                                Card(
-                                  child: ListTile(
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(5)),
-                                    tileColor: Theme.of(context)
-                                        .colorScheme
-                                        .onInverseSurface,
-                                    leading: Icon(
-                                      FontAwesomeIcons.microphone,
+                              title: Text(
+                                'Read Mukhwak',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .labelMedium!
+                                    .copyWith(
+                                      fontWeight: FontWeight.bold,
                                       color: Theme.of(context)
                                           .colorScheme
                                           .inverseSurface,
                                     ),
-                                    title: Text(
-                                      'Record',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .labelMedium!
-                                          .copyWith(
-                                            fontWeight: FontWeight.bold,
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .inverseSurface,
-                                          ),
+                              ),
+                            ),
+                          ),
+                          Card(
+                            child: ListTile(
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(5)),
+                              tileColor: Theme.of(context)
+                                  .colorScheme
+                                  .onInverseSurface,
+                              onTap: () async {
+                                await showDialog(
+                                    context: context,
+                                    builder: (_) => const WebViewApp(
+                                          url:
+                                              'https://sgpc.net/wp-content/uploads/2014/04/maryada_11.jpg',
+                                        ));
+                                showInterstitialAdRandom();
+                              },
+                              leading: Icon(
+                                FontAwesomeIcons.calendarDays,
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .inverseSurface,
+                              ),
+                              title: Text(
+                                'Daily Routine',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .labelMedium!
+                                    .copyWith(
+                                      fontWeight: FontWeight.bold,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .inverseSurface,
                                     ),
-                                    onTap: () {
-                                      _startDownload();
-                                    },
-                                  ),
+                              ),
+                            ),
+                          ),
+                          Card(
+                            child: ListTile(
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(5)),
+                              tileColor: Theme.of(context)
+                                  .colorScheme
+                                  .onInverseSurface,
+                              onTap: () async {
+                                await showDialog(
+                                    context: context,
+                                    builder: (_) => RagiListDialog(
+                                        ragiList: _todayDuties,
+                                        current: _currentDuty));
+                                showInterstitialAdRandom();
+                              },
+                              leading: Icon(
+                                FontAwesomeIcons.userClock,
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .inverseSurface,
+                              ),
+                              title: Text(
+                                'Ragi Duties',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .labelMedium!
+                                    .copyWith(
+                                      fontWeight: FontWeight.bold,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .inverseSurface,
+                                    ),
+                              ),
+                            ),
+                          ),
+                          if (!_downloading)
+                            Card(
+                              child: ListTile(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(5)),
+                                tileColor: Theme.of(context)
+                                    .colorScheme
+                                    .onInverseSurface,
+                                leading: Icon(
+                                  FontAwesomeIcons.microphone,
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .inverseSurface,
                                 ),
-                              if (_downloading)
-                                Card(
-                                  child: ListTile(
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(5)),
-                                    tileColor: loading
-                                        ? Theme.of(context)
+                                title: Text(
+                                  'Record',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .labelMedium!
+                                      .copyWith(
+                                        fontWeight: FontWeight.bold,
+                                        color: Theme.of(context)
                                             .colorScheme
-                                            .onInverseSurface
-                                        : Theme.of(context)
+                                            .inverseSurface,
+                                      ),
+                                ),
+                                onTap: () {
+                                  _startDownload();
+                                },
+                              ),
+                            ),
+                          if (_downloading)
+                            Card(
+                              child: ListTile(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(5)),
+                                tileColor: loading
+                                    ? Theme.of(context)
+                                        .colorScheme
+                                        .onInverseSurface
+                                    : Theme.of(context)
+                                        .colorScheme
+                                        .onPrimaryContainer,
+                                leading: loading
+                                    ? null
+                                    : Icon(FontAwesomeIcons.microphoneSlash,
+                                        color: Theme.of(context)
                                             .colorScheme
-                                            .onPrimaryContainer,
-                                    leading: loading
-                                        ? null
-                                        : Icon(FontAwesomeIcons.microphoneSlash,
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .onInverseSurface),
-                                    title: loading
-                                        ? Center(
-                                            child: CircularProgressIndicator(
+                                            .onInverseSurface),
+                                title: loading
+                                    ? Center(
+                                        child: CircularProgressIndicator(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .error,
+                                        ),
+                                      )
+                                    : Text(
+                                        _formatDuration(_elapsedTime),
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .labelMedium!
+                                            .copyWith(
+                                              fontWeight: FontWeight.bold,
                                               color: Theme.of(context)
                                                   .colorScheme
-                                                  .error,
+                                                  .onInverseSurface,
                                             ),
-                                          )
-                                        : Text(
-                                            _formatDuration(_elapsedTime),
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .labelMedium!
-                                                .copyWith(
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Theme.of(context)
-                                                      .colorScheme
-                                                      .onInverseSurface,
-                                                ),
-                                          ),
-                                    onTap: loading
-                                        ? null
-                                        : () {
-                                            _stopDownload();
-                                          },
-                                  ),
-                                ),
-                            ],
-                          ),
-                        ),
-                      ],
+                                      ),
+                                onTap: loading
+                                    ? null
+                                    : () {
+                                        _stopDownload();
+                                      },
+                              ),
+                            ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
