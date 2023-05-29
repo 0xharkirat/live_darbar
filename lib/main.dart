@@ -43,29 +43,34 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: theme,
-      debugShowCheckedModeBanner: false,
-      home: FutureBuilder(
-        future: Firebase.initializeApp(),
-        builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            return Scaffold(
-              body: Center(
-                child: Text(
-                  'There was an error :(',
-                  style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                      color: Theme.of(context).colorScheme.onBackground),
+        theme: theme,
+        debugShowCheckedModeBanner: false,
+        home: FutureBuilder(
+          future: Firebase.initializeApp(),
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              return Scaffold(
+                body: Center(
+                  child: Text(
+                    'There was an error :(',
+                    style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                        color: Theme.of(context).colorScheme.onBackground),
+                  ),
                 ),
-              ),
+              );
+            } else if (snapshot.connectionState == ConnectionState.done) {
+              return const HomePage();
+            }
+            return const Scaffold(
+              body: Center(),
             );
-          } else if (snapshot.connectionState == ConnectionState.done) {
-            return const HomePage();
-          }
-          return const Scaffold(
-            body: Center(),
+          },
+        ),
+        builder: (context, child) {
+          return MediaQuery(
+            data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+            child: child!,
           );
-        },
-      ),
-    );
+        });
   }
 }
