@@ -963,6 +963,17 @@ class _HomePageState extends State<HomePage>
                   ],
                 ),
               ),
+              if (selectedChannel != Channel.mukhwak && selectedChannel != Channel.mukhwakKatha)
+                const TextScroll(
+                  "All data is sourced from SGPC.net; Ragi list and duties may not be updated on SGPC.net in realtime.",
+                  velocity: Velocity(pixelsPerSecond: Offset(30, 0)),
+                  // delayBefore: Duration(seconds: 1),
+                  intervalSpaces: 110,
+                  style: TextStyle(
+                    color: Color(0xFFE9E1D9),
+                    fontFamily: 'Rubik',
+                  ),
+                ),
               if (banner == null)
                 const SizedBox(
                   height: 50,
