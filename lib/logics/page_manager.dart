@@ -11,15 +11,15 @@ class PageManager {
   final progressNotifier = ProgressNotifier();
 
   static const liveKirtan =
-      'https://live.sgpc.net:8443/;nocache=889869audio_file.mp3';
+      'http://live.sgpc.net:8080/;';
   static const mukhwak =
       'https://old.sgpc.net/hukumnama/jpeg%20hukamnama/hukamnama.mp3';
   static const mukhwakKatha =
       'https://old.sgpc.net/hukumnama/jpeg hukamnama/katha.mp3';
 
-  late List _playlist;
+  
 
-  final items = [
+  final _playlist = [
     AudioSource.uri(
       Uri.parse(liveKirtan),
       tag: MediaItem(
@@ -45,8 +45,7 @@ class PageManager {
 
   // Define the playlist
   void _setInitialPlaylist() async {
-    _playlist = items;
-    await _audioPlayer.setAudioSource(_playlist[0]);
+    await _audioPlayer.setAudioSource(_playlist[0], preload: true);
   }
 
   late AudioPlayer _audioPlayer;

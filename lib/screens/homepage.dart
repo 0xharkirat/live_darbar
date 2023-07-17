@@ -31,7 +31,7 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-const streamUrl = 'https://live.sgpc.net:8443/;nocache=889869';
+const streamUrl = 'http://live.sgpc.net:8080/;';
 
 late final PageManager _pageManager;
 late final Random random;
