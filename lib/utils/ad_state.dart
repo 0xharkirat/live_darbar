@@ -1,8 +1,15 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 class AdState {
+
+  static bool get isSimulator {
+    return !kIsWeb && (defaultTargetPlatform == TargetPlatform.iOS || defaultTargetPlatform == TargetPlatform.android);
+  }
+
+  
   Future<InitializationStatus> initialization;
 
   AdState(this.initialization);

@@ -785,7 +785,7 @@ class _HomePageState extends State<HomePage>
                                   context: context,
                                   builder: (_) => const WebViewApp(
                                     url:
-                                        'https://old.sgpc.net/hukumnama/jpeg%20hukamnama/hukamnama.gif',
+                                        'https://old.sgpc.net/hukumnama/jpeg%20hukamnama/hukamnama.gif', title: 'Mukhwak',
                                   ),
                                 );
                                 showInterstitialAdRandom();
@@ -822,7 +822,7 @@ class _HomePageState extends State<HomePage>
                                     context: context,
                                     builder: (_) => const WebViewApp(
                                           url:
-                                              'https://sgpc.net/wp-content/uploads/2014/04/maryada_11.jpg',
+                                              'https://sgpc.net/wp-content/uploads/2014/04/maryada_11.jpg', title: 'Daily Routine',
                                         ));
                                 showInterstitialAdRandom();
                               },
@@ -974,7 +974,7 @@ class _HomePageState extends State<HomePage>
                     fontFamily: 'Rubik',
                   ),
                 ),
-              if (banner == null)
+              if (banner == null || AdState.isSimulator)
                 const SizedBox(
                   height: 50,
                 )
