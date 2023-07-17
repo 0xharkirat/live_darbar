@@ -4,6 +4,7 @@ import 'dart:math';
 
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_offline/flutter_offline.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:live_darbar/components/ragi_list_dialog.dart';
@@ -68,6 +69,7 @@ class _HomePageState extends State<HomePage>
   bool bottomAnimation = false;
 
   late bool liveStarted;
+  int single = 0;
 
   @override
   void didChangeDependencies() {
@@ -169,39 +171,20 @@ class _HomePageState extends State<HomePage>
                           isPlaying: isPlaying,
                         )
                       : liveStarted
-                          ? _currentDuty?.ragi != null
-                              ? Text(
-                                  'Current Ragi: ${_currentDuty?.ragi}',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodySmall!
-                                      .copyWith(
-                                          color: isPlaying
-                                              ? Theme.of(context)
-                                                  .colorScheme
-                                                  .primaryContainer
-                                              : Theme.of(context)
-                                                  .colorScheme
-                                                  .inverseSurface),
-                                )
-                              : TextScroll(
-                                  'Path or Ardas is going to start, or is currently going on, or change of Ragi duty according to the Timetable.',
-                                  velocity: const Velocity(
-                                      pixelsPerSecond: Offset(30, 0)),
-                                  // delayBefore: Duration(seconds: 1),
-                                  intervalSpaces: 60,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodySmall!
-                                      .copyWith(
-                                          color: isPlaying
-                                              ? Theme.of(context)
-                                                  .colorScheme
-                                                  .primaryContainer
-                                              : Theme.of(context)
-                                                  .colorScheme
-                                                  .inverseSurface),
-                                )
+                          ? Text(
+                              'Current Ragi: ${_currentDuty?.ragi}',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodySmall!
+                                  .copyWith(
+                                      color: isPlaying
+                                          ? Theme.of(context)
+                                              .colorScheme
+                                              .primaryContainer
+                                          : Theme.of(context)
+                                              .colorScheme
+                                              .inverseSurface),
+                            )
                           : Container(),
                   const SizedBox(
                     height: 10.0,
@@ -217,6 +200,8 @@ class _HomePageState extends State<HomePage>
                           builder: (_, value, __) {
                             switch (value) {
                               case ButtonState.loading:
+                                print('loading...........');
+
                                 return SizedBox(
                                   width: 52.0,
                                   height: 52.0,
@@ -231,6 +216,7 @@ class _HomePageState extends State<HomePage>
                                   ),
                                 );
                               case ButtonState.paused:
+                                print('paused..............');
                                 return RoundIconButton(
                                     isPlaying: isPlaying,
                                     icon: FontAwesomeIcons.play,
@@ -244,17 +230,38 @@ class _HomePageState extends State<HomePage>
                                           }
                                         : null);
                               case ButtonState.playing:
+                                print("playing.........");
                                 return RoundIconButton(
                                     isPlaying: isPlaying,
                                     icon: FontAwesomeIcons.pause,
                                     onPressed: () {
                                       _pageManager.pause();
+
                                       setState(() {
                                         isPlaying = false;
 
                                         _controller?.reset();
                                       });
                                     });
+                              case ButtonState.completed:
+                                if (single == 0) {
+                                  single = 1;
+                                  isPlaying = false;
+                                  _controller?.reset();
+                                }
+                                return RoundIconButton(
+                                    isPlaying: isPlaying,
+                                    icon: FontAwesomeIcons.play,
+                                    onPressed: bottomAnimation
+                                        ? () {
+                                            single = 0;
+                                            _pageManager.resume();
+                                            setState(() {
+                                              isPlaying = true;
+                                              _controller?.repeat();
+                                            });
+                                          }
+                                        : null);
                             }
                           },
                         ),
@@ -597,395 +604,479 @@ class _HomePageState extends State<HomePage>
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        body: Container(
-          width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height,
-          padding: const EdgeInsets.all(15),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              if (!liveStarted)
-                const TextScroll(
-                  "The Live Kirtan may not be started yet. Refer to daily routine time.",
-                  velocity: Velocity(pixelsPerSecond: Offset(30, 0)),
-                  // delayBefore: Duration(seconds: 1),
-                  intervalSpaces: 60,
-                  style: TextStyle(
-                    color: Color(0xFFE9E1D9),
-                    fontFamily: 'Rubik',
-                  ),
-                ),
-              AnimatedContainer(
-                height: 200,
-                padding: const EdgeInsets.all(10.0),
-                duration: const Duration(seconds: 1),
-                decoration: BoxDecoration(
-                  color: isPlaying
-                      ? Theme.of(context).colorScheme.onPrimaryContainer
-                      : Theme.of(context).colorScheme.onInverseSurface,
-                  borderRadius: BorderRadius.circular(20.0),
-                ),
-                curve: Curves.fastOutSlowIn,
-                child: playerHeader(),
-              ),
-              const SizedBox(
-                height: 20.0,
-              ),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    ListTile(
-                      onTap: () {
-                        _pageManager.play(0);
-
-                        setState(() {
-                          selectedChannel = Channel.liveKirtan;
-                          isPlaying = true;
-                          visible = false;
-                          _headerImagePath = 'images/live_kirtan_player.jpg';
-                          _controller?.repeat();
-                          bottomAnimation = true;
-                        });
-                        showInterstitialAdRandom();
-                      },
-
-                      // tileColor: Theme.of(context).colorScheme.onInverseSurface,
-                      leading: Image.asset(
-                        "images/live_kirtan.jpg",
-                        width: 50.0,
-                        fit: BoxFit.cover,
-                      ),
-                      title: Text(
-                        'Live Kirtan',
-                        style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: selectedChannel == Channel.liveKirtan
-                                  ? Theme.of(context)
-                                      .colorScheme
-                                      .onPrimaryContainer
-                                  : Theme.of(context)
-                                      .colorScheme
-                                      .inverseSurface,
-                            ),
-                      ),
-                      trailing:
-                          selectedChannel == Channel.liveKirtan && isPlaying
-                              ? Image.asset(
-                                  'images/bars.gif',
-                                  width: 20.0,
-                                )
-                              : const SizedBox(),
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    ListTile(
-                      onTap: () {
-                        _pageManager.play(1);
-
-                        setState(() {
-                          selectedChannel = Channel.mukhwak;
-                          isPlaying = true;
-                          visible = true;
-                          _headerImagePath = 'images/mukhwak_player.jpg';
-                          _controller?.repeat();
-                          bottomAnimation = true;
-                        });
-                        showInterstitialAdRandom();
-                      },
-                      leading: Image.asset(
-                        "images/mukhwak.jpg",
-                        width: 50.0,
-                        fit: BoxFit.cover,
-                      ),
-                      title: Text(
-                        'Today\'s Mukhwak',
-                        style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: selectedChannel == Channel.mukhwak
-                                  ? Theme.of(context)
-                                      .colorScheme
-                                      .onPrimaryContainer
-                                  : Theme.of(context)
-                                      .colorScheme
-                                      .inverseSurface,
-                            ),
-                      ),
-                      trailing: selectedChannel == Channel.mukhwak && isPlaying
-                          ? Image.asset(
-                              'images/bars.gif',
-                              width: 20.0,
-                            )
-                          : const SizedBox(),
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    ListTile(
-                      onTap: () {
-                        _pageManager.play(2);
-
-                        setState(() {
-                          selectedChannel = Channel.mukhwakKatha;
-                          isPlaying = true;
-                          visible = true;
-                          _headerImagePath = 'images/katha_player.jpg';
-                          _controller?.repeat();
-                          bottomAnimation = true;
-                        });
-                        showInterstitialAdRandom();
-                      },
-                      leading: Image.asset(
-                        "images/katha.jpg",
-                        width: 50.0,
-                        fit: BoxFit.cover,
-                      ),
-                      title: Text(
-                        'Mukhwak Katha',
-                        style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: selectedChannel == Channel.mukhwakKatha
-                                  ? Theme.of(context)
-                                      .colorScheme
-                                      .onPrimaryContainer
-                                  : Theme.of(context)
-                                      .colorScheme
-                                      .inverseSurface,
-                            ),
-                      ),
-                      trailing:
-                          selectedChannel == Channel.mukhwakKatha && isPlaying
-                              ? Image.asset(
-                                  'images/bars.gif',
-                                  width: 20.0,
-                                )
-                              : const SizedBox(),
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    Expanded(
-                      child: GridView(
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 2,
-                                // mainAxisExtent: 32,
-                                childAspectRatio: 2.75),
-                        children: [
-                          Card(
-                            child: ListTile(
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(5)),
-                              tileColor: Theme.of(context)
-                                  .colorScheme
-                                  .onInverseSurface,
-                              onTap: () async {
-                                await showDialog(
-                                  context: context,
-                                  builder: (_) => const WebViewApp(
-                                    url:
-                                        'https://old.sgpc.net/hukumnama/jpeg%20hukamnama/hukamnama.gif', title: 'Mukhwak',
-                                  ),
-                                );
-                                showInterstitialAdRandom();
-                              },
-                              leading: Icon(
-                                FontAwesomeIcons.bookOpenReader,
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .inverseSurface,
-                              ),
-                              title: Text(
-                                'Read Mukhwak',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .labelMedium!
-                                    .copyWith(
-                                      fontWeight: FontWeight.bold,
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .inverseSurface,
-                                    ),
-                              ),
-                            ),
-                          ),
-                          Card(
-                            child: ListTile(
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(5)),
-                              tileColor: Theme.of(context)
-                                  .colorScheme
-                                  .onInverseSurface,
-                              onTap: () async {
-                                await showDialog(
-                                    context: context,
-                                    builder: (_) => const WebViewApp(
-                                          url:
-                                              'https://sgpc.net/wp-content/uploads/2014/04/maryada_11.jpg', title: 'Daily Routine',
-                                        ));
-                                showInterstitialAdRandom();
-                              },
-                              leading: Icon(
-                                FontAwesomeIcons.calendarDays,
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .inverseSurface,
-                              ),
-                              title: Text(
-                                'Daily Routine',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .labelMedium!
-                                    .copyWith(
-                                      fontWeight: FontWeight.bold,
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .inverseSurface,
-                                    ),
-                              ),
-                            ),
-                          ),
-                          Card(
-                            child: ListTile(
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(5)),
-                              tileColor: Theme.of(context)
-                                  .colorScheme
-                                  .onInverseSurface,
-                              onTap: () async {
-                                await showDialog(
-                                    context: context,
-                                    builder: (_) => RagiListDialog(
-                                        ragiList: _todayDuties,
-                                        current: _currentDuty));
-                                showInterstitialAdRandom();
-                              },
-                              leading: Icon(
-                                FontAwesomeIcons.userClock,
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .inverseSurface,
-                              ),
-                              title: Text(
-                                'Ragi Duties',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .labelMedium!
-                                    .copyWith(
-                                      fontWeight: FontWeight.bold,
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .inverseSurface,
-                                    ),
-                              ),
-                            ),
-                          ),
-                          if (!_downloading)
-                            Card(
-                              child: ListTile(
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(5)),
-                                tileColor: Theme.of(context)
-                                    .colorScheme
-                                    .onInverseSurface,
-                                leading: Icon(
-                                  FontAwesomeIcons.microphone,
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .inverseSurface,
-                                ),
-                                title: Text(
-                                  'Record',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .labelMedium!
-                                      .copyWith(
-                                        fontWeight: FontWeight.bold,
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .inverseSurface,
-                                      ),
-                                ),
-                                onTap: () {
-                                  _startDownload();
-                                },
-                              ),
-                            ),
-                          if (_downloading)
-                            Card(
-                              child: ListTile(
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(5)),
-                                tileColor: loading
-                                    ? Theme.of(context)
-                                        .colorScheme
-                                        .onInverseSurface
-                                    : Theme.of(context)
-                                        .colorScheme
-                                        .onPrimaryContainer,
-                                leading: loading
-                                    ? null
-                                    : Icon(FontAwesomeIcons.microphoneSlash,
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .onInverseSurface),
-                                title: loading
-                                    ? Center(
+        body: OfflineBuilder(
+            connectivityBuilder: (
+              BuildContext context,
+              ConnectivityResult connectivity,
+              Widget child,
+            ) {
+              final connected = connectivity != ConnectivityResult.none;
+              if (!connected) {
+                _pageManager.stop();
+                isPlaying = false;
+                selectedChannel = null;
+                _controller?.reset();
+                return Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    Positioned(
+                      height: 32.0,
+                      left: 0.0,
+                      right: 0.0,
+                      bottom: 0.0,
+                      child: AnimatedOpacity(
+                        opacity: !connected ? 1.0 : 0,
+                        duration: const Duration(seconds: 1),
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 350),
+                          color: connected
+                              ? Theme.of(context).colorScheme.tertiary
+                              : Theme.of(context).colorScheme.error,
+                          child: AnimatedSwitcher(
+                            duration: const Duration(milliseconds: 350),
+                            child: connected
+                                ? const Text('Back Online')
+                                : Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: <Widget>[
+                                      const Text('No connection'),
+                                      const SizedBox(width: 8.0),
+                                      SizedBox(
+                                        width: 12.0,
+                                        height: 12.0,
                                         child: CircularProgressIndicator(
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .error,
+                                          strokeWidth: 2.0,
+                                          valueColor:
+                                              AlwaysStoppedAnimation<Color>(
+                                                  Theme.of(context)
+                                                      .colorScheme
+                                                      .onError),
                                         ),
-                                      )
-                                    : Text(
-                                        _formatDuration(_elapsedTime),
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .labelMedium!
-                                            .copyWith(
-                                              fontWeight: FontWeight.bold,
-                                              color: Theme.of(context)
-                                                  .colorScheme
-                                                  .onInverseSurface,
-                                            ),
                                       ),
-                                onTap: loading
-                                    ? null
-                                    : () {
-                                        _stopDownload();
-                                      },
-                              ),
-                            ),
-                        ],
+                                    ],
+                                  ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Center(
+                      child: Text(
+                        "You're offline. Check your connection.",
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.onBackground),
                       ),
                     ),
                   ],
-                ),
-              ),
-              if (selectedChannel != Channel.mukhwak && selectedChannel != Channel.mukhwakKatha)
-                const TextScroll(
-                  "All data is sourced from SGPC.net; Ragi list and duties may not be updated on SGPC.net in realtime.",
-                  velocity: Velocity(pixelsPerSecond: Offset(30, 0)),
-                  // delayBefore: Duration(seconds: 1),
-                  intervalSpaces: 110,
-                  style: TextStyle(
-                    color: Color(0xFFE9E1D9),
-                    fontFamily: 'Rubik',
+                );
+              }
+
+              return child;
+            },
+            child: Container(
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height,
+              padding: const EdgeInsets.all(15),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  if (!liveStarted)
+                    const TextScroll(
+                      "The Live Kirtan may not be started yet. Refer to daily routine time.",
+                      velocity: Velocity(pixelsPerSecond: Offset(30, 0)),
+                      // delayBefore: Duration(seconds: 1),
+                      intervalSpaces: 60,
+                      style: TextStyle(
+                        color: Color(0xFFE9E1D9),
+                        fontFamily: 'Rubik',
+                      ),
+                    ),
+                  AnimatedContainer(
+                    height: 200,
+                    padding: const EdgeInsets.all(10.0),
+                    duration: const Duration(seconds: 1),
+                    decoration: BoxDecoration(
+                      color: isPlaying
+                          ? Theme.of(context).colorScheme.onPrimaryContainer
+                          : Theme.of(context).colorScheme.onInverseSurface,
+                      borderRadius: BorderRadius.circular(20.0),
+                    ),
+                    curve: Curves.fastOutSlowIn,
+                    child: playerHeader(),
                   ),
-                ),
-              if (banner == null || AdState.isSimulator)
-                const SizedBox(
-                  height: 50,
-                )
-              else
-                SizedBox(
-                  height: 50,
-                  child: AdWidget(ad: banner!),
-                )
-            ],
-          ),
-        ),
+                  const SizedBox(
+                    height: 20.0,
+                  ),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        ListTile(
+                          onTap: () {
+                            _pageManager.play(0);
+
+                            setState(() {
+                              selectedChannel = Channel.liveKirtan;
+                              isPlaying = true;
+                              visible = false;
+                              _headerImagePath =
+                                  'images/live_kirtan_player.jpg';
+                              _controller?.repeat();
+                              bottomAnimation = true;
+                            });
+                            showInterstitialAdRandom();
+                          },
+
+                          // tileColor: Theme.of(context).colorScheme.onInverseSurface,
+                          leading: Image.asset(
+                            "images/live_kirtan.jpg",
+                            width: 50.0,
+                            fit: BoxFit.cover,
+                          ),
+                          title: Text(
+                            'Live Kirtan',
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleLarge!
+                                .copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: selectedChannel == Channel.liveKirtan
+                                      ? Theme.of(context)
+                                          .colorScheme
+                                          .onPrimaryContainer
+                                      : Theme.of(context)
+                                          .colorScheme
+                                          .inverseSurface,
+                                ),
+                          ),
+                          trailing:
+                              selectedChannel == Channel.liveKirtan && isPlaying
+                                  ? Image.asset(
+                                      'images/bars.gif',
+                                      width: 20.0,
+                                    )
+                                  : const SizedBox(),
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        ListTile(
+                          onTap: () {
+                            _pageManager.play(1);
+                            single = 0;
+
+                            setState(() {
+                              selectedChannel = Channel.mukhwak;
+                              isPlaying = true;
+                              visible = true;
+                              _headerImagePath = 'images/mukhwak_player.jpg';
+                              _controller?.repeat();
+                              bottomAnimation = true;
+                            });
+                            showInterstitialAdRandom();
+                          },
+                          leading: Image.asset(
+                            "images/mukhwak.jpg",
+                            width: 50.0,
+                            fit: BoxFit.cover,
+                          ),
+                          title: Text(
+                            'Today\'s Mukhwak',
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleLarge!
+                                .copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: selectedChannel == Channel.mukhwak
+                                      ? Theme.of(context)
+                                          .colorScheme
+                                          .onPrimaryContainer
+                                      : Theme.of(context)
+                                          .colorScheme
+                                          .inverseSurface,
+                                ),
+                          ),
+                          trailing:
+                              selectedChannel == Channel.mukhwak && isPlaying
+                                  ? Image.asset(
+                                      'images/bars.gif',
+                                      width: 20.0,
+                                    )
+                                  : const SizedBox(),
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        ListTile(
+                          onTap: () {
+                            _pageManager.play(2);
+                            single = 0;
+
+                            setState(() {
+                              selectedChannel = Channel.mukhwakKatha;
+                              isPlaying = true;
+                              visible = true;
+                              _headerImagePath = 'images/katha_player.jpg';
+                              _controller?.repeat();
+                              bottomAnimation = true;
+                            });
+                            showInterstitialAdRandom();
+                          },
+                          leading: Image.asset(
+                            "images/katha.jpg",
+                            width: 50.0,
+                            fit: BoxFit.cover,
+                          ),
+                          title: Text(
+                            'Mukhwak Katha',
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleLarge!
+                                .copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: selectedChannel == Channel.mukhwakKatha
+                                      ? Theme.of(context)
+                                          .colorScheme
+                                          .onPrimaryContainer
+                                      : Theme.of(context)
+                                          .colorScheme
+                                          .inverseSurface,
+                                ),
+                          ),
+                          trailing: selectedChannel == Channel.mukhwakKatha &&
+                                  isPlaying
+                              ? Image.asset(
+                                  'images/bars.gif',
+                                  width: 20.0,
+                                )
+                              : const SizedBox(),
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        Expanded(
+                          child: GridView(
+                            gridDelegate:
+                                const SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: 2,
+                                    // mainAxisExtent: 32,
+                                    childAspectRatio: 2.75),
+                            children: [
+                              Card(
+                                child: ListTile(
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(5)),
+                                  tileColor: Theme.of(context)
+                                      .colorScheme
+                                      .onInverseSurface,
+                                  onTap: () async {
+                                    await showDialog(
+                                      context: context,
+                                      builder: (_) => const WebViewApp(
+                                        url:
+                                            'https://old.sgpc.net/hukumnama/jpeg%20hukamnama/hukamnama.gif',
+                                        title: 'Mukhwak',
+                                      ),
+                                    );
+                                    showInterstitialAdRandom();
+                                  },
+                                  leading: Icon(
+                                    FontAwesomeIcons.bookOpenReader,
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .inverseSurface,
+                                  ),
+                                  title: Text(
+                                    'Read Mukhwak',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .labelMedium!
+                                        .copyWith(
+                                          fontWeight: FontWeight.bold,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .inverseSurface,
+                                        ),
+                                  ),
+                                ),
+                              ),
+                              Card(
+                                child: ListTile(
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(5)),
+                                  tileColor: Theme.of(context)
+                                      .colorScheme
+                                      .onInverseSurface,
+                                  onTap: () async {
+                                    await showDialog(
+                                        context: context,
+                                        builder: (_) => const WebViewApp(
+                                              url:
+                                                  'https://sgpc.net/wp-content/uploads/2014/04/maryada_11.jpg',
+                                              title: 'Daily Routine',
+                                            ));
+                                    showInterstitialAdRandom();
+                                  },
+                                  leading: Icon(
+                                    FontAwesomeIcons.calendarDays,
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .inverseSurface,
+                                  ),
+                                  title: Text(
+                                    'Daily Routine',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .labelMedium!
+                                        .copyWith(
+                                          fontWeight: FontWeight.bold,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .inverseSurface,
+                                        ),
+                                  ),
+                                ),
+                              ),
+                              Card(
+                                child: ListTile(
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(5)),
+                                  tileColor: Theme.of(context)
+                                      .colorScheme
+                                      .onInverseSurface,
+                                  onTap: () async {
+                                    await showDialog(
+                                        context: context,
+                                        builder: (_) => RagiListDialog(
+                                            ragiList: _todayDuties,
+                                            current: _currentDuty));
+                                    showInterstitialAdRandom();
+                                  },
+                                  leading: Icon(
+                                    FontAwesomeIcons.userClock,
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .inverseSurface,
+                                  ),
+                                  title: Text(
+                                    'Ragi Duties',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .labelMedium!
+                                        .copyWith(
+                                          fontWeight: FontWeight.bold,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .inverseSurface,
+                                        ),
+                                  ),
+                                ),
+                              ),
+                              if (!_downloading)
+                                Card(
+                                  child: ListTile(
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(5)),
+                                    tileColor: Theme.of(context)
+                                        .colorScheme
+                                        .onInverseSurface,
+                                    leading: Icon(
+                                      FontAwesomeIcons.microphone,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .inverseSurface,
+                                    ),
+                                    title: Text(
+                                      'Record',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .labelMedium!
+                                          .copyWith(
+                                            fontWeight: FontWeight.bold,
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .inverseSurface,
+                                          ),
+                                    ),
+                                    onTap: () {
+                                      _startDownload();
+                                    },
+                                  ),
+                                ),
+                              if (_downloading)
+                                Card(
+                                  child: ListTile(
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(5)),
+                                    tileColor: loading
+                                        ? Theme.of(context)
+                                            .colorScheme
+                                            .onInverseSurface
+                                        : Theme.of(context)
+                                            .colorScheme
+                                            .onPrimaryContainer,
+                                    leading: loading
+                                        ? null
+                                        : Icon(FontAwesomeIcons.microphoneSlash,
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .onInverseSurface),
+                                    title: loading
+                                        ? Center(
+                                            child: CircularProgressIndicator(
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .error,
+                                            ),
+                                          )
+                                        : Text(
+                                            _formatDuration(_elapsedTime),
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .labelMedium!
+                                                .copyWith(
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .onInverseSurface,
+                                                ),
+                                          ),
+                                    onTap: loading
+                                        ? null
+                                        : () {
+                                            _stopDownload();
+                                          },
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  if (selectedChannel != Channel.mukhwak &&
+                      selectedChannel != Channel.mukhwakKatha)
+                    const TextScroll(
+                      "All data is sourced from SGPC.net; Ragi list and duties may not be updated on SGPC.net in realtime.",
+                      velocity: Velocity(pixelsPerSecond: Offset(30, 0)),
+                      // delayBefore: Duration(seconds: 1),
+                      intervalSpaces: 110,
+                      style: TextStyle(
+                        color: Color(0xFFE9E1D9),
+                        fontFamily: 'Rubik',
+                      ),
+                    ),
+                  if (banner == null || AdState.isSimulator)
+                    const SizedBox(
+                      height: 50,
+                    )
+                  else
+                    SizedBox(
+                      height: 50,
+                      child: AdWidget(ad: banner!),
+                    )
+                ],
+              ),
+            )),
       ),
     );
   }
