@@ -1,5 +1,3 @@
-
-
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
@@ -10,14 +8,11 @@ class PageManager {
   final currentSongTitleNotifier = ValueNotifier<String>('');
   final progressNotifier = ProgressNotifier();
 
-  static const liveKirtan =
-      'http://live.sgpc.net:8080/;';
+  static const liveKirtan = 'http://live.sgpc.net:8080/;';
   static const mukhwak =
       'https://old.sgpc.net/hukumnama/jpeg%20hukamnama/hukamnama.mp3';
   static const mukhwakKatha =
       'https://old.sgpc.net/hukumnama/jpeg hukamnama/katha.mp3';
-
-  
 
   final _playlist = [
     AudioSource.uri(
@@ -100,18 +95,28 @@ class PageManager {
   }
 
   void _listenForChangesInPlayerState() {
-    _audioPlayer.playerStateStream.listen((playerState) async {
+    _audioPlayer.playerStateStream.listen((playerState) {
       final isPlaying = playerState.playing;
+
       final processingState = playerState.processingState;
+      bool completed = false;
+
       if (processingState == ProcessingState.loading ||
           processingState == ProcessingState.buffering) {
+        print('loading0.......');
         buttonNotifier.value = ButtonState.loading;
       } else if (!isPlaying) {
-        buttonNotifier.value = ButtonState.paused;
+        if (!completed) {
+          print('paused0..........');
+          buttonNotifier.value = ButtonState.paused;
+        }
+        buttonNotifier.value = ButtonState.completed;
       } else if (processingState != ProcessingState.completed) {
+        print('playing0......');
         buttonNotifier.value = ButtonState.playing;
-      } else if (processingState == ProcessingState.completed) {
-        buttonNotifier.value = ButtonState.paused;
+      } else {
+        // completed
+        completed = true;
         _audioPlayer.seek(Duration.zero);
         _audioPlayer.pause();
       }
@@ -164,6 +169,15 @@ class PageManager {
   void dispose() {
     _audioPlayer.dispose();
   }
+
+  void stop() {
+    _audioPlayer.stop();
+  }
 }
 
-enum ButtonState { paused, playing, loading }
+enum ButtonState {
+  paused,
+  playing,
+  loading,
+  completed,
+}
