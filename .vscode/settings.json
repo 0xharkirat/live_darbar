@@ -1,4 +1,10 @@
 {
+<<<<<<< HEAD
   "java.configuration.updateBuildConfiguration": "interactive",
   "editor.acceptSuggestionOnEnter": "on"
 }
+=======
+    "java.configuration.updateBuildConfiguration": "interactive",
+    "editor.acceptSuggestionOnEnter": "on"
+}
+>>>>>>> ae60eb1 (update pod)
