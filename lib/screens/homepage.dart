@@ -14,11 +14,9 @@ import 'package:live_darbar/logics/page_manager.dart';
 import 'package:live_darbar/models/duty.dart';
 import 'package:live_darbar/models/timer.dart';
 import 'package:live_darbar/notifiers/progress_notifier.dart';
-import 'package:live_darbar/utils/ad_state.dart';
 import 'package:live_darbar/utils/firestore.dart';
 import 'package:live_darbar/utils/permission.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:provider/provider.dart';
 import 'package:live_darbar/components/round_icon_button.dart';
 import 'package:intl/intl.dart';
 import 'package:text_scroll/text_scroll.dart';
@@ -71,48 +69,8 @@ class _HomePageState extends State<HomePage>
   late bool liveStarted;
   int single = 0;
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    final adState = Provider.of<AdState>(context);
-    adState.initialization.then((status) {
-      setState(() {
-        banner = BannerAd(
-            size: AdSize.banner,
-            adUnitId: adState.bannerAdUnitId,
-            listener: adState.bannerAdListener,
-            request: const AdRequest())
-          ..load();
-      });
-    });
-  }
 
-  void _loadInterstitialAd() {
-    InterstitialAd.load(
-        adUnitId: AdState.interstitialAdUnitId,
-        request: const AdRequest(),
-        adLoadCallback: InterstitialAdLoadCallback(
-          onAdLoaded: (ad) {
-            ad.fullScreenContentCallback = FullScreenContentCallback(
-              onAdFailedToShowFullScreenContent: (ad, err) {
-                // Dispose the ad here to free resources.
-                ad.dispose();
-              },
-              // Called when the ad dismissed full screen content.
-              onAdDismissedFullScreenContent: (ad) {
-                // Dispose the ad here to free resources.
-                ad.dispose();
-              },
-            );
-            setState(() {
-              interstitialAd = ad;
-            });
-          },
-          onAdFailedToLoad: (error) {
-            print('Failed to load an interstitial ad: ${error.message}');
-          },
-        ));
-  }
+  
 
   double getAngle() {
     var value = _controller?.value ?? 0;
@@ -312,14 +270,7 @@ class _HomePageState extends State<HomePage>
     );
   }
 
-  void showInterstitialAdRandom() async {
-    final randomNumber = random.nextInt(10);
-    // print(randomNumber);
-    if (randomNumber == 0) {
-      await interstitialAd?.show();
-      _loadInterstitialAd();
-    }
-  }
+  
 
   void selectTimer(TimerModel time) {
     final snackBar = SnackBar(
@@ -420,7 +371,7 @@ class _HomePageState extends State<HomePage>
     _getData();
 
     timer = Timer.periodic(const Duration(seconds: 1), (Timer t) => _getTime());
-    _loadInterstitialAd();
+   
   }
 
   @override
@@ -729,7 +680,7 @@ class _HomePageState extends State<HomePage>
                               _controller?.repeat();
                               bottomAnimation = true;
                             });
-                            showInterstitialAdRandom();
+                           
                           },
 
                           // tileColor: Theme.of(context).colorScheme.onInverseSurface,
@@ -778,7 +729,7 @@ class _HomePageState extends State<HomePage>
                               _controller?.repeat();
                               bottomAnimation = true;
                             });
-                            showInterstitialAdRandom();
+                           
                           },
                           leading: Image.asset(
                             "images/mukhwak.jpg",
@@ -825,7 +776,7 @@ class _HomePageState extends State<HomePage>
                               _controller?.repeat();
                               bottomAnimation = true;
                             });
-                            showInterstitialAdRandom();
+                            
                           },
                           leading: Image.asset(
                             "images/katha.jpg",
@@ -883,7 +834,6 @@ class _HomePageState extends State<HomePage>
                                         title: 'Mukhwak',
                                       ),
                                     );
-                                    showInterstitialAdRandom();
                                   },
                                   leading: Icon(
                                     FontAwesomeIcons.bookOpenReader,
@@ -920,7 +870,6 @@ class _HomePageState extends State<HomePage>
                                                   'https://sgpc.net/wp-content/uploads/2014/04/maryada_11.jpg',
                                               title: 'Daily Routine',
                                             ));
-                                    showInterstitialAdRandom();
                                   },
                                   leading: Icon(
                                     FontAwesomeIcons.calendarDays,
@@ -956,7 +905,6 @@ class _HomePageState extends State<HomePage>
 
                                             ragiList: _todayDuties,
                                             current: _currentDuty, today: today,));
-                                    showInterstitialAdRandom();
                                   },
                                   leading: Icon(
                                     FontAwesomeIcons.userClock,
@@ -1072,15 +1020,7 @@ class _HomePageState extends State<HomePage>
                         fontFamily: 'Rubik',
                       ),
                     ),
-                  if (banner == null || AdState.isSimulator)
-                    const SizedBox(
-                      height: 50,
-                    )
-                  else
-                    SizedBox(
-                      height: 50,
-                      child: AdWidget(ad: banner!),
-                    )
+                  
                 ],
               ),
             )),
