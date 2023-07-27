@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:math';
-
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_offline/flutter_offline.dart';
@@ -54,6 +53,7 @@ class _HomePageState extends State<HomePage>
   List<Duty> _todayDuties = [];
   Duty? _currentDuty;
   late DateTime ist;
+  late String today;
 
   late String _timeString;
   late Timer timer;
@@ -497,10 +497,16 @@ class _HomePageState extends State<HomePage>
     final List<dynamic> listData = await FirestoreData.getData();
     final List<Duty> loadedDuties = [];
     for (final duty in listData) {
-      loadedDuties.add(Duty(
-          ragi: duty['ragi'],
-          startTime: duty['duty_start'],
-          endTime: duty['duty_end']));
+      print(duty);
+
+      if (duty['id'] != null) {
+        loadedDuties.add(Duty(
+            ragi: duty['ragi'],
+            startTime: duty['duty_start'],
+            endTime: duty['duty_end']));
+      } else if (duty['date'].length != 0) {
+        today = duty['date'];
+      }
     }
 
     setState(() {
@@ -947,8 +953,9 @@ class _HomePageState extends State<HomePage>
                                     await showDialog(
                                         context: context,
                                         builder: (_) => RagiListDialog(
+
                                             ragiList: _todayDuties,
-                                            current: _currentDuty));
+                                            current: _currentDuty, today: today,));
                                     showInterstitialAdRandom();
                                   },
                                   leading: Icon(

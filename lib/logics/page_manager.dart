@@ -8,7 +8,7 @@ class PageManager {
   final currentSongTitleNotifier = ValueNotifier<String>('');
   final progressNotifier = ProgressNotifier();
 
-  static const liveKirtan = 'http://live.sgpc.net:8080/;';
+  static const liveKirtan = 'http://live.sgpc.net:7339/;';
   static const mukhwak =
       'https://old.sgpc.net/hukumnama/jpeg%20hukamnama/hukamnama.mp3';
   static const mukhwakKatha =
