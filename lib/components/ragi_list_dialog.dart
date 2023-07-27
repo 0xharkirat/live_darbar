@@ -3,16 +3,16 @@ import 'package:live_darbar/models/duty.dart';
 
 class RagiListDialog extends StatelessWidget {
   const RagiListDialog(
-      {super.key, required this.ragiList, required this.current});
+      {super.key, required this.ragiList, required this.current, this.today = 'Today\'s '});
 
   final List<Duty> ragiList;
   final Duty? current;
+  final String today;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text("Ragi Duties")),
-      
       body: Dialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
         elevation: 1.5,
@@ -24,7 +24,7 @@ class RagiListDialog extends StatelessWidget {
           children: [
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Text('Today\'s Duties',
+              child: Text('$today Duties',
                   style: Theme.of(context).textTheme.titleLarge!.copyWith(
                       fontWeight: FontWeight.bold,
                       color: Theme.of(context).colorScheme.onBackground)),
@@ -37,8 +37,9 @@ class RagiListDialog extends StatelessWidget {
                       trailing: ragiList[index] == current
                           ? Icon(
                               Icons.arrow_left,
-                              color:
-                                  Theme.of(context).colorScheme.onInverseSurface,
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onInverseSurface,
                             )
                           : const SizedBox(),
                       selected: ragiList[index] == current ? true : false,
