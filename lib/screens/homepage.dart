@@ -445,7 +445,7 @@ class _HomePageState extends State<HomePage>
   }
 
   void _getData() async {
-    final List<dynamic> listData = await FirestoreData.getData();
+    final List<dynamic> listData = await FirestoreData.getRagiData();
     final List<Duty> loadedDuties = [];
     for (final duty in listData) {
       print(duty);

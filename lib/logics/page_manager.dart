@@ -2,55 +2,63 @@ import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'package:live_darbar/notifiers/progress_notifier.dart';
+import 'package:live_darbar/utils/firestore.dart';
 
 class PageManager {
   final buttonNotifier = ValueNotifier<ButtonState>(ButtonState.paused);
   final currentSongTitleNotifier = ValueNotifier<String>('');
   final progressNotifier = ProgressNotifier();
 
-  static const liveKirtan = 'http://live.sgpc.net:7339/;';
+  
   static const mukhwak =
       'https://old.sgpc.net/hukumnama/jpeg%20hukamnama/hukamnama.mp3';
   static const mukhwakKatha =
       'https://old.sgpc.net/hukumnama/jpeg hukamnama/katha.mp3';
 
-  final _playlist = [
-    AudioSource.uri(
-      Uri.parse(liveKirtan),
-      tag: MediaItem(
-        id: '${_nextMediaId++}',
-        title: 'Live Kirtan',
-      ),
-    ),
-    AudioSource.uri(
-      Uri.parse(mukhwak),
-      tag: MediaItem(
-        id: '${_nextMediaId++}',
-        title: 'Mukhwak',
-      ),
-    ),
-    AudioSource.uri(
-      Uri.parse(mukhwakKatha),
-      tag: MediaItem(
-        id: '${_nextMediaId++}',
-        title: 'Mukhwak Katha',
-      ),
-    ),
-  ];
-
+ late String liveKirtan;
+  List<AudioSource>? _playlist;
   // Define the playlist
+
   void _setInitialPlaylist() async {
-    await _audioPlayer.setAudioSource(_playlist[0], preload: true);
+    _playlist = [
+      if (liveKirtan.isNotEmpty)
+        AudioSource.uri(
+          Uri.parse(liveKirtan),
+          tag: const MediaItem(
+            id: 'live_kirtan',
+            title: 'Live Kirtan',
+          ),
+        ),
+      AudioSource.uri(
+        Uri.parse(mukhwak),
+        tag: const MediaItem(
+          id: 'mukhwak',
+          title: 'Mukhwak',
+        ),
+      ),
+      AudioSource.uri(
+        Uri.parse(mukhwakKatha),
+        tag: const MediaItem(
+          id: 'mukhwak_katha',
+          title: 'Mukhwak Katha',
+        ),
+      ),
+    ];
+
+    if (_playlist != null && _playlist!.isNotEmpty) {
+      await _audioPlayer.setAudioSource(_playlist![0], preload: true);
+    }
   }
 
   late AudioPlayer _audioPlayer;
-  static int _nextMediaId = 0;
+  
 
   PageManager() {
     _init();
   }
 
   void _init() async {
+    liveKirtan = await _getData();
     _audioPlayer = AudioPlayer();
     _setInitialPlaylist();
     _listenForChangesInPlayerPosition();
@@ -59,6 +67,17 @@ class PageManager {
     _listenForChangesInSequenceState();
     // _listenForChangesInPlayerState();
     // _listenForChangesInCurrentSong();
+  }
+
+  Future<String> _getData() async {
+    final List<dynamic> listData = await FirestoreData.getKirtanData();
+
+    if (listData.isNotEmpty) {
+      // Assuming you get a URL from Firestore for liveKirtan
+      return listData[0]['url'] as String;
+    }
+
+    return ''; // Return empty string if data is not available or no liveKirtan URL
   }
 
   void _listenForChangesInPlayerPosition() {
@@ -133,7 +152,7 @@ class PageManager {
   }
 
   void play(int index) async {
-    _audioPlayer.setAudioSource(_playlist[index]);
+    _audioPlayer.setAudioSource(_playlist![index]);
     _listenForChangesInPlayerState();
 
     await _audioPlayer.play();
