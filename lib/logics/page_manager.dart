@@ -15,7 +15,7 @@ class PageManager {
   static const mukhwakKatha =
       'https://old.sgpc.net/hukumnama/jpeg hukamnama/katha.mp3';
 
- late String liveKirtan;
+  static late String liveKirtan;
   List<AudioSource>? _playlist;
   // Define the playlist
 

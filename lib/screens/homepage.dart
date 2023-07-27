@@ -29,8 +29,6 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-const streamUrl = 'http://live.sgpc.net:8080/;';
-
 late final PageManager _pageManager;
 late final Random random;
 
@@ -514,7 +512,7 @@ class _HomePageState extends State<HomePage>
       });
 
       client = http.Client();
-      final request = http.Request('GET', Uri.parse(streamUrl));
+      final request = http.Request('GET', Uri.parse(PageManager.liveKirtan));
       _response = await client.send(request);
 
       setState(() {
@@ -1008,8 +1006,6 @@ class _HomePageState extends State<HomePage>
                       ],
                     ),
                   ),
-                  if (selectedChannel != Channel.mukhwak &&
-                      selectedChannel != Channel.mukhwakKatha)
                     const TextScroll(
                       "All data is sourced from SGPC.net; Ragi list and duties may not be updated on SGPC.net in realtime.",
                       velocity: Velocity(pixelsPerSecond: Offset(30, 0)),
