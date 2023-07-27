@@ -477,23 +477,30 @@ class _HomePageState extends State<HomePage>
       final eveningLive = DateTime.utc(ist.year, ist.month, ist.day, 18, 30);
 
       if (ist.isAfter(morningLiveStart) &&
-          ist.isBefore(morningLiveStart.add(const Duration(hours: 5, minutes: 20)))) {
+          ist.isBefore(
+              morningLiveStart.add(const Duration(hours: 5, minutes: 20)))) {
         // print('morning live now');
 
         setState(() {
           _currentLive = _todayLinks[0];
         });
       } else if (ist.isAfter(afternoonLive) &&
-          ist.isBefore(afternoonLive.add(const Duration(hours: 2, minutes: 20)))) {
+          ist.isBefore(
+              afternoonLive.add(const Duration(hours: 2, minutes: 20)))) {
         // print('afternoon live now');
         setState(() {
           _currentLive = _todayLinks[1];
         });
       } else if (ist.isAfter(eveningLive) &&
-          ist.isBefore(eveningLive.add(const Duration(hours: 2, minutes: 20)))) {
+          ist.isBefore(
+              eveningLive.add(const Duration(hours: 2, minutes: 20)))) {
         // print('evening live now');
         setState(() {
           _currentLive = _todayLinks[2];
+        });
+      } else {
+        setState(() {
+          _currentLive = null;
         });
       }
 
@@ -514,8 +521,6 @@ class _HomePageState extends State<HomePage>
     final List<YoutubeLink> loadedLinks = [];
 
     for (final duty in listData) {
-      
-
       if (duty['id'] != null) {
         loadedDuties.add(Duty(
             ragi: duty['ragi'],
@@ -527,7 +532,6 @@ class _HomePageState extends State<HomePage>
     }
 
     for (final link in linkData) {
-      
       loadedLinks.add(YoutubeLink(
           date: link['date'], link: link['link'], time: link['id']));
     }
