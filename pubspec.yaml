@@ -41,8 +41,8 @@ dependencies:
   font_awesome_flutter: ^10.3.0
   audio_video_progress_bar: ^0.9.0
   just_audio_background: ^0.0.1-beta.9
-  google_mobile_ads: ^3.0.0
-  provider: ^6.0.5
+  
+  
   transparent_image: ^2.0.1
   intl: ^0.18.1
   text_scroll: ^0.2.0
@@ -58,7 +58,9 @@ dependencies:
   firebase_core: ^2.12.0
   flutter_offline: ^3.0.0
   connectivity_plus: ^4.0.1
-  flutter_riverpod: ^2.3.6
+  url_launcher: ^6.1.12
+  
+  
 
 dev_dependencies:
   flutter_test:
