@@ -145,7 +145,6 @@ You can support this project by just simply downloading the app.
          ,@.  .@..,*.%..,@   /@         
              @,.@,*@.@ %@.#@            
               @&  *@.@   @@             
-
  
   
 a 0xharkirat (Harkirat Singh) 🦅 production.  
