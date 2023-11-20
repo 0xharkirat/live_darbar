@@ -128,24 +128,7 @@ A simple yet powerful & intelligent mobile app for live audio & video broadcast 
 
 ## Support the Project.
   
-You can support this project by just simply downloading the app.  
-                    @                   
-                  *@.@                  
-          #@@#  @@@@.@@@%  @@@*         
-       .@%@  @@**&@@.@@#**@&  @/@       
-      @,@   @**@  *@.@  .@**   ,@,@     
-    %@,@   @#*@   *@.@   *@*@(  (@,@    
-   .@,.@   *@*&&  *@.@   @(*@    @,,@   
-   @...@    (@**@@*@.@ @@*,@     @..%@  
-   @.../@     ,@@*(@.@**@@      @..,(@  
-   (@....@        *@.@         @...,@.  
-    @*....,@,     *@.@      &@....,&@   
-     &@.......@@@**@.@ (@@&.....,,@*    
-        %...@&@@#,......%@@@@..,@@      
-         ,@.  .@..,*.%..,@   /@         
-             @,.@,*@.@ %@.#@            
-              @&  *@.@   @@             
- 
+You can support this project by just simply downloading the app.
   
 a 0xharkirat (Harkirat Singh) 🦅 production.  
 
