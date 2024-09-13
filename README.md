@@ -4,7 +4,7 @@
   <img src="https://play-lh.googleusercontent.com/YGulqzP2If8VPwOJubXK-MrnLJf1LZBRFLVIeAh28wD4Hc8ESWhKMLEDXUPPkXlc5AfY=w120-h120-rw" />
 </p>
 
-A simple yet powerful & intelligent mobile app for live audio & video broadcast from _**[Golden Temple](https://en.wikipedia.org/wiki/Golden_Temple)**_, _**[Amritsar](https://en.wikipedia.org/wiki/Amritsar)**_. Both  [_**Android**_](https://play.google.com/store/apps/details?id=com.hsiharki.live_darbar)  &  [_**iOS**_](https://apps.apple.com/app/id6449766130)  apps are fully published on their respective app stores.
+A simple yet powerful & intelligent mobile app for live audio & video broadcast from _**[Golden Temple](https://en.wikipedia.org/wiki/Golden_Temple)**_, _**[Amritsar](https://en.wikipedia.org/wiki/Amritsar)**_. Both  [_**Android**_] (Due to change in play store policy about inactivity, they have deleted my developer account; download apk instead)  &  [_**iOS**_](https://apps.apple.com/app/id6449766130)  apps are fully published on their respective app stores.
 
 
 
