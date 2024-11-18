@@ -1,0 +1,10 @@
+<!-- res/xml/shortcuts.xml -->
+<shortcuts
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+  <capability
+      android:name="custom.actions.intent.PLAY_LIVE_DARBAR"
+      app:queryPatterns="@array/PlayLiveDarbarQueries">
+    <intent />
+  </capability>
+</shortcuts>

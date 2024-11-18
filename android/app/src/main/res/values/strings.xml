@@ -1,0 +1,9 @@
+<!-- res/values/strings.xml -->
+<resources>
+    <string-array name="PlayLiveDarbarQueries">
+      <item>play live darbar</item>
+      <item>start live darbar</item>
+      <item>stream live darbar</item>
+    </string-array>
+  </resources>
+  

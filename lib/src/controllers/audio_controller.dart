@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:rxdart/rxdart.dart';
@@ -22,8 +23,26 @@ class AudioProgressState {
 
 class AudioController {
   final AudioPlayer _audioPlayer;
+  static const MethodChannel _channel = MethodChannel('com.example.live_darbar/audio');
   AudioController(this._audioPlayer) {
     _init();
+    _setupMethodChannel();
+  }
+
+  Future<void> _setupMethodChannel() async {
+    // Listen for method calls from the native side
+    _channel.setMethodCallHandler((call) async {
+      if (call.method == 'playLiveDarbar') {
+        // Example method to play audio from a native trigger
+        await play();
+      } else if (call.method == 'pauseLiveDarbar') {
+        // Example method to pause audio
+        await pause();
+      } else if (call.method == 'stopLiveDarbar') {
+        // Example method to stop audio
+        await stop();
+      }
+    });
   }
 
   Future<void> _init() async {
