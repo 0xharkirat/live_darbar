@@ -5,6 +5,9 @@ import 'package:rxdart/rxdart.dart';
 const kLiveKirtanUrl =
     "https://s3.amazonaws.com/scifri-episodes/scifri20181123-episode.mp3";
 
+const kLiveKirtanUrl2 =
+    "http://live.sgpc.net:7339/;";
+
 class AudioProgressState {
   final Duration position;
   final Duration bufferedPosition;
@@ -24,7 +27,7 @@ class AudioController {
   }
 
   Future<void> _init() async {
-    await _audioPlayer.setUrl(kLiveKirtanUrl);
+    await _audioPlayer.setUrl(kLiveKirtanUrl2);
   }
 
   Future<void> play() async {
@@ -39,15 +42,18 @@ class AudioController {
     await _audioPlayer.stop();
   }
 
-  Stream<AudioProgressState> get positionDataStream =>
+   Stream<AudioProgressState> get positionDataStream =>
       Rx.combineLatest3<Duration, Duration, Duration?, AudioProgressState>(
           _audioPlayer.positionStream,
           _audioPlayer.bufferedPositionStream,
           _audioPlayer.durationStream,
-          (position, bufferedPosition, duration) => AudioProgressState(
-              position: position,
-              bufferedPosition: bufferedPosition,
-              totalDuration: duration ?? Duration.zero));
+          (position, bufferedPosition, duration) {
+            
+            return AudioProgressState(
+                position: position,
+                bufferedPosition: bufferedPosition,
+                totalDuration: duration ?? Duration.zero);
+          });
 
   Future<void> seek(Duration duration) async {
     await _audioPlayer.seek(duration);
@@ -56,5 +62,13 @@ class AudioController {
 
 final audioController = Provider<AudioController>((ref) {
   final audioPlayer = AudioPlayer();
+  
   return AudioController(audioPlayer);
 });
+
+// Create a StreamProvider to expose the position data stream
+final audioProgressProvider = StreamProvider<AudioProgressState>((ref) {
+  final controller = ref.watch(audioController); // Access the AudioController
+  return controller.positionDataStream; // Return the stream
+});
+

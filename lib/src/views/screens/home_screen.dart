@@ -15,6 +15,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Watch the audio progress state using the StreamProvider
+    final progressStateAsync = ref.watch(audioProgressProvider);
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -23,23 +25,28 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
       body: Center(
-        child: StreamBuilder<AudioProgressState>(
-            stream: ref.read(audioController).positionDataStream,
-            builder: (context, snapshot) {
-              final progress = snapshot.data;
-              
-              return Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: ProgressBar(
-                  progress: progress?.position ?? Duration.zero,
-                  buffered: progress?.bufferedPosition ?? Duration.zero,
-                  total: progress?.totalDuration ?? Duration.zero,
-                  bufferedBarColor: Colors.red,
-                  progressBarColor: Colors.blue,
-                  onSeek: (value) => ref.read(audioController).seek(value),
-                ),
-              );
-            }),
+        child: progressStateAsync.when(
+          data: (progressState) {
+            print(
+                "Position: ${progressState.position}, Buffered: ${progressState.bufferedPosition}, Duration: ${progressState.totalDuration ?? Duration.zero}");
+            return Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: ProgressBar(
+                progress: progressState.position,
+                buffered: progressState.bufferedPosition,
+                total: progressState.totalDuration,
+                bufferedBarColor: Colors.red,
+                thumbRadius: 5.0,
+                onSeek: (duration) {
+                  // Seek to a new position using AudioController
+                  ref.read(audioController).seek(duration);
+                },
+              ),
+            );
+          },
+          loading: () => CircularProgressIndicator(),
+          error: (error, stack) => Text('Error: $error'),
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
