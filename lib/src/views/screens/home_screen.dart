@@ -27,8 +27,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       body: Center(
         child: progressStateAsync.when(
           data: (progressState) {
-            print(
-                "Position: ${progressState.position}, Buffered: ${progressState.bufferedPosition}, Duration: ${progressState.totalDuration ?? Duration.zero}");
+            // print(
+            //     "Position: ${progressState.position}, Buffered: ${progressState.bufferedPosition}, Duration: ${progressState.totalDuration ?? Duration.zero}");
             return Padding(
               padding: const EdgeInsets.all(8.0),
               child: ProgressBar(

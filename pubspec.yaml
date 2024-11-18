@@ -39,6 +39,7 @@ dependencies:
   flutter_riverpod: ^2.6.1
   audio_video_progress_bar: ^2.0.3
   rxdart: ^0.28.0
+  quick_actions: ^1.0.8
 
 dev_dependencies:
   flutter_test:
