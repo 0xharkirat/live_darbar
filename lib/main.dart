@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:live_darbar/src/controllers/audio_controller.dart';
 import 'package:live_darbar/src/views/screens/home_screen.dart';
 import 'package:quick_actions/quick_actions.dart';
@@ -16,7 +17,6 @@ class MyApp extends ConsumerStatefulWidget {
 }
 
 class _MyAppState extends ConsumerState<MyApp> {
-
   final QuickActions quickActions = const QuickActions();
 
   @override
@@ -25,8 +25,6 @@ class _MyAppState extends ConsumerState<MyApp> {
 
     // Initialize quick actions with a callback
     quickActions.initialize((String shortcutType) {
-      
-
       if (shortcutType == 'action_play') {
         print('Play action triggered');
         ref.read(audioController).play(); // Call play function
@@ -50,13 +48,16 @@ class _MyAppState extends ConsumerState<MyApp> {
       ),
     ]);
   }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Live Darbar',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        textTheme: GoogleFonts.manropeTextTheme(),
+        colorScheme: ColorScheme.fromSeed(
+            seedColor: Color(0xFFFFAC1C), brightness: Brightness.dark),
         useMaterial3: true,
       ),
       home: const HomeScreen(),

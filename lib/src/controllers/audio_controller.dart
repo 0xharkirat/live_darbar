@@ -3,7 +3,7 @@ import 'package:just_audio/just_audio.dart';
 import 'package:rxdart/rxdart.dart';
 
 const kLiveKirtanUrl =
-    "https://s3.amazonaws.com/scifri-episodes/scifri20181123-episode.mp3";
+    "https://old.sgpc.net/hukumnama/jpeg%20hukamnama/hukamnama.mp3";
 
 const kLiveKirtanUrl2 =
     "http://live.sgpc.net:7339/;";
@@ -27,7 +27,7 @@ class AudioController {
   }
 
   Future<void> _init() async {
-    await _audioPlayer.setUrl(kLiveKirtanUrl2);
+    await _audioPlayer.setUrl(kLiveKirtanUrl);
   }
 
   Future<void> play() async {
