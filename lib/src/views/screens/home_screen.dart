@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:live_darbar/src/controllers/audio_controller.dart';
 import 'package:live_darbar/src/views/widgets/audio_tile_widget.dart';
 import 'package:live_darbar/src/views/widgets/progress_bar_widget.dart';
+import 'package:shadcn_ui/shadcn_ui.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -25,7 +26,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         title: const Text(
           'Live Darbar',
         ),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        backgroundColor: ShadTheme.of(context).colorScheme.accent,
       ),
       body: Stack(
         children: [
@@ -38,8 +39,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     imageUrl: 'assets/images/bg-5.jpg',
                     height: size.height * 0.3,
                     width: double.infinity,
-                    style: Theme.of(context).textTheme.displayLarge!.copyWith(
-                        color: Theme.of(context).colorScheme.surface,
+                    style: ShadTheme.of(context).textTheme.h1Large.copyWith(
+                        color:
+                            ShadTheme.of(context).colorScheme.accentForeground,
                         fontWeight: FontWeight.bold)),
                 const SizedBox(height: 12),
                 Row(
@@ -50,8 +52,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       imageUrl: "assets/images/bg-4.jpg",
                       height: size.height * 0.2,
                       width: size.width * 0.45,
-                      style: Theme.of(context).textTheme.displaySmall!.copyWith(
-                          color: Theme.of(context).colorScheme.surface,
+                      style: ShadTheme.of(context).textTheme.h3.copyWith(
+                          color: ShadTheme.of(context).colorScheme.foreground,
                           fontWeight: FontWeight.bold),
                     ),
                     AudioTileWidget(
@@ -59,8 +61,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       imageUrl: "assets/images/bg-4.jpg",
                       height: size.height * 0.2,
                       width: size.width * 0.45,
-                      style: Theme.of(context).textTheme.displaySmall!.copyWith(
-                          color: Theme.of(context).colorScheme.surface,
+                      style: ShadTheme.of(context).textTheme.h3.copyWith(
+                          color: ShadTheme.of(context).colorScheme.foreground,
                           fontWeight: FontWeight.bold),
                     ),
                   ],
@@ -72,12 +74,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           Positioned(
             bottom: 0,
             child: Container(
-              height: 48,
+              height: 56,
               width: size.width,
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.surfaceContainer,
+                color: ShadTheme.of(context).colorScheme.accent,
                 border: Border.all(
-                  color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                  color: ShadTheme.of(context).colorScheme.border,
                 ),
               ),
               child: Stack(
@@ -88,24 +90,25 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       Row(
                         children: [
                           Container(
-                            height: 48,
-                            width: 48,
+                            height: 56,
+                            width: 56,
                             decoration: BoxDecoration(
-                              color:
-                                  Theme.of(context).colorScheme.surfaceBright,
+                              color: ShadTheme.of(context).colorScheme.card,
+                            ),
+                            child: const Icon(
+                              LucideIcons.audioLines,
                             ),
                           ),
                           const SizedBox(width: 16),
                           Text(
                             "Live Kirtan",
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyLarge!
-                                .copyWith(
-                                  color:
-                                      Theme.of(context).colorScheme.onSurface,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                            style:
+                                ShadTheme.of(context).textTheme.large.copyWith(
+                                      color: ShadTheme.of(context)
+                                          .colorScheme
+                                          .accentForeground,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                           ),
                         ],
                       ),
@@ -123,11 +126,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             });
                           }
                         },
-                        icon: Icon(!isPlaying ? Icons.play_arrow : Icons.pause),
+                        icon: Icon(
+                            !isPlaying ? LucideIcons.play : LucideIcons.pause,
+                            color: ShadTheme.of(context).colorScheme.primary),
                       ),
                     ],
                   ),
-                  Positioned(bottom: 0, child:  ProgressBarWidget(size: size))
+                  Positioned(bottom: 0, child: ProgressBarWidget(size: size))
                 ],
               ),
             ),

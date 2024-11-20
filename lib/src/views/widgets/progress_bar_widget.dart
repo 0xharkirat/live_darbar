@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:live_darbar/src/controllers/audio_controller.dart';
+import 'package:shadcn_ui/shadcn_ui.dart';
 
 class ProgressBarWidget extends ConsumerWidget {
   const ProgressBarWidget({super.key, required this.size});
@@ -10,6 +11,15 @@ class ProgressBarWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final progressStateAsync = ref.watch(audioProgressProvider);
+
+    // return ConstrainedBox(
+    //   constraints: BoxConstraints(
+    //     maxWidth: size.width,
+    //   ),
+    //   child: const ShadProgress(
+    //     minHeight: 2,
+    //   ),
+    // );
 
     return progressStateAsync.when(
       data: (progressState) {
@@ -31,9 +41,8 @@ class ProgressBarWidget extends ConsumerWidget {
               height: 2,
               width: size.width * bufferedProgress,
               decoration: BoxDecoration(
-                color:
-                    Theme.of(context).colorScheme.primary.withOpacity(0.25),
-                borderRadius: BorderRadius.circular(15),
+                color: ShadTheme.of(context).colorScheme.selection,
+                borderRadius: BorderRadius.circular(16),
               ),
             ),
 
@@ -42,16 +51,18 @@ class ProgressBarWidget extends ConsumerWidget {
               height: 2,
               width: size.width * progress,
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.primary,
-                borderRadius: BorderRadius.circular(15),
+                color: ShadTheme.of(context).colorScheme.primary,
+                borderRadius: BorderRadius.circular(16),
               ),
             ),
           ],
         );
       },
-      loading: () =>  SizedBox(
-        width: size.width,
-        child: const LinearProgressIndicator(
+      loading: () => ConstrainedBox(
+        constraints: BoxConstraints(
+          maxWidth: size.width,
+        ),
+        child: const ShadProgress(
           minHeight: 2,
         ),
       ),
