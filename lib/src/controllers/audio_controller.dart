@@ -5,8 +5,7 @@ import 'package:rxdart/rxdart.dart';
 const kLiveKirtanUrl =
     "https://old.sgpc.net/hukumnama/jpeg%20hukamnama/hukamnama.mp3";
 
-const kLiveKirtanUrl2 =
-    "http://live.sgpc.net:7339/;";
+const kLiveKirtanUrl2 = "http://live.sgpc.net:7339/;";
 
 class AudioProgressState {
   final Duration position;
@@ -42,18 +41,16 @@ class AudioController {
     await _audioPlayer.stop();
   }
 
-   Stream<AudioProgressState> get positionDataStream =>
+  Stream<AudioProgressState> get positionDataStream =>
       Rx.combineLatest3<Duration, Duration, Duration?, AudioProgressState>(
           _audioPlayer.positionStream,
           _audioPlayer.bufferedPositionStream,
-          _audioPlayer.durationStream,
-          (position, bufferedPosition, duration) {
-            
-            return AudioProgressState(
-                position: position,
-                bufferedPosition: bufferedPosition,
-                totalDuration: duration ?? Duration.zero);
-          });
+          _audioPlayer.durationStream, (position, bufferedPosition, duration) {
+        return AudioProgressState(
+            position: position,
+            bufferedPosition: bufferedPosition,
+            totalDuration: duration ?? Duration.zero);
+      });
 
   Future<void> seek(Duration duration) async {
     await _audioPlayer.seek(duration);
@@ -62,7 +59,7 @@ class AudioController {
 
 final audioController = Provider<AudioController>((ref) {
   final audioPlayer = AudioPlayer();
-  
+
   return AudioController(audioPlayer);
 });
 
@@ -71,4 +68,3 @@ final audioProgressProvider = StreamProvider<AudioProgressState>((ref) {
   final controller = ref.watch(audioController); // Access the AudioController
   return controller.positionDataStream; // Return the stream
 });
-

@@ -127,7 +127,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       ),
                     ],
                   ),
-                  ProgressBarWidget(size: size)
+                  Positioned(bottom: 0, child:  ProgressBarWidget(size: size))
                 ],
               ),
             ),

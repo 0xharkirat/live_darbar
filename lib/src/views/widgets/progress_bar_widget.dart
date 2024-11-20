@@ -27,36 +27,33 @@ class ProgressBarWidget extends ConsumerWidget {
         return Stack(
           children: [
             // Buffered Progress (background indicator)
-            Positioned(
-              bottom: 0,
-              child: Container(
-                height: 2,
-                width: size.width * bufferedProgress,
-                decoration: BoxDecoration(
-                  color:
-                      Theme.of(context).colorScheme.primary.withOpacity(0.25),
-                  borderRadius: BorderRadius.circular(15),
-                ),
+            Container(
+              height: 2,
+              width: size.width * bufferedProgress,
+              decoration: BoxDecoration(
+                color:
+                    Theme.of(context).colorScheme.primary.withOpacity(0.25),
+                borderRadius: BorderRadius.circular(15),
               ),
             ),
 
             // Current Progress
-            Positioned(
-              bottom: 0,
-              child: Container(
-                height: 2,
-                width: size.width * progress,
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.primary,
-                  borderRadius: BorderRadius.circular(15),
-                ),
+            Container(
+              height: 2,
+              width: size.width * progress,
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.primary,
+                borderRadius: BorderRadius.circular(15),
               ),
             ),
           ],
         );
       },
-      loading: () => const LinearProgressIndicator(
-        minHeight: 2,
+      loading: () =>  SizedBox(
+        width: size.width,
+        child: const LinearProgressIndicator(
+          minHeight: 2,
+        ),
       ),
       error: (error, stackTrace) => Text('Error: $error'),
     );
