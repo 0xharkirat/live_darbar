@@ -1,4 +1,4 @@
-import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:live_darbar/src/controllers/audio_controller.dart';
@@ -35,6 +35,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             child: Column(
               children: [
                 AudioTileWidget(
+                    onTap: (){
+                      ref.read(audioController).play(0);
+                    },
                     text: 'Live Kirtan',
                     imageUrl: 'assets/images/bg-5.jpg',
                     height: size.height * 0.3,
@@ -48,6 +51,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     AudioTileWidget(
+                      onTap: (){
+                        ref.read(audioController).play(1);
+                      },
                       text: "Mukhwak",
                       imageUrl: "assets/images/bg-4.jpg",
                       height: size.height * 0.2,
@@ -57,6 +63,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           fontWeight: FontWeight.bold),
                     ),
                     AudioTileWidget(
+                      onTap: (){
+                        ref.read(audioController).play(2);
+                      },
                       text: "Mukhwak Katha",
                       imageUrl: "assets/images/bg-4.jpg",
                       height: size.height * 0.2,

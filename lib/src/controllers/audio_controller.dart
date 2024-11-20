@@ -1,11 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:live_darbar/src/models/source.dart';
 import 'package:rxdart/rxdart.dart';
-
-const kLiveKirtanUrl =
-    "https://old.sgpc.net/hukumnama/jpeg%20hukamnama/hukamnama.mp3";
-
-const kLiveKirtanUrl2 = "http://live.sgpc.net:7339/;";
 
 class AudioProgressState {
   final Duration position;
@@ -25,11 +21,42 @@ class AudioController {
     _init();
   }
 
+  final _audioSource = <AudioSource>[
+    AudioSource.uri(
+      Uri.parse(kLiveKirtanUrl),
+      tag: const Source(
+        id: '0',
+        name: 'Live Kirtan',
+        url: kLiveKirtanUrl,
+      ),
+    ),
+    AudioSource.uri(
+      Uri.parse(kMukhWakUrl),
+      tag: const Source(
+        id: '1',
+        name: 'Katha',
+        url: kMukhWakUrl,
+      ),
+    ),
+    AudioSource.uri(
+      Uri.parse(kMukhwakKathaUrl),
+      tag: const Source(
+        id: '2',
+        name: 'Mukhwak Katha',
+        url: kMukhwakKathaUrl,
+      ),
+    ),
+  ];
+
+  List<AudioSource> get audioSource => _audioSource;
+
   Future<void> _init() async {
-    await _audioPlayer.setUrl(kLiveKirtanUrl);
+    await _audioPlayer.setAudioSource(_audioSource.first);
   }
 
-  Future<void> play() async {
+  Future<void> play([int index = 0]) async {
+
+    await _audioPlayer.setAudioSource(_audioSource[index]);
     _audioPlayer.play();
   }
 
