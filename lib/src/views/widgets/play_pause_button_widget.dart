@@ -15,9 +15,10 @@ class PlayPauseButtonWidget extends ConsumerWidget {
 
     return playerStateAsync.when(
       data: (playerState) {
-        // check the current plyaer state
+        // check the current player state
         if (playerState.processingState == ProcessingState.loading ||
             playerState.processingState == ProcessingState.buffering) {
+          // show the loading indicator while loading or buffering
           return const IconButton(
             onPressed: null,
             icon: IconButton(
@@ -28,20 +29,39 @@ class PlayPauseButtonWidget extends ConsumerWidget {
               ),
             ),
           );
-        } else if (playerState.playing) {
-          // show the pause button
+        } else if (playerState.processingState == ProcessingState.completed) {
+          // show the play button when the audio is completed
           return IconButton(
-            onPressed: () {},
-            icon: Icon(LucideIcons.pause,
-                color: ShadTheme.of(context).colorScheme.primary),
-          );
-        } else {
-          // show the play button
-          return IconButton(
-            onPressed: () {},
+            onPressed: () async {
+              await ref.read(audioController).seek(Duration.zero);
+              ref.read(audioController).play();
+            },
             icon: Icon(LucideIcons.play,
                 color: ShadTheme.of(context).colorScheme.primary),
           );
+        } else if (playerState.playing) {
+          // show the pause button
+          return IconButton(
+            onPressed: () {
+              ref.read(audioController).pause();
+            },
+            icon: Icon(LucideIcons.pause,
+                color: ShadTheme.of(context).colorScheme.primary),
+          );
+        } else if (playerState.processingState == ProcessingState.ready ||
+            !playerState.playing) {
+          // show the play button (well resume techincally if paused -> !playerState.playing)
+          return IconButton(
+            onPressed: ()  {
+               ref.read(audioController).resume();
+            },
+            icon: Icon(LucideIcons.play,
+                color: ShadTheme.of(context).colorScheme.primary),
+          );
+        } else {
+          // Handle the idle state (e.g, no audio source set)
+          return Icon(LucideIcons.circleAlert,
+              color: ShadTheme.of(context).colorScheme.destructive);
         }
       },
       loading: () => const IconButton(
@@ -57,14 +77,5 @@ class PlayPauseButtonWidget extends ConsumerWidget {
             color: ShadTheme.of(context).colorScheme.destructive),
       ),
     );
-
-    // return IconButton(
-    //   onPressed: () async {
-
-    //   },
-    //   icon: Icon(
-    //       LucideIcons.play,
-    //       color: ShadTheme.of(context).colorScheme.primary),
-    // );
   }
 }

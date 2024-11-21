@@ -23,7 +23,7 @@ class AudioController {
       Uri.parse(kMukhWakUrl),
       tag: const Source(
         id: '1',
-        name: 'Katha',
+        name: 'Mukhwak',
         url: kMukhWakUrl,
       ),
     ),
@@ -44,8 +44,11 @@ class AudioController {
   }
 
   Future<void> play([int index = 0]) async {
-
     await _audioPlayer.setAudioSource(_audioSource[index]);
+    _audioPlayer.play();
+  }
+
+  void resume() async {
     _audioPlayer.play();
   }
 
@@ -61,6 +64,10 @@ class AudioController {
     await _audioPlayer.seek(duration);
   }
 
+  void dispose() {
+    _audioPlayer.dispose();
+  }
+
   Stream<AudioProgressState> get positionDataStream =>
       Rx.combineLatest3<Duration, Duration, Duration?, AudioProgressState>(
           _audioPlayer.positionStream,
@@ -74,19 +81,21 @@ class AudioController {
 
   Stream<PlayerState> get playStateStream => _audioPlayer.playerStateStream;
 
-  
+  Stream<int?> get currentIndexStream => _audioPlayer.currentIndexStream;
+
+  Stream<SequenceState?> get sequenceStateStream =>
+      _audioPlayer.sequenceStateStream;
 }
 
-final audioController = Provider<AudioController>((ref) {
+final audioController = Provider.autoDispose<AudioController>((ref) {
   final audioPlayer = AudioPlayer();
 
   return AudioController(audioPlayer);
 });
 
-
-
 // Create a StreamProvider to expose the position data stream
-final audioProgressProvider = StreamProvider<AudioProgressState>((ref) {
+final audioProgressProvider =
+    StreamProvider.autoDispose<AudioProgressState>((ref) {
   final controller = ref.watch(audioController); // Access the AudioController
   return controller.positionDataStream; // Return the stream
 });
@@ -97,3 +106,14 @@ final playerStateProvider = StreamProvider.autoDispose<PlayerState>((ref) {
   return controller.playStateStream; // Return the stream
 });
 
+// Create a StreamProvider to expose the current index stream
+final currentIndexProvider = StreamProvider.autoDispose<int?>((ref) {
+  final controller = ref.watch(audioController); // Access the AudioController
+  return controller.currentIndexStream; // Return the stream
+});
+
+// Create a StreamProvider to expose the sequence state stream
+final sequenceStateProvider = StreamProvider.autoDispose<SequenceState?>((ref) {
+  final controller = ref.watch(audioController); // Access the AudioController
+  return controller.sequenceStateStream; // Return the stream
+});
