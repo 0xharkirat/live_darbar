@@ -1,19 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:live_darbar/src/models/audio_progress_state.dart';
 import 'package:live_darbar/src/models/source.dart';
 import 'package:rxdart/rxdart.dart';
-
-class AudioProgressState {
-  final Duration position;
-  final Duration bufferedPosition;
-  final Duration totalDuration;
-
-  AudioProgressState({
-    required this.position,
-    required this.bufferedPosition,
-    required this.totalDuration,
-  });
-}
 
 class AudioController {
   final AudioPlayer _audioPlayer;
@@ -68,6 +57,10 @@ class AudioController {
     await _audioPlayer.stop();
   }
 
+  Future<void> seek(Duration duration) async {
+    await _audioPlayer.seek(duration);
+  }
+
   Stream<AudioProgressState> get positionDataStream =>
       Rx.combineLatest3<Duration, Duration, Duration?, AudioProgressState>(
           _audioPlayer.positionStream,
@@ -79,9 +72,9 @@ class AudioController {
             totalDuration: duration ?? Duration.zero);
       });
 
-  Future<void> seek(Duration duration) async {
-    await _audioPlayer.seek(duration);
-  }
+  Stream<PlayerState> get playStateStream => _audioPlayer.playerStateStream;
+
+  
 }
 
 final audioController = Provider<AudioController>((ref) {
@@ -90,8 +83,17 @@ final audioController = Provider<AudioController>((ref) {
   return AudioController(audioPlayer);
 });
 
+
+
 // Create a StreamProvider to expose the position data stream
 final audioProgressProvider = StreamProvider<AudioProgressState>((ref) {
   final controller = ref.watch(audioController); // Access the AudioController
   return controller.positionDataStream; // Return the stream
 });
+
+// Create a StreamProvider to expose the player state stream
+final playerStateProvider = StreamProvider.autoDispose<PlayerState>((ref) {
+  final controller = ref.watch(audioController); // Access the AudioController
+  return controller.playStateStream; // Return the stream
+});
+

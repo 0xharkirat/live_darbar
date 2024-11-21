@@ -3,21 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:live_darbar/src/controllers/audio_controller.dart';
 import 'package:live_darbar/src/views/widgets/audio_tile_widget.dart';
+import 'package:live_darbar/src/views/widgets/play_pause_button_widget.dart';
 import 'package:live_darbar/src/views/widgets/progress_bar_widget.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
-class HomeScreen extends ConsumerStatefulWidget {
+class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
 
   @override
-  ConsumerState<HomeScreen> createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends ConsumerState<HomeScreen> {
-  bool isPlaying = false;
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     // Watch the audio progress state using the StreamProvider
     final size = MediaQuery.of(context).size;
 
@@ -121,24 +115,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           ),
                         ],
                       ),
-                      IconButton(
-                        onPressed: () async {
-                          if (isPlaying) {
-                            await ref.read(audioController).pause();
-                            setState(() {
-                              isPlaying = false;
-                            });
-                          } else {
-                            await ref.read(audioController).play();
-                            setState(() {
-                              isPlaying = true;
-                            });
-                          }
-                        },
-                        icon: Icon(
-                            !isPlaying ? LucideIcons.play : LucideIcons.pause,
-                            color: ShadTheme.of(context).colorScheme.primary),
-                      ),
+                      const PlayPauseButtonWidget(),
                     ],
                   ),
                   Positioned(bottom: 0, child: ProgressBarWidget(size: size))
