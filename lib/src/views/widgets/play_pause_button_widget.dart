@@ -12,6 +12,18 @@ class PlayPauseButtonWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final playerStateAsync = ref.watch(playerStateProvider);
+    final sequenceStateAsync = ref.watch(sequenceStateProvider);
+
+    final index = sequenceStateAsync.when(
+      data: (value) {
+        if (value == null) {
+          return 0;
+        }
+        return value.currentSource?.tag.id;
+      },
+      loading: () => 0,
+      error: (error, _) => 0,
+    );
 
     return playerStateAsync.when(
       data: (playerState) {
@@ -34,7 +46,7 @@ class PlayPauseButtonWidget extends ConsumerWidget {
           return IconButton(
             onPressed: () async {
               await ref.read(audioController).seek(Duration.zero);
-              ref.read(audioController).play();
+              ref.read(audioController).play(index);
             },
             icon: Icon(LucideIcons.play,
                 color: ShadTheme.of(context).colorScheme.primary),
@@ -46,14 +58,14 @@ class PlayPauseButtonWidget extends ConsumerWidget {
               ref.read(audioController).pause();
             },
             icon: Icon(LucideIcons.pause,
-                color: ShadTheme.of(context).colorScheme.primary),
+                color: ShadTheme.of(context).colorScheme.primaryForeground),
           );
         } else if (playerState.processingState == ProcessingState.ready ||
             !playerState.playing) {
           // show the play button (well resume techincally if paused -> !playerState.playing)
           return IconButton(
-            onPressed: ()  {
-               ref.read(audioController).resume();
+            onPressed: () {
+              ref.read(audioController).resume();
             },
             icon: Icon(LucideIcons.play,
                 color: ShadTheme.of(context).colorScheme.primary),

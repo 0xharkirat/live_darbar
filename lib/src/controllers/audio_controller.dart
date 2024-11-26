@@ -14,7 +14,7 @@ class AudioController {
     AudioSource.uri(
       Uri.parse(kLiveKirtanUrl),
       tag: const Source(
-        id: '0',
+        id: 0,
         name: 'Live Kirtan',
         url: kLiveKirtanUrl,
       ),
@@ -22,7 +22,7 @@ class AudioController {
     AudioSource.uri(
       Uri.parse(kMukhWakUrl),
       tag: const Source(
-        id: '1',
+        id: 1,
         name: 'Mukhwak',
         url: kMukhWakUrl,
       ),
@@ -30,7 +30,7 @@ class AudioController {
     AudioSource.uri(
       Uri.parse(kMukhwakKathaUrl),
       tag: const Source(
-        id: '2',
+        id: 2,
         name: 'Mukhwak Katha',
         url: kMukhwakKathaUrl,
       ),

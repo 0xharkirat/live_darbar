@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:live_darbar/src/controllers/audio_controller.dart';
 import 'package:live_darbar/src/models/source.dart';
+import 'package:lottie/lottie.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
 class PlayerDataWidget extends ConsumerWidget {
@@ -28,28 +29,47 @@ class PlayerDataWidget extends ConsumerWidget {
       error: (error, _) => 'Error: $error',
     );
 
+    final playerStateAsync = ref.watch(playerStateProvider);
+
+    final isPlaying = playerStateAsync.when<bool>(
+      data: (playerState) => playerState.playing,
+      loading: () => false,
+      error: (error, _) => false,
+    );
+
     return Row(
-          children: [
-            Container(
-              height: 56,
-              width: 56,
-              decoration: BoxDecoration(
-                color: ShadTheme.of(context).colorScheme.card,
-              ),
-              child: const Icon(
-                LucideIcons.audioLines,
-              ),
+      children: [
+        Container(
+            height: 56,
+            width: 56,
+            decoration: BoxDecoration(
+              color: ShadTheme.of(context).colorScheme.card,
             ),
-            const SizedBox(width: 16),
-            Text(
-              title, // Source.name
-              
-              style: ShadTheme.of(context).textTheme.large.copyWith(
-                    color: ShadTheme.of(context).colorScheme.accentForeground,
-                    fontWeight: FontWeight.bold,
-                  ),
-            ),
-          ],
-        );
+            child: !isPlaying
+                ? const Icon(LucideIcons.audioLines)
+                : LottieBuilder.asset(
+                    "assets/images/playing.json",
+                    delegates: LottieDelegates(
+                      values: [
+                        ValueDelegate.color(
+                          const ['**'],
+                          value: ShadTheme.of(context).colorScheme.primary,
+                        ),
+                      ],
+                    ),
+                  )),
+        const SizedBox(width: 16),
+        Text(
+          title, // Source.name
+
+          style: ShadTheme.of(context).textTheme.large.copyWith(
+                color: !isPlaying
+                    ? ShadTheme.of(context).colorScheme.accentForeground
+                    : ShadTheme.of(context).colorScheme.primary,
+                fontWeight: FontWeight.bold,
+              ),
+        ),
+      ],
+    );
   }
 }

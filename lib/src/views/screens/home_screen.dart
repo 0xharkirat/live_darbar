@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:live_darbar/src/controllers/audio_controller.dart';
+import 'package:live_darbar/src/core/colors.dart';
 import 'package:live_darbar/src/views/widgets/audio_tile_widget.dart';
 import 'package:live_darbar/src/views/widgets/play_pause_button_widget.dart';
 import 'package:live_darbar/src/views/widgets/player_data_widget.dart';
@@ -24,58 +25,58 @@ class HomeScreen extends ConsumerWidget {
       ),
       body: Stack(
         children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              children: [
-                AudioTileWidget(
+          SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.only(
+                top: 20,
+                left: 20,
+                right: 20,
+                bottom: 56,
+              ),
+              child: Column(
+                children: [
+                  AudioTileWidget(
                     onTap: () {
                       ref.read(audioController).play(0);
                     },
+                    color: kFirstColor,
+                    id: 0,
                     text: 'Live Kirtan',
-                    imageUrl: 'assets/images/bg-5.jpg',
-                    height: size.height * 0.3,
-                    width: double.infinity,
-                    style: ShadTheme.of(context).textTheme.h1Large.copyWith(
-                        color:
-                            ShadTheme.of(context).colorScheme.accentForeground,
-                        fontWeight: FontWeight.bold)),
-                const SizedBox(height: 16),
-                Row(
-                  children: [
-                    Expanded(
-                      child: AudioTileWidget(
-                        onTap: () {
-                          ref.read(audioController).play(1);
-                        },
-                        text: "Mukhwak",
-                        imageUrl: "assets/images/bg-4.jpg",
-                        height: size.height * 0.2,
-                        width: null,
-                        style: ShadTheme.of(context).textTheme.h3.copyWith(
-                            color: ShadTheme.of(context).colorScheme.foreground,
-                            fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: AudioTileWidget(
-                        onTap: () {
-                          ref.read(audioController).play(2);
-                        },
-                        text: "Mukhwak Katha",
-                        imageUrl: "assets/images/bg-4.jpg",
-                        height: size.height * 0.2,
-                        width: null,
-                        style: ShadTheme.of(context).textTheme.h3.copyWith(
-                            color: ShadTheme.of(context).colorScheme.foreground,
-                            fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-              ],
+                    imageUrl: 'assets/images/0.jpg',
+                    style: ShadTheme.of(context).textTheme.h3.copyWith(
+                          color: ShadTheme.of(context).colorScheme.accent,
+                          fontWeight: FontWeight.bold,
+                        ),
+                  ),
+                  const SizedBox(height: 20),
+                  AudioTileWidget(
+                    onTap: () {
+                      ref.read(audioController).play(1);
+                    },
+                    color: kSecondColor,
+                    id: 1,
+                    text: "Mukhwak",
+                    imageUrl: "assets/images/1.jpg",
+                    style: ShadTheme.of(context).textTheme.h3.copyWith(
+                        color: ShadTheme.of(context).colorScheme.foreground,
+                        fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 20),
+                  AudioTileWidget(
+                    onTap: () {
+                      ref.read(audioController).play(2);
+                    },
+                    color: kThirdColor,
+                    id: 2,
+                    text: "Mukhwak Katha",
+                    imageUrl: "assets/images/2.jpg",
+                    style: ShadTheme.of(context).textTheme.h3.copyWith(
+                        color: ShadTheme.of(context).colorScheme.foreground,
+                        fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 20),
+                ],
+              ),
             ),
           ),
           Positioned(

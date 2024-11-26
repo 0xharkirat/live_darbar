@@ -1,5 +1,5 @@
 class Source {
-  final String id;
+  final int id;
   final String name;
   final String url;
 
@@ -11,7 +11,7 @@ class Source {
 
   factory Source.fromJson(Map<String, dynamic> json) {
     return Source(
-      id: json['id'] as String,
+      id: json['id'] as int,
       name: json['name'] as String,
       url: json['url'] as String,
     );
