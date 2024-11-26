@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:live_darbar/src/controllers/audio_controller.dart';
 import 'package:lottie/lottie.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
@@ -26,6 +27,7 @@ class AudioTileWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final size = MediaQuery.of(context).size;
     final currentAudio = ref.watch(sequenceStateProvider);
     final bool isSelected = currentAudio.when(
       data: (value) {
@@ -60,6 +62,8 @@ class AudioTileWidget extends ConsumerWidget {
                 placeholder: MemoryImage(kTransparentImage),
                 image: AssetImage(imageUrl),
                 fit: BoxFit.cover,
+                width: double.infinity,
+                height: size.height * 0.3,
               ),
             ),
             Container(
@@ -85,7 +89,9 @@ class AudioTileWidget extends ConsumerWidget {
 
                       final bool isPlaying = playerStateAsync.when(
                         data: (playerState) {
-                          return playerState.playing;
+                          return playerState.playing &&
+                              playerState.processingState !=
+                                  ProcessingState.completed;
                         },
                         loading: () => false,
                         error: (error, _) => false,

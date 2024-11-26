@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:live_darbar/src/controllers/audio_controller.dart';
 import 'package:live_darbar/src/models/source.dart';
 import 'package:lottie/lottie.dart';
@@ -32,7 +33,9 @@ class PlayerDataWidget extends ConsumerWidget {
     final playerStateAsync = ref.watch(playerStateProvider);
 
     final isPlaying = playerStateAsync.when<bool>(
-      data: (playerState) => playerState.playing,
+      data: (playerState) =>
+          playerState.playing &&
+          playerState.processingState != ProcessingState.completed,
       loading: () => false,
       error: (error, _) => false,
     );
