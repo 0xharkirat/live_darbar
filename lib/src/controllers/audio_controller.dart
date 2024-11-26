@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:just_audio_background/just_audio_background.dart';
 import 'package:live_darbar/src/models/audio_progress_state.dart';
 import 'package:live_darbar/src/models/source.dart';
 import 'package:rxdart/rxdart.dart';
@@ -13,26 +14,26 @@ class AudioController {
   final _audioSource = <AudioSource>[
     AudioSource.uri(
       Uri.parse(kLiveKirtanUrl),
-      tag: const Source(
-        id: 0,
-        name: 'Live Kirtan',
-        url: kLiveKirtanUrl,
+      tag: MediaItem(
+        id: '0',
+        title: 'Live Kirtan',
+        artUri: Uri.parse('https://raw.githubusercontent.com/0xharkirat/live_darbar/refs/heads/audio-controller/assets/images/splash_logo.png'),
       ),
     ),
     AudioSource.uri(
       Uri.parse(kMukhWakUrl),
-      tag: const Source(
-        id: 1,
-        name: 'Mukhwak',
-        url: kMukhWakUrl,
+      tag: MediaItem(
+        id: "1",
+        title: 'Mukhwak',
+        artUri: Uri.parse('https://raw.githubusercontent.com/0xharkirat/live_darbar/refs/heads/audio-controller/assets/images/splash_logo.png'),
       ),
     ),
     AudioSource.uri(
       Uri.parse(kMukhwakKathaUrl),
-      tag: const Source(
-        id: 2,
-        name: 'Mukhwak Katha',
-        url: kMukhwakKathaUrl,
+      tag: MediaItem(
+        id: "2",
+        title: 'Mukhwak Katha',
+        artUri: Uri.parse('https://raw.githubusercontent.com/0xharkirat/live_darbar/refs/heads/audio-controller/assets/images/splash_logo.png'),
       ),
     ),
   ];

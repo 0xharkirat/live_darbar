@@ -19,7 +19,7 @@ class PlayPauseButtonWidget extends ConsumerWidget {
         if (value == null) {
           return 0;
         }
-        return value.currentSource?.tag.id;
+        return int.parse(value.currentSource?.tag.id);
       },
       loading: () => 0,
       error: (error, _) => 0,

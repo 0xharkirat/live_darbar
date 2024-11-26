@@ -18,11 +18,11 @@ class PlayerDataWidget extends ConsumerWidget {
     final title = sequenceStateAsync.when<String>(
       data: (sequenceState) {
         // Extract current media item details as Source
-        final source = sequenceState?.currentSource?.tag as Source?;
+        final source = sequenceState?.currentSource?.tag;
 
         // Fall back to default source if current source is null
 
-        final title = source?.name ?? 'Loading...';
+        final title = source?.title ?? 'Loading...';
 
         return title;
       },

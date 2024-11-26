@@ -1,4 +1,4 @@
-package com.example.live_darbar
+package com.hsiharki.live_darbar
 
 import io.flutter.embedding.android.FlutterActivity
 

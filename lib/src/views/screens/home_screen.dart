@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:live_darbar/src/controllers/audio_controller.dart';
 import 'package:live_darbar/src/core/colors.dart';
 import 'package:live_darbar/src/views/widgets/audio_tile_widget.dart';
+import 'package:live_darbar/src/views/widgets/info_dialog_widget.dart';
 import 'package:live_darbar/src/views/widgets/play_pause_button_widget.dart';
 import 'package:live_darbar/src/views/widgets/player_data_widget.dart';
 import 'package:live_darbar/src/views/widgets/progress_bar_widget.dart';
@@ -22,6 +23,19 @@ class HomeScreen extends ConsumerWidget {
           'Live Darbar',
         ),
         backgroundColor: ShadTheme.of(context).colorScheme.accent,
+        actions: [
+          IconButton(
+            icon: const Icon(LucideIcons.info),
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return InfoDialogWidget();
+                },
+              );
+            },
+          ),
+        ],
       ),
       body: Stack(
         children: [

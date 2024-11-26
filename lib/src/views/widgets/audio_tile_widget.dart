@@ -34,7 +34,7 @@ class AudioTileWidget extends ConsumerWidget {
         if (value == null) {
           return false;
         }
-        return value.currentSource?.tag.id == id;
+        return value.currentSource?.tag.id.toString() == id.toString();
       },
       loading: () => false,
       error: (error, _) => false,
