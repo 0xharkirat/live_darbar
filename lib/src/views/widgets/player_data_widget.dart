@@ -1,8 +1,9 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:live_darbar/src/controllers/audio_controller.dart';
-import 'package:live_darbar/src/models/source.dart';
 import 'package:lottie/lottie.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
@@ -42,25 +43,50 @@ class PlayerDataWidget extends ConsumerWidget {
 
     return Row(
       children: [
-        Container(
-            height: 56,
-            width: 56,
-            decoration: BoxDecoration(
-              color: ShadTheme.of(context).colorScheme.card,
-            ),
-            child: !isPlaying
-                ? const Icon(LucideIcons.audioLines)
-                : LottieBuilder.asset(
-                    "assets/images/playing.json",
-                    delegates: LottieDelegates(
-                      values: [
-                        ValueDelegate.color(
-                          const ['**'],
-                          value: ShadTheme.of(context).colorScheme.primary,
-                        ),
-                      ],
+        ClipRRect(
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(16),
+            bottomLeft: Radius.circular(16),
+          ),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+            child: Container(
+                height: 56,
+                width: 56,
+                decoration: BoxDecoration(
+                  color:
+                      ShadTheme.of(context).colorScheme.card.withOpacity(0.5),
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(16),
+                    bottomLeft: Radius.circular(16),
+                  ),
+                  border: Border(
+                    left: BorderSide(
+                      color: ShadTheme.of(context).colorScheme.border,
                     ),
-                  )),
+                    top: BorderSide(
+                      color: ShadTheme.of(context).colorScheme.border,
+                    ),
+                    bottom: BorderSide(
+                      color: ShadTheme.of(context).colorScheme.border,
+                    ),
+                  ),
+                ),
+                child: !isPlaying
+                    ? const Icon(LucideIcons.audioLines)
+                    : LottieBuilder.asset(
+                        "assets/images/playing.json",
+                        delegates: LottieDelegates(
+                          values: [
+                            ValueDelegate.color(
+                              const ['**'],
+                              value: ShadTheme.of(context).colorScheme.primary,
+                            ),
+                          ],
+                        ),
+                      )),
+          ),
+        ),
         const SizedBox(width: 16),
         Text(
           title, // Source.name

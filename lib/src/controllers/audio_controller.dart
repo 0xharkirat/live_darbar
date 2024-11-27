@@ -13,11 +13,12 @@ class AudioController {
 
   final _audioSource = <AudioSource>[
     AudioSource.uri(
-      Uri.parse(kLiveKirtanUrl),
+      Uri.parse(kLiveKirtanUrlWeb),
       tag: MediaItem(
         id: '0',
         title: 'Live Kirtan',
-        artUri: Uri.parse('https://raw.githubusercontent.com/0xharkirat/live_darbar/refs/heads/audio-controller/assets/images/splash_logo.png'),
+        artUri: Uri.parse(
+            'https://raw.githubusercontent.com/0xharkirat/live_darbar/refs/heads/audio-controller/assets/images/splash_logo.png'),
       ),
     ),
     AudioSource.uri(
@@ -25,7 +26,8 @@ class AudioController {
       tag: MediaItem(
         id: "1",
         title: 'Mukhwak',
-        artUri: Uri.parse('https://raw.githubusercontent.com/0xharkirat/live_darbar/refs/heads/audio-controller/assets/images/splash_logo.png'),
+        artUri: Uri.parse(
+            'https://raw.githubusercontent.com/0xharkirat/live_darbar/refs/heads/audio-controller/assets/images/splash_logo.png'),
       ),
     ),
     AudioSource.uri(
@@ -33,7 +35,8 @@ class AudioController {
       tag: MediaItem(
         id: "2",
         title: 'Mukhwak Katha',
-        artUri: Uri.parse('https://raw.githubusercontent.com/0xharkirat/live_darbar/refs/heads/audio-controller/assets/images/splash_logo.png'),
+        artUri: Uri.parse(
+            'https://raw.githubusercontent.com/0xharkirat/live_darbar/refs/heads/audio-controller/assets/images/splash_logo.png'),
       ),
     ),
   ];
@@ -59,6 +62,7 @@ class AudioController {
 
   Future<void> stop() async {
     await _audioPlayer.stop();
+    await _audioPlayer.seek(Duration.zero);
   }
 
   Future<void> seek(Duration duration) async {

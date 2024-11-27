@@ -34,5 +34,4 @@ class Source {
 const kMukhWakUrl = "https://hs.sgpc.net/uploadhukamnama/hukamnama.mp3";
 const kMukhwakKathaUrl = "https://hs.sgpc.net/uploadkatha/katha.mp3";
 const kLiveKirtanUrl = "http://live.sgpc.net:7339/;";
-
-
+const kLiveKirtanUrlWeb = "https://live.sgpc.net:8442/;";

@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:live_darbar/src/controllers/audio_controller.dart';
@@ -16,109 +18,158 @@ class HomeScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     // Watch the audio progress state using the StreamProvider
     final size = MediaQuery.of(context).size;
+    const maxWidth = 500.0;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Live Darbar',
-        ),
-        backgroundColor: ShadTheme.of(context).colorScheme.accent,
-        actions: [
-          IconButton(
-            icon: const Icon(LucideIcons.info),
-            onPressed: () {
-              showDialog(
-                context: context,
-                builder: (context) {
-                  return InfoDialogWidget();
-                },
-              );
-            },
-          ),
-        ],
-      ),
-      body: Stack(
-        children: [
-          SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.only(
-                top: 20,
-                left: 20,
-                right: 20,
-                bottom: 56,
-              ),
-              child: Column(
-                children: [
-                  AudioTileWidget(
-                    onTap: () {
-                      ref.read(audioController).play(0);
-                    },
-                    color: kFirstColor,
-                    id: 0,
-                    text: 'Live Kirtan',
-                    imageUrl: 'assets/images/0.jpg',
-                    style: ShadTheme.of(context).textTheme.h3.copyWith(
-                          color: ShadTheme.of(context).colorScheme.accent,
-                          fontWeight: FontWeight.bold,
-                        ),
-                  ),
-                  const SizedBox(height: 20),
-                  AudioTileWidget(
-                    onTap: () {
-                      ref.read(audioController).play(1);
-                    },
-                    color: kSecondColor,
-                    id: 1,
-                    text: "Mukhwak",
-                    imageUrl: "assets/images/1.jpg",
-                    style: ShadTheme.of(context).textTheme.h3.copyWith(
-                        color: ShadTheme.of(context).colorScheme.foreground,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 20),
-                  AudioTileWidget(
-                    onTap: () {
-                      ref.read(audioController).play(2);
-                    },
-                    color: kThirdColor,
-                    id: 2,
-                    text: "Mukhwak Katha",
-                    imageUrl: "assets/images/2.jpg",
-                    style: ShadTheme.of(context).textTheme.h3.copyWith(
-                        color: ShadTheme.of(context).colorScheme.foreground,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 20),
-                ],
+    return Center(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: maxWidth),
+        child: Container(
+          decoration: BoxDecoration(
+            border: Border.symmetric(
+              vertical: BorderSide(
+                color: ShadTheme.of(context).colorScheme.border,
               ),
             ),
           ),
-          Positioned(
-            bottom: 0,
-            child: Container(
-              height: 56,
-              width: size.width,
-              decoration: BoxDecoration(
-                color: ShadTheme.of(context).colorScheme.accent,
-                border: Border.all(
-                  color: ShadTheme.of(context).colorScheme.border,
+          child: Scaffold(
+            appBar: AppBar(
+              title: const Text(
+                'Live Darbar',
+              ),
+              centerTitle: true,
+              backgroundColor: ShadTheme.of(context).colorScheme.accent,
+              actions: [
+                IconButton(
+                    tooltip: "Refresh Audio Sources",
+                    onPressed: () {
+                      ref.read(audioController).stop();
+                    },
+                    icon: const Icon(LucideIcons.rotateCcw)),
+                IconButton(
+                  tooltip: "About",
+                  icon: const Icon(LucideIcons.info),
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        return Center(
+                            child: ConstrainedBox(
+                                constraints:
+                                    const BoxConstraints(maxWidth: maxWidth),
+                                child: const InfoDialogWidget()));
+                      },
+                    );
+                  },
                 ),
-              ),
-              child: Stack(
-                children: [
-                  const Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      PlayerDataWidget(),
-                      PlayPauseButtonWidget(),
-                    ],
-                  ),
-                  Positioned(bottom: 0, child: ProgressBarWidget(size: size))
-                ],
-              ),
+              ],
             ),
-          )
-        ],
+            body: Stack(
+              children: [
+                SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                      top: 20,
+                      left: 20,
+                      right: 20,
+                      bottom: 56,
+                    ),
+                    child: Column(
+                      children: [
+                        AudioTileWidget(
+                          onTap: () {
+                            ref.read(audioController).play(0);
+                          },
+                          color: kFirstColor,
+                          id: 0,
+                          text: 'Live Kirtan',
+                          imageUrl: 'assets/images/0.jpg',
+                          style: ShadTheme.of(context).textTheme.h3.copyWith(
+                                color: ShadTheme.of(context).colorScheme.accent,
+                                fontWeight: FontWeight.bold,
+                              ),
+                        ),
+                        const SizedBox(height: 20),
+                        AudioTileWidget(
+                          onTap: () {
+                            ref.read(audioController).play(1);
+                          },
+                          color: kSecondColor,
+                          id: 1,
+                          text: "Mukhwak",
+                          imageUrl: "assets/images/1.jpg",
+                          style: ShadTheme.of(context).textTheme.h3.copyWith(
+                              color:
+                                  ShadTheme.of(context).colorScheme.foreground,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 20),
+                        AudioTileWidget(
+                          onTap: () {
+                            ref.read(audioController).play(2);
+                          },
+                          color: kThirdColor,
+                          id: 2,
+                          text: "Mukhwak Katha",
+                          imageUrl: "assets/images/2.jpg",
+                          style: ShadTheme.of(context).textTheme.h3.copyWith(
+                              color:
+                                  ShadTheme.of(context).colorScheme.foreground,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 20),
+                      ],
+                    ),
+                  ),
+                ),
+
+                // This is player controls
+                // I want to apply backdrop filter here such that when scrolling, anything which gets behind this player controls should be blurred
+                Positioned(
+                  bottom: 0,
+                  left: 12, // Added padding for left
+                  right: 12,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(16),
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                      child: Container(
+                        height: 56,
+                        width: size.width > maxWidth ? maxWidth : size.width,
+                        decoration: BoxDecoration(
+                          color: ShadTheme.of(context)
+                              .colorScheme
+                              .accent
+                              .withOpacity(0.8),
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: Stack(
+                          children: [
+                            const Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                PlayerDataWidget(),
+                                PlayPauseButtonWidget(),
+                              ],
+                            ),
+                            Positioned(
+                              bottom: 0,
+                              left: 56,
+                              right: 12,
+                              child: ProgressBarWidget(
+                                  width: size.width > maxWidth
+                                      ? maxWidth
+                                      : size.width),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                )
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }

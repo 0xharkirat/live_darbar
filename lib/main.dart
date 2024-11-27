@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -16,11 +17,15 @@ void main() async {
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
   ]);
-  await JustAudioBackground.init(
-    androidNotificationChannelId: 'com.ryanheise.bg_demo.channel.audio',
-    androidNotificationChannelName: 'Audio playback',
-    androidNotificationOngoing: true,
-  );
+  if (!kIsWeb && !kIsWasm) {
+    // Enable background audio playback
+    await JustAudioBackground.init(
+      androidNotificationChannelId: 'com.ryanheise.bg_demo.channel.audio',
+      androidNotificationChannelName: 'Audio playback',
+      androidNotificationOngoing: true,
+    );
+  }
+  
   runApp(const ProviderScope(child: MyApp()));
 }
 
@@ -38,6 +43,9 @@ class _MyAppState extends ConsumerState<MyApp> {
   void initState() {
     super.initState();
 
+    if (kIsWeb || kIsWasm) {
+      return;
+    }
     // Initialize quick actions with a callback
     quickActions.initialize((String shortcutType) {
       if (shortcutType == 'live_kirtan') {
@@ -69,7 +77,6 @@ class _MyAppState extends ConsumerState<MyApp> {
     ]);
   }
 
- 
   @override
   Widget build(BuildContext context) {
     return ShadApp.material(

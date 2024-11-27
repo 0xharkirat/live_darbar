@@ -4,9 +4,9 @@ import 'package:live_darbar/src/controllers/audio_controller.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
 class ProgressBarWidget extends ConsumerWidget {
-  const ProgressBarWidget({super.key, required this.size});
+  const ProgressBarWidget({super.key, required this.width});
 
-  final Size size;
+  final double width;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -14,7 +14,7 @@ class ProgressBarWidget extends ConsumerWidget {
 
     // return ConstrainedBox(
     //   constraints: BoxConstraints(
-    //     maxWidth: size.width,
+    //     maxWidth: width,
     //   ),
     //   child: const ShadProgress(
     //     minHeight: 2,
@@ -39,9 +39,9 @@ class ProgressBarWidget extends ConsumerWidget {
             // Buffered Progress (background indicator)
             Container(
               height: 2,
-              width: size.width * bufferedProgress,
+              width: width * bufferedProgress,
               decoration: BoxDecoration(
-                color: ShadTheme.of(context).colorScheme.selection,
+                color: ShadTheme.of(context).colorScheme.primaryForeground,
                 borderRadius: BorderRadius.circular(16),
               ),
             ),
@@ -49,7 +49,7 @@ class ProgressBarWidget extends ConsumerWidget {
             // Current Progress
             Container(
               height: 2,
-              width: size.width * progress,
+              width: width * progress,
               decoration: BoxDecoration(
                 color: ShadTheme.of(context).colorScheme.primary,
                 borderRadius: BorderRadius.circular(16),
@@ -60,7 +60,7 @@ class ProgressBarWidget extends ConsumerWidget {
       },
       loading: () => ConstrainedBox(
         constraints: BoxConstraints(
-          maxWidth: size.width,
+          maxWidth: width,
         ),
         child: const ShadProgress(
           minHeight: 2,

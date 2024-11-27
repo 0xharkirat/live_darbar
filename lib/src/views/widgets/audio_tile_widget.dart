@@ -19,7 +19,6 @@ class AudioTileWidget extends ConsumerWidget {
 
   final String text;
   final String imageUrl;
-
   final TextStyle style;
   final VoidCallback onTap;
   final int id;
@@ -29,6 +28,7 @@ class AudioTileWidget extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final size = MediaQuery.of(context).size;
     final currentAudio = ref.watch(sequenceStateProvider);
+
     final bool isSelected = currentAudio.when(
       data: (value) {
         if (value == null) {
@@ -39,87 +39,102 @@ class AudioTileWidget extends ConsumerWidget {
       loading: () => false,
       error: (error, _) => false,
     );
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(16),
-      child: Container(
-        decoration: BoxDecoration(
-          color: ShadTheme.of(context).colorScheme.card,
-          border: Border.all(
-            color: !isSelected ? Colors.transparent : color,
-            width: 2,
+
+    return Stack(
+      children: [
+        // Base container with image and text
+        Container(
+          decoration: BoxDecoration(
+            color: ShadTheme.of(context).colorScheme.card,
+            borderRadius: BorderRadius.circular(16),
           ),
-          borderRadius: BorderRadius.circular(16),
-        ),
-        child: Column(
-          children: [
-            ClipRRect(
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(16),
-                topRight: Radius.circular(16),
-              ),
-              child: FadeInImage(
-                placeholder: MemoryImage(kTransparentImage),
-                image: AssetImage(imageUrl),
-                fit: BoxFit.cover,
-                width: double.infinity,
-                height: size.height * 0.3,
-              ),
-            ),
-            Container(
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: color,
+          child: Column(
+            children: [
+              // Image Section
+              ClipRRect(
                 borderRadius: const BorderRadius.only(
-                  bottomLeft: Radius.circular(16),
-                  bottomRight: Radius.circular(16),
+                  topLeft: Radius.circular(16),
+                  topRight: Radius.circular(16),
+                ),
+                child: FadeInImage(
+                  placeholder: MemoryImage(kTransparentImage),
+                  image: AssetImage(imageUrl),
+                  fit: BoxFit.cover,
+                  width: double.infinity,
+                  height: size.height * 0.3,
                 ),
               ),
-              child: ListTile(
-                title: Text(
-                  text,
-                  style: style,
+              // Bottom Section
+              Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: color,
+                  borderRadius: const BorderRadius.only(
+                    bottomLeft: Radius.circular(16),
+                    bottomRight: Radius.circular(16),
+                  ),
                 ),
-                trailing: SizedBox(
-                  height: 56,
-                  width: 56,
-                  child: Consumer(
-                    builder: (context, ref, _) {
-                      final playerStateAsync = ref.watch(playerStateProvider);
+                child: ListTile(
+                  title: Text(
+                    text,
+                    style: style,
+                  ),
+                  trailing: SizedBox(
+                    height: 56,
+                    width: 56,
+                    child: Consumer(
+                      builder: (context, ref, _) {
+                        final playerStateAsync = ref.watch(playerStateProvider);
 
-                      final bool isPlaying = playerStateAsync.when(
-                        data: (playerState) {
-                          return playerState.playing &&
-                              playerState.processingState !=
-                                  ProcessingState.completed;
-                        },
-                        loading: () => false,
-                        error: (error, _) => false,
-                      );
-
-                      if (isPlaying && isSelected) {
-                        return LottieBuilder.asset(
-                          "assets/images/playing.json",
-                          delegates: LottieDelegates(
-                            values: [
-                              ValueDelegate.color(
-                                const ['**'],
-                                value:
-                                    ShadTheme.of(context).colorScheme.primary,
-                              ),
-                            ],
-                          ),
+                        final bool isPlaying = playerStateAsync.when(
+                          data: (playerState) {
+                            return playerState.playing &&
+                                playerState.processingState !=
+                                    ProcessingState.completed;
+                          },
+                          loading: () => false,
+                          error: (error, _) => false,
                         );
-                      }
-                      return const SizedBox.shrink();
-                    },
+
+                        if (isPlaying && isSelected) {
+                          return LottieBuilder.asset(
+                            "assets/images/playing.json",
+                            delegates: LottieDelegates(
+                              values: [
+                                ValueDelegate.color(
+                                  const ['**'],
+                                  value:
+                                      ShadTheme.of(context).colorScheme.primary,
+                                ),
+                              ],
+                            ),
+                          );
+                        }
+                        return const SizedBox.shrink();
+                      },
+                    ),
                   ),
                 ),
               ),
-            )
-          ],
+            ],
+          ),
         ),
-      ),
+        // Gradient Overlay when Selected
+
+        // InkWell for Ripple Effect
+        SizedBox(
+          height: size.height * 0.3,
+          child: Material(
+            color: isSelected ? Colors.black54 : Colors.transparent,
+            child: InkWell(
+              onTap: onTap,
+              borderRadius: BorderRadius.circular(16),
+              splashColor: color.withOpacity(0.3),
+              highlightColor: color.withOpacity(0.1),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
