@@ -10,6 +10,7 @@ import 'package:live_darbar/src/controllers/audio_controller.dart';
 import 'package:live_darbar/src/views/screens/home_screen.dart';
 import 'package:quick_actions/quick_actions.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
+import 'package:audio_service/audio_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -38,14 +39,26 @@ class MyApp extends ConsumerStatefulWidget {
 
 class _MyAppState extends ConsumerState<MyApp> {
   final QuickActions quickActions = const QuickActions();
+  static const MethodChannel _channel = MethodChannel('com.hsi.harki.live_darbar/audio');
+
+
+
 
   @override
   void initState() {
     super.initState();
 
+
     if (kIsWeb || kIsWasm) {
       return;
     }
+
+    _channel.setMethodCallHandler((call) async {
+      if (call.method == "playLiveDarbar") {
+        // Trigger playback logic
+        ref.read(audioController).play(0);
+      }
+    });
     // Initialize quick actions with a callback
     quickActions.initialize((String shortcutType) {
       if (shortcutType == 'live_kirtan') {

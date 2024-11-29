@@ -1,0 +1,5 @@
+<resources>
+    <string-array name="PlayLiveDarbarQueries">
+        <item>play live darbar</item>
+    </string-array>
+</resources>
