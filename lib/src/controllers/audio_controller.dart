@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
@@ -13,7 +14,8 @@ class AudioController {
 
   final _audioSource = <AudioSource>[
     AudioSource.uri(
-      Uri.parse(kLiveKirtanUrlWeb),
+      Uri.parse(kIsWasm || kIsWeb ? kLiveKirtanUrlWeb :
+       kLiveKirtanUrl),
       tag: MediaItem(
         id: '0',
         title: 'Live Kirtan',

@@ -33,6 +33,7 @@ class HomeScreen extends ConsumerWidget {
           ),
           child: Scaffold(
             appBar: AppBar(
+              leadingWidth: 40,
               title: const Text(
                 'Live Darbar',
               ),
@@ -53,10 +54,23 @@ class HomeScreen extends ConsumerWidget {
                       context: context,
                       builder: (context) {
                         return Center(
-                            child: ConstrainedBox(
-                                constraints:
-                                    const BoxConstraints(maxWidth: maxWidth),
-                                child: const InfoDialogWidget()));
+                          child: ConstrainedBox(
+                            constraints:
+                                const BoxConstraints(maxWidth: maxWidth),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                border: Border.symmetric(
+                                  vertical: BorderSide(
+                                    color: ShadTheme.of(context)
+                                        .colorScheme
+                                        .border,
+                                  ),
+                                ),
+                              ),
+                              child: const InfoDialogWidget(),
+                            ),
+                          ),
+                        );
                       },
                     );
                   },

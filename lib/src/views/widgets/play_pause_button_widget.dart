@@ -36,7 +36,16 @@ class PlayPauseButtonWidget extends ConsumerWidget {
         // Web-Specific Live Stream Handling
         if (kIsWeb && isLiveStream) {
           // Show the loading indicator only if it's buffering/loading AND not playing
-          
+          if (playerState.processingState == ProcessingState.loading) {
+            log("Web Live Stream: Loading ");
+            return const IconButton(
+              onPressed: null,
+              icon: SizedBox.square(
+                dimension: 16,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              ),
+            );
+          }
 
           // Show play button if paused
           if (!playerState.playing) {
@@ -61,24 +70,11 @@ class PlayPauseButtonWidget extends ConsumerWidget {
                   color: ShadTheme.of(context).colorScheme.primaryForeground),
             );
           }
-
-          if ((playerState.processingState == ProcessingState.loading ||
-                  playerState.processingState == ProcessingState.buffering) &&
-              !playerState.playing) {
-            log("Web Live Stream: Loading or Buffering");
-            return const IconButton(
-              onPressed: null,
-              icon: SizedBox.square(
-                dimension: 16,
-                child: CircularProgressIndicator(strokeWidth: 2),
-              ),
-            );
-          }
         }
 
         // Handle non-live audio and mobile platforms
         if (playerState.processingState == ProcessingState.loading ||
-                playerState.processingState == ProcessingState.buffering) {
+            playerState.processingState == ProcessingState.buffering) {
           log("Loading or Buffering");
           return const IconButton(
             onPressed: null,
