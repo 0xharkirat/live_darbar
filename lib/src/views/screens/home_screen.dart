@@ -11,6 +11,7 @@ import 'package:live_darbar/src/views/widgets/player_data_widget.dart';
 import 'package:live_darbar/src/views/widgets/progress_bar_widget.dart';
 import 'package:live_darbar/src/views/widgets/theme_switch_widget.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -35,21 +36,21 @@ class HomeScreen extends ConsumerWidget {
           child: Scaffold(
             appBar: AppBar(
               leadingWidth: 40,
-              title: const Text(
-                'Live Darbar',
+              title:  Text(
+                AppLocalizations.of(context)!.app_title,
               ),
               centerTitle: true,
               backgroundColor: ShadTheme.of(context).colorScheme.accent,
               actions: [
-                ThemeSwitchWidget(),
+                const ThemeSwitchWidget(),
                 IconButton(
-                    tooltip: "Refresh Audio Sources",
+                    tooltip: AppLocalizations.of(context)!.refresh_tooltip,
                     onPressed: () {
                       ref.read(audioController).stop();
                     },
                     icon: const Icon(LucideIcons.rotateCcw)),
                 IconButton(
-                  tooltip: "About",
+                  tooltip: AppLocalizations.of(context)!.about_tooltip,
                   icon: const Icon(LucideIcons.info),
                   onPressed: () {
                     showDialog(
@@ -97,7 +98,7 @@ class HomeScreen extends ConsumerWidget {
                           },
                           color: kFirstColor,
                           id: 0,
-                          text: 'Live Kirtan',
+                          text: AppLocalizations.of(context)!.live_kirtan,
                           imageUrl: 'assets/images/0.jpg',
                           style: ShadTheme.of(context).textTheme.h3.copyWith(
                                 color: ShadTheme.of(context).colorScheme.accent,
@@ -111,7 +112,7 @@ class HomeScreen extends ConsumerWidget {
                           },
                           color: kSecondColor,
                           id: 1,
-                          text: "Mukhwak",
+                          text: AppLocalizations.of(context)!.mukhwak,
                           imageUrl: "assets/images/1.jpg",
                           style: ShadTheme.of(context).textTheme.h3.copyWith(
                               color:
@@ -125,7 +126,7 @@ class HomeScreen extends ConsumerWidget {
                           },
                           color: kThirdColor,
                           id: 2,
-                          text: "Mukhwak Katha",
+                          text: AppLocalizations.of(context)!.mukhwak_katha,
                           imageUrl: "assets/images/2.jpg",
                           style: ShadTheme.of(context).textTheme.h3.copyWith(
                               color:

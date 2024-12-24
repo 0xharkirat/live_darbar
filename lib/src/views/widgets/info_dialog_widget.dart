@@ -4,6 +4,7 @@ import 'package:live_darbar/src/views/widgets/about_me_tab_widget.dart';
 import 'package:live_darbar/src/views/widgets/licensing_info_tab_widget.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class InfoDialogWidget extends StatelessWidget {
   const InfoDialogWidget({
@@ -31,13 +32,13 @@ class InfoDialogWidget extends StatelessWidget {
                 Navigator.pop(context);
               },
             ),
-            title: const Text('Information'),
+            title:  SelectableText(AppLocalizations.of(context)!.information),
             backgroundColor: ShadTheme.of(context).colorScheme.accent,
-            bottom: const TabBar(
+            bottom:  TabBar(
               tabs: [
-                Tab(text: "About the App"),
-                Tab(text: "About Me"),
-                Tab(text: "Licensing Info"),
+                Tab(text: AppLocalizations.of(context)!.about_section_heading),
+                Tab(text: AppLocalizations.of(context)!.about_me_heading),
+                Tab(text: AppLocalizations.of(context)!.licensing_heading),
               ],
             ),
           ),

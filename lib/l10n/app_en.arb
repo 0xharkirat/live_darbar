@@ -1,0 +1,150 @@
+{
+    "app_title": "Live Darbar",
+    "@app_title": {
+        "description": "Title of the app"
+    },
+    "live_kirtan": "Live Kirtan",
+    "@live_kirtan": {
+        "description": "Live Kirtan"
+    },
+    "mukhwak": "Mukhwak",
+    "@mukhwak": {
+        "description": "Mukhwak"
+    },
+    "mukhwak_katha": "Mukhwak Katha",
+    "@mukhwak_katha": {
+        "description": "Mukhwak Katha"
+    },
+    "loading": "Loading...",
+    "@loading": {
+        "description": "Loading..."
+    },
+    "error": "Error",
+    "@error": {
+        "description": "Error"
+    },
+    "color_tooltip": "Change Color",
+    "@color_tooltip": {
+        "description": "Change Color Tooltip"
+    },
+    "refresh_tooltip": "Refresh Audio Sources",
+    "@refresh_tooltip": {
+        "description": "Refresh Audio Sources Tooltip"
+    },
+    "about_tooltip": "About",
+    "@about_tooltip": {
+        "description": "About Tooltip"
+    },
+    "blue": "Blue",
+    "@blue": {
+        "description": "Blue"
+    },
+    "green": "Green",
+    "@green": {
+        "description": "Green"
+    },
+    "red": "Red",
+    "@red": {
+        "description": "Red"
+    },
+    "yellow": "Yellow",
+    "@yellow": {
+        "description": "Yellow"
+    },
+    "orange": "Orange",
+    "@orange": {
+        "description": "Orange"
+    },
+    "purple": "Purple",
+    "@purple": {
+        "description": "Purple"
+    },
+    "rose": "Rose",
+    "@rose": {
+        "description": "Pink"
+    },
+    "about_section_heading": "About the App",
+    "@about_section_heading": {
+        "description": "About the App Section Heading"
+    },
+    "about_section_p1": "This app is my humble contribution to the Sikh community all around the world, enabling listening to the divine kirtan anywhere in the world from Darbar Sahib Amritsar, which is the holiest site in Sikhism.",
+    "@about_section_p1": {
+        "description": "About the App Section Paragraph 1"
+    },
+    "about_section_p2": "By no means am I using this app for commercial purposes or with the intention of making a profit from it.",
+    "@about_section_p2": {
+        "description": "About the App Section Paragraph 2"
+    },
+    "about_section_p3": "If you have any concerns or feedback, feel free to reach out to me using this link:",
+    "@about_section_p3": {
+        "description": "About the App Section Paragraph 3"
+    },
+    "about_section_contact": "Contact Me",
+    "@about_section_contact": {
+        "description": "Contact Me"
+    },
+    "about_me_heading": "About Me",
+    "@about_me_heading": {
+        "description": "About Me Section Heading"
+    },
+    "about_me_p1": "Hi, I am Harkirat, a perpetual learner, constantly exploring new ideas and technologies in the field of computer science.",
+    "@about_me_p1": {
+        "description": "About Me Section Paragraph 1"
+    },
+    "about_me_p2": "I am learning & creating better technologies for the greater good of Humanity.",
+    "@about_me_p2": {
+        "description": "About Me Section Paragraph 2"
+    },
+    "about_me_p3": "I also play Tabla in Kirtan (Religious music).",
+    "@about_me_p3": {
+        "description": "About Me Section Paragraph 3"
+    },
+    "about_me_tabla_button": "My Tabla Videos",
+    "@about_me_tabla_button": {
+        "description": "My Tabla Videos"
+    },
+    "about_me_my_story": "My Story",
+    "@about_me_my_story": {
+        "description": "My Story"
+    },
+    "about_me_linkedin": "My LinkedIn",
+    "@about_me_linkedin": {
+        "description": "My LinkedIn"
+    },
+    "licensing_heading": "Licensing Info",
+    "@licensing_heading": {
+        "description": "Licensing Information Section Heading"
+    },
+    "licensing_link1_title": "1. Audio Source: ",
+    "@licensing_link1_title": {
+        "description": "Audio Source Title"
+    },
+    "licensing_link1_text": "All audio data is streamed from sgpc.net. Sgpc.net is the copyright owner of all the audio data.",
+    "@licensing_link1_text": {
+        "description": "Audio Source Text"
+    },
+    "licensing_link2_title": "2. App logo: ",
+    "@licensing_link2_title": {
+        "description": "App Logo Title"
+    },
+    "licensing_link2_text": "Used under free license from Punjab icons created by Freepik - Flaticon",
+    "@licensing_link2_text": {
+        "description": "App Logo Text"
+    },
+    "licensing_link3_title": "3. App Images: ",
+    "@licensing_link3_title": {
+        "description": "App Icon Title"
+    },
+    "licensing_link3_text": "Sourced from Art of Punjab (artofpunjab.com). Artist Kanwar Singh & his team are copyright owner of all the images.",
+    "@licensing_link3_text": {
+        "description": "App Icon Text"
+    },
+    "licensing_fianl_p": "Once again, By no means, I am claiming ownership of any of the above. This app is created for serving the Sikh Community. By no means am I using this app for commercial purposes or with the intention of making a profit from it.",
+    "@licensing_fianl_p": {
+        "description": "Licensing Information Final Paragraph"
+    },
+    "information": "Information",
+    "@information": {
+        "description": "Information"
+    }
+}

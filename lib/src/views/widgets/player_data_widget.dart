@@ -6,6 +6,7 @@ import 'package:just_audio/just_audio.dart';
 import 'package:live_darbar/src/controllers/audio_controller.dart';
 import 'package:lottie/lottie.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class PlayerDataWidget extends ConsumerWidget {
   const PlayerDataWidget({
@@ -23,12 +24,16 @@ class PlayerDataWidget extends ConsumerWidget {
 
         // Fall back to default source if current source is null
 
-        final title = source?.title ?? 'Loading...';
+        if (source == null) {
+          return AppLocalizations.of(context)!.loading;
+        }
 
-        return title;
+        final title = source?.title;
+
+        return getLocalizedTitle(title, context);
       },
-      loading: () => 'Loading...',
-      error: (error, _) => 'Error: $error',
+      loading: () => AppLocalizations.of(context)!.loading,
+      error: (error, _) => AppLocalizations.of(context)!.loading,
     );
 
     final playerStateAsync = ref.watch(playerStateProvider);
@@ -102,3 +107,18 @@ class PlayerDataWidget extends ConsumerWidget {
     );
   }
 }
+
+String getLocalizedTitle(String title, BuildContext context) {
+  final localizations = AppLocalizations.of(context)!;
+  switch (title) {
+    case 'Live Kirtan':
+      return localizations.live_kirtan;
+    case 'Mukhwak':
+      return localizations.mukhwak;
+    case 'Mukhwak Katha':
+      return localizations.mukhwak_katha;
+    default:
+      return title; // Fallback to the original title if no match
+  }
+}
+

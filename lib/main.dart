@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -11,6 +10,7 @@ import 'package:live_darbar/src/core/app_theme.dart';
 import 'package:live_darbar/src/views/screens/home_screen.dart';
 import 'package:quick_actions/quick_actions.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -87,6 +87,9 @@ class _MyAppState extends ConsumerState<MyApp> {
       theme: AppTheme.shadThemeData(themeColor.colorScheme),
       darkTheme: AppTheme.shadThemeData(themeColor.colorScheme),
       themeMode: ThemeMode.dark,
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
+      locale: Locale('pa'),
       home: const HomeScreen(),
     );
   }

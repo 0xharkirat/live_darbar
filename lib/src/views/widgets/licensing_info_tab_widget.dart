@@ -1,7 +1,9 @@
 
 import 'package:flutter/material.dart';
+import 'package:live_darbar/src/views/widgets/slogan_widget.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class LicensingInfoTabWidget extends StatelessWidget {
   const LicensingInfoTabWidget({super.key});
@@ -21,16 +23,16 @@ class LicensingInfoTabWidget extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'Licensing Information',
+            SelectableText(
+              AppLocalizations.of(context)!.licensing_heading,
               style: ShadTheme.of(context).textTheme.h3,
             ),
             const SizedBox(height: 16),
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  '1. Audio Source: ',
+                SelectableText(
+                  AppLocalizations.of(context)!.licensing_link1_title,
                   style: ShadTheme.of(context).textTheme.p,
                 ),
                 Expanded(
@@ -40,8 +42,9 @@ class LicensingInfoTabWidget extends StatelessWidget {
                         'https://www.sgpc.net/',
                       );
                     },
-                    child: Text(
-                      'All audio data is streamed from sgpc.net. Sgpc.net is the copyright owner of all the audio data.',
+                    mouseCursor: SystemMouseCursors.click,
+                    child: SelectableText(
+                      AppLocalizations.of(context)!.licensing_link1_text,
                       style: ShadTheme.of(context).textTheme.p.copyWith(
                             decoration: TextDecoration.underline,
                             color: ShadTheme.of(context).colorScheme.primary,
@@ -55,17 +58,18 @@ class LicensingInfoTabWidget extends StatelessWidget {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  '2. App logo: ',
+                SelectableText(
+                  AppLocalizations.of(context)!.licensing_link2_title,
                   style: ShadTheme.of(context).textTheme.p,
                 ),
                 Expanded(
                   child: InkWell(
+                    mouseCursor: SystemMouseCursors.click,
                     onTap: () => _launchUrl(
                       'https://www.flaticon.com/free-icons/punjab',
                     ),
-                    child: Text(
-                      'Used under free license from Punjab icons created by Freepik - Flaticon',
+                    child: SelectableText(
+                      AppLocalizations.of(context)!.licensing_link2_text,
                       style: ShadTheme.of(context).textTheme.p.copyWith(
                             decoration: TextDecoration.underline,
                             color: ShadTheme.of(context).colorScheme.primary,
@@ -79,17 +83,18 @@ class LicensingInfoTabWidget extends StatelessWidget {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  '3. App Images: ',
+                SelectableText(
+                  AppLocalizations.of(context)!.licensing_link3_title,
                   style: ShadTheme.of(context).textTheme.p,
                 ),
                 Expanded(
                   child: InkWell(
+                    mouseCursor: SystemMouseCursors.click,
                     onTap: () => _launchUrl(
                       'https://artofpunjab.com/',
                     ),
-                    child: Text(
-                      'Sourced from Art of Punjab (artofpunjab.com). Artist Kanwar Singh & his team are copyright owner of all the images.',
+                    child: SelectableText(
+                      AppLocalizations.of(context)!.licensing_link3_text,
                       style: ShadTheme.of(context).textTheme.p.copyWith(
                             decoration: TextDecoration.underline,
                             color: ShadTheme.of(context).colorScheme.primary,
@@ -100,10 +105,13 @@ class LicensingInfoTabWidget extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 16),
-            Text(
-              'Once again, By no means, I am claiming ownership of any of the above. This app is created for serving the Sikh Community. By no means am I using this app for commercial purposes or with the intention of making a profit from it.',
+            SelectableText(
+              AppLocalizations.of(context)!.licensing_fianl_p,
               style: ShadTheme.of(context).textTheme.p,
             ),
+
+            const SizedBox(height: 16),
+            const SloganWidget(),
           ],
         ),
       ),
