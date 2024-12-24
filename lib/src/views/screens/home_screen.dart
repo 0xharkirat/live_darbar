@@ -1,10 +1,13 @@
 import 'dart:ui';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:live_darbar/src/controllers/audio_controller.dart';
+import 'package:live_darbar/src/controllers/locale_controller.dart';
 import 'package:live_darbar/src/core/colors.dart';
 import 'package:live_darbar/src/views/widgets/audio_tile_widget.dart';
+import 'package:live_darbar/src/views/widgets/download_button_widget.dart';
 import 'package:live_darbar/src/views/widgets/info_dialog_widget.dart';
 import 'package:live_darbar/src/views/widgets/play_pause_button_widget.dart';
 import 'package:live_darbar/src/views/widgets/player_data_widget.dart';
@@ -35,7 +38,11 @@ class HomeScreen extends ConsumerWidget {
           ),
           child: Scaffold(
             appBar: AppBar(
-              leadingWidth: 40,
+              leading: IconButton(
+                tooltip: AppLocalizations.of(context)!.language_tooltip,
+                onPressed: (){
+                ref.read(localeController.notifier).toggleLocale();
+              }, icon: const Icon(LucideIcons.languages)),
               title:  Text(
                 AppLocalizations.of(context)!.app_title,
               ),
@@ -43,6 +50,9 @@ class HomeScreen extends ConsumerWidget {
               backgroundColor: ShadTheme.of(context).colorScheme.accent,
               actions: [
                 const ThemeSwitchWidget(),
+                // if web or wasm, show this buttn
+                if (kIsWeb || kIsWasm) const DownloadButtonWidget(),
+                
                 IconButton(
                     tooltip: AppLocalizations.of(context)!.refresh_tooltip,
                     onPressed: () {

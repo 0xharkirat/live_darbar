@@ -35,6 +35,14 @@
     "@about_tooltip": {
         "description": "About Tooltip"
     },
+    "language_tooltip": "Change Language",
+    "@language_tooltip": {
+        "description": "Change Language Tooltip"
+    },
+    "download_tooltip": "Download the app",
+    "@download_tooltip": {
+        "description": "Download Tooltip"
+    },
     "blue": "Blue",
     "@blue": {
         "description": "Blue"
@@ -146,5 +154,13 @@
     "information": "Information",
     "@information": {
         "description": "Information"
+    },
+    "google_play": "Google Play Store",
+    "@google_play": {
+        "description": "Google Play Store"
+    },
+    "apple_store": "Apple App Store",
+    "@apple_store": {
+        "description": "Apple App Store"
     }
 }

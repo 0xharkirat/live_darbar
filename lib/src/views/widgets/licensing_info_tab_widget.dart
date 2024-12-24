@@ -43,7 +43,7 @@ class LicensingInfoTabWidget extends StatelessWidget {
                       );
                     },
                     mouseCursor: SystemMouseCursors.click,
-                    child: SelectableText(
+                    child: Text(
                       AppLocalizations.of(context)!.licensing_link1_text,
                       style: ShadTheme.of(context).textTheme.p.copyWith(
                             decoration: TextDecoration.underline,
@@ -68,7 +68,7 @@ class LicensingInfoTabWidget extends StatelessWidget {
                     onTap: () => _launchUrl(
                       'https://www.flaticon.com/free-icons/punjab',
                     ),
-                    child: SelectableText(
+                    child: Text(
                       AppLocalizations.of(context)!.licensing_link2_text,
                       style: ShadTheme.of(context).textTheme.p.copyWith(
                             decoration: TextDecoration.underline,
@@ -93,7 +93,7 @@ class LicensingInfoTabWidget extends StatelessWidget {
                     onTap: () => _launchUrl(
                       'https://artofpunjab.com/',
                     ),
-                    child: SelectableText(
+                    child: Text(
                       AppLocalizations.of(context)!.licensing_link3_text,
                       style: ShadTheme.of(context).textTheme.p.copyWith(
                             decoration: TextDecoration.underline,

@@ -46,7 +46,7 @@ class AboutMeTabWidget extends StatelessWidget {
               variant: ShadButtonVariant.link,
               icon: const Icon(LucideIcons.youtube),
               cursor: SystemMouseCursors.click,
-              child: SelectableText(
+              child: Text(
                 AppLocalizations.of(context)!.about_me_tabla_button,
               ),
               onPressed: () => _launchUrl(
@@ -57,7 +57,7 @@ class AboutMeTabWidget extends StatelessWidget {
               variant: ShadButtonVariant.link,
               icon: const Icon(LucideIcons.externalLink),
               cursor: SystemMouseCursors.click,
-              child: SelectableText(
+              child: Text(
                 AppLocalizations.of(context)!.about_me_my_story,
               ),
               onPressed: () => _launchUrl(
@@ -68,7 +68,7 @@ class AboutMeTabWidget extends StatelessWidget {
               variant: ShadButtonVariant.link,
               icon: const Icon(LucideIcons.linkedin),
               cursor: SystemMouseCursors.click,
-              child:  SelectableText(
+              child:  Text(
                 AppLocalizations.of(context)!.about_me_linkedin,
               ),
               onPressed: () => _launchUrl(

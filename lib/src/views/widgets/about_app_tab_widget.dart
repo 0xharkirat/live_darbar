@@ -37,7 +37,7 @@ class AboutAppTabWidget extends StatelessWidget {
               icon: const Icon(LucideIcons.externalLink),
               cursor: SystemMouseCursors.click,
               onPressed: onPressed,
-              child: SelectableText(
+              child: Text(
                 AppLocalizations.of(context)!.about_section_contact,
               ),
             ),

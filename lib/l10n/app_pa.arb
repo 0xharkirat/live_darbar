@@ -31,9 +31,17 @@
     "@refresh_tooltip": {
         "description": "ਆਡੀਓ ਸਰੋਤਾਂ ਨੂੰ ਤਾਜ਼ਾ ਕਰਨ ਲਈ ਟੂਲਟਿਪ"
     },
-    "about_tooltip": "ਬਾਰੇ",
+    "about_tooltip": "ਜਾਣਕਾਰੀ",
     "@about_tooltip": {
-        "description": "ਬਾਰੇ ਟੂਲਟਿਪ"
+        "description": "ਜਾਣਕਾਰੀ ਟੂਲਟਿਪ"
+    },
+    "language_tooltip": "ਭਾਸ਼ਾ ਬਦਲੋ",
+    "@language_tooltip": {
+        "description": "ਭਾਸ਼ਾ ਬਦਲੋ ਟੂਲਟਿਪ"
+    },
+    "download_tooltip": "ਐਪ ਡਾਊਨਲੋਡ ਕਰੋ",
+    "@download_tooltip": {
+        "description": "ਡਾਊਨਲੋਡ ਟੂਲਟਿਪ"
     },
     "blue": "ਨੀਲਾ",
     "@blue": {
@@ -146,5 +154,13 @@
     "information": "ਜਾਣਕਾਰੀ",
     "@information": {
         "description": "ਜਾਣਕਾਰੀ"
+    },
+    "google_play": "ਗੂਗਲ ਪਲੇ ਸਟੋਰ",
+    "@google_play": {
+        "description": "ਗੂਗਲ ਪਲੇ ਸਟੋਰ"
+    },
+    "apple_store": "ਐਪਲ ਐਪ ਸਟੋਰ",
+    "@apple_store": {
+        "description": "ਐਪਲ ਐਪ ਸਟੋਰ"
     }
 }
