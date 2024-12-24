@@ -9,6 +9,7 @@ import 'package:live_darbar/src/views/widgets/info_dialog_widget.dart';
 import 'package:live_darbar/src/views/widgets/play_pause_button_widget.dart';
 import 'package:live_darbar/src/views/widgets/player_data_widget.dart';
 import 'package:live_darbar/src/views/widgets/progress_bar_widget.dart';
+import 'package:live_darbar/src/views/widgets/theme_switch_widget.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
 class HomeScreen extends ConsumerWidget {
@@ -40,6 +41,7 @@ class HomeScreen extends ConsumerWidget {
               centerTitle: true,
               backgroundColor: ShadTheme.of(context).colorScheme.accent,
               actions: [
+                ThemeSwitchWidget(),
                 IconButton(
                     tooltip: "Refresh Audio Sources",
                     onPressed: () {

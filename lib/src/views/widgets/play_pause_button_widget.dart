@@ -67,7 +67,7 @@ class PlayPauseButtonWidget extends ConsumerWidget {
                 ref.read(audioController).pause();
               },
               icon: Icon(LucideIcons.pause,
-                  color: ShadTheme.of(context).colorScheme.primaryForeground),
+                  color: ShadTheme.of(context).colorScheme.foreground),
             );
           }
         }
@@ -104,7 +104,7 @@ class PlayPauseButtonWidget extends ConsumerWidget {
               ref.read(audioController).pause();
             },
             icon: Icon(LucideIcons.pause,
-                color: ShadTheme.of(context).colorScheme.primaryForeground),
+                color: ShadTheme.of(context).colorScheme.foreground),
           );
         }
 
