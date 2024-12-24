@@ -1,16 +1,17 @@
 import 'dart:developer';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'package:live_darbar/src/controllers/audio_controller.dart';
+import 'package:live_darbar/src/controllers/locale_controller.dart';
 import 'package:live_darbar/src/controllers/theme_controller.dart';
 import 'package:live_darbar/src/core/app_theme.dart';
 import 'package:live_darbar/src/views/screens/home_screen.dart';
 import 'package:quick_actions/quick_actions.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -81,12 +82,16 @@ class _MyAppState extends ConsumerState<MyApp> {
   @override
   Widget build(BuildContext context) {
     final themeColor = ref.watch(themeController);
+    final locale = ref.watch(localeController);
     return ShadApp.material(
       title: 'Live Darbar',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.shadThemeData(themeColor.colorScheme),
       darkTheme: AppTheme.shadThemeData(themeColor.colorScheme),
       themeMode: ThemeMode.dark,
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
+      locale: Locale(locale),
       home: const HomeScreen(),
     );
   }

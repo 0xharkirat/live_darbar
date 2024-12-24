@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:live_darbar/src/views/widgets/slogan_widget.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AboutAppTabWidget extends StatelessWidget {
   const AboutAppTabWidget({
@@ -17,30 +19,30 @@ class AboutAppTabWidget extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'About the App',
+            SelectableText(
+              AppLocalizations.of(context)!.about_section_heading,
               style: ShadTheme.of(context).textTheme.h3,
             ),
             const SizedBox(height: 16),
-            Text(
-                'This app is my humble contribution to the Sikh community all around the world, enabling listening to the divine kirtan anywhere in the world from Darbar Sahib Amritsar, which is the holiest site in Sikhism.',
+            SelectableText(AppLocalizations.of(context)!.about_section_p1,
                 style: ShadTheme.of(context).textTheme.p),
             const SizedBox(height: 16),
-            Text(
-                'By no means am I using this app for commercial purposes or with the intention of making a profit from it.',
+            SelectableText(AppLocalizations.of(context)!.about_section_p2,
                 style: ShadTheme.of(context).textTheme.p),
             const SizedBox(height: 16),
-            Text(
-                'If you have any concerns or feedback, feel free to reach out to me using this link:',
+            SelectableText(AppLocalizations.of(context)!.about_section_p3,
                 style: ShadTheme.of(context).textTheme.p),
             const SizedBox(height: 16),
             ShadButton.outline(
               icon: const Icon(LucideIcons.externalLink),
+              cursor: SystemMouseCursors.click,
               onPressed: onPressed,
-              child: const Text(
-                'Contact Me',
+              child: Text(
+                AppLocalizations.of(context)!.about_section_contact,
               ),
             ),
+            const SizedBox(height: 16),
+            const SloganWidget(),
           ],
         ),
       ),

@@ -49,6 +49,9 @@ dependencies:
   url_launcher: ^6.3.1
   any_link_preview: ^3.0.2
   shared_preferences: ^2.3.4
+  intl: any
+  flutter_localizations:
+    sdk: flutter
   
 
 dev_dependencies:
@@ -72,6 +75,7 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+  generate: true
 
   # To add assets to your application, add an assets section, like this:
   assets:
