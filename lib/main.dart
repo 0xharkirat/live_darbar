@@ -10,7 +10,6 @@ import 'package:live_darbar/src/controllers/audio_controller.dart';
 import 'package:live_darbar/src/views/screens/home_screen.dart';
 import 'package:quick_actions/quick_actions.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
-import 'package:audio_service/audio_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
