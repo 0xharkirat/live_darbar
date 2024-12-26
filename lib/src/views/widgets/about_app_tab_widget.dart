@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:live_darbar/src/core/app_version.dart';
 import 'package:live_darbar/src/views/widgets/slogan_widget.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -43,6 +44,15 @@ class AboutAppTabWidget extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             const SloganWidget(),
+            const SizedBox(height: 16),
+            SizedBox(
+              width: double.infinity,
+              child: SelectableText(
+                "Current Version: $appVersion",
+                style: ShadTheme.of(context).textTheme.p,
+                textAlign: TextAlign.center,
+              ),
+            ),
           ],
         ),
       ),
