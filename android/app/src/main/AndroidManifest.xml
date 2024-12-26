@@ -36,6 +36,7 @@
             <intent-filter>
                 <action android:name="custom.actions.intent.PLAY_LIVE_DARBAR" />
                 <category android:name="android.intent.category.DEFAULT" />
+
             </intent-filter>
 
         </activity>

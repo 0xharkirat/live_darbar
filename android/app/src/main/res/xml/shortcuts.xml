@@ -7,4 +7,12 @@
         app:queryPatterns="@array/PlayLiveDarbarQueries">
         <intent />
     </capability>
+
+    <capability android:name="actions.intent.OPEN_APP_FEATURE">
+        <intent
+            android:targetPackage="com.hsi.harki.live_darbar"
+            >
+
+        </intent>
+    </capability>
 </shortcuts>
