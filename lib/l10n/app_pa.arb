@@ -1,0 +1,166 @@
+{
+    "app_title": "ਲਾਈਵ ਦਰਬਾਰ",
+    "@app_title": {
+        "description": "ਐਪ ਦਾ ਨਾਮ"
+    },
+    "live_kirtan": "ਲਾਈਵ ਕੀਰਤਨ",
+    "@live_kirtan": {
+        "description": "ਲਾਈਵ ਕੀਰਤਨ"
+    },
+    "mukhwak": "ਹੁਕਮਨਾਮਾ",
+    "@mukhwak": {
+        "description": "ਹੁਕਮਨਾਮਾ"
+    },
+    "mukhwak_katha": "ਹੁਕਮਨਾਮਾ ਕਥਾ",
+    "@mukhwak_katha": {
+        "description": "ਹੁਕਮਨਾਮਾ ਕਥਾ"
+    },
+    "loading": "ਲੋਡ ਹੋ ਰਿਹਾ ਹੈ...",
+    "@loading": {
+        "description": "ਲੋਡ ਹੋ ਰਿਹਾ ਹੈ..."
+    },
+    "error": "ਗਲਤੀ",
+    "@error": {
+        "description": "ਗਲਤੀ"
+    },
+    "color_tooltip": "ਰੰਗ ਬਦਲੋ",
+    "@color_tooltip": {
+        "description": "ਰੰਗ ਬਦਲਣ ਲਈ ਟੂਲਟਿਪ"
+    },
+    "refresh_tooltip": "ਆਡੀਓ ਸਰੋਤ ਰਿਫਰੇਸ਼ ਕਰੋ",
+    "@refresh_tooltip": {
+        "description": "ਆਡੀਓ ਸਰੋਤਾਂ ਨੂੰ ਤਾਜ਼ਾ ਕਰਨ ਲਈ ਟੂਲਟਿਪ"
+    },
+    "about_tooltip": "ਜਾਣਕਾਰੀ",
+    "@about_tooltip": {
+        "description": "ਜਾਣਕਾਰੀ ਟੂਲਟਿਪ"
+    },
+    "language_tooltip": "ਭਾਸ਼ਾ ਬਦਲੋ",
+    "@language_tooltip": {
+        "description": "ਭਾਸ਼ਾ ਬਦਲੋ ਟੂਲਟਿਪ"
+    },
+    "download_tooltip": "ਐਪ ਡਾਊਨਲੋਡ ਕਰੋ",
+    "@download_tooltip": {
+        "description": "ਡਾਊਨਲੋਡ ਟੂਲਟਿਪ"
+    },
+    "blue": "ਨੀਲਾ",
+    "@blue": {
+        "description": "ਨੀਲਾ ਰੰਗ"
+    },
+    "green": "ਹਰਾ",
+    "@green": {
+        "description": "ਹਰਾ ਰੰਗ"
+    },
+    "red": "ਲਾਲ",
+    "@red": {
+        "description": "ਲਾਲ ਰੰਗ"
+    },
+    "yellow": "ਪੀਲਾ",
+    "@yellow": {
+        "description": "ਪੀਲਾ ਰੰਗ"
+    },
+    "orange": "ਸੰਤਰੀ",
+    "@orange": {
+        "description": "ਸੰਤਰੀ ਰੰਗ"
+    },
+    "purple": "ਜਾਮਨੀ",
+    "@purple": {
+        "description": "ਜਾਮਨੀ ਰੰਗ"
+    },
+    "rose": "ਗੁਲਾਬੀ",
+    "@rose": {
+        "description": "ਗੁਲਾਬੀ ਰੰਗ"
+    },
+    "about_section_heading": "ਐਪ ਬਾਰੇ",
+    "@about_section_heading": {
+        "description": "ਐਪ ਬਾਰੇ ਸੈਕਸ਼ਨ ਸਿਰਲੇਖ"
+    },
+    "about_section_p1": "ਇਹ ਐਪ ਦੁਨੀਆ ਭਰ ਦੇ ਸਿੱਖ ਭਾਈਚਾਰੇ ਲਈ ਮੇਰਾ ਨਿਮਾਣਾ ਯੋਗਦਾਨ ਹੈ, ਜਿਸ ਨਾਲ ਦਰਬਾਰ ਸਾਹਿਬ ਅੰਮ੍ਰਿਤਸਰ, ਜੋ ਕਿ ਸਿੱਖ ਧਰਮ ਦਾ ਸਭ ਤੋਂ ਪਵਿੱਤਰ ਅਸਥਾਨ ਹੈ, ਤੋਂ ਦੁਨੀਆ ਭਰ ਵਿੱਚ ਕਿਤੇ ਵੀ ਇਲਾਹੀ ਕੀਰਤਨ ਸੁਣਿਆ ਜਾ ਸਕਦਾ ਹੈ।",
+    "@about_section_p1": {
+        "description": "ਐਪ ਬਾਰੇ ਸੈਕਸ਼ਨ ਪੈਰਾ 1"
+    },
+    "about_section_p2": "ਮੈਂ ਕਿਸੇ ਵੀ ਤਰੀਕੇ ਨਾਲ ਇਸ ਐਪ ਦੀ ਵਰਤੋਂ ਵਪਾਰਕ ਉਦੇਸ਼ਾਂ ਲਈ ਜਾਂ ਇਸ ਤੋਂ ਲਾਭ ਕਮਾਉਣ ਦੇ ਇਰਾਦੇ ਨਾਲ ਨਹੀਂ ਕਰ ਰਿਹਾ ਹਾਂ।",
+    "@about_section_p2": {
+        "description": "ਐਪ ਬਾਰੇ ਸੈਕਸ਼ਨ ਪੈਰਾ 2"
+    },
+    "about_section_p3": "ਜੇ ਤੁਹਾਨੂੰ ਕੋਈ ਚਿੰਤਾ ਜਾਂ ਪ੍ਰਤੀਕਿਰਿਆ ਹੈ, ਤਾਂ ਕਿਰਪਾ ਕਰਕੇ ਇਸ ਲਿੰਕ ਦੀ ਵਰਤੋਂ ਕਰਕੇ ਮੈਨੂੰ ਸੰਪਰਕ ਕਰੋ:",
+    "@about_section_p3": {
+        "description": "ਐਪ ਬਾਰੇ ਸੈਕਸ਼ਨ ਪੈਰਾ 3"
+    },
+    "about_section_contact": "ਸੰਪਰਕ ਕਰੋ",
+    "@about_section_contact": {
+        "description": "ਸੰਪਰਕ ਕਰੋ"
+    },
+    "about_me_heading": "ਮੇਰੇ ਬਾਰੇ",
+    "@about_me_heading": {
+        "description": "ਮੇਰੇ ਬਾਰੇ ਸੈਕਸ਼ਨ ਸਿਰਲੇਖ"
+    },
+    "about_me_p1": "ਸਤਿ ਸ੍ਰੀ ਅਕਾਲ, ਮੈਂ ਹਰਕੀਰਤ ਹਾਂ, ਇੱਕ ਸਦੀਵੀ ਸਿੱਖਣ ਵਾਲਾ, ਕੰਪਿਊਟਰ ਵਿਗਿਆਨ ਦੇ ਖੇਤਰ ਵਿੱਚ ਲਗਾਤਾਰ ਨਵੇਂ ਵਿਚਾਰਾਂ ਅਤੇ ਤਕਨਾਲੋਜੀਆਂ ਦੀ ਪੜਚੋਲ ਕਰ ਰਿਹਾ ਹਾਂ।",
+    "@about_me_p1": {
+        "description": "ਮੇਰੇ ਬਾਰੇ ਸੈਕਸ਼ਨ ਪੈਰਾ 1"
+    },
+    "about_me_p2": "ਮੈਂ ਮਨੁੱਖਤਾ ਦੀ ਭਲਾਈ ਲਈ ਬਿਹਤਰ ਤਕਨਾਲੋਜੀਆਂ ਬਣਾਉਣ ਅਤੇ ਸਿਖਣ ਵਿੱਚ ਲਗਿਆ ਹੋਇਆ ਹਾਂ।",
+    "@about_me_p2": {
+        "description": "ਮੇਰੇ ਬਾਰੇ ਸੈਕਸ਼ਨ ਪੈਰਾ 2"
+    },
+    "about_me_p3": "ਮੈਂ ਕੀਰਤਨ ਵਿੱਚ ਤਬਲਾ ਵੀ ਵਜਾਉਂਦਾ ਹਾਂ।",
+    "@about_me_p3": {
+        "description": "ਮੇਰੇ ਬਾਰੇ ਸੈਕਸ਼ਨ ਪੈਰਾ 3"
+    },
+    "about_me_tabla_button": "ਮੇਰੇ ਤਬਲੇ ਦੇ ਵੀਡੀਓਜ਼",
+    "@about_me_tabla_button": {
+        "description": "ਮੇਰੇ ਤਬਲੇ ਦੇ ਵੀਡੀਓਜ਼"
+    },
+    "about_me_my_story": "ਮੇਰੀ ਕਹਾਣੀ",
+    "@about_me_my_story": {
+        "description": "ਮੇਰੀ ਕਹਾਣੀ"
+    },
+    "about_me_linkedin": "ਮੇਰਾ LinkedIn",
+    "@about_me_linkedin": {
+        "description": "ਮੇਰਾ LinkedIn"
+    },
+    "licensing_heading": "ਲਾਇਸੈਂਸ ਜਾਣਕਾਰੀ",
+    "@licensing_heading": {
+        "description": "ਲਾਇਸੈਂਸ ਜਾਣਕਾਰੀ ਸੈਕਸ਼ਨ ਸਿਰਲੇਖ"
+    },
+    "licensing_link1_title": "1. ਆਡੀਓ ਸਰੋਤ: ",
+    "@licensing_link1_title": {
+        "description": "ਆਡੀਓ ਸਰੋਤ ਸਿਰਲੇਖ"
+    },
+    "licensing_link1_text": "ਸਾਰਾ ਆਡੀਓ ਡਾਟਾ sgpc.net ਤੋਂ ਲਿਆ ਗਿਆ ਹੈ। sgpc.net ਸਾਰੇ ਆਡੀਓ ਡਾਟਾ ਦੇ ਕਾਪੀਰਾਈਟ ਮਾਲਕ ਹਨ।",
+    "@licensing_link1_text": {
+        "description": "ਆਡੀਓ ਸਰੋਤ ਪਾਠ"
+    },
+    "licensing_link2_title": "2. ਐਪ ਲੋਗੋ: ",
+    "@licensing_link2_title": {
+        "description": "ਐਪ ਲੋਗੋ ਸਿਰਲੇਖ"
+    },
+    "licensing_link2_text": "ਫ੍ਰੀ ਲਾਇਸੈਂਸ ਦੇ ਅਧੀਨ ਵਰਤਿਆ ਗਿਆ। Used under free license from Punjab icons created by Freepik - Flaticon",
+    "@licensing_link2_text": {
+        "description": "ਐਪ ਲੋਗੋ ਪਾਠ"
+    },
+    "licensing_link3_title": "3. ਐਪ ਚਿੱਤਰ: ",
+    "@licensing_link3_title": {
+        "description": "ਐਪ ਚਿੱਤਰ ਸਿਰਲੇਖ"
+    },
+    "licensing_link3_text": "Art of Punjab (artofpunjab.com) ਤੋਂ ਲਿਆ ਗਿਆ। ਸਾਰੇ ਚਿੱਤਰਾਂ ਦੇ ਕਾਪੀਰਾਈਟ ਮਾਲਕ ਕਲਾਕਾਰ ਕੰਵਰ ਸਿੰਘ ਅਤੇ ਉਸਦੀ ਟੀਮ ਹਨ।",
+    "@licensing_link3_text": {
+        "description": "ਐਪ ਚਿੱਤਰ ਪਾਠ"
+    },
+    "licensing_fianl_p": "ਇੱਕ ਵਾਰ ਫਿਰ, ਮੈਂ ਉਪਰੋਕਤ ਵਿੱਚੋਂ ਕਿਸੇ ਦਾ ਮਾਲਕ ਹੋਣ ਦਾ ਦਾਅਵਾ ਨਹੀਂ ਕਰ ਰਿਹਾ। ਇਹ ਐਪ ਸਿੱਖ ਭਾਈਚਾਰੇ ਦੀ ਸੇਵਾ ਲਈ ਬਣਾਈ ਗਈ ਹੈ। ਮੈਂ ਕਿਸੇ ਵੀ ਤਰੀਕੇ ਨਾਲ ਇਸ ਐਪ ਦੀ ਵਰਤੋਂ ਵਪਾਰਕ ਉਦੇਸ਼ਾਂ ਲਈ ਜਾਂ ਇਸ ਤੋਂ ਲਾਭ ਕਮਾਉਣ ਦੇ ਇਰਾਦੇ ਨਾਲ ਨਹੀਂ ਕਰ ਰਿਹਾ ਹਾਂ।",
+    "@licensing_fianl_p": {
+        "description": "ਲਾਇਸੈਂਸ ਜਾਣਕਾਰੀ ਅੰਤਿਮ ਪੈਰਾ"
+    },
+    "information": "ਜਾਣਕਾਰੀ",
+    "@information": {
+        "description": "ਜਾਣਕਾਰੀ"
+    },
+    "google_play": "ਗੂਗਲ ਪਲੇ ਸਟੋਰ",
+    "@google_play": {
+        "description": "ਗੂਗਲ ਪਲੇ ਸਟੋਰ"
+    },
+    "apple_store": "ਐਪਲ ਐਪ ਸਟੋਰ",
+    "@apple_store": {
+        "description": "ਐਪਲ ਐਪ ਸਟੋਰ"
+    }
+}

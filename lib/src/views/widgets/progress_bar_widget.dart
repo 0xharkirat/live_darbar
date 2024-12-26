@@ -41,7 +41,7 @@ class ProgressBarWidget extends ConsumerWidget {
               height: 2,
               width: width * bufferedProgress,
               decoration: BoxDecoration(
-                color: ShadTheme.of(context).colorScheme.primaryForeground,
+                color: ShadTheme.of(context).colorScheme.foreground,
                 borderRadius: BorderRadius.circular(16),
               ),
             ),

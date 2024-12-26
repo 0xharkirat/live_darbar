@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:live_darbar/src/views/widgets/slogan_widget.dart';
 
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AboutMeTabWidget extends StatelessWidget {
   const AboutMeTabWidget({
@@ -23,28 +25,29 @@ class AboutMeTabWidget extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('About Me', style: ShadTheme.of(context).textTheme.h3),
+            SelectableText(AppLocalizations.of(context)!.about_me_heading, style: ShadTheme.of(context).textTheme.h3),
             const SizedBox(height: 16),
-            Text(
-              'Hi, I am Harkirat, a perpetual learner, constantly exploring new ideas and technologies in the field of computer science.  ',
+            SelectableText(
+              AppLocalizations.of(context)!.about_me_p1,
               style: ShadTheme.of(context).textTheme.p,
             ),
             const SizedBox(height: 16),
-            Text(
-              'I am learning & creating better technologies for the greater good of Humanity.',
+            SelectableText(
+              AppLocalizations.of(context)!.about_me_p2,
               style: ShadTheme.of(context).textTheme.p,
             ),
             const SizedBox(height: 16),
-            Text(
-              'I also play Tabla in Kirtan (Religious music).',
+            SelectableText(
+              AppLocalizations.of(context)!.about_me_p3,
               style: ShadTheme.of(context).textTheme.p,
             ),
             const SizedBox(height: 16),
             ShadButton.raw(
               variant: ShadButtonVariant.link,
               icon: const Icon(LucideIcons.youtube),
-              child: const Text(
-                'My Tabla Videos',
+              cursor: SystemMouseCursors.click,
+              child: Text(
+                AppLocalizations.of(context)!.about_me_tabla_button,
               ),
               onPressed: () => _launchUrl(
                 'https://www.youtube.com/watch?v=0lhJ_0ve5q8&list=PLLx2TfaNTPhyQPAIfEnib4MfXppYtYVyB',
@@ -53,8 +56,9 @@ class AboutMeTabWidget extends StatelessWidget {
             ShadButton.raw(
               variant: ShadButtonVariant.link,
               icon: const Icon(LucideIcons.externalLink),
-              child: const Text(
-                'My Story',
+              cursor: SystemMouseCursors.click,
+              child: Text(
+                AppLocalizations.of(context)!.about_me_my_story,
               ),
               onPressed: () => _launchUrl(
                 'https://openinapp.link/so8kh',
@@ -63,13 +67,16 @@ class AboutMeTabWidget extends StatelessWidget {
             ShadButton.raw(
               variant: ShadButtonVariant.link,
               icon: const Icon(LucideIcons.linkedin),
-              child: const Text(
-                'My LinkedIn',
+              cursor: SystemMouseCursors.click,
+              child:  Text(
+                AppLocalizations.of(context)!.about_me_linkedin,
               ),
               onPressed: () => _launchUrl(
                 'https://www.linkedin.com/in/0xharkirat/',
               ),
-            )
+            ),
+            const SizedBox(height: 16),
+            const SloganWidget(),
           ],
         ),
       ),

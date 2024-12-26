@@ -75,6 +75,7 @@ class AudioTileWidget extends ConsumerWidget {
                   ),
                 ),
                 child: ListTile(
+                  onTap: onTap,
                   title: Text(
                     text,
                     style: style,
