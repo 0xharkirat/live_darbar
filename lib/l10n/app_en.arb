@@ -162,5 +162,9 @@
     "apple_store": "Apple App Store",
     "@apple_store": {
         "description": "Apple App Store"
+    },
+    "live": "Live",
+    "@live": {
+        "description": "Live"
     }
 }
