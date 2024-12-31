@@ -130,8 +130,8 @@ class AudioTileWidget extends ConsumerWidget {
             child: InkWell(
               onTap: onTap,
               borderRadius: BorderRadius.circular(16),
-              splashColor: color.withOpacity(0.3),
-              highlightColor: color.withOpacity(0.1),
+              splashColor: color.withValues(alpha: 0.3),
+              highlightColor: color.withValues(alpha: 0.1),
             ),
           ),
         ),

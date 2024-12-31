@@ -162,5 +162,9 @@
     "apple_store": "ਐਪਲ ਐਪ ਸਟੋਰ",
     "@apple_store": {
         "description": "ਐਪਲ ਐਪ ਸਟੋਰ"
+    },
+    "live": "ਲਾਈਵ",
+    "@live": {
+        "description": "ਲਾਈਵ"
     }
 }

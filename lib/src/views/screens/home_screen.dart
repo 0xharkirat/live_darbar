@@ -8,6 +8,7 @@ import 'package:live_darbar/src/controllers/locale_controller.dart';
 import 'package:live_darbar/src/core/colors.dart';
 import 'package:live_darbar/src/views/widgets/audio_tile_widget.dart';
 import 'package:live_darbar/src/views/widgets/download_button_widget.dart';
+import 'package:live_darbar/src/views/widgets/individual_item_dialog.dart';
 import 'package:live_darbar/src/views/widgets/info_dialog_widget.dart';
 import 'package:live_darbar/src/views/widgets/play_pause_button_widget.dart';
 import 'package:live_darbar/src/views/widgets/player_data_widget.dart';
@@ -108,6 +109,7 @@ class HomeScreen extends ConsumerWidget {
                           AudioTileWidget(
                             onTap: () {
                               ref.read(audioController).play(0);
+                              showIndividualDialog(context, maxWidth);
                             },
                             color: kFirstColor,
                             id: 0,
@@ -123,6 +125,7 @@ class HomeScreen extends ConsumerWidget {
                           AudioTileWidget(
                             onTap: () {
                               ref.read(audioController).play(1);
+                              showIndividualDialog(context, maxWidth);
                             },
                             color: kSecondColor,
                             id: 1,
@@ -138,6 +141,7 @@ class HomeScreen extends ConsumerWidget {
                           AudioTileWidget(
                             onTap: () {
                               ref.read(audioController).play(2);
+                              showIndividualDialog(context, maxWidth);
                             },
                             color: kThirdColor,
                             id: 2,
@@ -172,18 +176,25 @@ class HomeScreen extends ConsumerWidget {
                             color: ShadTheme.of(context)
                                 .colorScheme
                                 .accent
-                                .withOpacity(0.8),
+                                .withValues(alpha: 0.8),
                             borderRadius: BorderRadius.circular(16),
                           ),
                           child: Stack(
                             children: [
-                              const Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  PlayerDataWidget(),
-                                  PlayPauseButtonWidget(),
-                                ],
+                              InkWell(
+                                onTap: () {
+                                  showIndividualDialog(context, maxWidth);
+                                },
+                                child: const Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    PlayerDataWidget(),
+                                    PlayPauseButtonWidget(
+                                      showBackground: false,
+                                    ),
+                                  ],
+                                ),
                               ),
                               Positioned(
                                 bottom: 0,
@@ -206,6 +217,30 @@ class HomeScreen extends ConsumerWidget {
           ),
         ),
       ),
+    );
+  }
+
+  Future<dynamic> showIndividualDialog(BuildContext context, double maxWidth) {
+    return showDialog(
+      
+      context: context,
+      builder: (context) {
+        return Center(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(maxWidth: maxWidth),
+            child: Container(
+              decoration: BoxDecoration(
+                border: Border.symmetric(
+                  vertical: BorderSide(
+                    color: ShadTheme.of(context).colorScheme.border,
+                  ),
+                ),
+              ),
+              child: const IndividualItemDialog(),
+            ),
+          ),
+        );
+      },
     );
   }
 }
