@@ -1,38 +1,45 @@
+//
+//  AppShortcuts.swift
+//  Runner
+//
+//  Created by Harkirat Singh on 1/1/2025.
+//
+
+
 import AppIntents
 import intelligence
 
 struct AppShortcuts: AppShortcutsProvider {
-  static var appShortcuts: [AppShortcut] {
-    [
-      // Mukhwak Intent
-      AppShortcut(
-        intent: MukhwakIntent(),
-        phrases: [
-          "Play mukhwak in \(.applicationName)",
-          "Start hukumnama in \(.applicationName)"
+    static var appShortcuts: [AppShortcut] {
+        return [
+            // Mukhwak Intent Shortcut
+            AppShortcut(
+                intent: MukhwakIntent(),
+                phrases: [
+                    "\(.applicationName) mukhwak",
+                ]
+            ),
+            
+            // Live Kirtan Intent Shortcut
+            AppShortcut(
+                intent: LiveKirtanIntent(),
+                phrases: [
+                    "\(.applicationName) kirtan",
+                    "Open \(.applicationName)"
+                ]
+            ),
+            
+            // Katha Intent Shortcut
+            AppShortcut(
+                intent: KathaIntent(),
+                phrases: [
+                   
+                    "\(.applicationName) katha",
+                    
+                    
+                ]
+            )
         ]
-      ),
-      
-      // Live Kirtan Intent
-      AppShortcut(
-        intent: LiveKirtanIntent(),
-        phrases: [
-          "Play Live Kirtan in \(.applicationName)",
-          "Start Live Kirtan in \(.applicationName)",
-          "Open \(.applicationName)"
-        ]
-      ),
-      
-      // Katha Intent
-      AppShortcut(
-        intent: KathaIntent(),
-        phrases: [
-          "Play katha in \(.applicationName)",
-          "Start katha in \(.applicationName)",
-          "Play mukhwak katha in \(.applicationName)",
-          "Play hukumnama katha in \(.applicationName)"
-        ]
-      )
-    ]
-  }
+    }
 }
+

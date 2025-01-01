@@ -1,8 +1,16 @@
+//
+//  MukhwakIntent.swift
+//  Runner
+//
+//  Created by Harkirat Singh on 1/1/2025.
+//
+
+
 import AppIntents
 import intelligence
 
 struct MukhwakIntent: AppIntent {
-  static var title: LocalizedStringResource = "Play Mukhwak"
+  static var title: LocalizedStringResource = "Start Hukumnama"
   static var openAppWhenRun: Bool = true
   
   @MainActor
@@ -12,14 +20,3 @@ struct MukhwakIntent: AppIntent {
   }
 }
 
-struct MukhwakShortcuts: AppShortcutsProvider {
-  static var appShortcuts: [AppShortcut] {
-    AppShortcut(
-      intent: MukhwakIntent(),
-      phrases: [
-        "Play mukhwak in \(.applicationName)",
-        "Start hukumnama in \(.applicationName)"
-      ]
-    )
-  }
-}

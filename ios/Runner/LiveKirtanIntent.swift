@@ -10,7 +10,7 @@ import AppIntents
 import intelligence
 
 struct LiveKirtanIntent: AppIntent {
-  static var title: LocalizedStringResource = "Play Live Kirtan"
+  static var title: LocalizedStringResource = "Start Kirtan"
   static var openAppWhenRun: Bool = true
   
   @MainActor
@@ -19,3 +19,4 @@ struct LiveKirtanIntent: AppIntent {
     return .result()
   }
 }
+
