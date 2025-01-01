@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:live_darbar/src/controllers/audio_controller.dart';
-import 'package:live_darbar/src/core/colors.dart';
 import 'package:live_darbar/src/core/get_localized_title.dart';
 import 'package:live_darbar/src/views/widgets/play_pause_button_widget.dart';
 import 'package:live_darbar/src/views/widgets/progress_bar_custom.dart';

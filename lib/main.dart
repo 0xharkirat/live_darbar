@@ -1,7 +1,9 @@
 import 'dart:developer';
+import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_core_spotlight/flutter_core_spotlight.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'package:live_darbar/src/controllers/audio_controller.dart';
@@ -26,6 +28,8 @@ void main() async {
       androidNotificationChannelName: 'Audio playback',
       androidNotificationOngoing: true,
     );
+
+    
   }
 
   runApp(const ProviderScope(child: MyApp()));
@@ -40,19 +44,22 @@ class MyApp extends ConsumerStatefulWidget {
 
 class _MyAppState extends ConsumerState<MyApp> {
   final QuickActions quickActions = const QuickActions();
-  static const MethodChannel _channel = MethodChannel('com.hsi.harki.live_darbar/audio');
-
-
-
+  static const MethodChannel _channel =
+      MethodChannel('com.hsi.harki.live_darbar/audio');
 
   @override
   void initState() {
+    if (Platform.isIOS) {
+      initIOSSpotlight();
+      configureSpotlightActivity(ref);
+    }
     super.initState();
-
 
     if (kIsWeb || kIsWasm) {
       return;
     }
+
+    
 
     _channel.setMethodCallHandler((call) async {
       if (call.method == "playLiveDarbar") {
@@ -91,6 +98,8 @@ class _MyAppState extends ConsumerState<MyApp> {
     ]);
   }
 
+  
+
   @override
   Widget build(BuildContext context) {
     final themeColor = ref.watch(themeController);
@@ -108,3 +117,45 @@ class _MyAppState extends ConsumerState<MyApp> {
     );
   }
 }
+
+Future<String> initIOSSpotlight() {
+  return FlutterCoreSpotlight.instance.indexSearchableItems([
+    FlutterSpotlightItem(
+      uniqueIdentifier: "live_kirtan",
+      domainIdentifier: 'com.hsiharki.liveDarbar',
+      attributeTitle: 'Live Kirtan',
+      attributeDescription: 'Play Live Kirtan',
+    ),
+    FlutterSpotlightItem(
+      uniqueIdentifier: "mukhwak",
+      domainIdentifier: 'com.hsiharki.liveDarbar',
+      attributeTitle: 'Mukhwak',
+      attributeDescription: 'Play Mukhwak',
+    ),
+    FlutterSpotlightItem(
+      uniqueIdentifier: "mukhwak_katha",
+      domainIdentifier: 'com.hsiharki.liveDarbar',
+      attributeTitle: 'Mukhwak Katha',
+      attributeDescription: 'Play Mukhwak Katha',
+    ),
+  ]);
+}
+
+void configureSpotlightActivity(WidgetRef ref) {
+    return FlutterCoreSpotlight.instance.configure(
+      onSearchableItemSelected: (FlutterSpotlightUserActivity? userActivity) {
+        log("uniqueIdentifier: ${userActivity?.uniqueIdentifier}");
+
+        if (userActivity?.uniqueIdentifier == 'live_kirtan') {
+        log('Live Kirtan Spotlight Triggered');
+        ref.read(audioController).play(0); // Call play function
+      } else if (userActivity?.uniqueIdentifier == 'mukhwak') {
+        log('Mukhwak Spotlight Triggered');
+        ref.read(audioController).play(1); // Call pause function
+      } else if (userActivity?.uniqueIdentifier == 'mukhwak_katha') {
+        log('Mukhwak Katha Spotlight Triggered');
+        ref.read(audioController).play(2); // Call pause function
+      }
+      },
+    );
+  }

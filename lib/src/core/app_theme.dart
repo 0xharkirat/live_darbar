@@ -47,8 +47,7 @@ extension AppThemeColorExtension on AppThemeColor {
         return const ShadVioletColorScheme.dark();
       case AppThemeColor.yellow:
         return const ShadYellowColorScheme.dark();
-      default:
-        return const ShadOrangeColorScheme.dark();
+
     }
   }
 }

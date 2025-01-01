@@ -53,6 +53,7 @@ dependencies:
   intl: any
   flutter_localizations:
     sdk: flutter
+  flutter_core_spotlight: ^1.0.4
 
   
 
