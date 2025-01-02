@@ -16,7 +16,7 @@ struct AppShortcuts: AppShortcutsProvider {
             AppShortcut(
                 intent: MukhwakIntent(),
                 phrases: [
-                    "\(.applicationName) mukhwak",
+                    "Start mukhwak in \(.applicationName)",
                 ]
             ),
             
@@ -24,7 +24,7 @@ struct AppShortcuts: AppShortcutsProvider {
             AppShortcut(
                 intent: LiveKirtanIntent(),
                 phrases: [
-                    "\(.applicationName) kirtan",
+                    "Start kirtan in \(.applicationName)",
                     "Open \(.applicationName)"
                 ]
             ),
@@ -34,7 +34,7 @@ struct AppShortcuts: AppShortcutsProvider {
                 intent: KathaIntent(),
                 phrases: [
                    
-                    "\(.applicationName) katha",
+                    "Start katha in \(.applicationName)",
                     
                     
                 ]
