@@ -42,13 +42,13 @@ class MyApp extends ConsumerStatefulWidget {
 
 class _MyAppState extends ConsumerState<MyApp> {
   final QuickActions quickActions = const QuickActions();
-  final _intelligence = Intelligence();
+  final Intelligence? _intelligence =
+      defaultTargetPlatform == TargetPlatform.iOS ? Intelligence() : null;
   static const MethodChannel _channel =
       MethodChannel('com.hsi.harki.live_darbar/audio');
 
   @override
   void initState() {
-    
     super.initState();
 
     if (kIsWeb || kIsWasm) {
@@ -91,12 +91,15 @@ class _MyAppState extends ConsumerState<MyApp> {
   }
 
   Future<void> init() async {
-    try {
-      _intelligence.selectionsStream().listen(_handleSelection);
-    } on PlatformException catch (e) {
-      debugPrint(e.toString());
-    }
+  if (_intelligence == null) return; // Skip initialization if not on iOS
+
+  try {
+    _intelligence.selectionsStream().listen(_handleSelection);
+  } on PlatformException catch (e) {
+    debugPrint(e.toString());
   }
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -115,8 +118,6 @@ class _MyAppState extends ConsumerState<MyApp> {
     );
   }
 }
-
-
 
 void shortcutPlay(String? channelKey, WidgetRef ref) {
   if (channelKey == 'live_kirtan') {
