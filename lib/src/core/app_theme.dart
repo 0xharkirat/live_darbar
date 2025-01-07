@@ -1,5 +1,6 @@
-import 'dart:ui';
 
+
+import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
@@ -11,6 +12,14 @@ class AppTheme {
       textTheme: ShadTextTheme.fromGoogleFont(
         GoogleFonts.manrope,
       ),
+    );
+  }
+
+  static ThemeData materialThemeData(ShadColorScheme colorScheme) {
+    return ThemeData(
+      colorScheme: ColorScheme.fromSeed(seedColor: colorScheme.primary, brightness: Brightness.dark),
+     
+      textTheme: GoogleFonts.manropeTextTheme(),
     );
   }
 }
@@ -47,8 +56,12 @@ extension AppThemeColorExtension on AppThemeColor {
         return const ShadVioletColorScheme.dark();
       case AppThemeColor.yellow:
         return const ShadYellowColorScheme.dark();
-
     }
+  }
+
+  Color get materialColor {
+    return colorScheme.primary;
+    
   }
 }
 

@@ -110,6 +110,10 @@ class _MyAppState extends ConsumerState<MyApp> {
       debugShowCheckedModeBanner: false,
       theme: AppTheme.shadThemeData(themeColor.colorScheme),
       darkTheme: AppTheme.shadThemeData(themeColor.colorScheme),
+      materialThemeBuilder: (context, theme) {
+        return AppTheme.materialThemeData(themeColor.colorScheme);
+        
+      },
       themeMode: ThemeMode.dark,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,

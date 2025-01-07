@@ -125,13 +125,19 @@ class AudioTileWidget extends ConsumerWidget {
         // InkWell for Ripple Effect
         SizedBox(
           height: size.height * 0.3,
-          child: Material(
-            color: isSelected ? Colors.black54 : Colors.transparent,
-            child: InkWell(
-              onTap: onTap,
-              borderRadius: BorderRadius.circular(16),
-              splashColor: color.withValues(alpha: 0.3),
-              highlightColor: color.withValues(alpha: 0.1),
+          child: ClipRRect(
+            
+            borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(16),
+                  topRight: Radius.circular(16),),
+            child: Material(
+              color: isSelected ? Colors.black54 : Colors.transparent,
+              child: InkWell(
+                onTap: onTap,
+                borderRadius: BorderRadius.circular(16),
+                splashColor: color.withValues(alpha: 0.3),
+                highlightColor: color.withValues(alpha: 0.1),
+              ),
             ),
           ),
         ),
