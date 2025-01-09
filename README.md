@@ -1,7 +1,7 @@
 # Live Darbar
 
 <p align="center">
-  <img src="https://play-lh.googleusercontent.com/YGulqzP2If8VPwOJubXK-MrnLJf1LZBRFLVIeAh28wD4Hc8ESWhKMLEDXUPPkXlc5AfY=w120-h120-rw" />
+  <img src="https://raw.githubusercontent.com/0xharkirat/live_darbar/refs/heads/main/assets/images/splash_logo.png" width="200" />
 </p>
 
 A simple yet powerful & intelligent mobile app for live audio & video broadcast from _**[Golden Temple](https://en.wikipedia.org/wiki/Golden_Temple)**_, _**[Amritsar](https://en.wikipedia.org/wiki/Amritsar)**_. Both  [_**Android**_] (Due to change in play store policy about inactivity, they have deleted my developer account; download apk instead)  &  [_**iOS**_](https://apps.apple.com/app/id6449766130)  apps are fully published on their respective app stores.
@@ -10,9 +10,7 @@ A simple yet powerful & intelligent mobile app for live audio & video broadcast 
 
 
 ## App Screenshots
-<p align="center">
-  <img src="https://raw.githubusercontent.com/0xharkirat/live_darbar/main/screenshots.gif" />
-</p>
+![demo](docs/screenshots.gif =x250)
 
 # About the App
 
