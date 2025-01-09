@@ -16,9 +16,9 @@ By no means am I using this app for commercial purposes or with the intention of
 <p>
   <img src="https://raw.githubusercontent.com/0xharkirat/live_darbar/refs/heads/responsive/docs/screenshots.gif" width="200" />
 </p>
+
+
 https://github.com/user-attachments/assets/86133128-0a25-40a6-93cf-7bc88eeb41b1
-
-
 # About the App
 
 ***Current Features:***
