@@ -14,6 +14,10 @@ A simple yet powerful & intelligent mobile app for live audio & video broadcast 
 
 # About the App
 
+
+https://github.com/user-attachments/assets/86133128-0a25-40a6-93cf-7bc88eeb41b1
+
+
 ***Current Features:***
 
  - [x] Listen to live [kirtan](https://en.wikipedia.org/wiki/Sikh_music) from Golden Temple, Amritsar.
