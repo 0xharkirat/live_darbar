@@ -1,19 +1,16 @@
 import 'dart:ui';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:live_darbar/src/controllers/audio_controller.dart';
-import 'package:live_darbar/src/controllers/locale_controller.dart';
 import 'package:live_darbar/src/core/colors.dart';
 import 'package:live_darbar/src/views/widgets/audio_tile_widget.dart';
-import 'package:live_darbar/src/views/widgets/download_button_widget.dart';
+import 'package:live_darbar/src/views/widgets/home_app_bar_widget.dart';
 import 'package:live_darbar/src/views/widgets/individual_item_dialog.dart';
-import 'package:live_darbar/src/views/widgets/info_dialog_widget.dart';
+import 'package:live_darbar/src/views/widgets/moving_gradient_widget.dart';
 import 'package:live_darbar/src/views/widgets/play_pause_button_widget.dart';
 import 'package:live_darbar/src/views/widgets/player_data_widget.dart';
 import 'package:live_darbar/src/views/widgets/progress_bar_widget.dart';
-import 'package:live_darbar/src/views/widgets/theme_switch_widget.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -26,85 +23,37 @@ class HomeScreen extends ConsumerWidget {
     final size = MediaQuery.of(context).size;
     const maxWidth = 500.0;
 
-    return Center(
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: maxWidth),
-        child: Container(
-          decoration: BoxDecoration(
-            border: Border.symmetric(
-              vertical: BorderSide(
-                color: ShadTheme.of(context).colorScheme.border,
-              ),
-            ),
-          ),
-          child: SafeArea(
-            top: false,
-            child: Scaffold(
-              appBar: AppBar(
-                leading: IconButton(
-                    tooltip: AppLocalizations.of(context)!.language_tooltip,
-                    onPressed: () {
-                      ref.read(localeController.notifier).toggleLocale();
-                    },
-                    icon: const Icon(LucideIcons.languages)),
-                title: Text(
-                  AppLocalizations.of(context)!.app_title,
-                ),
-                centerTitle: true,
-                backgroundColor: ShadTheme.of(context).colorScheme.accent,
-                actions: [
-                  const ThemeSwitchWidget(),
-                  // if web or wasm, show this buttn
-                  if (kIsWeb || kIsWasm) const DownloadButtonWidget(),
-
-                  IconButton(
-                      tooltip: AppLocalizations.of(context)!.refresh_tooltip,
-                      onPressed: () {
-                        ref.read(audioController).stop();
-                      },
-                      icon: const Icon(LucideIcons.rotateCcw)),
-                  IconButton(
-                    tooltip: AppLocalizations.of(context)!.about_tooltip,
-                    icon: const Icon(LucideIcons.info),
-                    onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (context) {
-                          return Center(
-                            child: ConstrainedBox(
-                              constraints:
-                                  const BoxConstraints(maxWidth: maxWidth),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  border: Border.symmetric(
-                                    vertical: BorderSide(
-                                      color: ShadTheme.of(context)
-                                          .colorScheme
-                                          .border,
-                                    ),
-                                  ),
-                                ),
-                                child: const InfoDialogWidget(),
-                              ),
-                            ),
-                          );
-                        },
-                      );
-                    },
-                  ),
-                ],
-              ),
-              body: Stack(
-                children: [
-                  SingleChildScrollView(
-                    child: Padding(
-                      padding: const EdgeInsets.only(
-                        top: 20,
-                        left: 20,
-                        right: 20,
-                        bottom: 56,
+    return SafeArea(
+      top: false,
+      child: MovingGradientWidget(
+        colors: [
+          Theme.of(context).colorScheme.onTertiary,
+          Theme.of(context).colorScheme.onPrimary,
+          Theme.of(context).colorScheme.inversePrimary,
+          Theme.of(context).colorScheme.onSecondary,
+        ],
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+          appBar: const HomeAppBarWidget(),
+          body: Stack(
+            clipBehavior: Clip.antiAlias,
+            children: [
+              SingleChildScrollView(
+                child: Center(
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                      top: 20,
+                      left: 20,
+                      right: 20,
+                      bottom: 56,
+                    ),
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(
+                        maxWidth: maxWidth,
                       ),
                       child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           AudioTileWidget(
                             onTap: () {
@@ -158,62 +107,66 @@ class HomeScreen extends ConsumerWidget {
                       ),
                     ),
                   ),
+                ),
+              ),
 
-                  // This is player controls
-                  // I want to apply backdrop filter here such that when scrolling, anything which gets behind this player controls should be blurred
-                  Positioned(
-                    bottom: 0,
-                    left: 12, // Added padding for left
-                    right: 12,
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(16),
-                      child: BackdropFilter(
-                        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                        child: Container(
-                          height: 56,
-                          width: size.width > maxWidth ? maxWidth : size.width,
-                          decoration: BoxDecoration(
-                            color: ShadTheme.of(context)
-                                .colorScheme
-                                .accent
-                                .withValues(alpha: 0.8),
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          child: Stack(
-                            children: [
-                              InkWell(
-                                onTap: () {
-                                  showIndividualDialog(context, maxWidth);
-                                },
-                                child: const Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    PlayerDataWidget(),
-                                    PlayPauseButtonWidget(
-                                      showBackground: false,
-                                    ),
-                                  ],
+              // This is player controls
+              Positioned(
+                bottom: 0,
+                left: size.width > maxWidth + 48
+                    ? (size.width - maxWidth) / 2 -
+                        12 // A little "out" for large screens
+                    : 12, // At least 12px padding for small screens
+                right: size.width > maxWidth + 48
+                    ? (size.width - maxWidth) / 2 -
+                        12 // A little "out" for large screens
+                    : 12, // At least 12px padding for small screens
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(16),
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                    child: Container(
+                      height: 56,
+                      width: size.width > maxWidth ? maxWidth : size.width,
+                      decoration: BoxDecoration(
+                        color: ShadTheme.of(context)
+                            .colorScheme
+                            .accent
+                            .withValues(alpha: 0.8),
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Stack(
+                        children: [
+                          InkWell(
+                            onTap: () {
+                              showIndividualDialog(context, maxWidth);
+                            },
+                            child: const Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                PlayerDataWidget(),
+                                PlayPauseButtonWidget(
+                                  showBackground: false,
                                 ),
-                              ),
-                              Positioned(
-                                bottom: 0,
-                                left: 56,
-                                right: 12,
-                                child: ProgressBarWidget(
-                                    width: size.width > maxWidth
-                                        ? maxWidth
-                                        : size.width),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
-                        ),
+                          Positioned(
+                            bottom: 0,
+                            left: 56,
+                            right: 12,
+                            child: ProgressBarWidget(
+                                width: size.width > maxWidth
+                                    ? maxWidth
+                                    : size.width),
+                          ),
+                        ],
                       ),
                     ),
-                  )
-                ],
-              ),
-            ),
+                  ),
+                ),
+              )
+            ],
           ),
         ),
       ),
@@ -222,24 +175,9 @@ class HomeScreen extends ConsumerWidget {
 
   Future<dynamic> showIndividualDialog(BuildContext context, double maxWidth) {
     return showDialog(
-      
       context: context,
       builder: (context) {
-        return Center(
-          child: ConstrainedBox(
-            constraints: BoxConstraints(maxWidth: maxWidth),
-            child: Container(
-              decoration: BoxDecoration(
-                border: Border.symmetric(
-                  vertical: BorderSide(
-                    color: ShadTheme.of(context).colorScheme.border,
-                  ),
-                ),
-              ),
-              child: const IndividualItemDialog(),
-            ),
-          ),
-        );
+        return const IndividualItemDialog();
       },
     );
   }

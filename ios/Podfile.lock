@@ -6,6 +6,9 @@ PODS:
   - Flutter (1.0.0)
   - flutter_native_splash (2.4.3):
     - Flutter
+  - intelligence (0.0.1):
+    - Flutter
+    - SQLite.swift (~> 0.14.0)
   - just_audio (0.0.1):
     - Flutter
   - path_provider_foundation (0.0.1):
@@ -19,6 +22,9 @@ PODS:
   - sqflite_darwin (0.0.4):
     - Flutter
     - FlutterMacOS
+  - SQLite.swift (0.14.1):
+    - SQLite.swift/standard (= 0.14.1)
+  - SQLite.swift/standard (0.14.1)
   - url_launcher_ios (0.0.1):
     - Flutter
 
@@ -27,12 +33,17 @@ DEPENDENCIES:
   - audio_session (from `.symlinks/plugins/audio_session/ios`)
   - Flutter (from `Flutter`)
   - flutter_native_splash (from `.symlinks/plugins/flutter_native_splash/ios`)
+  - intelligence (from `.symlinks/plugins/intelligence/ios`)
   - just_audio (from `.symlinks/plugins/just_audio/ios`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
   - quick_actions_ios (from `.symlinks/plugins/quick_actions_ios/ios`)
   - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
   - sqflite_darwin (from `.symlinks/plugins/sqflite_darwin/darwin`)
   - url_launcher_ios (from `.symlinks/plugins/url_launcher_ios/ios`)
+
+SPEC REPOS:
+  trunk:
+    - SQLite.swift
 
 EXTERNAL SOURCES:
   audio_service:
@@ -43,6 +54,8 @@ EXTERNAL SOURCES:
     :path: Flutter
   flutter_native_splash:
     :path: ".symlinks/plugins/flutter_native_splash/ios"
+  intelligence:
+    :path: ".symlinks/plugins/intelligence/ios"
   just_audio:
     :path: ".symlinks/plugins/just_audio/ios"
   path_provider_foundation:
@@ -61,13 +74,15 @@ SPEC CHECKSUMS:
   audio_session: 088d2483ebd1dc43f51d253d4a1c517d9a2e7207
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
   flutter_native_splash: e8a1e01082d97a8099d973f919f57904c925008a
+  intelligence: 0035d18a90254f2079069dcb294ee599a90246d6
   just_audio: baa7252489dbcf47a4c7cc9ca663e9661c99aafa
   path_provider_foundation: 2b6b4c569c0fb62ec74538f866245ac84301af46
   quick_actions_ios: 56f3cbaa71e94f212838d1f9fe354bd0734779bf
   shared_preferences_foundation: fcdcbc04712aee1108ac7fda236f363274528f78
   sqflite_darwin: 5a7236e3b501866c1c9befc6771dfd73ffb8702d
+  SQLite.swift: 2992550ebf3c5b268bf4352603e3df87d2a4ed72
   url_launcher_ios: 5334b05cef931de560670eeae103fd3e431ac3fe
 
-PODFILE CHECKSUM: a0f40a64ffae106c65312329f6d1f9437dec076e
+PODFILE CHECKSUM: 04611d04280dc3efcaa33889429500130807a832
 
 COCOAPODS: 1.15.2

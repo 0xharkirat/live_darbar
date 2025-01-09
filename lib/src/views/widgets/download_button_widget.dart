@@ -29,6 +29,9 @@ class DownloadButtonWidget extends StatelessWidget {
             _launchUrl(
                 'https://apps.apple.com/us/app/live-darbar/id6449766130');
             break;
+          case 'youtube':
+            _launchUrl('https://www.youtube.com/watch?v=BDN2wySGjic');
+            break;
         }
       },
       itemBuilder: (context) {
@@ -37,7 +40,6 @@ class DownloadButtonWidget extends StatelessWidget {
             value: 'android',
             child: ListTile(
               mouseCursor: SystemMouseCursors.click,
-              
               leading: Image.asset(
                 'assets/images/google_play.png',
                 width: 28,
@@ -51,12 +53,24 @@ class DownloadButtonWidget extends StatelessWidget {
           PopupMenuItem<String>(
             value: 'ios',
             child: ListTile(
-              
               mouseCursor: SystemMouseCursors.click,
               leading: const Icon(Icons.apple_outlined),
               title: Text(
                 AppLocalizations.of(context)!.apple_store,
               ),
+              trailing: const Icon(LucideIcons.externalLink),
+            ),
+          ),
+          PopupMenuItem<String>(
+            value: 'youtube',
+            child: ListTile(
+              mouseCursor: SystemMouseCursors.click,
+              leading: Image.asset(
+                'assets/images/youtube_social_icon_red.png',
+                height: 20,
+                fit: BoxFit.cover,
+              ),
+              title: Text(AppLocalizations.of(context)!.youtube),
               trailing: const Icon(LucideIcons.externalLink),
             ),
           ),

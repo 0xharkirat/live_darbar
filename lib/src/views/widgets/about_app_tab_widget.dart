@@ -38,6 +38,11 @@ class AboutAppTabWidget extends StatelessWidget {
               icon: const Icon(LucideIcons.externalLink),
               cursor: SystemMouseCursors.click,
               onPressed: onPressed,
+              decoration: ShadDecoration(
+                border: ShadBorder.all(
+                  color: ShadTheme.of(context).colorScheme.primary,
+                ),
+              ),
               child: Text(
                 AppLocalizations.of(context)!.about_section_contact,
               ),

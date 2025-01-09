@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:live_darbar/src/views/widgets/slogan_widget.dart';
 
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -42,8 +41,12 @@ class AboutMeTabWidget extends StatelessWidget {
               style: ShadTheme.of(context).textTheme.p,
             ),
             const SizedBox(height: 16),
-            ShadButton.raw(
-              variant: ShadButtonVariant.link,
+            ShadButton.outline(
+              decoration: ShadDecoration(
+                border: ShadBorder.all(
+                  color: ShadTheme.of(context).colorScheme.primary,
+                ),
+              ),
               icon: const Icon(LucideIcons.youtube),
               cursor: SystemMouseCursors.click,
               child: Text(
@@ -53,8 +56,13 @@ class AboutMeTabWidget extends StatelessWidget {
                 'https://www.youtube.com/watch?v=0lhJ_0ve5q8&list=PLLx2TfaNTPhyQPAIfEnib4MfXppYtYVyB',
               ),
             ),
-            ShadButton.raw(
-              variant: ShadButtonVariant.link,
+            ShadButton.outline(
+              decoration: ShadDecoration(
+                border: ShadBorder.all(
+                  color: ShadTheme.of(context).colorScheme.primary,
+                ),
+              ),
+             
               icon: const Icon(LucideIcons.externalLink),
               cursor: SystemMouseCursors.click,
               child: Text(
@@ -64,8 +72,13 @@ class AboutMeTabWidget extends StatelessWidget {
                 'https://openinapp.link/so8kh',
               ),
             ),
-            ShadButton.raw(
-              variant: ShadButtonVariant.link,
+            ShadButton.outline(
+              decoration: ShadDecoration(
+                border: ShadBorder.all(
+                  color: ShadTheme.of(context).colorScheme.primary,
+                ),
+              ),
+              
               icon: const Icon(LucideIcons.linkedin),
               cursor: SystemMouseCursors.click,
               child:  Text(
@@ -76,7 +89,7 @@ class AboutMeTabWidget extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
-            const SloganWidget(),
+            
           ],
         ),
       ),

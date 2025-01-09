@@ -166,5 +166,9 @@
     "live": "Live",
     "@live": {
         "description": "Live"
+    },
+    "youtube": "YouTube Video",
+    "@youtube": {
+        "description": "Youtube video"
     }
 }
