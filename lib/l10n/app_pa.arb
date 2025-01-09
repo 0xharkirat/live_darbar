@@ -166,5 +166,9 @@
     "live": "ਲਾਈਵ",
     "@live": {
         "description": "ਲਾਈਵ"
+    },
+    "youtube": "ਯੂਟਿਊਬ ਵੀਡੀਓ",
+    "@youtube": {
+        "description": "ਯੂਟਿਊਬ ਵੀਡੀਓ"
     }
 }
