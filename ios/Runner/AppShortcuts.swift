@@ -60,8 +60,6 @@ struct AppShortcuts: AppShortcutsProvider {
                 phrases: [
                     "Start Kirtan in \(.applicationName)",
                     "\(.applicationName) Kirtan Shuru Karo",
-                    "Kirtan Shuru Karo",
-                    "Start Kirtan",
                 ]
             ),
             
@@ -71,8 +69,6 @@ struct AppShortcuts: AppShortcutsProvider {
                 phrases: [
                     "Start Katha in \(.applicationName)",
                     "\(.applicationName) Katha Shuru Karo",
-                    "Katha Shuru Karo",
-                    "Start Katha",
                 ]
             )
         ]

@@ -5,7 +5,7 @@ import 'package:live_darbar/src/views/widgets/licensing_info_tab_widget.dart';
 import 'package:live_darbar/src/views/widgets/moving_gradient_widget.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:live_darbar/l10n/app_localizations.dart';
 
 class InfoDialogWidget extends StatelessWidget {
   const InfoDialogWidget({
@@ -56,7 +56,6 @@ class InfoDialogWidget extends StatelessWidget {
                     child: TabBar(
                       indicatorColor: ShadTheme.of(context).colorScheme.primary,
                       labelColor: ShadTheme.of(context).colorScheme.primary,
-                      
                       tabs: [
                         Tab(
                             text: AppLocalizations.of(context)!

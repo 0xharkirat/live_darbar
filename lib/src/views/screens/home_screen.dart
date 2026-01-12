@@ -12,7 +12,7 @@ import 'package:live_darbar/src/views/widgets/play_pause_button_widget.dart';
 import 'package:live_darbar/src/views/widgets/player_data_widget.dart';
 import 'package:live_darbar/src/views/widgets/progress_bar_widget.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:live_darbar/l10n/app_localizations.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});

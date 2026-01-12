@@ -6,7 +6,7 @@ import 'package:live_darbar/src/views/widgets/play_pause_button_widget.dart';
 import 'package:live_darbar/src/views/widgets/progress_bar_custom.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:transparent_image/transparent_image.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:live_darbar/l10n/app_localizations.dart';
 
 class IndividualItemDialog extends ConsumerWidget {
   const IndividualItemDialog({super.key});
@@ -28,13 +28,19 @@ class IndividualItemDialog extends ConsumerWidget {
           ),
         ),
         body: Container(
-          decoration:  BoxDecoration(
+          decoration: BoxDecoration(
             gradient: RadialGradient(
               center: Alignment.center,
               radius: 1,
               colors: [
-                ShadTheme.of(context).colorScheme.primary.withValues(alpha: 0.2),
-                ShadTheme.of(context).colorScheme.background.withValues(alpha: 0.8),
+                ShadTheme.of(context)
+                    .colorScheme
+                    .primary
+                    .withValues(alpha: 0.2),
+                ShadTheme.of(context)
+                    .colorScheme
+                    .background
+                    .withValues(alpha: 0.8),
               ],
             ),
           ),
@@ -55,7 +61,7 @@ class IndividualItemDialog extends ConsumerWidget {
                       child: Consumer(builder: (context, ref, _) {
                         final sequenceStateAsync =
                             ref.watch(sequenceStateProvider);
-                        
+
                         // just get the id of the current source
                         final id = sequenceStateAsync.when<int>(
                           data: (value) {
@@ -78,20 +84,20 @@ class IndividualItemDialog extends ConsumerWidget {
                       builder: (context, ref, _) {
                         final sequenceStateAsync =
                             ref.watch(sequenceStateProvider);
-                        
+
                         final title = sequenceStateAsync.when<String>(
                           data: (sequenceState) {
                             // Extract current media item details as Source
                             final source = sequenceState?.currentSource?.tag;
-                        
+
                             // Fall back to default source if current source is null
-                        
+
                             if (source == null) {
                               return AppLocalizations.of(context)!.loading;
                             }
-                        
+
                             final title = source?.title;
-                        
+
                             return getLocalizedTitle(title, context);
                           },
                           loading: () => AppLocalizations.of(context)!.loading,

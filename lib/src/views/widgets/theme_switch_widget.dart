@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:live_darbar/src/controllers/theme_controller.dart';
 import 'package:live_darbar/src/core/app_theme.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:live_darbar/l10n/app_localizations.dart';
 
 class ThemeSwitchWidget extends ConsumerWidget {
   const ThemeSwitchWidget({super.key});
@@ -22,7 +22,8 @@ class ThemeSwitchWidget extends ConsumerWidget {
       itemBuilder: (context) {
         return AppThemeColor.values.map((themeColor) {
           return PopupMenuItem<AppThemeColor>(
-              value: themeColor, child: Text(getLocalizedTitle(themeColor, context)));
+              value: themeColor,
+              child: Text(getLocalizedTitle(themeColor, context)));
         }).toList();
       },
     );
@@ -49,5 +50,3 @@ String getLocalizedTitle(AppThemeColor themeColor, BuildContext context) {
       return localizations.rose;
   }
 }
-
-

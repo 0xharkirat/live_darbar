@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:live_darbar/src/controllers/audio_controller.dart';
 import 'package:lottie/lottie.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:live_darbar/l10n/app_localizations.dart';
 
 class ProgressBarCustom extends ConsumerWidget {
   const ProgressBarCustom({

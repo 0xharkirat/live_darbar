@@ -136,4 +136,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get youtube => 'YouTube Video';
+
+  @override
+  String get mukhwak_pdf_title => 'Daily Mukhwak (PDF)';
 }

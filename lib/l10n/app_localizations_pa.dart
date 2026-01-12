@@ -136,4 +136,7 @@ class AppLocalizationsPa extends AppLocalizations {
 
   @override
   String get youtube => 'ਯੂਟਿਊਬ ਵੀਡੀਓ';
+
+  @override
+  String get mukhwak_pdf_title => 'ਅੱਜ ਦਾ ਮੁੱਖਵਾਕ (PDF)';
 }

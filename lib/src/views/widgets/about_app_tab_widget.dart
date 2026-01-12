@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:live_darbar/src/core/app_version.dart';
 import 'package:live_darbar/src/views/widgets/slogan_widget.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:live_darbar/l10n/app_localizations.dart';
 
 class AboutAppTabWidget extends StatelessWidget {
   const AboutAppTabWidget({
@@ -35,7 +35,6 @@ class AboutAppTabWidget extends StatelessWidget {
                 style: ShadTheme.of(context).textTheme.p),
             const SizedBox(height: 16),
             ShadButton.outline(
-              icon: const Icon(LucideIcons.externalLink),
               cursor: SystemMouseCursors.click,
               onPressed: onPressed,
               decoration: ShadDecoration(
@@ -43,8 +42,15 @@ class AboutAppTabWidget extends StatelessWidget {
                   color: ShadTheme.of(context).colorScheme.primary,
                 ),
               ),
-              child: Text(
-                AppLocalizations.of(context)!.about_section_contact,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(LucideIcons.externalLink, size: 16),
+                  const SizedBox(width: 8),
+                  Text(
+                    AppLocalizations.of(context)!.about_section_contact,
+                  ),
+                ],
               ),
             ),
             const SizedBox(height: 16),

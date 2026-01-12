@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:live_darbar/l10n/app_localizations.dart';
 
 String getLocalizedTitle(String title, BuildContext context) {
   final localizations = AppLocalizations.of(context)!;
@@ -14,4 +14,3 @@ String getLocalizedTitle(String title, BuildContext context) {
       return title; // Fallback to the original title if no match
   }
 }
-

@@ -1,9 +1,8 @@
-
 import 'package:flutter/material.dart';
-import 'package:live_darbar/src/views/widgets/slogan_widget.dart';
+
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:live_darbar/l10n/app_localizations.dart';
 
 class LicensingInfoTabWidget extends StatelessWidget {
   const LicensingInfoTabWidget({super.key});
@@ -109,9 +108,7 @@ class LicensingInfoTabWidget extends StatelessWidget {
               AppLocalizations.of(context)!.licensing_fianl_p,
               style: ShadTheme.of(context).textTheme.p,
             ),
-
             const SizedBox(height: 16),
-           
           ],
         ),
       ),

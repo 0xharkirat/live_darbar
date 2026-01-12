@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:live_darbar/l10n/app_localizations.dart';
 
 class AboutMeTabWidget extends StatelessWidget {
   const AboutMeTabWidget({
@@ -24,7 +24,8 @@ class AboutMeTabWidget extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SelectableText(AppLocalizations.of(context)!.about_me_heading, style: ShadTheme.of(context).textTheme.h3),
+            SelectableText(AppLocalizations.of(context)!.about_me_heading,
+                style: ShadTheme.of(context).textTheme.h3),
             const SizedBox(height: 16),
             SelectableText(
               AppLocalizations.of(context)!.about_me_p1,
@@ -47,10 +48,16 @@ class AboutMeTabWidget extends StatelessWidget {
                   color: ShadTheme.of(context).colorScheme.primary,
                 ),
               ),
-              icon: const Icon(LucideIcons.youtube),
               cursor: SystemMouseCursors.click,
-              child: Text(
-                AppLocalizations.of(context)!.about_me_tabla_button,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(LucideIcons.youtube, size: 16),
+                  const SizedBox(width: 8),
+                  Text(
+                    AppLocalizations.of(context)!.about_me_tabla_button,
+                  ),
+                ],
               ),
               onPressed: () => _launchUrl(
                 'https://www.youtube.com/watch?v=0lhJ_0ve5q8&list=PLLx2TfaNTPhyQPAIfEnib4MfXppYtYVyB',
@@ -62,11 +69,16 @@ class AboutMeTabWidget extends StatelessWidget {
                   color: ShadTheme.of(context).colorScheme.primary,
                 ),
               ),
-             
-              icon: const Icon(LucideIcons.externalLink),
               cursor: SystemMouseCursors.click,
-              child: Text(
-                AppLocalizations.of(context)!.about_me_my_story,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(LucideIcons.externalLink, size: 16),
+                  const SizedBox(width: 8),
+                  Text(
+                    AppLocalizations.of(context)!.about_me_my_story,
+                  ),
+                ],
               ),
               onPressed: () => _launchUrl(
                 'https://openinapp.link/so8kh',
@@ -78,18 +90,22 @@ class AboutMeTabWidget extends StatelessWidget {
                   color: ShadTheme.of(context).colorScheme.primary,
                 ),
               ),
-              
-              icon: const Icon(LucideIcons.linkedin),
               cursor: SystemMouseCursors.click,
-              child:  Text(
-                AppLocalizations.of(context)!.about_me_linkedin,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(LucideIcons.linkedin, size: 16),
+                  const SizedBox(width: 8),
+                  Text(
+                    AppLocalizations.of(context)!.about_me_linkedin,
+                  ),
+                ],
               ),
               onPressed: () => _launchUrl(
                 'https://www.linkedin.com/in/0xharkirat/',
               ),
             ),
             const SizedBox(height: 16),
-            
           ],
         ),
       ),

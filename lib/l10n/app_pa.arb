@@ -170,5 +170,9 @@
     "youtube": "ਯੂਟਿਊਬ ਵੀਡੀਓ",
     "@youtube": {
         "description": "ਯੂਟਿਊਬ ਵੀਡੀਓ"
+    },
+    "mukhwak_pdf_title": "ਅੱਜ ਦਾ ਮੁੱਖਵਾਕ (PDF)",
+    "@mukhwak_pdf_title": {
+        "description": "Title for the Daily Mukhwak PDF screen"
     }
 }

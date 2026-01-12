@@ -352,6 +352,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'YouTube Video'**
   String get youtube;
+
+  /// Title for the Daily Mukhwak PDF screen
+  ///
+  /// In en, this message translates to:
+  /// **'Daily Mukhwak (PDF)'**
+  String get mukhwak_pdf_title;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

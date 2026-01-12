@@ -7,7 +7,7 @@ import 'package:live_darbar/src/controllers/audio_controller.dart';
 import 'package:live_darbar/src/core/get_localized_title.dart';
 import 'package:lottie/lottie.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:live_darbar/l10n/app_localizations.dart';
 
 class PlayerDataWidget extends ConsumerWidget {
   const PlayerDataWidget({
@@ -60,8 +60,10 @@ class PlayerDataWidget extends ConsumerWidget {
                 height: 56,
                 width: 56,
                 decoration: BoxDecoration(
-                  color:
-                      ShadTheme.of(context).colorScheme.card.withValues(alpha: 0.5),
+                  color: ShadTheme.of(context)
+                      .colorScheme
+                      .card
+                      .withValues(alpha: 0.5),
                   borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(16),
                     bottomLeft: Radius.circular(16),

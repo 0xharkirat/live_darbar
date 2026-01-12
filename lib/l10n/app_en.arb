@@ -170,5 +170,9 @@
     "youtube": "YouTube Video",
     "@youtube": {
         "description": "Youtube video"
+    },
+    "mukhwak_pdf_title": "Daily Mukhwak (PDF)",
+    "@mukhwak_pdf_title": {
+        "description": "Title for the Daily Mukhwak PDF screen"
     }
 }
