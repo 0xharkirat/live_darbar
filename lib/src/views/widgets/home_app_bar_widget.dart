@@ -6,7 +6,7 @@ import 'package:live_darbar/src/controllers/audio_controller.dart';
 import 'package:live_darbar/src/controllers/locale_controller.dart';
 import 'package:live_darbar/src/views/widgets/download_button_widget.dart';
 import 'package:live_darbar/src/views/widgets/info_dialog_widget.dart';
-import 'package:live_darbar/src/views/widgets/theme_switch_widget.dart';
+
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:live_darbar/src/views/screens/mukhwak_pdf_viewer.dart';
 
@@ -34,7 +34,6 @@ class HomeAppBarWidget extends ConsumerWidget implements PreferredSizeWidget {
       surfaceTintColor: Colors.transparent,
       elevation: 0,
       actions: [
-        const ThemeSwitchWidget(),
         // if web or wasm, show this buttn
         if (kIsWeb || kIsWasm) const DownloadButtonWidget(),
 
