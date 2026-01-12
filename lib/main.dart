@@ -11,6 +11,7 @@ import 'package:live_darbar/src/controllers/locale_controller.dart';
 import 'package:live_darbar/src/controllers/theme_controller.dart';
 import 'package:live_darbar/src/core/app_theme.dart';
 import 'package:live_darbar/src/views/screens/home_screen.dart';
+import 'package:live_darbar/src/controllers/mukhwak_controller.dart';
 import 'package:quick_actions/quick_actions.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:live_darbar/l10n/app_localizations.dart';
@@ -83,6 +84,9 @@ class _MyAppState extends ConsumerState<MyApp> {
         localizedTitle: 'Mukhwak Katha',
       ),
     ]);
+
+    // Prefetch daily Mukhwak PDF
+    ref.read(mukhwakController.notifier).fetchAndCache();
   }
 
   void _handleSelection(String id) {
