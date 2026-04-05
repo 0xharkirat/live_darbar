@@ -1,0 +1,170 @@
+{
+  "oacpVersion": "0.3",
+  "appId": "__APPLICATION_ID__",
+  "displayName": "Live Darbar",
+  "appDomains": ["religion", "music", "audio"],
+  "appKeywords": ["gurbani", "kirtan", "hukumnama", "mukhwak", "katha", "darbar sahib", "golden temple", "sgpc", "sikh"],
+  "appAliases": ["live darbar", "darbar sahib", "golden temple radio", "gurbani live"],
+  "capabilities": [
+    {
+      "id": "play_live_kirtan",
+      "description": "Start playing the live kirtan stream from Sri Darbar Sahib (Golden Temple), Amritsar.",
+      "domain": "music",
+      "aliases": [
+        "play live kirtan", "start kirtan", "live kirtan",
+        "play gurbani", "start gurbani", "live gurbani",
+        "play darbar sahib", "golden temple live",
+        "kirtan shuru karo", "gurbani shuru karo",
+        "play live stream", "listen to kirtan"
+      ],
+      "examples": [
+        "play live kirtan",
+        "start the kirtan stream",
+        "play gurbani from darbar sahib",
+        "listen to live kirtan from golden temple",
+        "start kirtan in live darbar",
+        "kirtan shuru karo"
+      ],
+      "keywords": ["kirtan", "live", "gurbani", "darbar", "golden temple", "stream", "play", "start", "listen"],
+      "disambiguationHints": [
+        "Use this when the user wants LIVE kirtan from Darbar Sahib.",
+        "This is a live audio stream, not a recording.",
+        "Do NOT use for mukhwak/hukumnama audio — use play_mukhwak instead.",
+        "Do NOT use for katha — use play_katha instead."
+      ],
+      "parameters": [],
+      "confirmation": "never",
+      "executionMessage": "Starting live kirtan.",
+      "visibility": "public",
+      "requiresForeground": true,
+      "completionMode": "foreground_handoff",
+      "sensitivity": "low",
+      "idempotent": true,
+      "invoke": {
+        "android": {
+          "type": "activity",
+          "action": "__APPLICATION_ID__.oacp.ACTION_PLAY_LIVE_KIRTAN"
+        }
+      }
+    },
+    {
+      "id": "play_mukhwak",
+      "description": "Play today's Mukhwak (Hukumnama) audio from Sri Darbar Sahib.",
+      "domain": "religion",
+      "aliases": [
+        "play mukhwak", "start mukhwak", "play hukumnama",
+        "start hukumnama", "today's hukumnama", "today's mukhwak",
+        "ajj da mukhwak", "ajj da hukumnama",
+        "play hukum", "daily hukumnama", "daily mukhwak",
+        "play muk wak", "play mukh wak"
+      ],
+      "examples": [
+        "play today's mukhwak",
+        "start hukumnama",
+        "play the daily hukumnama audio",
+        "listen to mukhwak",
+        "ajj da mukhwak shuru karo",
+        "play today's hukum"
+      ],
+      "keywords": ["mukhwak", "hukumnama", "hukum", "daily", "today", "play", "start", "listen", "wak"],
+      "disambiguationHints": [
+        "Use this when the user wants to LISTEN to the mukhwak/hukumnama audio.",
+        "This plays the audio recording of today's hukumnama.",
+        "For viewing the PDF text, use view_mukhwak_pdf instead.",
+        "Do NOT use for live kirtan — use play_live_kirtan instead."
+      ],
+      "parameters": [],
+      "confirmation": "never",
+      "executionMessage": "Playing today's Mukhwak.",
+      "visibility": "public",
+      "requiresForeground": true,
+      "completionMode": "foreground_handoff",
+      "sensitivity": "low",
+      "idempotent": true,
+      "invoke": {
+        "android": {
+          "type": "activity",
+          "action": "__APPLICATION_ID__.oacp.ACTION_PLAY_MUKHWAK"
+        }
+      }
+    },
+    {
+      "id": "play_katha",
+      "description": "Play today's Mukhwak Katha (explanation/discourse on the daily Hukumnama).",
+      "domain": "religion",
+      "aliases": [
+        "play katha", "start katha", "mukhwak katha",
+        "play discourse", "hukumnama katha",
+        "katha shuru karo", "play explanation",
+        "listen to katha", "daily katha"
+      ],
+      "examples": [
+        "play katha",
+        "start mukhwak katha",
+        "play today's katha",
+        "listen to the hukumnama explanation",
+        "katha shuru karo"
+      ],
+      "keywords": ["katha", "discourse", "explanation", "mukhwak", "hukumnama", "play", "start", "listen"],
+      "disambiguationHints": [
+        "Use this when the user wants to listen to katha (discourse/explanation).",
+        "This is a spoken explanation of the daily hukumnama, not the hukumnama itself.",
+        "Do NOT use for the hukumnama audio — use play_mukhwak instead.",
+        "Do NOT use for live kirtan — use play_live_kirtan instead."
+      ],
+      "parameters": [],
+      "confirmation": "never",
+      "executionMessage": "Playing Mukhwak Katha.",
+      "visibility": "public",
+      "requiresForeground": true,
+      "completionMode": "foreground_handoff",
+      "sensitivity": "low",
+      "idempotent": true,
+      "invoke": {
+        "android": {
+          "type": "activity",
+          "action": "__APPLICATION_ID__.oacp.ACTION_PLAY_KATHA"
+        }
+      }
+    },
+    {
+      "id": "view_mukhwak_pdf",
+      "description": "Open and display today's Mukhwak (Hukumnama) as a PDF document.",
+      "domain": "religion",
+      "aliases": [
+        "view mukhwak", "show mukhwak", "read mukhwak",
+        "view hukumnama", "show hukumnama", "read hukumnama",
+        "mukhwak pdf", "hukumnama pdf",
+        "show today's hukumnama", "read today's mukhwak",
+        "open hukumnama"
+      ],
+      "examples": [
+        "show today's mukhwak",
+        "view the hukumnama",
+        "read today's hukumnama",
+        "open the mukhwak pdf",
+        "show me the daily hukumnama"
+      ],
+      "keywords": ["view", "show", "read", "open", "mukhwak", "hukumnama", "pdf", "text", "display"],
+      "disambiguationHints": [
+        "Use this when the user wants to SEE/READ the mukhwak text (PDF).",
+        "This opens the visual PDF viewer, not audio playback.",
+        "For LISTENING to the hukumnama, use play_mukhwak instead."
+      ],
+      "parameters": [],
+      "confirmation": "never",
+      "executionMessage": "Opening Mukhwak PDF.",
+      "visibility": "public",
+      "requiresForeground": true,
+      "completionMode": "foreground_handoff",
+      "sensitivity": "low",
+      "idempotent": true,
+      "invoke": {
+        "android": {
+          "type": "activity",
+          "action": "__APPLICATION_ID__.oacp.ACTION_VIEW_MUKHWAK_PDF"
+        }
+      }
+    }
+  ]
+}
