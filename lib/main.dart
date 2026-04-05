@@ -95,6 +95,13 @@ class _MyAppState extends ConsumerState<MyApp> {
     ref.read(mukhwakController.notifier).fetchAndCache();
   }
 
+  @override
+  void dispose() {
+    _oacpChannel.setMethodCallHandler(null);
+    _channel.setMethodCallHandler(null);
+    super.dispose();
+  }
+
   void _handleSelection(String id) {
     log("Intelligence: $id");
     shortcutPlay(id, ref);
@@ -102,9 +109,10 @@ class _MyAppState extends ConsumerState<MyApp> {
 
   Future<void> _handleOacpCommand(MethodCall call) async {
     if (call.method != 'handleOacpCommand') return;
-    final args = call.arguments as Map?;
-    if (args == null) return;
-    final command = args['command'] as String?;
+    if (!mounted) return;
+    final dynamic raw = call.arguments;
+    if (raw is! Map) return;
+    final command = raw['command'] as String?;
     log('OACP command received: $command');
 
     switch (command) {
@@ -161,9 +169,9 @@ void shortcutPlay(String? channelKey, WidgetRef ref) {
     ref.read(audioController).play(0); // Call play function
   } else if (channelKey == 'mukhwak') {
     log('Mukhwak action Triggered');
-    ref.read(audioController).play(1); // Call pause function
+    ref.read(audioController).play(1);
   } else if (channelKey == 'mukhwak_katha') {
     log('Mukhwak Katha action Triggered');
-    ref.read(audioController).play(2); // Call pause function
+    ref.read(audioController).play(2);
   }
 }

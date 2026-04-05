@@ -6,11 +6,11 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
-import androidx.annotation.NonNull
 import com.ryanheise.audioservice.AudioServicePlugin
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
+import java.util.UUID
 
 class MainActivity : FlutterActivity() {
     companion object {
@@ -21,6 +21,8 @@ class MainActivity : FlutterActivity() {
     }
 
     private var oacpChannel: MethodChannel? = null
+    private val handler = Handler(Looper.getMainLooper())
+    private var pendingOacpPayload: HashMap<String, Any>? = null
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
@@ -30,7 +32,14 @@ class MainActivity : FlutterActivity() {
             OACP_CHANNEL
         )
 
-        // Dispatch any OACP intent that launched/resumed the app
+        // Drain any command that arrived before the channel was ready
+        pendingOacpPayload?.let { payload ->
+            pendingOacpPayload = null
+            Log.d(TAG, "Draining pending OACP command: ${payload["command"]}")
+            sendOacpCommandWithRetry(payload, retriesLeft = 40)
+        }
+
+        // Dispatch any OACP intent that launched the app
         dispatchOacpIntent(intent)
     }
 
@@ -48,6 +57,12 @@ class MainActivity : FlutterActivity() {
 
         handleLegacyIntent(intent)
         dispatchOacpIntent(intent)
+    }
+
+    override fun onDestroy() {
+        // Cancel any pending retry callbacks to prevent Activity leak
+        handler.removeCallbacksAndMessages(null)
+        super.onDestroy()
     }
 
     // --- Legacy intent (custom.actions.intent.PLAY_LIVE_DARBAR) ---
@@ -70,14 +85,29 @@ class MainActivity : FlutterActivity() {
 
     private fun dispatchOacpIntent(intent: Intent?) {
         val payload = buildOacpPayload(intent) ?: return
+        // Clear consumed action to prevent re-dispatch on resume
+        intent?.action = null
+
+        // Cancel any in-flight retry chain from a previous command
+        handler.removeCallbacksAndMessages(null)
+
         Log.d(TAG, "OACP command: ${payload["command"]}")
+
+        val channel = oacpChannel
+        if (channel == null) {
+            // Channel not ready yet — queue for drain in configureFlutterEngine
+            pendingOacpPayload = payload
+            Log.d(TAG, "OACP channel not ready, queuing command")
+            return
+        }
+
         sendOacpCommandWithRetry(payload, retriesLeft = 40)
     }
 
     private fun buildOacpPayload(intent: Intent?): HashMap<String, Any>? {
         val action = intent?.action ?: return null
         val payload = hashMapOf<String, Any>(
-            "requestId" to System.currentTimeMillis().toString()
+            "requestId" to UUID.randomUUID().toString()
         )
 
         when {
@@ -101,7 +131,7 @@ class MainActivity : FlutterActivity() {
 
     private fun sendOacpCommandWithRetry(payload: HashMap<String, Any>, retriesLeft: Int) {
         val channel = oacpChannel ?: run {
-            Log.w(TAG, "OACP channel is null, retries=$retriesLeft")
+            Log.w(TAG, "OACP channel became null during retry")
             return
         }
 
@@ -112,7 +142,7 @@ class MainActivity : FlutterActivity() {
 
             override fun error(errorCode: String, errorMessage: String?, errorDetails: Any?) {
                 if (retriesLeft > 0) {
-                    Handler(Looper.getMainLooper()).postDelayed({
+                    handler.postDelayed({
                         sendOacpCommandWithRetry(payload, retriesLeft - 1)
                     }, 250)
                 } else {
@@ -122,7 +152,7 @@ class MainActivity : FlutterActivity() {
 
             override fun notImplemented() {
                 if (retriesLeft > 0) {
-                    Handler(Looper.getMainLooper()).postDelayed({
+                    handler.postDelayed({
                         sendOacpCommandWithRetry(payload, retriesLeft - 1)
                     }, 250)
                 } else {
@@ -132,7 +162,7 @@ class MainActivity : FlutterActivity() {
         })
     }
 
-    override fun provideFlutterEngine(@NonNull context: Context): FlutterEngine {
+    override fun provideFlutterEngine(context: Context): FlutterEngine {
         return AudioServicePlugin.getFlutterEngine(context)
     }
 }
