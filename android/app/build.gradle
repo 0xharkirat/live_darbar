@@ -55,6 +55,11 @@ android {
     }
 }
 
+dependencies {
+    implementation files("libs/oacp-android-release.aar")
+    implementation "androidx.annotation:annotation:1.7.1"
+}
+
 flutter {
     source = "../.."
 }

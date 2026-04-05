@@ -11,6 +11,7 @@ import 'package:live_darbar/src/controllers/locale_controller.dart';
 import 'package:live_darbar/src/controllers/theme_controller.dart';
 import 'package:live_darbar/src/core/app_theme.dart';
 import 'package:live_darbar/src/views/screens/home_screen.dart';
+import 'package:live_darbar/src/views/screens/mukhwak_pdf_viewer.dart';
 import 'package:live_darbar/src/controllers/mukhwak_controller.dart';
 import 'package:quick_actions/quick_actions.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
@@ -47,6 +48,9 @@ class _MyAppState extends ConsumerState<MyApp> {
       defaultTargetPlatform == TargetPlatform.iOS ? Intelligence() : null;
   static const MethodChannel _channel =
       MethodChannel('com.hsi.harki.live_darbar/audio');
+  static const MethodChannel _oacpChannel =
+      MethodChannel('com.hsi.harki.live_darbar/oacp');
+  final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
 
   @override
   void initState() {
@@ -64,6 +68,8 @@ class _MyAppState extends ConsumerState<MyApp> {
         ref.read(audioController).play(0);
       }
     });
+
+    _oacpChannel.setMethodCallHandler(_handleOacpCommand);
     // Initialize quick actions with a callback
     quickActions.initialize((String shortcutType) {
       shortcutPlay(shortcutType, ref);
@@ -89,9 +95,40 @@ class _MyAppState extends ConsumerState<MyApp> {
     ref.read(mukhwakController.notifier).fetchAndCache();
   }
 
+  @override
+  void dispose() {
+    _oacpChannel.setMethodCallHandler(null);
+    _channel.setMethodCallHandler(null);
+    super.dispose();
+  }
+
   void _handleSelection(String id) {
     log("Intelligence: $id");
     shortcutPlay(id, ref);
+  }
+
+  Future<void> _handleOacpCommand(MethodCall call) async {
+    if (call.method != 'handleOacpCommand') return;
+    if (!mounted) return;
+    final dynamic raw = call.arguments;
+    if (raw is! Map) return;
+    final command = raw['command'] as String?;
+    log('OACP command received: $command');
+
+    switch (command) {
+      case 'play_live_kirtan':
+        ref.read(audioController).play(0);
+      case 'play_mukhwak':
+        ref.read(audioController).play(1);
+      case 'play_katha':
+        ref.read(audioController).play(2);
+      case 'view_mukhwak_pdf':
+        _navigatorKey.currentState?.push(
+          MaterialPageRoute(
+            builder: (_) => const MukhwakPdfViewer(),
+          ),
+        );
+    }
   }
 
   Future<void> init() async {
@@ -109,6 +146,7 @@ class _MyAppState extends ConsumerState<MyApp> {
     final themeColor = ref.watch(themeController);
     final locale = ref.watch(localeController);
     return ShadApp(
+      navigatorKey: _navigatorKey,
       title: 'Live Darbar',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.shadThemeData(themeColor.colorScheme),
@@ -131,9 +169,9 @@ void shortcutPlay(String? channelKey, WidgetRef ref) {
     ref.read(audioController).play(0); // Call play function
   } else if (channelKey == 'mukhwak') {
     log('Mukhwak action Triggered');
-    ref.read(audioController).play(1); // Call pause function
+    ref.read(audioController).play(1);
   } else if (channelKey == 'mukhwak_katha') {
     log('Mukhwak Katha action Triggered');
-    ref.read(audioController).play(2); // Call pause function
+    ref.read(audioController).play(2);
   }
 }

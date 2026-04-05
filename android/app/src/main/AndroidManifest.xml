@@ -37,10 +37,34 @@
             <intent-filter>
                 <action android:name="custom.actions.intent.PLAY_LIVE_DARBAR" />
                 <category android:name="android.intent.category.DEFAULT" />
-
             </intent-filter>
-
+            <!-- OACP foreground actions -->
+            <intent-filter>
+                <action android:name="${applicationId}.oacp.ACTION_PLAY_LIVE_KIRTAN" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="${applicationId}.oacp.ACTION_PLAY_MUKHWAK" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="${applicationId}.oacp.ACTION_PLAY_KATHA" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="${applicationId}.oacp.ACTION_VIEW_MUKHWAK_PDF" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
         </activity>
+
+        <!-- OACP background receiver (for future background actions) -->
+        <receiver
+            android:name=".oacp.OacpActionReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="${applicationId}.oacp.ACTION_PLACEHOLDER" />
+            </intent-filter>
+        </receiver>
         <!-- ADD THIS "SERVICE" element -->
         <service android:name="com.ryanheise.audioservice.AudioService"
             android:foregroundServiceType="mediaPlayback"
