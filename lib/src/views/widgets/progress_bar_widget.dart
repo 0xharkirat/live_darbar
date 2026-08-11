@@ -23,39 +23,45 @@ class ProgressBarWidget extends ConsumerWidget {
 
     return progressStateAsync.when(
       data: (progressState) {
-        final position = progressState.position.inMilliseconds.toDouble();
-        final bufferedPosition =
-            progressState.bufferedPosition.inMilliseconds.toDouble();
-        final totalDuration =
-            progressState.totalDuration.inMilliseconds.toDouble();
+        // The live stream has no duration, so there is no fraction to draw.
+        // The old code arrived at the same place by dividing by zero and
+        // rendering a zero-width bar, which cost a repaint every 16 ms to show
+        // nothing at all.
+        if (progressState.isLive) return SizedBox(width: width, height: 2);
 
-        // Calculate progress and buffered percentage
-        final progress = totalDuration > 0 ? position / totalDuration : 0.0;
-        final bufferedProgress =
-            totalDuration > 0 ? bufferedPosition / totalDuration : 0.0;
+        final total = progressState.totalDuration!.inMilliseconds.toDouble();
+        final progress =
+            total > 0 ? progressState.position.inMilliseconds / total : 0.0;
+        final bufferedProgress = total > 0
+            ? progressState.bufferedPosition.inMilliseconds / total
+            : 0.0;
 
-        return Stack(
-          children: [
-            // Buffered Progress (background indicator)
-            Container(
-              height: 2,
-              width: width * bufferedProgress,
-              decoration: BoxDecoration(
-                color: ShadTheme.of(context).colorScheme.foreground,
-                borderRadius: BorderRadius.circular(16),
+        // The bar sits inside a BackdropFilter, so without this boundary every
+        // tick marks the blurred layer above it dirty too.
+        return RepaintBoundary(
+          child: Stack(
+            children: [
+              // Buffered Progress (background indicator)
+              Container(
+                height: 2,
+                width: width * bufferedProgress,
+                decoration: BoxDecoration(
+                  color: ShadTheme.of(context).colorScheme.foreground,
+                  borderRadius: BorderRadius.circular(16),
+                ),
               ),
-            ),
 
-            // Current Progress
-            Container(
-              height: 2,
-              width: width * progress,
-              decoration: BoxDecoration(
-                color: ShadTheme.of(context).colorScheme.primary,
-                borderRadius: BorderRadius.circular(16),
+              // Current Progress
+              Container(
+                height: 2,
+                width: width * progress,
+                decoration: BoxDecoration(
+                  color: ShadTheme.of(context).colorScheme.primary,
+                  borderRadius: BorderRadius.circular(16),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         );
       },
       loading: () => ConstrainedBox(
@@ -66,7 +72,10 @@ class ProgressBarWidget extends ConsumerWidget {
           minHeight: 2,
         ),
       ),
-      error: (error, stackTrace) => Text('Error: $error'),
+      // A progress bar that cannot read its position is not worth a message.
+      // The player above it already reports anything the listener can act on,
+      // and the old `Text('Error: $error')` put a raw Dart exception on screen.
+      error: (error, stackTrace) => SizedBox(width: width, height: 2),
     );
   }
 }

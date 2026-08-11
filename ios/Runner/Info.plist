@@ -26,10 +26,23 @@
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<!-- The live Icecast stream is cleartext on live.sgpc.net:7339 and the
+	     server offers no HTTPS equivalent at that bitrate. Everything else the
+	     app touches is HTTPS, so the exception is scoped to that one host
+	     rather than using NSAllowsArbitraryLoads, which App Review asks you to
+	     justify and which would drop protection for every other request. -->
 	<key>NSAppTransportSecurity</key>
 	<dict>
-		<key>NSAllowsArbitraryLoads</key>
-		<true/>
+		<key>NSExceptionDomains</key>
+		<dict>
+			<key>live.sgpc.net</key>
+			<dict>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+				<key>NSIncludesSubdomains</key>
+				<false/>
+			</dict>
+		</dict>
 	</dict>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>

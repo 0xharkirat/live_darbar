@@ -1,7 +1,10 @@
 package com.hsi.harki.live_darbar
 
+import android.Manifest
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -11,6 +14,8 @@ import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
 import java.util.UUID
+
+private const val NOTIFICATION_PERMISSION_REQUEST = 1001
 
 class MainActivity : FlutterActivity() {
     companion object {
@@ -47,8 +52,30 @@ class MainActivity : FlutterActivity() {
         super.onCreate(savedInstanceState)
         Log.d(TAG, "MainActivity created")
 
+        ensureNotificationPermission()
+
         // Handle legacy intent
         handleLegacyIntent(intent)
+    }
+
+    /**
+     * Asks for POST_NOTIFICATIONS on Android 13 and above.
+     *
+     * The media transport notification is the only playback control available
+     * once the app is backgrounded, so the permission is core to the app rather
+     * than peripheral to it, and asking at launch is honest about that. The
+     * system stops showing the dialog by itself after two refusals, so calling
+     * this on every cold start costs nothing.
+     */
+    private fun ensureNotificationPermission() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) return
+        val granted = checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) ==
+                PackageManager.PERMISSION_GRANTED
+        if (granted) return
+        requestPermissions(
+            arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+            NOTIFICATION_PERMISSION_REQUEST,
+        )
     }
 
     override fun onNewIntent(intent: Intent) {

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <!--
+        The app is HTTPS-only except for the live Icecast stream. The SGPC server
+        publishes it as cleartext on live.sgpc.net:7339; its HTTPS variant on port
+        8442 is a lower bitrate and is used only on web. Permitting cleartext for
+        that one host keeps the rest of the app protected, which an app-wide
+        android:usesCleartextTraffic="true" did not.
+    -->
+    <base-config cleartextTrafficPermitted="false" />
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="false">live.sgpc.net</domain>
+    </domain-config>
+</network-security-config>

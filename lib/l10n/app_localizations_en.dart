@@ -30,9 +30,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get color_tooltip => 'Change Color';
 
   @override
-  String get refresh_tooltip => 'Refresh Audio Sources';
-
-  @override
   String get about_tooltip => 'About';
 
   @override
@@ -139,4 +136,53 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get mukhwak_pdf_title => 'Daily Mukhwak (PDF)';
+
+  @override
+  String get go_live => 'Go live';
+
+  @override
+  String behind_live(int seconds) {
+    return '${seconds}s behind';
+  }
+
+  @override
+  String get reconnecting => 'Reconnecting...';
+
+  @override
+  String get low_quality_stream => 'Low quality stream';
+
+  @override
+  String get offline_banner => 'No internet connection';
+
+  @override
+  String get offline_banner_detail => 'Playback will resume when you are back online';
+
+  @override
+  String get stream_unreachable => 'Can\'t reach the kirtan stream';
+
+  @override
+  String get retry => 'Retry';
+
+  @override
+  String get mukhwak_load_failed => 'Could not load today\'s Mukhwak';
+
+  @override
+  String get playback_error => 'Playback problem';
+
+  @override
+  String get stop_tooltip => 'Stop playback';
+
+  @override
+  String get update_available => 'A new version is available';
+
+  @override
+  String update_version(String version) {
+    return 'Version $version';
+  }
+
+  @override
+  String get update_now => 'Update now';
+
+  @override
+  String get update_later => 'Not now';
 }

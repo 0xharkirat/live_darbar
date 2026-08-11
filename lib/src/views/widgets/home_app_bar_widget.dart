@@ -37,12 +37,19 @@ class HomeAppBarWidget extends ConsumerWidget implements PreferredSizeWidget {
         // if web or wasm, show this buttn
         if (kIsWeb || kIsWasm) const DownloadButtonWidget(),
 
+        // This calls stop(), and used to wear a refresh arrow labelled
+        // "Refresh Audio Sources", which is not what it does. Stopping is the
+        // genuinely useful function here, because pause leaves the media
+        // notification sitting in the shade and this is the only way to clear
+        // it, so the icon and label now match the behaviour rather than the
+        // other way round. Reconnecting no longer needs a button: failures
+        // retry themselves, and drifting behind live has its own affordance.
         IconButton(
-            tooltip: AppLocalizations.of(context)!.refresh_tooltip,
+            tooltip: AppLocalizations.of(context)!.stop_tooltip,
             onPressed: () {
               ref.read(audioController).stop();
             },
-            icon: const Icon(LucideIcons.rotateCcw)),
+            icon: const Icon(LucideIcons.circleStop)),
         IconButton(
             tooltip: AppLocalizations.of(context)!.mukhwak_pdf_title,
             onPressed: () {

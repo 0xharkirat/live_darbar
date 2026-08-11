@@ -3,7 +3,10 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:live_darbar/src/controllers/audio_controller.dart';
+import 'package:live_darbar/src/controllers/update_controller.dart';
 import 'package:live_darbar/src/core/colors.dart';
+import 'package:live_darbar/src/models/app_update.dart';
+import 'package:live_darbar/src/views/widgets/update_sheet.dart';
 import 'package:live_darbar/src/views/widgets/audio_tile_widget.dart';
 import 'package:live_darbar/src/views/widgets/home_app_bar_widget.dart';
 import 'package:live_darbar/src/views/widgets/individual_item_dialog.dart';
@@ -22,6 +25,17 @@ class HomeScreen extends ConsumerWidget {
     // Watch the audio progress state using the StreamProvider
     final size = MediaQuery.of(context).size;
     const maxWidth = 500.0;
+
+    // Offer a new release once the check comes back, a second or two after
+    // launch. Listening here rather than watching keeps this a side effect:
+    // the home screen does not rebuild because a version number arrived.
+    ref.listen<AsyncValue<AppUpdate?>>(updateController, (previous, next) {
+      final update = next.value;
+      if (update == null) return;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (context.mounted) showUpdateSheet(context, update);
+      });
+    });
 
     return SafeArea(
       top: false,

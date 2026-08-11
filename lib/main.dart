@@ -12,6 +12,7 @@ import 'package:live_darbar/src/controllers/theme_controller.dart';
 import 'package:live_darbar/src/core/app_theme.dart';
 import 'package:live_darbar/src/views/screens/home_screen.dart';
 import 'package:live_darbar/src/views/screens/mukhwak_pdf_viewer.dart';
+import 'package:live_darbar/src/views/widgets/offline_banner_widget.dart';
 import 'package:live_darbar/src/controllers/mukhwak_controller.dart';
 import 'package:quick_actions/quick_actions.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
@@ -25,6 +26,13 @@ void main() async {
   ]);
   if (!kIsWeb && !kIsWasm) {
     // Enable background audio playback
+    //
+    // The channel id is copied from just_audio_background's own example and
+    // reads oddly, but leave it alone. Android keys notification channels by
+    // id and never deletes an old one short of an uninstall, so renaming it
+    // would leave every existing user with two "Audio playback" entries in
+    // their notification settings. The id is invisible to users; only the name
+    // shows. Nothing is gained by fixing it and something is lost.
     await JustAudioBackground.init(
       androidNotificationChannelId: 'com.ryanheise.bg_demo.channel.audio',
       androidNotificationChannelName: 'Audio playback',
@@ -158,6 +166,16 @@ class _MyAppState extends ConsumerState<MyApp> {
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       locale: Locale(locale),
+      // The offline banner lives above every route rather than inside
+      // HomeScreen, so it is still there when the player dialog or the PDF
+      // viewer is open. Losing your connection while reading the Mukhwak is
+      // exactly when you want to be told.
+      builder: (context, child) => Column(
+        children: [
+          const OfflineBannerWidget(),
+          Expanded(child: child ?? const SizedBox.shrink()),
+        ],
+      ),
       home: const HomeScreen(),
     );
   }

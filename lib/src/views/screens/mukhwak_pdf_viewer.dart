@@ -35,31 +35,22 @@ class MukhwakPdfViewer extends ConsumerWidget {
         ),
         body: SafeArea(
           child: mukhwakState.when(
-            data: (filePath) {
-              if (filePath != null) {
-                return SfPdfViewer.file(File(filePath));
-              } else {
-                // Trigger fetch if null (should have been triggered by main, but safe fallback)
-                // Or actually, main triggers it, so we might start in loading.
-                // If builds returns null but fetch didn't start, we might show loading and fetch.
-                // But since we control it, let's assume if it is null, we can try network as fallback or just show loading/error.
-                // Better: use network as fallback if cache fails completely, but cache logic handles it.
-                // For now, let's retry fetch if data is null? Or just show network version while fetching?
-                // Simple approach: show loading if null, as main triggers fetch.
-                // If it persists null, maybe show network.
-                // Let's rely on controller. If data is present, use file.
-                // If null returned by build, wait for fetchAndCache to update it.
-                // Actually, if build returns null, it means not in cache. FetchAndCache puts it into loading state?
-                // No, fetchAndCache sets state = loading, then data.
-                // So if we see null data, it might mean checkCache failed (cache empty) and fetch hasn't updated state yet.
-                // The best way is: if data is null, we show loading indicator and let the background fetch do its job.
-                // If it takes too long, users might be confused.
-                // Let's implement a fallback: if null, show loading.
-                return const Center(child: CircularProgressIndicator());
-              }
-            },
+            // A null path means the cache was empty and the fetch started by
+            // main.dart has not landed yet, so it reads the same as loading.
+            data: (filePath) => filePath != null
+                ? SfPdfViewer.file(File(filePath))
+                : const Center(child: CircularProgressIndicator()),
             loading: () => const Center(child: CircularProgressIndicator()),
-            error: (err, stack) => Center(child: Text('Error: $err')),
+            error: (err, stack) => Center(
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: Text(
+                  AppLocalizations.of(context)!.mukhwak_load_failed,
+                  textAlign: TextAlign.center,
+                  style: ShadTheme.of(context).textTheme.muted,
+                ),
+              ),
+            ),
           ),
         ),
       ),

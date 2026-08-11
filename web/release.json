@@ -1,0 +1,24 @@
+{
+  "_comment": "Served from https://darbar.live/release.json. NOT version.json: the Flutter web build generates its own version.json for PWA versioning and would overwrite this one on every deploy, with a shape this app rejects, so updates would silently never appear. Firebase Hosting serves real files before applying the catch-all rewrite in firebase.json, so this reaches the app rather than index.html. UPDATE THIS IN THE SAME COMMIT THAT BUMPS pubspec.yaml, and deploy the web build, or the app will keep telling people they are up to date. Build numbers are compared, not version strings.",
+  "android": {
+    "version": "2.1.0",
+    "build": 7
+  },
+  "ios": {
+    "version": "2.1.0",
+    "build": 7
+  },
+  "macos": {
+    "version": "2.1.0",
+    "build": 7
+  },
+  "stores": {
+    "android": "https://play.google.com/store/apps/details?id=com.hsi.harki.live_darbar",
+    "ios": "https://apps.apple.com/us/app/live-darbar/id6449766130",
+    "macos": "https://apps.apple.com/us/app/live-darbar/id6449766130"
+  },
+  "notes": {
+    "en": [],
+    "pa": []
+  }
+}

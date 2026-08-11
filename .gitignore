@@ -46,3 +46,6 @@ app.*.map.json
 
 
 .firebase/
+
+# Recovered agent research notes (local only)
+.research/

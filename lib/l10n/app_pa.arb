@@ -27,10 +27,6 @@
     "@color_tooltip": {
         "description": "ਰੰਗ ਬਦਲਣ ਲਈ ਟੂਲਟਿਪ"
     },
-    "refresh_tooltip": "ਆਡੀਓ ਸਰੋਤ ਰਿਫਰੇਸ਼ ਕਰੋ",
-    "@refresh_tooltip": {
-        "description": "ਆਡੀਓ ਸਰੋਤਾਂ ਨੂੰ ਤਾਜ਼ਾ ਕਰਨ ਲਈ ਟੂਲਟਿਪ"
-    },
     "about_tooltip": "ਜਾਣਕਾਰੀ",
     "@about_tooltip": {
         "description": "ਜਾਣਕਾਰੀ ਟੂਲਟਿਪ"
@@ -174,5 +170,75 @@
     "mukhwak_pdf_title": "ਅੱਜ ਦਾ ਮੁੱਖਵਾਕ (PDF)",
     "@mukhwak_pdf_title": {
         "description": "Title for the Daily Mukhwak PDF screen"
+    },
+    "go_live": "ਲਾਈਵ 'ਤੇ ਜਾਓ",
+    "@go_live": {
+        "description": "Button that reconnects the stream to jump back to the live edge"
+    },
+    "behind_live": "{seconds} ਸਕਿੰਟ ਪਿੱਛੇ",
+    "@behind_live": {
+        "description": "How far the playhead trails the live broadcast, shown after a long pause",
+        "placeholders": {
+            "seconds": {
+                "type": "int"
+            }
+        }
+    },
+    "reconnecting": "ਮੁੜ ਜੁੜ ਰਿਹਾ ਹੈ...",
+    "@reconnecting": {
+        "description": "Shown while the app is retrying a dropped stream connection"
+    },
+    "low_quality_stream": "ਘੱਟ ਕੁਆਲਿਟੀ ਸਟ੍ਰੀਮ",
+    "@low_quality_stream": {
+        "description": "Shown when playback has fallen back to the 28 kbps tier"
+    },
+    "offline_banner": "ਇੰਟਰਨੈੱਟ ਕਨੈਕਸ਼ਨ ਨਹੀਂ ਹੈ",
+    "@offline_banner": {
+        "description": "Banner shown while the device has no network interface at all"
+    },
+    "offline_banner_detail": "ਇੰਟਰਨੈੱਟ ਵਾਪਸ ਆਉਣ 'ਤੇ ਆਪਣੇ ਆਪ ਚੱਲ ਪਵੇਗਾ",
+    "@offline_banner_detail": {
+        "description": "Second line of the offline banner, telling the user they need do nothing"
+    },
+    "stream_unreachable": "ਕੀਰਤਨ ਸਟ੍ਰੀਮ ਨਾਲ ਜੁੜਿਆ ਨਹੀਂ ਜਾ ਸਕਿਆ",
+    "@stream_unreachable": {
+        "description": "Shown when the device is online but the SGPC server cannot be reached"
+    },
+    "retry": "ਮੁੜ ਕੋਸ਼ਿਸ਼ ਕਰੋ",
+    "@retry": {
+        "description": "Button that retries a failed connection immediately"
+    },
+    "mukhwak_load_failed": "ਅੱਜ ਦਾ ਮੁੱਖਵਾਕ ਲੋਡ ਨਹੀਂ ਹੋ ਸਕਿਆ",
+    "@mukhwak_load_failed": {
+        "description": "Replaces a raw exception when the Mukhwak PDF fails to load"
+    },
+    "playback_error": "ਪਲੇਬੈਕ ਵਿੱਚ ਸਮੱਸਿਆ",
+    "@playback_error": {
+        "description": "Replaces a raw exception in the player when progress cannot be read"
+    },
+    "stop_tooltip": "ਪਲੇਬੈਕ ਬੰਦ ਕਰੋ",
+    "@stop_tooltip": {
+        "description": "App bar button that stops playback and dismisses the media notification"
+    },
+    "update_available": "ਨਵਾਂ ਵਰਜਨ ਉਪਲਬਧ ਹੈ",
+    "@update_available": {
+        "description": "Heading of the update sheet"
+    },
+    "update_version": "ਵਰਜਨ {version}",
+    "@update_version": {
+        "description": "Subtitle naming the new version number",
+        "placeholders": {
+            "version": {
+                "type": "String"
+            }
+        }
+    },
+    "update_now": "ਹੁਣੇ ਅੱਪਡੇਟ ਕਰੋ",
+    "@update_now": {
+        "description": "Primary button that opens the app store listing"
+    },
+    "update_later": "ਹੁਣ ਨਹੀਂ",
+    "@update_later": {
+        "description": "Secondary button that dismisses the update sheet for this release"
     }
 }

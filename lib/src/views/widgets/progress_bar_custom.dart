@@ -20,7 +20,7 @@ class ProgressBarCustom extends ConsumerWidget {
 
     return progressStateAsync.when(
       data: (progressState) {
-        if (progressState.totalDuration == Duration.zero) {
+        if (progressState.isLive) {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
@@ -60,7 +60,7 @@ class ProgressBarCustom extends ConsumerWidget {
           barHeight: 4,
           progress: progressState.position,
           buffered: progressState.bufferedPosition,
-          total: progressState.totalDuration,
+          total: progressState.totalDuration!,
           barCapShape: BarCapShape.square,
           thumbGlowRadius: 16,
           thumbRadius: 8,
@@ -73,7 +73,10 @@ class ProgressBarCustom extends ConsumerWidget {
       loading: () => const LinearProgressIndicator(
         minHeight: 4,
       ),
-      error: (error, stack) => Text('Error: $error'),
+      error: (error, stack) => Text(
+        AppLocalizations.of(context)!.playback_error,
+        style: ShadTheme.of(context).textTheme.muted,
+      ),
     );
   }
 }

@@ -30,9 +30,6 @@ class AppLocalizationsPa extends AppLocalizations {
   String get color_tooltip => 'ਰੰਗ ਬਦਲੋ';
 
   @override
-  String get refresh_tooltip => 'ਆਡੀਓ ਸਰੋਤ ਰਿਫਰੇਸ਼ ਕਰੋ';
-
-  @override
   String get about_tooltip => 'ਜਾਣਕਾਰੀ';
 
   @override
@@ -139,4 +136,53 @@ class AppLocalizationsPa extends AppLocalizations {
 
   @override
   String get mukhwak_pdf_title => 'ਅੱਜ ਦਾ ਮੁੱਖਵਾਕ (PDF)';
+
+  @override
+  String get go_live => 'ਲਾਈਵ \'ਤੇ ਜਾਓ';
+
+  @override
+  String behind_live(int seconds) {
+    return '$seconds ਸਕਿੰਟ ਪਿੱਛੇ';
+  }
+
+  @override
+  String get reconnecting => 'ਮੁੜ ਜੁੜ ਰਿਹਾ ਹੈ...';
+
+  @override
+  String get low_quality_stream => 'ਘੱਟ ਕੁਆਲਿਟੀ ਸਟ੍ਰੀਮ';
+
+  @override
+  String get offline_banner => 'ਇੰਟਰਨੈੱਟ ਕਨੈਕਸ਼ਨ ਨਹੀਂ ਹੈ';
+
+  @override
+  String get offline_banner_detail => 'ਇੰਟਰਨੈੱਟ ਵਾਪਸ ਆਉਣ \'ਤੇ ਆਪਣੇ ਆਪ ਚੱਲ ਪਵੇਗਾ';
+
+  @override
+  String get stream_unreachable => 'ਕੀਰਤਨ ਸਟ੍ਰੀਮ ਨਾਲ ਜੁੜਿਆ ਨਹੀਂ ਜਾ ਸਕਿਆ';
+
+  @override
+  String get retry => 'ਮੁੜ ਕੋਸ਼ਿਸ਼ ਕਰੋ';
+
+  @override
+  String get mukhwak_load_failed => 'ਅੱਜ ਦਾ ਮੁੱਖਵਾਕ ਲੋਡ ਨਹੀਂ ਹੋ ਸਕਿਆ';
+
+  @override
+  String get playback_error => 'ਪਲੇਬੈਕ ਵਿੱਚ ਸਮੱਸਿਆ';
+
+  @override
+  String get stop_tooltip => 'ਪਲੇਬੈਕ ਬੰਦ ਕਰੋ';
+
+  @override
+  String get update_available => 'ਨਵਾਂ ਵਰਜਨ ਉਪਲਬਧ ਹੈ';
+
+  @override
+  String update_version(String version) {
+    return 'ਵਰਜਨ $version';
+  }
+
+  @override
+  String get update_now => 'ਹੁਣੇ ਅੱਪਡੇਟ ਕਰੋ';
+
+  @override
+  String get update_later => 'ਹੁਣ ਨਹੀਂ';
 }

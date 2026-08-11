@@ -137,12 +137,6 @@ abstract class AppLocalizations {
   /// **'Change Color'**
   String get color_tooltip;
 
-  /// Refresh Audio Sources Tooltip
-  ///
-  /// In en, this message translates to:
-  /// **'Refresh Audio Sources'**
-  String get refresh_tooltip;
-
   /// About Tooltip
   ///
   /// In en, this message translates to:
@@ -358,6 +352,96 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Daily Mukhwak (PDF)'**
   String get mukhwak_pdf_title;
+
+  /// Button that reconnects the stream to jump back to the live edge
+  ///
+  /// In en, this message translates to:
+  /// **'Go live'**
+  String get go_live;
+
+  /// How far the playhead trails the live broadcast, shown after a long pause
+  ///
+  /// In en, this message translates to:
+  /// **'{seconds}s behind'**
+  String behind_live(int seconds);
+
+  /// Shown while the app is retrying a dropped stream connection
+  ///
+  /// In en, this message translates to:
+  /// **'Reconnecting...'**
+  String get reconnecting;
+
+  /// Shown when playback has fallen back to the 28 kbps tier
+  ///
+  /// In en, this message translates to:
+  /// **'Low quality stream'**
+  String get low_quality_stream;
+
+  /// Banner shown while the device has no network interface at all
+  ///
+  /// In en, this message translates to:
+  /// **'No internet connection'**
+  String get offline_banner;
+
+  /// Second line of the offline banner, telling the user they need do nothing
+  ///
+  /// In en, this message translates to:
+  /// **'Playback will resume when you are back online'**
+  String get offline_banner_detail;
+
+  /// Shown when the device is online but the SGPC server cannot be reached
+  ///
+  /// In en, this message translates to:
+  /// **'Can\'t reach the kirtan stream'**
+  String get stream_unreachable;
+
+  /// Button that retries a failed connection immediately
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get retry;
+
+  /// Replaces a raw exception when the Mukhwak PDF fails to load
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load today\'s Mukhwak'**
+  String get mukhwak_load_failed;
+
+  /// Replaces a raw exception in the player when progress cannot be read
+  ///
+  /// In en, this message translates to:
+  /// **'Playback problem'**
+  String get playback_error;
+
+  /// App bar button that stops playback and dismisses the media notification
+  ///
+  /// In en, this message translates to:
+  /// **'Stop playback'**
+  String get stop_tooltip;
+
+  /// Heading of the update sheet
+  ///
+  /// In en, this message translates to:
+  /// **'A new version is available'**
+  String get update_available;
+
+  /// Subtitle naming the new version number
+  ///
+  /// In en, this message translates to:
+  /// **'Version {version}'**
+  String update_version(String version);
+
+  /// Primary button that opens the app store listing
+  ///
+  /// In en, this message translates to:
+  /// **'Update now'**
+  String get update_now;
+
+  /// Secondary button that dismisses the update sheet for this release
+  ///
+  /// In en, this message translates to:
+  /// **'Not now'**
+  String get update_later;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

@@ -52,7 +52,9 @@ class AboutMeTabWidget extends StatelessWidget {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(LucideIcons.youtube, size: 16),
+                  // Lucide dropped its brand icons, so this is the generic
+                  // play mark. The button label names the destination.
+                  const Icon(LucideIcons.circlePlay, size: 16),
                   const SizedBox(width: 8),
                   Text(
                     AppLocalizations.of(context)!.about_me_tabla_button,
@@ -94,7 +96,7 @@ class AboutMeTabWidget extends StatelessWidget {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(LucideIcons.linkedin, size: 16),
+                  const Icon(LucideIcons.briefcase, size: 16),
                   const SizedBox(width: 8),
                   Text(
                     AppLocalizations.of(context)!.about_me_linkedin,

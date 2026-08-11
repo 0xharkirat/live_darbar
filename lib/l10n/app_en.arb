@@ -27,10 +27,6 @@
     "@color_tooltip": {
         "description": "Change Color Tooltip"
     },
-    "refresh_tooltip": "Refresh Audio Sources",
-    "@refresh_tooltip": {
-        "description": "Refresh Audio Sources Tooltip"
-    },
     "about_tooltip": "About",
     "@about_tooltip": {
         "description": "About Tooltip"
@@ -174,5 +170,75 @@
     "mukhwak_pdf_title": "Daily Mukhwak (PDF)",
     "@mukhwak_pdf_title": {
         "description": "Title for the Daily Mukhwak PDF screen"
+    },
+    "go_live": "Go live",
+    "@go_live": {
+        "description": "Button that reconnects the stream to jump back to the live edge"
+    },
+    "behind_live": "{seconds}s behind",
+    "@behind_live": {
+        "description": "How far the playhead trails the live broadcast, shown after a long pause",
+        "placeholders": {
+            "seconds": {
+                "type": "int"
+            }
+        }
+    },
+    "reconnecting": "Reconnecting...",
+    "@reconnecting": {
+        "description": "Shown while the app is retrying a dropped stream connection"
+    },
+    "low_quality_stream": "Low quality stream",
+    "@low_quality_stream": {
+        "description": "Shown when playback has fallen back to the 28 kbps tier"
+    },
+    "offline_banner": "No internet connection",
+    "@offline_banner": {
+        "description": "Banner shown while the device has no network interface at all"
+    },
+    "offline_banner_detail": "Playback will resume when you are back online",
+    "@offline_banner_detail": {
+        "description": "Second line of the offline banner, telling the user they need do nothing"
+    },
+    "stream_unreachable": "Can't reach the kirtan stream",
+    "@stream_unreachable": {
+        "description": "Shown when the device is online but the SGPC server cannot be reached"
+    },
+    "retry": "Retry",
+    "@retry": {
+        "description": "Button that retries a failed connection immediately"
+    },
+    "mukhwak_load_failed": "Could not load today's Mukhwak",
+    "@mukhwak_load_failed": {
+        "description": "Replaces a raw exception when the Mukhwak PDF fails to load"
+    },
+    "playback_error": "Playback problem",
+    "@playback_error": {
+        "description": "Replaces a raw exception in the player when progress cannot be read"
+    },
+    "stop_tooltip": "Stop playback",
+    "@stop_tooltip": {
+        "description": "App bar button that stops playback and dismisses the media notification"
+    },
+    "update_available": "A new version is available",
+    "@update_available": {
+        "description": "Heading of the update sheet"
+    },
+    "update_version": "Version {version}",
+    "@update_version": {
+        "description": "Subtitle naming the new version number",
+        "placeholders": {
+            "version": {
+                "type": "String"
+            }
+        }
+    },
+    "update_now": "Update now",
+    "@update_now": {
+        "description": "Primary button that opens the app store listing"
+    },
+    "update_later": "Not now",
+    "@update_later": {
+        "description": "Secondary button that dismisses the update sheet for this release"
     }
 }

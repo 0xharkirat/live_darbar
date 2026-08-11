@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:live_darbar/src/controllers/audio_controller.dart';
 import 'package:live_darbar/src/core/get_localized_title.dart';
+import 'package:live_darbar/src/views/widgets/live_status_widget.dart';
 import 'package:live_darbar/src/views/widgets/play_pause_button_widget.dart';
 import 'package:live_darbar/src/views/widgets/progress_bar_custom.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
@@ -113,6 +114,7 @@ class IndividualItemDialog extends ConsumerWidget {
                     ProgressBarCustom(
                       onSeek: ref.read(audioController).seek,
                     ),
+                    const Center(child: LiveStatusWidget()),
                     const Center(child: PlayPauseButtonWidget()),
                   ],
                 ),
