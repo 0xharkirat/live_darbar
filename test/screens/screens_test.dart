@@ -79,6 +79,16 @@ void main() {
     });
   }
 
+  // The darbar.live landing page shows this one in Punjabi.
+  testWidgets('now playing, live, pa', (tester) async {
+    await _pump(tester, const HomeScreen(), now: _livePlaying, locale: 'pa');
+    showNowPlaying(tester.element(find.byType(HomeScreen)));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    await _precache(tester);
+    await _shot(tester, 'now_playing_live_pa');
+  });
+
   for (final locale in ['en', 'pa']) {
     testWidgets('hukamnama reader, $locale', (tester) async {
       await _pump(tester, const HukamnamaScreen(), locale: locale);
@@ -98,13 +108,15 @@ void main() {
     });
   }
 
-  testWidgets('quality sheet', (tester) async {
-    await _pump(tester, const HomeScreen(), now: _livePlaying);
-    showQualitySheet(tester.element(find.byType(HomeScreen)));
-    await tester.pump();
-    await tester.pump(const Duration(seconds: 1));
-    await _shot(tester, 'quality_en');
-  });
+  for (final locale in ['en', 'pa']) {
+    testWidgets('quality sheet, $locale', (tester) async {
+      await _pump(tester, const HomeScreen(), now: _livePlaying, locale: locale);
+      showQualitySheet(tester.element(find.byType(HomeScreen)));
+      await tester.pump();
+      await tester.pump(const Duration(seconds: 1));
+      await _shot(tester, 'quality_$locale');
+    });
+  }
 
   for (final locale in ['en', 'pa']) {
     testWidgets('about, $locale', (tester) async {

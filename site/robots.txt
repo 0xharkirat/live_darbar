@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://darbar.live/sitemap.xml

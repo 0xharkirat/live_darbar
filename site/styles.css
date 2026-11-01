@@ -1,0 +1,875 @@
+/* Live Darbar landing page. One file for /, /pa/ and the 404 page.
+   Tokens match lib/src/core/palette.dart. Dark only, by decision.
+
+   The look follows the product pages of Kit Langton (Scrawl, Skulk, Hex):
+   near-black canvas, one huge tight headline, small quiet section titles,
+   hairline borders, and a real product demo that carries the page.
+   Nothing here moves on scroll. The only motion is the film itself. */
+
+@font-face {
+  font-family: "Manrope";
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/manrope-400.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Manrope";
+  font-weight: 700;
+  font-display: swap;
+  src: url("/fonts/manrope-700.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Noto Serif";
+  font-weight: 600;
+  font-display: swap;
+  src: url("/fonts/noto-serif-600.woff2") format("woff2");
+}
+/* The Gurmukhi files also hold Latin, so a /pa/ page loads these 3 and no more. */
+@font-face {
+  font-family: "Noto Sans Gurmukhi Web";
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/noto-sans-gurmukhi-400.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Noto Sans Gurmukhi Web";
+  font-weight: 700;
+  font-display: swap;
+  src: url("/fonts/noto-sans-gurmukhi-700.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Noto Serif Gurmukhi Web";
+  font-weight: 600;
+  font-display: swap;
+  src: url("/fonts/noto-serif-gurmukhi-600.woff2") format("woff2");
+}
+
+:root {
+  color-scheme: dark;
+  --bg: #0c0a09;
+  --surface: #141110;
+  --surface-high: #1d1814;
+  --line: rgba(245, 241, 235, 0.1);
+  --line-strong: rgba(245, 241, 235, 0.2);
+  --fg: #f5f1eb;
+  --muted: #ada398;
+  --faint: #8a8076;
+  --gold: #e8b04b;
+  --gold-soft: rgba(232, 176, 75, 0.14);
+  --on-gold: #0c0a09;
+  --live: #ff453a;
+  --serif: "Noto Serif", Georgia, "Times New Roman", serif;
+  --sans: "Manrope", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --ease: cubic-bezier(0.23, 1, 0.32, 1);
+  --gutter: 20px;
+}
+
+/* Punjabi swaps the families, and nothing else: see the letter-spacing rule at the end. */
+:root:lang(pa) {
+  --serif: "Noto Serif Gurmukhi Web", "Noto Serif Gurmukhi", "Gurmukhi MN", "Nirmala UI", serif;
+  --sans: "Noto Sans Gurmukhi Web", "Noto Sans Gurmukhi", "Gurmukhi MN", "Nirmala UI", system-ui, sans-serif;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--bg);
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  font-synthesis: none;
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font: 400 17px/1.6 var(--sans);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+:root:lang(pa) body {
+  font-size: 18px;
+  line-height: 1.8;
+}
+
+h1,
+h2,
+h3 {
+  margin: 0;
+  font-family: var(--serif);
+  font-weight: 600;
+  text-wrap: balance;
+}
+
+p {
+  margin: 0;
+  text-wrap: pretty;
+}
+
+ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+a {
+  color: inherit;
+}
+
+img,
+video {
+  display: block;
+  max-width: 100%;
+}
+
+.wrap {
+  width: 100%;
+  max-width: 1160px;
+  margin: 0 auto;
+  padding-left: var(--gutter);
+  padding-right: var(--gutter);
+}
+
+.skip {
+  position: absolute;
+  left: 20px;
+  top: -80px;
+  z-index: 10;
+  padding: 10px 16px;
+  border-radius: 999px;
+  background: var(--gold);
+  color: var(--on-gold);
+  font-weight: 700;
+  text-decoration: none;
+}
+.skip:focus {
+  top: 12px;
+}
+
+:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+  border-radius: 8px;
+}
+
+/* ---------- Buttons: pills, one gold per view ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 0 22px;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--fg);
+  font: 700 16px/1 var(--sans);
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: transform 120ms var(--ease), background-color 160ms var(--ease),
+    border-color 160ms var(--ease);
+}
+.btn:active {
+  transform: scale(0.97);
+}
+.btn-gold {
+  border-color: var(--gold);
+  background: var(--gold);
+  color: var(--on-gold);
+  box-shadow: 0 10px 40px -10px rgba(232, 176, 75, 0.45);
+}
+.btn-sm {
+  min-height: 40px;
+  padding: 0 18px;
+  font-size: 15px;
+}
+@media (hover: hover) {
+  .btn:hover {
+    background: var(--surface-high);
+    border-color: var(--muted);
+  }
+  .btn-gold:hover {
+    background: #f0bd62;
+    border-color: #f0bd62;
+  }
+}
+
+/* ---------- Top bar ---------- */
+.top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 16px;
+  padding-bottom: 8px;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--serif);
+  font-weight: 600;
+  font-size: 20px;
+  text-decoration: none;
+}
+.brand img {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+}
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+/* On the English page this label is Gurmukhi. It uses the system's Gurmukhi font,
+   so the English page does not download one. */
+.lang[hreflang="pa"] {
+  font-family: "Noto Sans Gurmukhi", "Gurmukhi MN", "Nirmala UI", Raavi, system-ui, sans-serif;
+}
+.nav .btn {
+  min-height: 40px;
+  padding: 0 16px;
+  font-size: 15px;
+}
+
+/* ---------- Hero ---------- */
+.hero {
+  display: grid;
+  gap: 40px;
+  justify-items: center;
+  padding-top: 44px;
+  padding-bottom: 24px;
+  text-align: center;
+  /* The glow behind the phone reaches past the column. Cut it off here, so it
+     never makes the page scroll sideways. */
+  overflow-x: clip;
+}
+.hero-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.dot {
+  flex: none;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--live);
+}
+h1 {
+  font-size: clamp(46px, 13.2vw, 80px);
+  line-height: 1.02;
+  letter-spacing: -0.035em;
+}
+h1 span {
+  display: block;
+}
+/* The answer line is the product's word, so it is the bright one; the
+   problem line above it sits back. */
+h1 .dim {
+  color: var(--muted);
+}
+.lead {
+  max-width: 31em;
+  margin-top: 22px;
+  color: var(--muted);
+  font-size: clamp(17px, 4.6vw, 20px);
+  line-height: 1.55;
+}
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 30px;
+}
+.note {
+  margin-top: 18px;
+  color: var(--faint);
+  font-size: 15px;
+}
+
+/* The phone, drawn in CSS around the real recording. */
+.film {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 22px;
+}
+.film::before {
+  /* A still glow behind the phone. It does not move. */
+  content: "";
+  position: absolute;
+  inset: 4% -30% 10%;
+  background: radial-gradient(closest-side, rgba(232, 176, 75, 0.16), transparent 72%);
+  pointer-events: none;
+}
+.device {
+  --dw: min(300px, 74vw);
+  position: relative;
+  width: var(--dw);
+  padding: calc(var(--dw) * 0.032);
+  border-radius: calc(var(--dw) * 0.17);
+  background: linear-gradient(150deg, #2c2520, #0f0d0c 55%, #1c1713);
+  box-shadow: 0 0 0 1px rgba(245, 241, 235, 0.14), 0 0 0 calc(var(--dw) * 0.008) #050404,
+    0 50px 90px -30px rgba(0, 0, 0, 0.9);
+}
+.screen {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 1206 / 2622;
+  border-radius: calc(var(--dw) * 0.14);
+  background: #000;
+}
+.screen video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.cap-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  min-height: 44px;
+}
+.film-toggle {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 1px solid var(--line-strong);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--fg);
+  cursor: pointer;
+  transition: transform 120ms var(--ease), background-color 160ms var(--ease);
+}
+@media (hover: hover) {
+  .film-toggle:hover {
+    background: var(--surface-high);
+  }
+}
+.film-toggle:active {
+  transform: scale(0.94);
+}
+.film-toggle svg {
+  width: 16px;
+  height: 16px;
+  fill: currentColor;
+}
+.film-toggle .i-play {
+  display: none;
+}
+.film-toggle[data-paused="true"] .i-play {
+  display: block;
+}
+.film-toggle[data-paused="true"] .i-pause {
+  display: none;
+}
+/* Few words on screen, in step with the film. */
+.cap {
+  min-height: 1.6em;
+  color: var(--fg);
+  font-family: var(--serif);
+  font-size: 20px;
+  line-height: 1.4;
+  text-align: center;
+}
+
+/* ---------- Sections ---------- */
+.sect {
+  padding-top: 88px;
+}
+.sect-head {
+  max-width: 36em;
+}
+.kicker {
+  margin-bottom: 14px;
+  color: var(--gold);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+h2 {
+  font-size: clamp(32px, 7.6vw, 46px);
+  line-height: 1.08;
+  letter-spacing: -0.025em;
+}
+.sect-lead {
+  margin-top: 14px;
+  color: var(--muted);
+  font-size: 18px;
+}
+
+/* ---------- Why Live Darbar ---------- */
+.why {
+  display: grid;
+  gap: 16px;
+  margin-top: 40px;
+}
+.card {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  background: var(--surface);
+}
+.vis {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 1 / 0.92;
+  background: radial-gradient(120% 90% at 50% 0%, rgba(232, 176, 75, 0.1), transparent 62%),
+    #100d0c;
+  border-bottom: 1px solid var(--line);
+}
+.card-text {
+  padding: 22px 24px 26px;
+}
+h3 {
+  font-size: 22px;
+  line-height: 1.25;
+  letter-spacing: -0.015em;
+}
+.card-text p {
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 16px;
+  line-height: 1.55;
+}
+
+/* A phone that rises out of the bottom edge of its panel. */
+.peek {
+  position: absolute;
+  left: 50%;
+  top: 12%;
+  width: 68%;
+  transform: translateX(-50%);
+  border: 6px solid #1f1a16;
+  border-bottom: 0;
+  border-radius: 34px 34px 0 0;
+  background: #000;
+  box-shadow: 0 0 0 1px rgba(245, 241, 235, 0.12), 0 30px 60px -20px rgba(0, 0, 0, 0.8);
+  -webkit-mask-image: linear-gradient(#000 86%, transparent);
+  mask-image: linear-gradient(#000 86%, transparent);
+}
+.peek img {
+  width: 100%;
+  height: auto;
+  border-radius: 28px 28px 0 0;
+}
+.peek-pair .peek {
+  width: 58%;
+  border-width: 5px;
+  border-radius: 28px 28px 0 0;
+}
+.peek-pair .peek img {
+  border-radius: 23px 23px 0 0;
+}
+.peek-pair .peek:first-child {
+  left: 32%;
+  top: 14%;
+}
+.peek-pair .peek:last-child {
+  left: 68%;
+  top: 24%;
+}
+
+/* A cropped piece of the app, shown as it is. */
+.crop {
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  top: 50%;
+  transform: translateY(-50%);
+}
+.crop img {
+  width: 100%;
+  height: auto;
+  border-radius: 22px;
+  box-shadow: 0 24px 50px -16px rgba(0, 0, 0, 0.85);
+}
+.crop.low {
+  top: auto;
+  bottom: 0;
+  left: 6%;
+  right: 6%;
+  transform: none;
+}
+.crop.low img {
+  border-radius: 22px 22px 0 0;
+}
+
+/* The rail: kirtan runs on, and what usually breaks it passes underneath. */
+.keep {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 18px;
+  padding: 0 7%;
+}
+.keep-live {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.keep svg {
+  width: 100%;
+  height: auto;
+}
+.keep-bars rect {
+  fill: var(--gold);
+}
+.keep-gap {
+  fill: rgba(245, 241, 235, 0.07);
+  stroke: rgba(245, 241, 235, 0.16);
+  stroke-dasharray: 3 4;
+}
+.keep-names {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  text-align: center;
+}
+.keep-names li {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.35;
+}
+.keep-names li::before {
+  content: "";
+  display: block;
+  width: 1px;
+  height: 14px;
+  margin: 0 auto 6px;
+  background: var(--line-strong);
+}
+
+/* ---------- Free band ---------- */
+.free {
+  margin-top: 16px;
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  background: var(--surface);
+  overflow: hidden;
+}
+.free ul {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+.free li {
+  padding: 26px 24px;
+  border-top: 1px solid var(--line);
+  font-family: var(--serif);
+  font-weight: 600;
+  font-size: clamp(22px, 5.4vw, 34px);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+.free li:nth-child(-n + 2) {
+  border-top: 0;
+}
+.free li:nth-child(odd) {
+  border-right: 1px solid var(--line);
+}
+.free p {
+  padding: 16px 24px;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 15px;
+}
+
+/* ---------- Roadmap ---------- */
+.road {
+  display: grid;
+  gap: 40px;
+  margin-top: 40px;
+}
+.status {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--line-strong);
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.status::before {
+  content: "";
+  flex: none;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+}
+.status-on {
+  color: var(--gold);
+}
+.status-on::before {
+  background: var(--gold);
+  box-shadow: 0 0 0 4px var(--gold-soft);
+}
+.status-look {
+  color: var(--muted);
+}
+.status-look::before {
+  border: 2px solid var(--faint);
+}
+.road li {
+  padding: 16px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 17px;
+  line-height: 1.5;
+}
+.road li b {
+  font-weight: 700;
+}
+
+/* ---------- Get the app: rows, as on Hex's download table ---------- */
+.get {
+  margin-top: 36px;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: var(--surface);
+  overflow: hidden;
+}
+.get .row {
+  display: grid;
+  grid-template-columns: 96px 1fr auto;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px 14px 20px;
+  border-top: 1px solid var(--line);
+}
+.get .row:first-child {
+  border-top: 0;
+}
+.get .k {
+  font-weight: 700;
+}
+.get .v {
+  color: var(--muted);
+  font-size: 16px;
+}
+.get-note {
+  margin-top: 16px;
+  color: var(--muted);
+  font-size: 16px;
+}
+
+/* ---------- Credits ---------- */
+.credits-intro {
+  max-width: 34em;
+  margin-top: 14px;
+  color: var(--muted);
+}
+.credits {
+  display: grid;
+  gap: 24px 40px;
+  margin-top: 28px;
+}
+.credits li {
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+}
+.credits a {
+  color: var(--gold);
+  font-weight: 700;
+  text-underline-offset: 4px;
+}
+.credits p {
+  margin-top: 6px;
+  color: var(--muted);
+  font-size: 16px;
+}
+.maker {
+  margin-top: 32px;
+  color: var(--muted);
+}
+.maker a {
+  color: var(--fg);
+  text-underline-offset: 4px;
+}
+
+/* ---------- Footer ---------- */
+.foot {
+  margin-top: 88px;
+  padding-bottom: 56px;
+}
+.foot ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 24px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+.foot a {
+  display: inline-block;
+  padding: 10px 0;
+  color: var(--muted);
+  font-size: 16px;
+  text-underline-offset: 4px;
+}
+@media (hover: hover) {
+  .foot a:hover {
+    color: var(--fg);
+  }
+}
+
+/* ---------- 404 ---------- */
+.lost {
+  min-height: 70svh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-align: center;
+}
+
+/* ---------- Wider screens ---------- */
+@media (min-width: 720px) {
+  :root {
+    --gutter: 32px;
+  }
+  .why {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .free ul {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  .free li {
+    border-top: 0;
+    border-right: 1px solid var(--line);
+    font-size: clamp(22px, 3.1vw, 34px);
+    padding-left: 20px;
+    padding-right: 16px;
+  }
+  .free li:last-child {
+    border-right: 0;
+  }
+  .road {
+    grid-template-columns: 1fr 1fr;
+    gap: 56px;
+  }
+  .credits {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .get .row {
+    grid-template-columns: 140px 1fr auto;
+  }
+}
+
+@media (min-width: 960px) {
+  .sect {
+    padding-top: 120px;
+  }
+  .hero {
+    grid-template-columns: minmax(0, 1.12fr) minmax(0, 0.88fr);
+    gap: 32px;
+    justify-items: stretch;
+    align-items: center;
+    min-height: min(820px, calc(100svh - 72px));
+    padding-top: 24px;
+    text-align: left;
+  }
+  .hero-copy {
+    align-items: flex-start;
+  }
+  .actions {
+    justify-content: flex-start;
+  }
+  h1 {
+    font-size: clamp(60px, 6.4vw, 80px);
+  }
+  .film {
+    justify-self: center;
+  }
+  .device {
+    --dw: min(318px, 34vh * 0.62 + 130px);
+  }
+}
+
+@media (min-width: 1040px) {
+  .why {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .vis {
+    aspect-ratio: 1 / 0.96;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .btn,
+  .film-toggle {
+    transition: none;
+  }
+  .btn:active,
+  .film-toggle:active {
+    transform: none;
+  }
+}
+
+/* Gurmukhi vowel signs sit on their letters by position. Letter-spacing pushes
+   them off. Nothing on a /pa/ page may carry any, whatever a rule above says.
+   Capitals do not exist in Gurmukhi, so uppercase is off too. */
+:root:lang(pa) *,
+:root:lang(pa) *::before,
+:root:lang(pa) *::after {
+  letter-spacing: 0 !important;
+  text-transform: none !important;
+}
+:root:lang(pa) h1,
+:root:lang(pa) h2,
+:root:lang(pa) h3 {
+  line-height: 1.3;
+}
+:root:lang(pa) .eyebrow,
+:root:lang(pa) .kicker,
+:root:lang(pa) .status {
+  font-size: 16px;
+}
+:root:lang(pa) .keep-live {
+  font-size: 15px;
+}
+:root:lang(pa) .free li {
+  font-size: clamp(20px, 2.4vw, 28px);
+}
