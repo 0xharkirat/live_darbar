@@ -68,7 +68,14 @@
                 <action android:name="${applicationId}.oacp.ACTION_PLACEHOLDER" />
             </intent-filter>
         </receiver>
-        <!-- ADD THIS "SERVICE" element -->
+        <!--
+            The media session, and the one thing in this file that Android Auto
+            and voice assistants talk to. audio_service's service is a
+            MediaBrowserService: it answers a browse request with the three
+            items that LiveDarbarAudioHandler lists, and passes "play" and
+            "play from search" on to Dart. The intent filter is how they find
+            it, and exported must stay true for the same reason.
+        -->
         <service android:name="com.ryanheise.audioservice.AudioService"
             android:foregroundServiceType="mediaPlayback"
             android:exported="true" tools:ignore="Instantiatable">
@@ -77,13 +84,35 @@
             </intent-filter>
         </service>
 
-        <!-- ADD THIS "RECEIVER" element -->
+        <!-- Headset, Bluetooth and notification buttons. -->
         <receiver android:name="com.ryanheise.audioservice.MediaButtonReceiver"
             android:exported="true" tools:ignore="Instantiatable">
             <intent-filter>
                 <action android:name="android.intent.action.MEDIA_BUTTON" />
             </intent-filter>
         </receiver>
+
+        <!--
+            The paintings for the browse rows in Android Auto. A file in the
+            app's private directory is unreadable to the Auto host, so a small
+            provider serves the three paintings and nothing else. It is
+            exported for that reason, it opens files for reading only, and it
+            answers only /0.jpg, /1.jpg and /2.jpg. The authority is the one
+            lib/src/core/artwork_store.dart builds its URIs from.
+        -->
+        <provider
+            android:name=".ArtworkProvider"
+            android:authorities="${applicationId}.artwork"
+            android:exported="true"
+            android:grantUriPermissions="false" />
+
+        <!--
+            Tells Android Auto this is a media app. The file names the kind
+            of app; the browse tree itself comes from the service above.
+        -->
+        <meta-data
+            android:name="com.google.android.gms.car.application"
+            android:resource="@xml/automotive_app_desc" />
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
         <meta-data

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    audio_service finds its icons by name at run time, with
+    Resources.getIdentifier, so nothing in the code points at them. The
+    resource shrinker in a release build cannot see them used and would drop
+    them: the notification would lose its small icon and its buttons. This
+    keeps the notification icon and the plugin's button icons.
+-->
+<resources xmlns:tools="http://schemas.android.com/tools"
+    tools:keep="@drawable/ic_notification,@drawable/audio_service_*,@mipmap/ic_launcher" />

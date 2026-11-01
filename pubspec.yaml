@@ -19,7 +19,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 2.2.0+8 #prev 2.1.0+7
 
 environment:
-  sdk: ^3.5.3
+  sdk: ^3.6.0
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -40,7 +40,10 @@ dependencies:
   rxdart: ^0.28.0
   quick_actions: ^1.0.8
   flutter_native_splash: ^2.4.3
-  just_audio_background: ^0.0.1-beta.13
+  # Owns the media session: the notification, the lock screen, headset
+  # buttons, and the browse tree that Android Auto and voice assistants read.
+  # just_audio_background could not serve a browse tree, so it is gone.
+  audio_service: ^0.18.19
   audio_session: ^0.2.2
   url_launcher: ^6.3.1
 
