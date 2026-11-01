@@ -1,119 +1,30 @@
 PODS:
-  - audio_service (0.0.1):
-    - Flutter
-    - FlutterMacOS
-  - audio_session (0.0.1):
-    - Flutter
-  - connectivity_plus (0.0.1):
-    - Flutter
-  - device_info_plus (0.0.1):
-    - Flutter
   - Flutter (1.0.0)
-  - flutter_native_splash (2.4.3):
-    - Flutter
-  - integration_test (0.0.1):
-    - Flutter
   - intelligence (0.0.1):
     - Flutter
     - SQLite.swift (~> 0.14.0)
-  - just_audio (0.0.1):
-    - Flutter
-    - FlutterMacOS
-  - package_info_plus (0.4.5):
-    - Flutter
-  - path_provider_foundation (0.0.1):
-    - Flutter
-    - FlutterMacOS
-  - quick_actions_ios (0.0.1):
-    - Flutter
-  - shared_preferences_foundation (0.0.1):
-    - Flutter
-    - FlutterMacOS
-  - sqflite_darwin (0.0.4):
-    - Flutter
-    - FlutterMacOS
   - SQLite.swift (0.14.1):
     - SQLite.swift/standard (= 0.14.1)
   - SQLite.swift/standard (0.14.1)
-  - syncfusion_flutter_pdfviewer (0.0.1):
-    - Flutter
-  - url_launcher_ios (0.0.1):
-    - Flutter
 
 DEPENDENCIES:
-  - audio_service (from `.symlinks/plugins/audio_service/darwin`)
-  - audio_session (from `.symlinks/plugins/audio_session/ios`)
-  - connectivity_plus (from `.symlinks/plugins/connectivity_plus/ios`)
-  - device_info_plus (from `.symlinks/plugins/device_info_plus/ios`)
   - Flutter (from `Flutter`)
-  - flutter_native_splash (from `.symlinks/plugins/flutter_native_splash/ios`)
-  - integration_test (from `.symlinks/plugins/integration_test/ios`)
   - intelligence (from `.symlinks/plugins/intelligence/ios`)
-  - just_audio (from `.symlinks/plugins/just_audio/darwin`)
-  - package_info_plus (from `.symlinks/plugins/package_info_plus/ios`)
-  - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
-  - quick_actions_ios (from `.symlinks/plugins/quick_actions_ios/ios`)
-  - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
-  - sqflite_darwin (from `.symlinks/plugins/sqflite_darwin/darwin`)
-  - syncfusion_flutter_pdfviewer (from `.symlinks/plugins/syncfusion_flutter_pdfviewer/ios`)
-  - url_launcher_ios (from `.symlinks/plugins/url_launcher_ios/ios`)
 
 SPEC REPOS:
   trunk:
     - SQLite.swift
 
 EXTERNAL SOURCES:
-  audio_service:
-    :path: ".symlinks/plugins/audio_service/darwin"
-  audio_session:
-    :path: ".symlinks/plugins/audio_session/ios"
-  connectivity_plus:
-    :path: ".symlinks/plugins/connectivity_plus/ios"
-  device_info_plus:
-    :path: ".symlinks/plugins/device_info_plus/ios"
   Flutter:
     :path: Flutter
-  flutter_native_splash:
-    :path: ".symlinks/plugins/flutter_native_splash/ios"
-  integration_test:
-    :path: ".symlinks/plugins/integration_test/ios"
   intelligence:
     :path: ".symlinks/plugins/intelligence/ios"
-  just_audio:
-    :path: ".symlinks/plugins/just_audio/darwin"
-  package_info_plus:
-    :path: ".symlinks/plugins/package_info_plus/ios"
-  path_provider_foundation:
-    :path: ".symlinks/plugins/path_provider_foundation/darwin"
-  quick_actions_ios:
-    :path: ".symlinks/plugins/quick_actions_ios/ios"
-  shared_preferences_foundation:
-    :path: ".symlinks/plugins/shared_preferences_foundation/darwin"
-  sqflite_darwin:
-    :path: ".symlinks/plugins/sqflite_darwin/darwin"
-  syncfusion_flutter_pdfviewer:
-    :path: ".symlinks/plugins/syncfusion_flutter_pdfviewer/ios"
-  url_launcher_ios:
-    :path: ".symlinks/plugins/url_launcher_ios/ios"
 
 SPEC CHECKSUMS:
-  audio_service: aa99a6ba2ae7565996015322b0bb024e1d25c6fd
-  audio_session: 9bb7f6c970f21241b19f5a3658097ae459681ba0
-  connectivity_plus: cb623214f4e1f6ef8fe7403d580fdad517d2f7dd
-  device_info_plus: 21fcca2080fbcd348be798aa36c3e5ed849eefbe
-  Flutter: cabc95a1d2626b1b06e7179b784ebcf0c0cde467
-  flutter_native_splash: c32d145d68aeda5502d5f543ee38c192065986cf
-  integration_test: 4a889634ef21a45d28d50d622cf412dc6d9f586e
+  Flutter: 71a624a5bc0c04062bf19101d501e466baf2fb47
   intelligence: 15222bed61d1cd5bb8247b4bf4189ee70ef9f774
-  just_audio: 4e391f57b79cad2b0674030a00453ca5ce817eed
-  package_info_plus: af8e2ca6888548050f16fa2f1938db7b5a5df499
-  path_provider_foundation: bb55f6dbba17d0dccd6737fe6f7f34fbd0376880
-  quick_actions_ios: 500fcc11711d9f646739093395c4ae8eec25f779
-  shared_preferences_foundation: 7036424c3d8ec98dfe75ff1667cb0cd531ec82bb
-  sqflite_darwin: 20b2a3a3b70e43edae938624ce550a3cbf66a3d0
   SQLite.swift: 2992550ebf3c5b268bf4352603e3df87d2a4ed72
-  syncfusion_flutter_pdfviewer: 90dc48305d2e33d4aa20681d1e98ddeda891bc14
-  url_launcher_ios: 7a95fa5b60cc718a708b8f2966718e93db0cef1b
 
 PODFILE CHECKSUM: 83aa871ae2368aabbd7f6346aaca230f885fa36f
 
