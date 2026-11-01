@@ -18,6 +18,8 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:live_darbar/src/models/sgpc_day.dart';
+
 /// Bytes of body to wait for at each checkpoint.
 ///
 /// A 96 kbps stream carries 12 KB per second of audio, so 32 KB is roughly
@@ -27,13 +29,28 @@ const _marks = <int>[16 * 1024, 32 * 1024, 64 * 1024, 128 * 1024];
 
 const _readDeadline = Duration(seconds: 30);
 
-const _endpoints = <String, String>{
-  'live 96k cleartext': 'http://live.sgpc.net:7339/;',
-  'live 28k tls': 'https://live.sgpc.net:8442/;',
-  'hukamnama mp3': 'https://hs.sgpc.net/uploadhukamnama/hukamnama.mp3',
-  'katha mp3': 'https://hs.sgpc.net/uploadkatha/katha.mp3',
-  'hukamnama pdf': 'https://hs.sgpc.net/hukamnamapdf.php',
-};
+/// Built rather than declared const, because half of these carry today's date.
+///
+/// Both forms of each daily asset are listed on purpose. The dated pair is
+/// what the app asks for; the undated pair is the last resort it falls back
+/// to. Running them side by side is how the difference gets measured rather
+/// than assumed, and it is also the quickest way to see whether the dated file
+/// for the day has been uploaded yet.
+Map<String, String> endpoints() {
+  final today = sgpcDayNow();
+  final yesterday = previousSgpcDay(today);
+  return <String, String>{
+    'live 96k cleartext': 'http://live.sgpc.net:7339/;',
+    'live 28k tls': 'https://live.sgpc.net:8442/;',
+    'hukamnama mp3 dated today': DailyAsset.hukamnama.urlFor(today),
+    'hukamnama mp3 dated yesterday': DailyAsset.hukamnama.urlFor(yesterday),
+    'hukamnama mp3 undated': DailyAsset.hukamnama.latestUrl,
+    'katha mp3 dated today': DailyAsset.katha.urlFor(today),
+    'katha mp3 dated yesterday': DailyAsset.katha.urlFor(yesterday),
+    'katha mp3 undated': DailyAsset.katha.latestUrl,
+    'hukamnama pdf undated': kLatestHukamnamaPdfUrl,
+  };
+}
 
 /// Cumulative milliseconds from the start of the attempt, keyed by phase.
 typedef Timings = Map<String, int>;
@@ -223,7 +240,9 @@ Future<void> main(List<String> args) async {
       filters.add(a);
     }
   }
-  for (final entry in _endpoints.entries) {
+  stdout.writeln('SGPC day: ${sgpcDayIso(sgpcDayNow())} '
+      '(stamp ${sgpcDayStamp(sgpcDayNow())})');
+  for (final entry in endpoints().entries) {
     if (filters.isNotEmpty && !filters.any(entry.key.contains)) continue;
     await run(entry.key, entry.value, runs);
   }

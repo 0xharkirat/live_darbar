@@ -6,9 +6,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'package:live_darbar/src/controllers/connectivity_controller.dart';
+import 'package:live_darbar/src/controllers/daily_content_controller.dart';
 import 'package:live_darbar/src/models/audio_progress_state.dart';
+import 'package:live_darbar/src/models/daily_edition.dart';
 import 'package:live_darbar/src/models/live_playback_state.dart';
-import 'package:live_darbar/src/models/source.dart';
+import 'package:live_darbar/src/models/sgpc_day.dart';
 import 'package:live_darbar/src/models/stream_quality.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -47,7 +49,7 @@ const _kArtUrl =
 /// download, so the playhead falls behind by however long you paused. That is
 /// worth reporting and offering to fix, not worth silently reconnecting over.
 class AudioController {
-  AudioController(this._player) {
+  AudioController(this._player, this._daily) {
     _quality = StreamQuality.initial;
     _live.add(LivePlaybackState(quality: _quality));
     _attachListeners();
@@ -55,6 +57,11 @@ class AudioController {
   }
 
   final AudioPlayer _player;
+
+  /// Settles which day's Mukhwak or Katha is actually available before the
+  /// player is handed a URL. See [DailyContentResolver] for why that has to
+  /// happen first rather than as error recovery.
+  final DailyContentResolver _daily;
 
   /// Backoff schedule for reconnects, in order. The last entry repeats.
   static const _backoff = <Duration>[
@@ -108,6 +115,12 @@ class AudioController {
   /// be checked on a real device instead of argued about.
   Stopwatch? _tapToSound;
 
+  /// The source the listener last asked for, whether or not it loaded.
+  ///
+  /// Distinct from [_loadedIndex], which only moves on success. See
+  /// [_retryIndex].
+  int _requestedIndex = -1;
+
   /// A load already running, so a second caller joins instead of restarting.
   Future<bool>? _inFlightLoad;
   int _inFlightIndex = -1;
@@ -128,7 +141,18 @@ class AudioController {
         artUri: Uri.parse(_kArtUrl),
       );
 
-  AudioSource _sourceFor(int index) {
+  /// The daily recording behind [index], or null for the live stream.
+  DailyAsset? _assetFor(int index) => switch (index) {
+        kMukhwakIndex => DailyAsset.hukamnama,
+        kKathaIndex => DailyAsset.katha,
+        _ => null,
+      };
+
+  /// [edition] is the resolved day for a daily source, and is null only for
+  /// the live stream. The undated URL stands in if one ever arrives null
+  /// anyway, because playing the newest recording SGPC has is a better answer
+  /// than throwing at somebody who pressed play.
+  AudioSource _sourceFor(int index, DailyEdition? edition) {
     switch (index) {
       case kLiveIndex:
         return AudioSource.uri(
@@ -137,12 +161,12 @@ class AudioController {
         );
       case kMukhwakIndex:
         return AudioSource.uri(
-          Uri.parse(kMukhWakUrl),
+          Uri.parse(edition?.url ?? DailyAsset.hukamnama.latestUrl),
           tag: _tag('1', 'Mukhwak'),
         );
       case kKathaIndex:
         return AudioSource.uri(
-          Uri.parse(kMukhwakKathaUrl),
+          Uri.parse(edition?.url ?? DailyAsset.katha.latestUrl),
           tag: _tag('2', 'Mukhwak Katha'),
         );
       default:
@@ -208,7 +232,11 @@ class AudioController {
     _cancelReconnect();
     await _player.stop();
     await _player.seek(Duration.zero);
-    _emit(status: LiveStatus.idle, behindLive: Duration.zero);
+    _emit(
+      status: LiveStatus.idle,
+      behindLive: Duration.zero,
+      clearEdition: true,
+    );
   }
 
   Future<void> seek(Duration duration) => _player.seek(duration);
@@ -266,6 +294,19 @@ class AudioController {
   bool get _isDead {
     final s = _player.processingState;
     return s == ProcessingState.idle || s == ProcessingState.completed;
+  }
+
+  /// Which source a retry should reopen.
+  ///
+  /// [_loadedIndex] is only set once a load succeeds, so it is still -1 while
+  /// the very first attempt at a source is failing. Falling back to
+  /// [kLiveIndex] there meant that tapping Mukhwak on a bad connection quietly
+  /// started live kirtan instead: the listener asked for one thing, the retry
+  /// gave them another, and nothing said so. [_requestedIndex] records what
+  /// was actually asked for, which is the thing worth retrying.
+  int get _retryIndex {
+    if (_requestedIndex >= 0) return _requestedIndex;
+    return _loadedIndex < 0 ? kLiveIndex : _loadedIndex;
   }
 
   Duration get _drift {
@@ -338,14 +379,27 @@ class AudioController {
   /// Returns false if it failed, having already scheduled a retry.
   Future<bool> _performLoad(int index) async {
     if (_disposed) return false;
+    _requestedIndex = index;
     _emit(
       status: LiveStatus.connecting,
       clearError: true,
       behindLive: Duration.zero,
       isLiveSource: index == kLiveIndex,
+      clearEdition: true,
     );
     try {
-      await _player.setAudioSource(_sourceFor(index), preload: true);
+      // Resolved before the player is touched, not after it fails. A dated
+      // file that is not up yet answers 404, which the retry loop below would
+      // treat as a transient fault and hammer on a backoff, and it is not one:
+      // no amount of asking makes tomorrow's upload arrive early. The resolver
+      // caches per day, so this costs one HEAD on the first Mukhwak or Katha
+      // of the day and nothing after that. The live stream skips it entirely,
+      // because it is the latency-critical path and it has no day.
+      final asset = _assetFor(index);
+      final edition = asset == null ? null : await _daily.resolve(asset);
+      if (_disposed) return false;
+
+      await _player.setAudioSource(_sourceFor(index, edition), preload: true);
       _loadedIndex = index;
       _failures = 0;
       _pausedAt = null;
@@ -354,6 +408,7 @@ class AudioController {
         status: _player.playing ? LiveStatus.playing : LiveStatus.buffering,
         reconnectAttempt: 0,
         clearError: true,
+        edition: edition,
       );
       _startDriftTracking(index == kLiveIndex);
       return true;
@@ -430,6 +485,7 @@ class AudioController {
         behindLive: Duration.zero,
         clearError: true,
         reconnectAttempt: 0,
+        clearEdition: true,
       );
       return;
     }
@@ -459,9 +515,10 @@ class AudioController {
     }
 
     _cancelReconnect();
+    final target = _retryIndex;
     _reconnectTimer = Timer(delay, () async {
       if (_disposed) return;
-      final ok = await _load(_loadedIndex < 0 ? kLiveIndex : _loadedIndex);
+      final ok = await _load(target);
       if (ok && _wantsPlayback) unawaited(_player.play());
     });
   }
@@ -488,6 +545,8 @@ class AudioController {
     bool clearError = false,
     int? reconnectAttempt,
     bool? isLiveSource,
+    DailyEdition? edition,
+    bool clearEdition = false,
   }) {
     if (_disposed || _live.isClosed) return;
     final next = _live.value.copyWith(
@@ -498,6 +557,8 @@ class AudioController {
       clearError: clearError,
       reconnectAttempt: reconnectAttempt,
       isLiveSource: isLiveSource,
+      edition: edition,
+      clearEdition: clearEdition,
     );
     _live.add(next);
   }
@@ -526,12 +587,17 @@ class AudioController {
         position: position,
         bufferedPosition: buffered,
         totalDuration: duration,
+        // The controller knows which source it loaded, so liveness is a fact
+        // here rather than something the UI has to deduce from a duration the
+        // two platforms describe differently.
+        isLive: _loadedIndex == kLiveIndex,
       ),
     ).distinct(
       (a, b) =>
           a.position == b.position &&
           a.bufferedPosition == b.bufferedPosition &&
-          a.totalDuration == b.totalDuration,
+          a.totalDuration == b.totalDuration &&
+          a.isLive == b.isLive,
     );
   }
 
@@ -585,7 +651,7 @@ final audioController = Provider<AudioController>((ref) {
       ),
     ),
   );
-  final controller = AudioController(player);
+  final controller = AudioController(player, ref.read(dailyContentResolver));
 
   // Reconnect the moment the radio comes back rather than waiting out a
   // backoff that was only ever a guess about why the connection died.

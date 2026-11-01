@@ -131,12 +131,6 @@ abstract class AppLocalizations {
   /// **'Error'**
   String get error;
 
-  /// Change Color Tooltip
-  ///
-  /// In en, this message translates to:
-  /// **'Change Color'**
-  String get color_tooltip;
-
   /// About Tooltip
   ///
   /// In en, this message translates to:
@@ -155,76 +149,28 @@ abstract class AppLocalizations {
   /// **'Download the app'**
   String get download_tooltip;
 
-  /// Blue
-  ///
-  /// In en, this message translates to:
-  /// **'Blue'**
-  String get blue;
-
-  /// Green
-  ///
-  /// In en, this message translates to:
-  /// **'Green'**
-  String get green;
-
-  /// Red
-  ///
-  /// In en, this message translates to:
-  /// **'Red'**
-  String get red;
-
-  /// Yellow
-  ///
-  /// In en, this message translates to:
-  /// **'Yellow'**
-  String get yellow;
-
-  /// Orange
-  ///
-  /// In en, this message translates to:
-  /// **'Orange'**
-  String get orange;
-
-  /// Purple
-  ///
-  /// In en, this message translates to:
-  /// **'Purple'**
-  String get purple;
-
-  /// Pink
-  ///
-  /// In en, this message translates to:
-  /// **'Rose'**
-  String get rose;
-
   /// About the App Section Heading
   ///
   /// In en, this message translates to:
   /// **'About the App'**
   String get about_section_heading;
 
-  /// About the App Section Paragraph 1
+  /// One line saying what the app does
   ///
   /// In en, this message translates to:
-  /// **'This app is my humble contribution to the Sikh community all around the world, enabling listening to the divine kirtan anywhere in the world from Darbar Sahib Amritsar, which is the holiest site in Sikhism.'**
+  /// **'Live kirtan from Sri Darbar Sahib in Amritsar, wherever you are.'**
   String get about_section_p1;
 
-  /// About the App Section Paragraph 2
+  /// States that the app is non-commercial
   ///
   /// In en, this message translates to:
-  /// **'By no means am I using this app for commercial purposes or with the intention of making a profit from it.'**
+  /// **'It is free and I make no money from it. That will not change.'**
   String get about_section_p2;
 
-  /// About the App Section Paragraph 3
+  /// Button that opens the feedback form
   ///
   /// In en, this message translates to:
-  /// **'If you have any concerns or feedback, feel free to reach out to me using this link:'**
-  String get about_section_p3;
-
-  /// Contact Me
-  ///
-  /// In en, this message translates to:
-  /// **'Contact Me'**
+  /// **'Send feedback'**
   String get about_section_contact;
 
   /// About Me Section Heading
@@ -233,41 +179,65 @@ abstract class AppLocalizations {
   /// **'About Me'**
   String get about_me_heading;
 
-  /// About Me Section Paragraph 1
+  /// Who the author is
   ///
   /// In en, this message translates to:
-  /// **'Hi, I am Harkirat, a perpetual learner, constantly exploring new ideas and technologies in the field of computer science.'**
+  /// **'I am Harkirat, Hark for short. Born in Amritsar, now a software engineer at SSW in Newcastle, Australia.'**
   String get about_me_p1;
 
-  /// About Me Section Paragraph 2
+  /// The author's connection to kirtan
   ///
   /// In en, this message translates to:
-  /// **'I am learning & creating better technologies for the greater good of Humanity.'**
+  /// **'I have played tabla since year 5, back in Amritsar. These days it is the Newcastle Gurdwara on Saturdays and Sundays.'**
   String get about_me_p2;
 
-  /// About Me Section Paragraph 3
+  /// The author's motto, carried over from harksingh.com. Memento Homo is Latin and stays untranslated
   ///
   /// In en, this message translates to:
-  /// **'I also play Tabla in Kirtan (Religious music).'**
-  String get about_me_p3;
+  /// **'Memento Homo. Remember, you are only a man.'**
+  String get about_me_motto;
 
-  /// My Tabla Videos
+  /// Link to the author's website. A domain name, so it is the same in every language
   ///
   /// In en, this message translates to:
-  /// **'My Tabla Videos'**
+  /// **'harksingh.com'**
+  String get about_me_website;
+
+  /// Link to a YouTube playlist of the author playing tabla
+  ///
+  /// In en, this message translates to:
+  /// **'My tabla videos'**
   String get about_me_tabla_button;
 
-  /// My Story
+  /// Link to the author's GitHub. A brand name, so it is the same in every language
   ///
   /// In en, this message translates to:
-  /// **'My Story'**
-  String get about_me_my_story;
+  /// **'GitHub'**
+  String get about_me_github;
 
-  /// My LinkedIn
+  /// Link to the author's LinkedIn. A brand name, so it is the same in every language
   ///
   /// In en, this message translates to:
-  /// **'My LinkedIn'**
+  /// **'LinkedIn'**
   String get about_me_linkedin;
+
+  /// Link to the author's YouTube channel. A brand name, so it is the same in every language
+  ///
+  /// In en, this message translates to:
+  /// **'YouTube'**
+  String get about_me_youtube;
+
+  /// Link to the author's X profile. A brand name, so it is the same in every language
+  ///
+  /// In en, this message translates to:
+  /// **'X'**
+  String get about_me_x;
+
+  /// Link to the author's Instagram. A brand name, so it is the same in every language
+  ///
+  /// In en, this message translates to:
+  /// **'Instagram'**
+  String get about_me_instagram;
 
   /// Licensing Information Section Heading
   ///
@@ -275,47 +245,47 @@ abstract class AppLocalizations {
   /// **'Licensing Info'**
   String get licensing_heading;
 
-  /// Audio Source Title
+  /// Link text for the audio attribution. A domain name, so it is the same in every language
   ///
   /// In en, this message translates to:
-  /// **'1. Audio Source: '**
-  String get licensing_link1_title;
+  /// **'sgpc.net'**
+  String get licensing_audio_source;
 
-  /// Audio Source Text
+  /// Attribution for the audio stream
   ///
   /// In en, this message translates to:
-  /// **'All audio data is streamed from sgpc.net. Sgpc.net is the copyright owner of all the audio data.'**
-  String get licensing_link1_text;
+  /// **'Live kirtan audio, streamed from SGPC. The copyright is theirs.'**
+  String get licensing_audio;
 
-  /// App Logo Title
+  /// Link text for the logo attribution. Flaticon's free licence requires this exact credit line, so leave it in English
   ///
   /// In en, this message translates to:
-  /// **'2. App logo: '**
-  String get licensing_link2_title;
+  /// **'Punjab icons created by Freepik - Flaticon'**
+  String get licensing_logo_source;
 
-  /// App Logo Text
+  /// Attribution for the app logo
   ///
   /// In en, this message translates to:
-  /// **'Used under free license from Punjab icons created by Freepik - Flaticon'**
-  String get licensing_link2_text;
+  /// **'App logo, used under Flaticon\'s free licence.'**
+  String get licensing_logo;
 
-  /// App Icon Title
+  /// Link text for the artwork attribution. The name of a studio, so it is the same in every language
   ///
   /// In en, this message translates to:
-  /// **'3. App Images: '**
-  String get licensing_link3_title;
+  /// **'Art of Punjab'**
+  String get licensing_images_source;
 
-  /// App Icon Text
+  /// Attribution for the artwork used in the app
   ///
   /// In en, this message translates to:
-  /// **'Sourced from Art of Punjab (artofpunjab.com). Artist Kanwar Singh & his team are copyright owner of all the images.'**
-  String get licensing_link3_text;
+  /// **'Artwork by Kanwar Singh and his team. The copyright is theirs.'**
+  String get licensing_images;
 
-  /// Licensing Information Final Paragraph
+  /// Closing line disclaiming ownership and repeating that the app is non-commercial
   ///
   /// In en, this message translates to:
-  /// **'Once again, By no means, I am claiming ownership of any of the above. This app is created for serving the Sikh Community. By no means am I using this app for commercial purposes or with the intention of making a profit from it.'**
-  String get licensing_fianl_p;
+  /// **'None of this is mine. I have only put it in one place, and I make no money from it.'**
+  String get licensing_final_p;
 
   /// Information
   ///
@@ -406,6 +376,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Could not load today\'s Mukhwak'**
   String get mukhwak_load_failed;
+
+  /// Chip in the player saying the loaded Mukhwak or Katha is the previous day's, because today's has not been published yet
+  ///
+  /// In en, this message translates to:
+  /// **'Yesterday\'s recording'**
+  String get yesterdays_recording;
+
+  /// Banner above the PDF viewer when the cached document is the previous day's
+  ///
+  /// In en, this message translates to:
+  /// **'Yesterday\'s Mukhwak. Today\'s has not been published yet.'**
+  String get mukhwak_from_yesterday;
 
   /// Replaces a raw exception in the player when progress cannot be read
   ///

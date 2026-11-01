@@ -8,7 +8,6 @@ import 'package:intelligence/intelligence.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'package:live_darbar/src/controllers/audio_controller.dart';
 import 'package:live_darbar/src/controllers/locale_controller.dart';
-import 'package:live_darbar/src/controllers/theme_controller.dart';
 import 'package:live_darbar/src/core/app_theme.dart';
 import 'package:live_darbar/src/views/screens/home_screen.dart';
 import 'package:live_darbar/src/views/screens/mukhwak_pdf_viewer.dart';
@@ -151,17 +150,14 @@ class _MyAppState extends ConsumerState<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    final themeColor = ref.watch(themeController);
     final locale = ref.watch(localeController);
     return ShadApp(
       navigatorKey: _navigatorKey,
       title: 'Live Darbar',
       debugShowCheckedModeBanner: false,
-      theme: AppTheme.shadThemeData(themeColor.colorScheme),
-      darkTheme: AppTheme.shadThemeData(themeColor.colorScheme),
-      materialThemeBuilder: (context, theme) {
-        return AppTheme.materialThemeData(themeColor.colorScheme);
-      },
+      theme: AppTheme.shad,
+      darkTheme: AppTheme.shad,
+      materialThemeBuilder: (context, theme) => AppTheme.material,
       themeMode: ThemeMode.dark,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,

@@ -49,3 +49,6 @@ app.*.map.json
 
 # Recovered agent research notes (local only)
 .research/
+
+# Agent worktrees and local Claude settings
+.claude/

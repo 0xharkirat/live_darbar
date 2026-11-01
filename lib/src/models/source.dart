@@ -31,7 +31,10 @@ class Source {
   }
 }
 
-const kMukhWakUrl = "https://hs.sgpc.net/uploadhukamnama/hukamnama.mp3";
-const kMukhwakKathaUrl = "https://hs.sgpc.net/uploadkatha/katha.mp3";
+// The two daily recordings used to be addressed by fixed URL from here. They
+// now live on DailyAsset in sgpc_day.dart, which keeps the undated address as
+// a last resort and prefers the dated archive, so that a cache key is a day
+// rather than a filename that means something different every morning.
+
 const kLiveKirtanUrl = "http://live.sgpc.net:7339/;";
 const kLiveKirtanUrlWeb = "https://live.sgpc.net:8442/;";

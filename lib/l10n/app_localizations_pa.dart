@@ -27,9 +27,6 @@ class AppLocalizationsPa extends AppLocalizations {
   String get error => 'ਗਲਤੀ';
 
   @override
-  String get color_tooltip => 'ਰੰਗ ਬਦਲੋ';
-
-  @override
   String get about_tooltip => 'ਜਾਣਕਾਰੀ';
 
   @override
@@ -39,85 +36,73 @@ class AppLocalizationsPa extends AppLocalizations {
   String get download_tooltip => 'ਐਪ ਡਾਊਨਲੋਡ ਕਰੋ';
 
   @override
-  String get blue => 'ਨੀਲਾ';
-
-  @override
-  String get green => 'ਹਰਾ';
-
-  @override
-  String get red => 'ਲਾਲ';
-
-  @override
-  String get yellow => 'ਪੀਲਾ';
-
-  @override
-  String get orange => 'ਸੰਤਰੀ';
-
-  @override
-  String get purple => 'ਜਾਮਨੀ';
-
-  @override
-  String get rose => 'ਗੁਲਾਬੀ';
-
-  @override
   String get about_section_heading => 'ਐਪ ਬਾਰੇ';
 
   @override
-  String get about_section_p1 => 'ਇਹ ਐਪ ਦੁਨੀਆ ਭਰ ਦੇ ਸਿੱਖ ਭਾਈਚਾਰੇ ਲਈ ਮੇਰਾ ਨਿਮਾਣਾ ਯੋਗਦਾਨ ਹੈ, ਜਿਸ ਨਾਲ ਦਰਬਾਰ ਸਾਹਿਬ ਅੰਮ੍ਰਿਤਸਰ, ਜੋ ਕਿ ਸਿੱਖ ਧਰਮ ਦਾ ਸਭ ਤੋਂ ਪਵਿੱਤਰ ਅਸਥਾਨ ਹੈ, ਤੋਂ ਦੁਨੀਆ ਭਰ ਵਿੱਚ ਕਿਤੇ ਵੀ ਇਲਾਹੀ ਕੀਰਤਨ ਸੁਣਿਆ ਜਾ ਸਕਦਾ ਹੈ।';
+  String get about_section_p1 => 'ਸ੍ਰੀ ਦਰਬਾਰ ਸਾਹਿਬ, ਅੰਮ੍ਰਿਤਸਰ ਤੋਂ ਲਾਈਵ ਕੀਰਤਨ, ਤੁਸੀਂ ਜਿੱਥੇ ਵੀ ਹੋਵੋ।';
 
   @override
-  String get about_section_p2 => 'ਮੈਂ ਕਿਸੇ ਵੀ ਤਰੀਕੇ ਨਾਲ ਇਸ ਐਪ ਦੀ ਵਰਤੋਂ ਵਪਾਰਕ ਉਦੇਸ਼ਾਂ ਲਈ ਜਾਂ ਇਸ ਤੋਂ ਲਾਭ ਕਮਾਉਣ ਦੇ ਇਰਾਦੇ ਨਾਲ ਨਹੀਂ ਕਰ ਰਿਹਾ ਹਾਂ।';
+  String get about_section_p2 => 'ਇਹ ਮੁਫ਼ਤ ਹੈ ਅਤੇ ਮੈਂ ਇਸ ਤੋਂ ਕੋਈ ਕਮਾਈ ਨਹੀਂ ਕਰਦਾ। ਇਹ ਅੱਗੇ ਵੀ ਇਵੇਂ ਹੀ ਰਹੇਗਾ।';
 
   @override
-  String get about_section_p3 => 'ਜੇ ਤੁਹਾਨੂੰ ਕੋਈ ਚਿੰਤਾ ਜਾਂ ਪ੍ਰਤੀਕਿਰਿਆ ਹੈ, ਤਾਂ ਕਿਰਪਾ ਕਰਕੇ ਇਸ ਲਿੰਕ ਦੀ ਵਰਤੋਂ ਕਰਕੇ ਮੈਨੂੰ ਸੰਪਰਕ ਕਰੋ:';
-
-  @override
-  String get about_section_contact => 'ਸੰਪਰਕ ਕਰੋ';
+  String get about_section_contact => 'ਫੀਡਬੈਕ ਭੇਜੋ';
 
   @override
   String get about_me_heading => 'ਮੇਰੇ ਬਾਰੇ';
 
   @override
-  String get about_me_p1 => 'ਸਤਿ ਸ੍ਰੀ ਅਕਾਲ, ਮੈਂ ਹਰਕੀਰਤ ਹਾਂ, ਇੱਕ ਸਦੀਵੀ ਸਿੱਖਣ ਵਾਲਾ, ਕੰਪਿਊਟਰ ਵਿਗਿਆਨ ਦੇ ਖੇਤਰ ਵਿੱਚ ਲਗਾਤਾਰ ਨਵੇਂ ਵਿਚਾਰਾਂ ਅਤੇ ਤਕਨਾਲੋਜੀਆਂ ਦੀ ਪੜਚੋਲ ਕਰ ਰਿਹਾ ਹਾਂ।';
+  String get about_me_p1 => 'ਮੈਂ ਹਰਕੀਰਤ ਹਾਂ, ਹਾਰਕ ਕਹਿ ਲਓ। ਅੰਮ੍ਰਿਤਸਰ ਵਿੱਚ ਜਨਮਿਆ ਹਾਂ। ਹੁਣ ਆਸਟ੍ਰੇਲੀਆ ਦੇ ਨਿਊਕੈਸਲ ਵਿੱਚ SSW ਨਾਲ ਸਾਫਟਵੇਅਰ ਇੰਜੀਨੀਅਰ ਵਜੋਂ ਕੰਮ ਕਰਦਾ ਹਾਂ।';
 
   @override
-  String get about_me_p2 => 'ਮੈਂ ਮਨੁੱਖਤਾ ਦੀ ਭਲਾਈ ਲਈ ਬਿਹਤਰ ਤਕਨਾਲੋਜੀਆਂ ਬਣਾਉਣ ਅਤੇ ਸਿਖਣ ਵਿੱਚ ਲਗਿਆ ਹੋਇਆ ਹਾਂ।';
+  String get about_me_p2 => 'ਪੰਜਵੀਂ ਜਮਾਤ ਤੋਂ ਤਬਲਾ ਵਜਾ ਰਿਹਾ ਹਾਂ। ਅੰਮ੍ਰਿਤਸਰ ਵਿੱਚ ਸ਼ੁਰੂ ਕੀਤਾ ਸੀ। ਅੱਜਕੱਲ੍ਹ ਸ਼ਨੀਵਾਰ ਤੇ ਐਤਵਾਰ ਨਿਊਕੈਸਲ ਦੇ ਗੁਰਦੁਆਰਾ ਸਾਹਿਬ ਵਿੱਚ ਵਜਾਉਂਦਾ ਹਾਂ।';
 
   @override
-  String get about_me_p3 => 'ਮੈਂ ਕੀਰਤਨ ਵਿੱਚ ਤਬਲਾ ਵੀ ਵਜਾਉਂਦਾ ਹਾਂ।';
+  String get about_me_motto => 'Memento Homo. ਯਾਦ ਰੱਖ, ਤੂੰ ਸਿਰਫ਼ ਇੱਕ ਇਨਸਾਨ ਹੈਂ।';
 
   @override
-  String get about_me_tabla_button => 'ਮੇਰੇ ਤਬਲੇ ਦੇ ਵੀਡੀਓਜ਼';
+  String get about_me_website => 'harksingh.com';
 
   @override
-  String get about_me_my_story => 'ਮੇਰੀ ਕਹਾਣੀ';
+  String get about_me_tabla_button => 'ਮੇਰੇ ਤਬਲੇ ਦੇ ਵੀਡੀਓ';
 
   @override
-  String get about_me_linkedin => 'ਮੇਰਾ LinkedIn';
+  String get about_me_github => 'GitHub';
+
+  @override
+  String get about_me_linkedin => 'LinkedIn';
+
+  @override
+  String get about_me_youtube => 'YouTube';
+
+  @override
+  String get about_me_x => 'X';
+
+  @override
+  String get about_me_instagram => 'Instagram';
 
   @override
   String get licensing_heading => 'ਲਾਇਸੈਂਸ ਜਾਣਕਾਰੀ';
 
   @override
-  String get licensing_link1_title => '1. ਆਡੀਓ ਸਰੋਤ: ';
+  String get licensing_audio_source => 'sgpc.net';
 
   @override
-  String get licensing_link1_text => 'ਸਾਰਾ ਆਡੀਓ ਡਾਟਾ sgpc.net ਤੋਂ ਲਿਆ ਗਿਆ ਹੈ। sgpc.net ਸਾਰੇ ਆਡੀਓ ਡਾਟਾ ਦੇ ਕਾਪੀਰਾਈਟ ਮਾਲਕ ਹਨ।';
+  String get licensing_audio => 'ਲਾਈਵ ਕੀਰਤਨ ਦੀ ਆਡੀਓ SGPC ਤੋਂ ਆਉਂਦੀ ਹੈ। ਇਸ ਦੇ ਕਾਪੀਰਾਈਟ ਹੱਕ SGPC ਕੋਲ ਹਨ।';
 
   @override
-  String get licensing_link2_title => '2. ਐਪ ਲੋਗੋ: ';
+  String get licensing_logo_source => 'Punjab icons created by Freepik - Flaticon';
 
   @override
-  String get licensing_link2_text => 'ਫ੍ਰੀ ਲਾਇਸੈਂਸ ਦੇ ਅਧੀਨ ਵਰਤਿਆ ਗਿਆ। Used under free license from Punjab icons created by Freepik - Flaticon';
+  String get licensing_logo => 'ਐਪ ਦਾ ਲੋਗੋ, Flaticon ਦੇ ਮੁਫ਼ਤ ਲਾਇਸੈਂਸ ਹੇਠ ਵਰਤਿਆ ਗਿਆ।';
 
   @override
-  String get licensing_link3_title => '3. ਐਪ ਚਿੱਤਰ: ';
+  String get licensing_images_source => 'Art of Punjab';
 
   @override
-  String get licensing_link3_text => 'Art of Punjab (artofpunjab.com) ਤੋਂ ਲਿਆ ਗਿਆ। ਸਾਰੇ ਚਿੱਤਰਾਂ ਦੇ ਕਾਪੀਰਾਈਟ ਮਾਲਕ ਕਲਾਕਾਰ ਕੰਵਰ ਸਿੰਘ ਅਤੇ ਉਸਦੀ ਟੀਮ ਹਨ।';
+  String get licensing_images => 'ਤਸਵੀਰਾਂ ਕੰਵਰ ਸਿੰਘ ਜੀ ਅਤੇ ਉਨ੍ਹਾਂ ਦੀ ਟੀਮ ਦੀਆਂ ਹਨ। ਇਨ੍ਹਾਂ ਦੇ ਕਾਪੀਰਾਈਟ ਹੱਕ ਉਨ੍ਹਾਂ ਕੋਲ ਹਨ।';
 
   @override
-  String get licensing_fianl_p => 'ਇੱਕ ਵਾਰ ਫਿਰ, ਮੈਂ ਉਪਰੋਕਤ ਵਿੱਚੋਂ ਕਿਸੇ ਦਾ ਮਾਲਕ ਹੋਣ ਦਾ ਦਾਅਵਾ ਨਹੀਂ ਕਰ ਰਿਹਾ। ਇਹ ਐਪ ਸਿੱਖ ਭਾਈਚਾਰੇ ਦੀ ਸੇਵਾ ਲਈ ਬਣਾਈ ਗਈ ਹੈ। ਮੈਂ ਕਿਸੇ ਵੀ ਤਰੀਕੇ ਨਾਲ ਇਸ ਐਪ ਦੀ ਵਰਤੋਂ ਵਪਾਰਕ ਉਦੇਸ਼ਾਂ ਲਈ ਜਾਂ ਇਸ ਤੋਂ ਲਾਭ ਕਮਾਉਣ ਦੇ ਇਰਾਦੇ ਨਾਲ ਨਹੀਂ ਕਰ ਰਿਹਾ ਹਾਂ।';
+  String get licensing_final_p => 'ਇਹਨਾਂ ਵਿੱਚੋਂ ਕੁਝ ਵੀ ਮੇਰਾ ਨਹੀਂ ਹੈ। ਮੈਂ ਸਿਰਫ਼ ਇਹ ਸਭ ਇੱਕ ਥਾਂ ਇਕੱਠਾ ਕੀਤਾ ਹੈ, ਅਤੇ ਇਸ ਤੋਂ ਕੋਈ ਕਮਾਈ ਨਹੀਂ ਕਰਦਾ।';
 
   @override
   String get information => 'ਜਾਣਕਾਰੀ';
@@ -165,6 +150,12 @@ class AppLocalizationsPa extends AppLocalizations {
 
   @override
   String get mukhwak_load_failed => 'ਅੱਜ ਦਾ ਮੁੱਖਵਾਕ ਲੋਡ ਨਹੀਂ ਹੋ ਸਕਿਆ';
+
+  @override
+  String get yesterdays_recording => 'ਬੀਤੇ ਕੱਲ੍ਹ ਦੀ ਰਿਕਾਰਡਿੰਗ';
+
+  @override
+  String get mukhwak_from_yesterday => 'ਬੀਤੇ ਕੱਲ੍ਹ ਦਾ ਮੁੱਖਵਾਕ। ਅੱਜ ਦਾ ਅਜੇ ਪ੍ਰਕਾਸ਼ਿਤ ਨਹੀਂ ਹੋਇਆ।';
 
   @override
   String get playback_error => 'ਪਲੇਬੈਕ ਵਿੱਚ ਸਮੱਸਿਆ';

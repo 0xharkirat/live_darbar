@@ -27,9 +27,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get error => 'Error';
 
   @override
-  String get color_tooltip => 'Change Color';
-
-  @override
   String get about_tooltip => 'About';
 
   @override
@@ -39,85 +36,73 @@ class AppLocalizationsEn extends AppLocalizations {
   String get download_tooltip => 'Download the app';
 
   @override
-  String get blue => 'Blue';
-
-  @override
-  String get green => 'Green';
-
-  @override
-  String get red => 'Red';
-
-  @override
-  String get yellow => 'Yellow';
-
-  @override
-  String get orange => 'Orange';
-
-  @override
-  String get purple => 'Purple';
-
-  @override
-  String get rose => 'Rose';
-
-  @override
   String get about_section_heading => 'About the App';
 
   @override
-  String get about_section_p1 => 'This app is my humble contribution to the Sikh community all around the world, enabling listening to the divine kirtan anywhere in the world from Darbar Sahib Amritsar, which is the holiest site in Sikhism.';
+  String get about_section_p1 => 'Live kirtan from Sri Darbar Sahib in Amritsar, wherever you are.';
 
   @override
-  String get about_section_p2 => 'By no means am I using this app for commercial purposes or with the intention of making a profit from it.';
+  String get about_section_p2 => 'It is free and I make no money from it. That will not change.';
 
   @override
-  String get about_section_p3 => 'If you have any concerns or feedback, feel free to reach out to me using this link:';
-
-  @override
-  String get about_section_contact => 'Contact Me';
+  String get about_section_contact => 'Send feedback';
 
   @override
   String get about_me_heading => 'About Me';
 
   @override
-  String get about_me_p1 => 'Hi, I am Harkirat, a perpetual learner, constantly exploring new ideas and technologies in the field of computer science.';
+  String get about_me_p1 => 'I am Harkirat, Hark for short. Born in Amritsar, now a software engineer at SSW in Newcastle, Australia.';
 
   @override
-  String get about_me_p2 => 'I am learning & creating better technologies for the greater good of Humanity.';
+  String get about_me_p2 => 'I have played tabla since year 5, back in Amritsar. These days it is the Newcastle Gurdwara on Saturdays and Sundays.';
 
   @override
-  String get about_me_p3 => 'I also play Tabla in Kirtan (Religious music).';
+  String get about_me_motto => 'Memento Homo. Remember, you are only a man.';
 
   @override
-  String get about_me_tabla_button => 'My Tabla Videos';
+  String get about_me_website => 'harksingh.com';
 
   @override
-  String get about_me_my_story => 'My Story';
+  String get about_me_tabla_button => 'My tabla videos';
 
   @override
-  String get about_me_linkedin => 'My LinkedIn';
+  String get about_me_github => 'GitHub';
+
+  @override
+  String get about_me_linkedin => 'LinkedIn';
+
+  @override
+  String get about_me_youtube => 'YouTube';
+
+  @override
+  String get about_me_x => 'X';
+
+  @override
+  String get about_me_instagram => 'Instagram';
 
   @override
   String get licensing_heading => 'Licensing Info';
 
   @override
-  String get licensing_link1_title => '1. Audio Source: ';
+  String get licensing_audio_source => 'sgpc.net';
 
   @override
-  String get licensing_link1_text => 'All audio data is streamed from sgpc.net. Sgpc.net is the copyright owner of all the audio data.';
+  String get licensing_audio => 'Live kirtan audio, streamed from SGPC. The copyright is theirs.';
 
   @override
-  String get licensing_link2_title => '2. App logo: ';
+  String get licensing_logo_source => 'Punjab icons created by Freepik - Flaticon';
 
   @override
-  String get licensing_link2_text => 'Used under free license from Punjab icons created by Freepik - Flaticon';
+  String get licensing_logo => 'App logo, used under Flaticon\'s free licence.';
 
   @override
-  String get licensing_link3_title => '3. App Images: ';
+  String get licensing_images_source => 'Art of Punjab';
 
   @override
-  String get licensing_link3_text => 'Sourced from Art of Punjab (artofpunjab.com). Artist Kanwar Singh & his team are copyright owner of all the images.';
+  String get licensing_images => 'Artwork by Kanwar Singh and his team. The copyright is theirs.';
 
   @override
-  String get licensing_fianl_p => 'Once again, By no means, I am claiming ownership of any of the above. This app is created for serving the Sikh Community. By no means am I using this app for commercial purposes or with the intention of making a profit from it.';
+  String get licensing_final_p => 'None of this is mine. I have only put it in one place, and I make no money from it.';
 
   @override
   String get information => 'Information';
@@ -165,6 +150,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get mukhwak_load_failed => 'Could not load today\'s Mukhwak';
+
+  @override
+  String get yesterdays_recording => 'Yesterday\'s recording';
+
+  @override
+  String get mukhwak_from_yesterday => 'Yesterday\'s Mukhwak. Today\'s has not been published yet.';
 
   @override
   String get playback_error => 'Playback problem';

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
 class SloganWidget extends StatelessWidget {
@@ -65,12 +64,14 @@ class SloganWidget extends StatelessWidget {
     );
   }
 
-  /// Custom TextStyle for Emojis
+  /// Emoji render in the platform's own colour font.
+  ///
+  /// This used to force Noto Color Emoji through `google_fonts`, which fetches
+  /// a multi-megabyte font over the network to draw two glyphs. Android, iOS
+  /// and macOS all ship a colour emoji face and pick it up automatically, so
+  /// the override bought nothing on the platforms that matter and cost a
+  /// download on first launch.
   TextStyle? _emojiTextStyle(TextStyle? baseStyle) {
-    return baseStyle?.copyWith(
-      fontFamily: GoogleFonts.notoColorEmoji()
-          .fontFamily, // Ensure colorful emoji rendering
-      fontSize: baseStyle.fontSize ?? 16.0, // Match size with default text
-    );
+    return baseStyle?.copyWith(fontSize: baseStyle.fontSize ?? 16.0);
   }
 }

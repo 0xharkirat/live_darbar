@@ -18,7 +18,19 @@
     "macos": "https://apps.apple.com/us/app/live-darbar/id6449766130"
   },
   "notes": {
-    "en": [],
-    "pa": []
+    "en": [
+      "Live kirtan starts straight away",
+      "Reconnects on its own if your connection drops",
+      "Tells you when you have fallen behind live, and catches you up",
+      "Playback controls now work from the notification",
+      "A clear notice when your phone has no internet"
+    ],
+    "pa": [
+      "ਲਾਈਵ ਕੀਰਤਨ ਤੁਰੰਤ ਸ਼ੁਰੂ ਹੁੰਦਾ ਹੈ",
+      "ਕੁਨੈਕਸ਼ਨ ਟੁੱਟਣ 'ਤੇ ਆਪਣੇ ਆਪ ਮੁੜ ਜੁੜ ਜਾਂਦਾ ਹੈ",
+      "ਦੱਸਦਾ ਹੈ ਕਿ ਤੁਸੀਂ ਲਾਈਵ ਤੋਂ ਕਿੰਨਾ ਪਿੱਛੇ ਹੋ",
+      "ਪਲੇ ਅਤੇ ਪੌਜ਼ ਹੁਣ ਨੋਟੀਫਿਕੇਸ਼ਨ ਤੋਂ ਚੱਲਦੇ ਹਨ",
+      "ਇੰਟਰਨੈੱਟ ਨਾ ਹੋਣ 'ਤੇ ਸਾਫ਼ ਸੁਨੇਹਾ"
+    ]
   }
 }

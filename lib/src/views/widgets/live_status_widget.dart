@@ -7,13 +7,14 @@ import 'package:live_darbar/src/models/live_playback_state.dart';
 import 'package:live_darbar/src/models/stream_quality.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
-/// Tells the listener what the live stream is doing when it is not simply
-/// working, and offers the one action that helps.
+/// Tells the listener what the player is doing when it is not simply working,
+/// and offers the one action that helps.
 ///
-/// It renders nothing in the ordinary case. Three things are worth interrupting
-/// for: the connection dropped and we are retrying, we fell back to the low
-/// bitrate tier, or a long pause has left the playhead well behind the
-/// broadcast. Anything less and a badge would be noise.
+/// It renders nothing in the ordinary case. Four things are worth interrupting
+/// for: the connection dropped and we are retrying, the recording loaded is
+/// not the day the listener asked for, we fell back to the low bitrate tier,
+/// or a long pause has left the playhead well behind the broadcast. Anything
+/// less and a badge would be noise.
 class LiveStatusWidget extends ConsumerWidget {
   const LiveStatusWidget({super.key});
 
@@ -46,6 +47,23 @@ class LiveStatusWidget extends ConsumerWidget {
         action: givenUp ? l10n.retry : null,
         onAction:
             givenUp ? () => ref.read(audioController).onNetworkRestored() : null,
+      );
+    }
+
+    // SGPC uploads the Hukamnama around half past five in the morning in
+    // Amritsar and the Katha around half past nine, so for a good part of
+    // every day the app is serving the previous day's recording because that
+    // is all there is. Playing it is right; playing it silently is not, since
+    // the shabad would not match the one being read at Darbar Sahib and the
+    // listener would have no way to tell why.
+    //
+    // Only the previous day earns a chip. Content from the undated endpoint is
+    // always the newest SGPC holds, so there is nothing true to say about it.
+    if (live.edition?.isStale ?? false) {
+      return _Chip(
+        color: theme.colorScheme.mutedForeground,
+        icon: LucideIcons.calendarClock,
+        label: l10n.yesterdays_recording,
       );
     }
 

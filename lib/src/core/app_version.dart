@@ -1,6 +1,13 @@
-/// Kept in step with `pubspec.yaml` by hand, which is a trap.
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+
+/// The installed version, as the platform bundle reports it.
 ///
-/// package_info_plus is now a dependency, added for the update check, and it
-/// reads the real installed version from the platform bundle. The About screen
-/// should use that instead so this cannot drift again. See the About rewrite.
-const appVersion = "2.1.0+7";
+/// This was a constant kept in step with `pubspec.yaml` by hand, which meant
+/// the About screen could name a build that was never shipped. Reading the
+/// bundle removes the step that gets forgotten. The build number rides along
+/// because it is what a bug report actually needs.
+final appVersionProvider = FutureProvider<String>((ref) async {
+  final info = await PackageInfo.fromPlatform();
+  return '${info.version} (${info.buildNumber})';
+});

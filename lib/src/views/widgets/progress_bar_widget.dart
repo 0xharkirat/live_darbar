@@ -27,7 +27,12 @@ class ProgressBarWidget extends ConsumerWidget {
         // The old code arrived at the same place by dividing by zero and
         // rendering a zero-width bar, which cost a repaint every 16 ms to show
         // nothing at all.
-        if (progressState.isLive) return SizedBox(width: width, height: 2);
+        // Nothing to draw for a live stream, and nothing to draw for a track
+        // whose length has not arrived yet. hasDuration covers both, and
+        // guarantees the unwrap below.
+        if (!progressState.hasDuration) {
+          return SizedBox(width: width, height: 2);
+        }
 
         final total = progressState.totalDuration!.inMilliseconds.toDouble();
         final progress =

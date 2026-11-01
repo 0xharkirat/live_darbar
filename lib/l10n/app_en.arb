@@ -23,10 +23,6 @@
     "@error": {
         "description": "Error"
     },
-    "color_tooltip": "Change Color",
-    "@color_tooltip": {
-        "description": "Change Color Tooltip"
-    },
     "about_tooltip": "About",
     "@about_tooltip": {
         "description": "About Tooltip"
@@ -39,113 +35,97 @@
     "@download_tooltip": {
         "description": "Download Tooltip"
     },
-    "blue": "Blue",
-    "@blue": {
-        "description": "Blue"
-    },
-    "green": "Green",
-    "@green": {
-        "description": "Green"
-    },
-    "red": "Red",
-    "@red": {
-        "description": "Red"
-    },
-    "yellow": "Yellow",
-    "@yellow": {
-        "description": "Yellow"
-    },
-    "orange": "Orange",
-    "@orange": {
-        "description": "Orange"
-    },
-    "purple": "Purple",
-    "@purple": {
-        "description": "Purple"
-    },
-    "rose": "Rose",
-    "@rose": {
-        "description": "Pink"
-    },
     "about_section_heading": "About the App",
     "@about_section_heading": {
         "description": "About the App Section Heading"
     },
-    "about_section_p1": "This app is my humble contribution to the Sikh community all around the world, enabling listening to the divine kirtan anywhere in the world from Darbar Sahib Amritsar, which is the holiest site in Sikhism.",
+    "about_section_p1": "Live kirtan from Sri Darbar Sahib in Amritsar, wherever you are.",
     "@about_section_p1": {
-        "description": "About the App Section Paragraph 1"
+        "description": "One line saying what the app does"
     },
-    "about_section_p2": "By no means am I using this app for commercial purposes or with the intention of making a profit from it.",
+    "about_section_p2": "It is free and I make no money from it. That will not change.",
     "@about_section_p2": {
-        "description": "About the App Section Paragraph 2"
+        "description": "States that the app is non-commercial"
     },
-    "about_section_p3": "If you have any concerns or feedback, feel free to reach out to me using this link:",
-    "@about_section_p3": {
-        "description": "About the App Section Paragraph 3"
-    },
-    "about_section_contact": "Contact Me",
+    "about_section_contact": "Send feedback",
     "@about_section_contact": {
-        "description": "Contact Me"
+        "description": "Button that opens the feedback form"
     },
     "about_me_heading": "About Me",
     "@about_me_heading": {
         "description": "About Me Section Heading"
     },
-    "about_me_p1": "Hi, I am Harkirat, a perpetual learner, constantly exploring new ideas and technologies in the field of computer science.",
+    "about_me_p1": "I am Harkirat, Hark for short. Born in Amritsar, now a software engineer at SSW in Newcastle, Australia.",
     "@about_me_p1": {
-        "description": "About Me Section Paragraph 1"
+        "description": "Who the author is"
     },
-    "about_me_p2": "I am learning & creating better technologies for the greater good of Humanity.",
+    "about_me_p2": "I have played tabla since year 5, back in Amritsar. These days it is the Newcastle Gurdwara on Saturdays and Sundays.",
     "@about_me_p2": {
-        "description": "About Me Section Paragraph 2"
+        "description": "The author's connection to kirtan"
     },
-    "about_me_p3": "I also play Tabla in Kirtan (Religious music).",
-    "@about_me_p3": {
-        "description": "About Me Section Paragraph 3"
+    "about_me_motto": "Memento Homo. Remember, you are only a man.",
+    "@about_me_motto": {
+        "description": "The author's motto, carried over from harksingh.com. Memento Homo is Latin and stays untranslated"
     },
-    "about_me_tabla_button": "My Tabla Videos",
+    "about_me_website": "harksingh.com",
+    "@about_me_website": {
+        "description": "Link to the author's website. A domain name, so it is the same in every language"
+    },
+    "about_me_tabla_button": "My tabla videos",
     "@about_me_tabla_button": {
-        "description": "My Tabla Videos"
+        "description": "Link to a YouTube playlist of the author playing tabla"
     },
-    "about_me_my_story": "My Story",
-    "@about_me_my_story": {
-        "description": "My Story"
+    "about_me_github": "GitHub",
+    "@about_me_github": {
+        "description": "Link to the author's GitHub. A brand name, so it is the same in every language"
     },
-    "about_me_linkedin": "My LinkedIn",
+    "about_me_linkedin": "LinkedIn",
     "@about_me_linkedin": {
-        "description": "My LinkedIn"
+        "description": "Link to the author's LinkedIn. A brand name, so it is the same in every language"
+    },
+    "about_me_youtube": "YouTube",
+    "@about_me_youtube": {
+        "description": "Link to the author's YouTube channel. A brand name, so it is the same in every language"
+    },
+    "about_me_x": "X",
+    "@about_me_x": {
+        "description": "Link to the author's X profile. A brand name, so it is the same in every language"
+    },
+    "about_me_instagram": "Instagram",
+    "@about_me_instagram": {
+        "description": "Link to the author's Instagram. A brand name, so it is the same in every language"
     },
     "licensing_heading": "Licensing Info",
     "@licensing_heading": {
         "description": "Licensing Information Section Heading"
     },
-    "licensing_link1_title": "1. Audio Source: ",
-    "@licensing_link1_title": {
-        "description": "Audio Source Title"
+    "licensing_audio_source": "sgpc.net",
+    "@licensing_audio_source": {
+        "description": "Link text for the audio attribution. A domain name, so it is the same in every language"
     },
-    "licensing_link1_text": "All audio data is streamed from sgpc.net. Sgpc.net is the copyright owner of all the audio data.",
-    "@licensing_link1_text": {
-        "description": "Audio Source Text"
+    "licensing_audio": "Live kirtan audio, streamed from SGPC. The copyright is theirs.",
+    "@licensing_audio": {
+        "description": "Attribution for the audio stream"
     },
-    "licensing_link2_title": "2. App logo: ",
-    "@licensing_link2_title": {
-        "description": "App Logo Title"
+    "licensing_logo_source": "Punjab icons created by Freepik - Flaticon",
+    "@licensing_logo_source": {
+        "description": "Link text for the logo attribution. Flaticon's free licence requires this exact credit line, so leave it in English"
     },
-    "licensing_link2_text": "Used under free license from Punjab icons created by Freepik - Flaticon",
-    "@licensing_link2_text": {
-        "description": "App Logo Text"
+    "licensing_logo": "App logo, used under Flaticon's free licence.",
+    "@licensing_logo": {
+        "description": "Attribution for the app logo"
     },
-    "licensing_link3_title": "3. App Images: ",
-    "@licensing_link3_title": {
-        "description": "App Icon Title"
+    "licensing_images_source": "Art of Punjab",
+    "@licensing_images_source": {
+        "description": "Link text for the artwork attribution. The name of a studio, so it is the same in every language"
     },
-    "licensing_link3_text": "Sourced from Art of Punjab (artofpunjab.com). Artist Kanwar Singh & his team are copyright owner of all the images.",
-    "@licensing_link3_text": {
-        "description": "App Icon Text"
+    "licensing_images": "Artwork by Kanwar Singh and his team. The copyright is theirs.",
+    "@licensing_images": {
+        "description": "Attribution for the artwork used in the app"
     },
-    "licensing_fianl_p": "Once again, By no means, I am claiming ownership of any of the above. This app is created for serving the Sikh Community. By no means am I using this app for commercial purposes or with the intention of making a profit from it.",
-    "@licensing_fianl_p": {
-        "description": "Licensing Information Final Paragraph"
+    "licensing_final_p": "None of this is mine. I have only put it in one place, and I make no money from it.",
+    "@licensing_final_p": {
+        "description": "Closing line disclaiming ownership and repeating that the app is non-commercial"
     },
     "information": "Information",
     "@information": {
@@ -211,6 +191,14 @@
     "mukhwak_load_failed": "Could not load today's Mukhwak",
     "@mukhwak_load_failed": {
         "description": "Replaces a raw exception when the Mukhwak PDF fails to load"
+    },
+    "yesterdays_recording": "Yesterday's recording",
+    "@yesterdays_recording": {
+        "description": "Chip in the player saying the loaded Mukhwak or Katha is the previous day's, because today's has not been published yet"
+    },
+    "mukhwak_from_yesterday": "Yesterday's Mukhwak. Today's has not been published yet.",
+    "@mukhwak_from_yesterday": {
+        "description": "Banner above the PDF viewer when the cached document is the previous day's"
     },
     "playback_error": "Playback problem",
     "@playback_error": {

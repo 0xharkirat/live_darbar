@@ -56,6 +56,13 @@ class ProgressBarCustom extends ConsumerWidget {
             ],
           );
         }
+        // Not live, but the length has not arrived yet. Showing a seek bar
+        // against a zero duration would render a full or empty bar and invite
+        // a seek that cannot land.
+        if (!progressState.hasDuration) {
+          return const LinearProgressIndicator(minHeight: 4);
+        }
+
         return ProgressBar(
           barHeight: 4,
           progress: progressState.position,

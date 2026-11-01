@@ -1,3 +1,4 @@
+import 'package:live_darbar/src/models/daily_edition.dart';
 import 'package:live_darbar/src/models/stream_quality.dart';
 
 /// What the live stream is doing, in terms the UI can render directly.
@@ -33,10 +34,17 @@ class LivePlaybackState {
     this.error,
     this.reconnectAttempt = 0,
     this.isLiveSource = true,
+    this.edition,
   });
 
   final LiveStatus status;
   final StreamQuality quality;
+
+  /// Which day's recording is loaded, when a daily one is.
+  ///
+  /// Null for the live stream, which has no day, and null before the first
+  /// Mukhwak or Katha has been resolved.
+  final DailyEdition? edition;
 
   /// False while Mukhwak or Katha is loaded.
   ///
@@ -81,6 +89,8 @@ class LivePlaybackState {
     bool clearError = false,
     int? reconnectAttempt,
     bool? isLiveSource,
+    DailyEdition? edition,
+    bool clearEdition = false,
   }) {
     return LivePlaybackState(
       status: status ?? this.status,
@@ -89,6 +99,7 @@ class LivePlaybackState {
       error: clearError ? null : (error ?? this.error),
       reconnectAttempt: reconnectAttempt ?? this.reconnectAttempt,
       isLiveSource: isLiveSource ?? this.isLiveSource,
+      edition: clearEdition ? null : (edition ?? this.edition),
     );
   }
 }

@@ -1,5 +1,5 @@
 name: live_darbar
-description: "A new Flutter project."
+description: "Live kirtan from Sri Darbar Sahib in Amritsar, wherever you are."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -40,7 +40,6 @@ dependencies:
   audio_video_progress_bar: ^2.0.3
   rxdart: ^0.28.0
   quick_actions: ^1.0.8
-  google_fonts: ^7.0.0
   transparent_image: ^2.0.1
   shadcn_ui: ^0.43.1
   lottie: ^3.1.3
@@ -68,6 +67,8 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  integration_test:
+    sdk: flutter
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
@@ -91,6 +92,35 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/images/
+
+  # Bundled rather than fetched at runtime by google_fonts. That cost a
+  # network round trip on first launch, a visible swap from the fallback
+  # face, and on an offline first launch the intended face never arrived.
+  #
+  # Manrope carries no Gurmukhi, so Punjabi silently fell back to whatever
+  # the OS supplied and the app rendered in two unrelated typefaces. Noto
+  # Sans Gurmukhi is declared as the fallback family in AppTheme so each
+  # script gets a face chosen for it.
+  #
+  # Three weights each, because three are used. Google's static instances
+  # are already script-subsetted: 180 KB for both families in total.
+  fonts:
+    - family: Manrope
+      fonts:
+        - asset: assets/fonts/Manrope-400.ttf
+          weight: 400
+        - asset: assets/fonts/Manrope-500.ttf
+          weight: 500
+        - asset: assets/fonts/Manrope-700.ttf
+          weight: 700
+    - family: NotoSansGurmukhi
+      fonts:
+        - asset: assets/fonts/NotoSansGurmukhi-400.ttf
+          weight: 400
+        - asset: assets/fonts/NotoSansGurmukhi-500.ttf
+          weight: 500
+        - asset: assets/fonts/NotoSansGurmukhi-700.ttf
+          weight: 700
     
 
   # An image asset can refer to one or more resolution-specific "variants", see

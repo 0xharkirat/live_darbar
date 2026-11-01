@@ -4,20 +4,13 @@ import 'package:live_darbar/src/views/widgets/about_me_tab_widget.dart';
 import 'package:live_darbar/src/views/widgets/licensing_info_tab_widget.dart';
 import 'package:live_darbar/src/views/widgets/moving_gradient_widget.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:live_darbar/l10n/app_localizations.dart';
+import 'package:live_darbar/src/core/open_link.dart';
 
 class InfoDialogWidget extends StatelessWidget {
   const InfoDialogWidget({
     super.key,
   });
-
-  Future<void> _launchUrl(String url) async {
-    if (!await launchUrl(Uri.parse(url),
-        mode: LaunchMode.externalApplication)) {
-      throw Exception('Could not launch $url');
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -79,7 +72,7 @@ class InfoDialogWidget extends StatelessWidget {
                   children: [
                     // About the App Tab
                     AboutAppTabWidget(
-                      onPressed: () => _launchUrl(
+                      onPressed: () => openLink(
                         'https://forms.gle/HKZtyYzdEYstgbby7',
                       ),
                     ),
