@@ -43,83 +43,88 @@ class _UpdateSheet extends ConsumerWidget {
       ),
       child: SafeArea(
         top: false,
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(24, 10, 24, 16),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Center(
-                child: Container(
-                  width: 36,
-                  height: 5,
-                  margin: const EdgeInsets.only(bottom: 24),
-                  decoration: BoxDecoration(
-                    color: Palette.border,
-                    borderRadius: BorderRadius.circular(3),
+        // Scrolls when it does not fit: on a 360 x 640 phone, common among
+        // low-cost Android phones, this sheet is taller than the screen.
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(24, 10, 24, 16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Center(
+                  child: Container(
+                    width: 36,
+                    height: 5,
+                    margin: const EdgeInsets.only(bottom: 24),
+                    decoration: BoxDecoration(
+                      color: Palette.border,
+                      borderRadius: BorderRadius.circular(3),
+                    ),
                   ),
                 ),
-              ),
-              Text(l10n.update_available, style: AppType.title2),
-              const SizedBox(height: 4),
-              Text(l10n.update_version(update.version), style: AppType.callout),
-              if (notes.isNotEmpty) ...[
-                const SizedBox(height: 20),
-                for (final note in notes)
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 10),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Padding(
-                          padding: EdgeInsets.only(top: 4, right: 12),
-                          child: Icon(
-                            CupertinoIcons.checkmark_alt,
-                            size: 16,
-                            color: Palette.gold,
+                Text(l10n.update_available, style: AppType.title2),
+                const SizedBox(height: 4),
+                Text(l10n.update_version(update.version),
+                    style: AppType.callout),
+                if (notes.isNotEmpty) ...[
+                  const SizedBox(height: 20),
+                  for (final note in notes)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 10),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Padding(
+                            padding: EdgeInsets.only(top: 4, right: 12),
+                            child: Icon(
+                              CupertinoIcons.checkmark_alt,
+                              size: 16,
+                              color: Palette.gold,
+                            ),
                           ),
-                        ),
-                        Expanded(child: Text(note, style: AppType.body)),
-                      ],
+                          Expanded(child: Text(note, style: AppType.body)),
+                        ],
+                      ),
+                    ),
+                ],
+                const SizedBox(height: 20),
+                Pressable(
+                  semanticLabel: l10n.update_now,
+                  onTap: () async {
+                    Navigator.of(context).pop();
+                    await ref.read(updateController.notifier).dismiss();
+                    await openLink(update.storeUrl);
+                  },
+                  child: Container(
+                    height: 54,
+                    alignment: Alignment.center,
+                    decoration: ShapeDecoration(
+                      color: Palette.gold,
+                      shape: RoundedSuperellipseBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                    ),
+                    child: Text(
+                      l10n.update_now,
+                      style: AppType.headline.copyWith(color: Palette.onGold),
                     ),
                   ),
-              ],
-              const SizedBox(height: 20),
-              Pressable(
-                semanticLabel: l10n.update_now,
-                onTap: () async {
-                  Navigator.of(context).pop();
-                  await ref.read(updateController.notifier).dismiss();
-                  await openLink(update.storeUrl);
-                },
-                child: Container(
-                  height: 54,
-                  alignment: Alignment.center,
-                  decoration: ShapeDecoration(
-                    color: Palette.gold,
-                    shape: RoundedSuperellipseBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                  ),
+                ),
+                const SizedBox(height: 4),
+                CupertinoButton(
+                  minimumSize: const Size(44, 48),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    ref.read(updateController.notifier).dismiss();
+                  },
                   child: Text(
-                    l10n.update_now,
-                    style: AppType.headline.copyWith(color: Palette.onGold),
+                    l10n.update_later,
+                    style: AppType.callout.copyWith(color: Palette.muted),
                   ),
                 ),
-              ),
-              const SizedBox(height: 4),
-              CupertinoButton(
-                minimumSize: const Size(44, 48),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  ref.read(updateController.notifier).dismiss();
-                },
-                child: Text(
-                  l10n.update_later,
-                  style: AppType.callout.copyWith(color: Palette.muted),
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

@@ -47,6 +47,7 @@ class QualityButton extends ConsumerWidget {
 Future<void> showQualitySheet(BuildContext context) {
   return showModalBottomSheet<void>(
     context: context,
+    isScrollControlled: true,
     backgroundColor: Colors.transparent,
     builder: (_) => const _QualitySheet(),
   );
@@ -117,45 +118,52 @@ class _QualitySheet extends ConsumerWidget {
       ),
       child: SafeArea(
         top: false,
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(20, 10, 20, 16),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Center(
-                child: Container(
-                  width: 36,
-                  height: 5,
-                  margin: const EdgeInsets.only(bottom: 20),
-                  decoration: BoxDecoration(
-                    color: Palette.border,
-                    borderRadius: BorderRadius.circular(3),
+        // Scrolls when it does not fit: on a 360 x 640 phone, common among
+        // low-cost Android phones, this sheet is taller than the screen.
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 10, 20, 16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Center(
+                  child: Container(
+                    width: 36,
+                    height: 5,
+                    margin: const EdgeInsets.only(bottom: 20),
+                    decoration: BoxDecoration(
+                      color: Palette.border,
+                      borderRadius: BorderRadius.circular(3),
+                    ),
                   ),
                 ),
-              ),
-              Text(l10n.quality, style: AppType.title2),
-              const SizedBox(height: 16),
-              DecoratedBox(
-                decoration: ShapeDecoration(
-                  color: Palette.surfaceHigh,
-                  shape: RoundedSuperellipseBorder(
-                    borderRadius: BorderRadius.circular(18),
+                Text(l10n.quality, style: AppType.title2),
+                const SizedBox(height: 16),
+                DecoratedBox(
+                  decoration: ShapeDecoration(
+                    color: Palette.surfaceHigh,
+                    shape: RoundedSuperellipseBorder(
+                      borderRadius: BorderRadius.circular(18),
+                    ),
+                  ),
+                  child: Column(
+                    children: [
+                      row(QualityMode.automatic, l10n.quality_automatic_detail),
+                      const Divider(
+                          height: 1, color: Palette.border, indent: 16),
+                      row(QualityMode.high, l10n.quality_high_detail),
+                      const Divider(
+                          height: 1, color: Palette.border, indent: 16),
+                      row(QualityMode.dataSaver,
+                          l10n.quality_data_saver_detail),
+                    ],
                   ),
                 ),
-                child: Column(
-                  children: [
-                    row(QualityMode.automatic, l10n.quality_automatic_detail),
-                    const Divider(height: 1, color: Palette.border, indent: 16),
-                    row(QualityMode.high, l10n.quality_high_detail),
-                    const Divider(height: 1, color: Palette.border, indent: 16),
-                    row(QualityMode.dataSaver, l10n.quality_data_saver_detail),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 12),
-              Text(l10n.quality_note, style: AppType.footnote),
-            ],
+                const SizedBox(height: 12),
+                Text(l10n.quality_note, style: AppType.footnote),
+              ],
+            ),
           ),
         ),
       ),

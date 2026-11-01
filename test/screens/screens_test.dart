@@ -116,6 +116,23 @@ void main() {
 
 final _shotKey = GlobalKey();
 
+/// Which screen to render for. Pick one with
+/// `flutter test test/screens --dart-define=SHOT=play`.
+///
+/// - `iphone17pro` (default): for review, into build/screens/.
+/// - `play`: Google Play phone screenshots, 9:16 at 1080 x 1920.
+/// - `appstore`: the App Store's 6.9-inch size, 1290 x 2796.
+const _shotTarget = String.fromEnvironment('SHOT', defaultValue: 'iphone17pro');
+
+const _targets = {
+  'iphone17pro': (size: Size(1206, 2622), top: 186.0, bottom: 102.0),
+  'play': (size: Size(1080, 1920), top: 72.0, bottom: 48.0),
+  'appstore': (size: Size(1290, 2796), top: 177.0, bottom: 102.0),
+};
+
+String get _shotDir =>
+    _shotTarget == 'iphone17pro' ? 'build/screens' : 'build/screens/$_shotTarget';
+
 const _idle = NowPlaying(
   index: kLiveIndex,
   action: PlayAction.play,
@@ -145,9 +162,10 @@ Future<void> _pump(
 }) async {
   // The app shell does this in the real app; see AppType.tracking.
   AppType.tracking = locale != 'pa';
-  tester.view.physicalSize = const Size(1206, 2622);
+  final target = _targets[_shotTarget]!;
+  tester.view.physicalSize = target.size;
   tester.view.devicePixelRatio = 3;
-  tester.view.padding = const FakeViewPadding(top: 186, bottom: 102);
+  tester.view.padding = FakeViewPadding(top: target.top, bottom: target.bottom);
   addTearDown(tester.view.reset);
 
   final progress = AudioProgressState(
@@ -213,7 +231,7 @@ Future<void> _shot(WidgetTester tester, String name) async {
   await tester.runAsync(() async {
     final image = await boundary.toImage(pixelRatio: 3);
     final bytes = await image.toByteData(format: ui.ImageByteFormat.png);
-    File('build/screens/$name.png')
+    File('$_shotDir/$name.png')
       ..createSync(recursive: true)
       ..writeAsBytesSync(bytes!.buffer.asUint8List());
   });
