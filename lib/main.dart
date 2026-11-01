@@ -52,7 +52,14 @@ void main() async {
     await JustAudioBackground.init(
       androidNotificationChannelId: 'com.ryanheise.bg_demo.channel.audio',
       androidNotificationChannelName: 'Audio playback',
-      androidNotificationOngoing: true,
+      // Stay in the foreground while paused. A phone call pauses kirtan; if
+      // the service left the foreground then, Android 12+ may refuse to let
+      // it back in when playback resumes in the background after the call,
+      // and the kirtan would not come back. The cost: the notification stays
+      // until the listener stops or closes the app, instead of becoming
+      // swipeable on pause.
+      androidNotificationOngoing: false,
+      androidStopForegroundOnPause: false,
     );
   }
 
