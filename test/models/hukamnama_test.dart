@@ -1,0 +1,352 @@
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:flutter_test/flutter_test.dart';
+import 'package:live_darbar/src/models/hukamnama.dart';
+
+Map<String, dynamic> _load(String name) => jsonDecode(
+      File('test/fixtures/$name').readAsStringSync(),
+    ) as Map<String, dynamic>;
+
+/// A real response: POST https://hs.sgpc.net/hssearchhukmanamaTestCalender.php
+/// with selected_date=2026-11-02, recorded on 2 November 2026 and not edited.
+/// Dhanaasree Mahalla 4, Ang 668.
+Map<String, dynamic> fixture() => _load('sgpc_hukamnama_2026_11_02.json');
+
+/// A real response for 16 October 2026: a second heading line, and a
+/// "Rahaau Dooja" pause marker that runs into the shabad number.
+Map<String, dynamic> rahauDoojaFixture() =>
+    _load('sgpc_hukamnama_2026_10_16.json');
+
+/// A minimal answer that is a whole Hukamnama, with [body] merged over it.
+Map<String, dynamic> response({
+  Object? supported = true,
+  Map<String, Object?> body = const {},
+}) =>
+    {
+      'supported': supported,
+      'hukamnama': {
+        'ang': '12',
+        'ghukamnama': 'ਸੋਚੈ ਸੋਚਿ ਨ ਹੋਵਈ ॥',
+        'date': '2026-11-02',
+        ...body,
+      },
+      'pdfFiles': <Object>[],
+    };
+
+void main() {
+  group('Hukamnama.fromSgpc on the recorded response', () {
+    final h = Hukamnama.fromSgpc(fixture());
+
+    test('carries the day the text is for', () {
+      expect(h.date, DateTime.utc(2026, 11, 2));
+      expect(h.isFor(DateTime.utc(2026, 11, 2)), isTrue);
+      expect(h.isFor(DateTime.utc(2026, 11, 3)), isFalse);
+      // Only the calendar day counts, not the time or the zone.
+      expect(h.isFor(DateTime(2026, 11, 2, 14, 30)), isTrue);
+    });
+
+    test('reads the Ang from SGPC\'s string', () {
+      expect(h.ang, 668);
+    });
+
+    test('carries the heading in both languages', () {
+      expect(h.headingGurmukhi, 'ਧਨਾਸਰੀ ਮਹਲਾ ੪॥');
+      expect(h.headingEnglish, 'DHANAASAREE, FOURTH MEHL:');
+    });
+
+    test('breaks the text into its 10 lines, markers and numbers kept', () {
+      expect(h.lines.map((l) => l.gurmukhi), [
+        'ਹਰਿ ਹਰਿ ਬੂੰਦ ਭਏ ਹਰਿ ਸੁਆਮੀ ਹਮ ਚਾਤ੍ਰਿਕ ਬਿਲਲ ਬਿਲਲਾਤੀ ॥',
+        'ਹਰਿ ਹਰਿ ਕ੍ਰਿਪਾ ਕਰਹੁ ਪ੍ਰਭ ਅਪਨੀ ਮੁਖਿ ਦੇਵਹੁ ਹਰਿ ਨਿਮਖਾਤੀ ॥੧॥',
+        'ਹਰਿ ਬਿਨੁ ਰਹਿ ਨ ਸਕਉ ਇਕ ਰਾਤੀ ॥',
+        'ਜਿਉ ਬਿਨੁ ਅਮਲੈ ਅਮਲੀ ਮਰਿ ਜਾਈ ਹੈ ਤਿਉ ਹਰਿ ਬਿਨੁ ਹਮ ਮਰਿ ਜਾਤੀ ॥ ਰਹਾਉ ॥',
+        'ਤੁਮ ਹਰਿ ਸਰਵਰ ਅਤਿ ਅਗਾਹ ਹਮ ਲਹਿ ਨ ਸਕਹਿ ਅੰਤੁ ਮਾਤੀ ॥',
+        'ਤੂ ਪਰੈ ਪਰੈ ਅਪਰੰਪਰੁ ਸੁਆਮੀ ਮਿਤਿ ਜਾਨਹੁ ਆਪਨ ਗਾਤੀ ॥੨॥',
+        'ਹਰਿ ਕੇ ਸੰਤ ਜਨਾ ਹਰਿ ਜਪਿਓ ਗੁਰ ਰੰਗਿ ਚਲੂਲੈ ਰਾਤੀ ॥',
+        'ਹਰਿ ਹਰਿ ਭਗਤਿ ਬਨੀ ਅਤਿ ਸੋਭਾ ਹਰਿ ਜਪਿਓ ਊਤਮ ਪਾਤੀ ॥੩॥',
+        'ਆਪੇ ਠਾਕੁਰੁ ਆਪੇ ਸੇਵਕੁ ਆਪਿ ਬਨਾਵੈ ਭਾਤੀ ॥',
+        'ਨਾਨਕੁ ਜਨੁ ਤੁਮਰੀ ਸਰਣਾਈ ਹਰਿ ਰਾਖਹੁ ਲਾਜ ਭਗਾਤੀ ॥੪॥੫॥',
+      ]);
+    });
+
+    test('leaves the per-line meanings empty, which SGPC does not give', () {
+      for (final line in h.lines) {
+        expect(line.punjabi, isNull);
+        expect(line.english, isNull);
+        expect(line.transliteration, isNull);
+      }
+    });
+
+    test('carries SGPC\'s whole Punjabi and English meanings', () {
+      expect(h.punjabiMeaning, startsWith('ਹੇ ਹਰੀ! ਹੇ ਸੁਆਮੀ! ਮੈਂ ਪਪੀਹਾ'));
+      expect(h.punjabiMeaning, endsWith('ਰੱਖਦਾ ਹੈਂ।੪।੫।'));
+      expect(
+          h.englishMeaning,
+          startsWith('The Lord, Har, Har, is the rain-drop; I am the '
+              'song-bird, crying, crying out for it.'));
+      expect(h.englishMeaning, endsWith('|| 4 || 5 ||'));
+    });
+
+    test('carries the Nanakshahi date line, trimmed', () {
+      // ਸ਼ is the one-piece ਸ਼, which is how SGPC writes it.
+      expect(h.footerGurmukhi, 'ਸੋਮਵਾਰ, ੧੭ ਕੱਤਕ (ਸੰਮਤ ੫੫੮ ਨਾਨਕਸ਼ਾਹੀ)');
+      expect(h.footerEnglish, 'Monday, 17th Katak (Samvat 558 Nanakshahi)');
+    });
+
+    test('loses no text between SGPC\'s block and the lines', () {
+      final source = (fixture()['hukamnama'] as Map)['ghukamnama'] as String;
+      expect(h.lines.map((l) => l.gurmukhi).join(' '), source);
+    });
+
+    test('survives the round trip to disk', () {
+      final again = Hukamnama.fromJson(
+        jsonDecode(jsonEncode(h.toJson())) as Map<String, dynamic>,
+      );
+      expect(again.date, h.date);
+      expect(again.ang, h.ang);
+      expect(again.headingGurmukhi, h.headingGurmukhi);
+      expect(again.headingEnglish, h.headingEnglish);
+      expect(again.lines, h.lines);
+      expect(again.punjabiMeaning, h.punjabiMeaning);
+      expect(again.englishMeaning, h.englishMeaning);
+      expect(again.footerGurmukhi, h.footerGurmukhi);
+      expect(again.footerEnglish, h.footerEnglish);
+    });
+  });
+
+  group('Hukamnama.fromSgpc on a day with a second heading line', () {
+    final h = Hukamnama.fromSgpc(rahauDoojaFixture());
+
+    test('joins the heading lines with a newline', () {
+      expect(h.date, DateTime.utc(2026, 10, 16));
+      expect(h.ang, 641);
+      expect(h.headingGurmukhi,
+          'ਸੋਰਠਿ ਮਹਲਾ ੫ ਘਰੁ ੨ ਅਸਟਪਦੀਆ\nੴ ਸਤਿਗੁਰ ਪ੍ਰਸਾਦਿ ॥');
+      expect(h.headingEnglish, startsWith('SORAT’H, FIFTH MEHL, SECOND HOUSE'));
+      expect(h.headingEnglish, contains('\nONE UNIVERSAL CREATOR GOD.'));
+    });
+
+    test('keeps a pause marker with its line, and the number after it', () {
+      final lines = h.lines.map((l) => l.gurmukhi).toList();
+      expect(lines, hasLength(20));
+      expect(
+          lines,
+          contains('ਹਾਰਿ ਪਰਿਓ ਸੁਆਮੀ ਕੈ ਦੁਆਰੈ ਦੀਜੈ ਬੁਧਿ ਬਿਬੇਕਾ ॥ ਰਹਾਉ ॥'));
+      expect(
+          lines.last,
+          'ਭਇਓ ਕ੍ਰਿਪਾਲੁ ਦੀਨ ਦੁਖ ਭੰਜਨੁ ਹਰਿ ਹਰਿ ਕੀਰਤਨਿ ਇਹੁ ਮਨੁ ਰਾਤਾ ॥ '
+          'ਰਹਾਉ ਦੂਜਾ ॥੧॥੩॥');
+    });
+
+    test('no line starts with a marker or ends without one', () {
+      for (final line in h.lines.map((l) => l.gurmukhi)) {
+        expect(line, endsWith('॥'));
+        expect(line, isNot(matches(RegExp(r'^(ਰਹਾਉ|[੦-੯]|॥)'))));
+      }
+    });
+  });
+
+  group('splitHukamnamaLines', () {
+    test('ends a line at each plain ॥', () {
+      expect(splitHukamnamaLines('ਇਕ ਸਤਰ ॥ ਦੂਜੀ ਸਤਰ ॥'), ['ਇਕ ਸਤਰ ॥', 'ਦੂਜੀ ਸਤਰ ॥']);
+    });
+
+    test('keeps a verse number with its line', () {
+      expect(splitHukamnamaLines('ਪਹਿਲੀ ॥੧॥ ਦੂਜੀ ॥੨॥'), ['ਪਹਿਲੀ ॥੧॥', 'ਦੂਜੀ ॥੨॥']);
+    });
+
+    test('keeps a run of numbers, the verse and the shabad', () {
+      expect(splitHukamnamaLines('ਅੰਤ ਸਤਰ ॥੪॥੫॥੧੭॥ ਅਗਲੀ ॥'), [
+        'ਅੰਤ ਸਤਰ ॥੪॥੫॥੧੭॥',
+        'ਅਗਲੀ ॥',
+      ]);
+    });
+
+    test('keeps ਰਹਾਉ with the line it follows', () {
+      expect(splitHukamnamaLines('ਸਤਰ ॥ ਰਹਾਉ ॥ ਅਗਲੀ ॥'), [
+        'ਸਤਰ ॥ ਰਹਾਉ ॥',
+        'ਅਗਲੀ ॥',
+      ]);
+    });
+
+    test('keeps ਰਹਾਉ after a verse number, and ਰਹਾਉ ਦੂਜਾ before one', () {
+      expect(splitHukamnamaLines('ਸਤਰ ॥੧॥ ਰਹਾਉ ॥ ਅਗਲੀ ॥ ਰਹਾਉ ਦੂਜਾ ॥੧॥੩॥'), [
+        'ਸਤਰ ॥੧॥ ਰਹਾਉ ॥',
+        'ਅਗਲੀ ॥ ਰਹਾਉ ਦੂਜਾ ॥੧॥੩॥',
+      ]);
+    });
+
+    test('breaks where the next word follows with no space', () {
+      // SGPC writes `॥੨॥ਸਤਸੰਗਤਿ` and `॥ਸਰਵਰ` in places.
+      expect(splitHukamnamaLines('ਪਹਿਲੀ ॥੨॥ਦੂਜੀ ॥ਤੀਜੀ ॥'),
+          ['ਪਹਿਲੀ ॥੨॥', 'ਦੂਜੀ ॥', 'ਤੀਜੀ ॥']);
+    });
+
+    test('gives a section label such as ਸਲੋਕੁ a line of its own', () {
+      expect(splitHukamnamaLines('ਸਲੋਕੁ ॥ ਪਹਿਲੀ ॥੧॥ ਛੰਤੁ ॥ ਦੂਜੀ ॥੧॥'),
+          ['ਸਲੋਕੁ ॥', 'ਪਹਿਲੀ ॥੧॥', 'ਛੰਤੁ ॥', 'ਦੂਜੀ ॥੧॥']);
+    });
+
+    test('collapses runs of white space and trims', () {
+      expect(splitHukamnamaLines('  ਤਟ   ਤੀਰਥ \n ਸਭ ॥  \t ਅਗਲੀ ॥  '),
+          ['ਤਟ ਤੀਰਥ ਸਭ ॥', 'ਅਗਲੀ ॥']);
+    });
+
+    test('keeps text after the last ॥ as a last line', () {
+      expect(splitHukamnamaLines('ਪਹਿਲੀ ॥ ਬਿਨਾ ਅੰਤ'), ['ਪਹਿਲੀ ॥', 'ਬਿਨਾ ਅੰਤ']);
+    });
+
+    test('gives no lines for blank text', () {
+      expect(splitHukamnamaLines(''), isEmpty);
+      expect(splitHukamnamaLines('  \n '), isEmpty);
+    });
+  });
+
+  group('Hukamnama.fromSgpc with gaps in the response', () {
+    test('accepts the smallest whole answer', () {
+      final h = Hukamnama.fromSgpc(response());
+      expect(h.lines.single.gurmukhi, 'ਸੋਚੈ ਸੋਚਿ ਨ ਹੋਵਈ ॥');
+      expect(h.ang, 12);
+      expect(h.headingGurmukhi, isNull);
+      expect(h.headingEnglish, isNull);
+      expect(h.punjabiMeaning, isNull);
+      expect(h.englishMeaning, isNull);
+      expect(h.footerGurmukhi, isNull);
+      expect(h.footerEnglish, isNull);
+    });
+
+    test('refuses a day SGPC has no Hukamnama for', () {
+      // SGPC's real answer for 3 November 2026 on the morning of the 2nd.
+      final notPosted = jsonDecode(
+        '{"supported":false,"hukamnama":{"date":"2026-11-03","message":'
+        '"No Hukamnama Available for this date."},"pdfFiles":[]}',
+      ) as Map<String, dynamic>;
+      expect(() => Hukamnama.fromSgpc(notPosted), throwsFormatException);
+      expect(() => Hukamnama.fromSgpc(response(supported: false)),
+          throwsFormatException);
+      expect(() => Hukamnama.fromSgpc(response(supported: null)),
+          throwsFormatException);
+      expect(() => Hukamnama.fromSgpc(response(supported: 'true')),
+          throwsFormatException);
+    });
+
+    test('refuses a response with no Hukamnama object', () {
+      expect(() => Hukamnama.fromSgpc({'supported': true}),
+          throwsFormatException);
+      expect(() => Hukamnama.fromSgpc({'supported': true, 'hukamnama': []}),
+          throwsFormatException);
+      expect(() => Hukamnama.fromSgpc(<String, dynamic>{}),
+          throwsFormatException);
+    });
+
+    test('refuses a response with no Gurmukhi', () {
+      for (final broken in <Object?>[null, '', '   \n', 12, <String>[]]) {
+        expect(
+          () => Hukamnama.fromSgpc(response(body: {'ghukamnama': broken})),
+          throwsFormatException,
+          reason: 'ghukamnama: $broken',
+        );
+      }
+      // The meanings alone are not a Hukamnama.
+      final onlyMeanings = response();
+      (onlyMeanings['hukamnama'] as Map).remove('ghukamnama');
+      (onlyMeanings['hukamnama'] as Map)['ehukamnamadesc'] = 'Meaning.';
+      expect(() => Hukamnama.fromSgpc(onlyMeanings), throwsFormatException);
+    });
+
+    test('refuses a response that cannot say which day it is for', () {
+      for (final broken in <Object?>[
+        null,
+        '',
+        'yesterday',
+        '2026-11-2',
+        '02-11-2026',
+        '2026-13-45',
+        '2026-02-30',
+        20261102,
+      ]) {
+        expect(
+          () => Hukamnama.fromSgpc(response(body: {'date': broken})),
+          throwsFormatException,
+          reason: 'date: $broken',
+        );
+      }
+    });
+
+    test('has no Ang when SGPC gives none that is a page', () {
+      for (final broken in <Object?>[null, '', 'sixty', '0', '-4', '1431']) {
+        expect(
+          Hukamnama.fromSgpc(response(body: {'ang': broken})).ang,
+          isNull,
+          reason: 'ang: $broken',
+        );
+      }
+      expect(Hukamnama.fromSgpc(response(body: {'ang': ' 1430 '})).ang, 1430);
+      expect(Hukamnama.fromSgpc(response(body: {'ang': 668})).ang, 668);
+    });
+
+    test('treats a blank heading, meaning or footer as missing', () {
+      final h = Hukamnama.fromSgpc(response(body: {
+        'gheading1': '  ',
+        'gheading2': '',
+        'eheading1': null,
+        'ghukamnamadesc': '\n',
+        'ehukamnamadesc': '',
+        'gfooter1': ' ',
+        'efooter1': null,
+      }));
+      expect(h.headingGurmukhi, isNull);
+      expect(h.headingEnglish, isNull);
+      expect(h.punjabiMeaning, isNull);
+      expect(h.englishMeaning, isNull);
+      expect(h.footerGurmukhi, isNull);
+      expect(h.footerEnglish, isNull);
+    });
+
+    test('takes the second heading alone when the first is blank', () {
+      final h = Hukamnama.fromSgpc(response(body: {
+        'gheading1': '',
+        'gheading2': ' ਸਲੋਕੁ  ਮਃ ੩ ॥ ',
+      }));
+      expect(h.headingGurmukhi, 'ਸਲੋਕੁ ਮਃ ੩ ॥');
+    });
+  });
+
+  group('Hukamnama.fromJson', () {
+    test('refuses what toJson did not write', () {
+      expect(() => Hukamnama.fromJson({'version': 3}), throwsFormatException);
+      expect(() => Hukamnama.fromJson({'version': 2}), throwsFormatException);
+      expect(
+          () => Hukamnama.fromJson({
+                'version': 2,
+                'date': '2026-11-02',
+                'lines': <Object>[],
+              }),
+          throwsFormatException);
+      expect(
+          () => Hukamnama.fromJson({
+                'version': 2,
+                'date': 'yesterday',
+                'lines': [
+                  {'gurmukhi': 'ਸਲੋਕੁ ॥'},
+                ],
+              }),
+          throwsFormatException);
+    });
+
+    test('does not read the early build\'s version 1 file', () {
+      expect(
+          () => Hukamnama.fromJson({
+                'version': 1,
+                'date': '2026-11-02',
+                'ang': 668,
+                'raag': 'Raag Dhanaasree',
+                'lines': [
+                  {'gurmukhi': 'ਧਨਾਸਰੀ ਮਹਲਾ ੪ ॥', 'english': 'Dhanaasaree.'},
+                ],
+              }),
+          throwsFormatException);
+    });
+  });
+}

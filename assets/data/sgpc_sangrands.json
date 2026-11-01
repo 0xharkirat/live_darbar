@@ -1,0 +1,309 @@
+{
+  "version": 1,
+  "description": "Month starts of the Nanakshahi calendar as SGPC and Darbar Sahib print it. Each entry is the Gregorian date (IST) on which the month begins. A date belongs to the entry with the latest start on or before it, and the next entry's start ends it. The last entry only marks the end of the table.",
+  "monthIndex": "0 = Chet ... 11 = Phagun. The year number changes on 1 Chet.",
+  "sources": {
+    "sgpc-archive": "SGPC Harmandir Sahib archive, POST https://hs.sgpc.net/hssearchhukmanamaTestCalender.php, selected_date=yyyy-MM-dd. The month start is the date minus (printed day - 1). Probed 2026-11-02.",
+    "jantri-558": "SGPC Nanakshahi Jantri for NS 558 as listed in the nanakshahi-ical feed (MIT, janpreet/nanakshahi-ical). Dates in the future when probed.",
+    "computed": "Sun enters each sidereal sign (Lahiri ayanamsa, Meeus solar longitude). The month starts on the Amritsar sunrise-to-sunrise day that contains that moment. This rule reproduces 107 of 109 month starts SGPC printed from 2017 to 2026, and both misses fall within 2 minutes of sunrise."
+  },
+  "months": [
+    {
+      "start": "2025-03-14",
+      "month": 0,
+      "year": 557,
+      "source": "sgpc-archive"
+    },
+    {
+      "start": "2025-04-13",
+      "month": 1,
+      "year": 557,
+      "source": "sgpc-archive"
+    },
+    {
+      "start": "2025-05-14",
+      "month": 2,
+      "year": 557,
+      "source": "sgpc-archive"
+    },
+    {
+      "start": "2025-06-15",
+      "month": 3,
+      "year": 557,
+      "source": "sgpc-archive"
+    },
+    {
+      "start": "2025-07-16",
+      "month": 4,
+      "year": 557,
+      "source": "sgpc-archive"
+    },
+    {
+      "start": "2025-08-16",
+      "month": 5,
+      "year": 557,
+      "source": "sgpc-archive"
+    },
+    {
+      "start": "2025-09-16",
+      "month": 6,
+      "year": 557,
+      "source": "sgpc-archive"
+    },
+    {
+      "start": "2025-10-17",
+      "month": 7,
+      "year": 557,
+      "source": "sgpc-archive"
+    },
+    {
+      "start": "2025-11-16",
+      "month": 8,
+      "year": 557,
+      "source": "sgpc-archive"
+    },
+    {
+      "start": "2025-12-15",
+      "month": 9,
+      "year": 557,
+      "source": "sgpc-archive"
+    },
+    {
+      "start": "2026-01-14",
+      "month": 10,
+      "year": 557,
+      "source": "sgpc-archive"
+    },
+    {
+      "start": "2026-02-12",
+      "month": 11,
+      "year": 557,
+      "source": "sgpc-archive"
+    },
+    {
+      "start": "2026-03-14",
+      "month": 0,
+      "year": 558,
+      "source": "sgpc-archive"
+    },
+    {
+      "start": "2026-04-14",
+      "month": 1,
+      "year": 558,
+      "source": "sgpc-archive"
+    },
+    {
+      "start": "2026-05-15",
+      "month": 2,
+      "year": 558,
+      "source": "sgpc-archive"
+    },
+    {
+      "start": "2026-06-15",
+      "month": 3,
+      "year": 558,
+      "source": "sgpc-archive"
+    },
+    {
+      "start": "2026-07-16",
+      "month": 4,
+      "year": 558,
+      "source": "sgpc-archive"
+    },
+    {
+      "start": "2026-08-17",
+      "month": 5,
+      "year": 558,
+      "source": "sgpc-archive"
+    },
+    {
+      "start": "2026-09-17",
+      "month": 6,
+      "year": 558,
+      "source": "sgpc-archive"
+    },
+    {
+      "start": "2026-10-17",
+      "month": 7,
+      "year": 558,
+      "source": "sgpc-archive"
+    },
+    {
+      "start": "2026-11-16",
+      "month": 8,
+      "year": 558,
+      "source": "jantri-558"
+    },
+    {
+      "start": "2026-12-16",
+      "month": 9,
+      "year": 558,
+      "source": "jantri-558"
+    },
+    {
+      "start": "2027-01-14",
+      "month": 10,
+      "year": 558,
+      "source": "jantri-558"
+    },
+    {
+      "start": "2027-02-13",
+      "month": 11,
+      "year": 558,
+      "source": "jantri-558"
+    },
+    {
+      "start": "2027-03-15",
+      "month": 0,
+      "year": 559,
+      "source": "computed",
+      "note": "Sankranti falls 9 min from sunrise at Amritsar. Matches the 30 day Phagun 558 in the Jantri, but check against the SGPC Jantri before release."
+    },
+    {
+      "start": "2027-04-14",
+      "month": 1,
+      "year": 559,
+      "source": "computed"
+    },
+    {
+      "start": "2027-05-15",
+      "month": 2,
+      "year": 559,
+      "source": "computed"
+    },
+    {
+      "start": "2027-06-15",
+      "month": 3,
+      "year": 559,
+      "source": "computed"
+    },
+    {
+      "start": "2027-07-16",
+      "month": 4,
+      "year": 559,
+      "source": "computed",
+      "uncertain": true,
+      "note": "Sankranti falls 1 min from sunrise at Amritsar, so the start could be one day later. Check against the SGPC Jantri before release."
+    },
+    {
+      "start": "2027-08-17",
+      "month": 5,
+      "year": 559,
+      "source": "computed"
+    },
+    {
+      "start": "2027-09-17",
+      "month": 6,
+      "year": 559,
+      "source": "computed"
+    },
+    {
+      "start": "2027-10-17",
+      "month": 7,
+      "year": 559,
+      "source": "computed"
+    },
+    {
+      "start": "2027-11-16",
+      "month": 8,
+      "year": 559,
+      "source": "computed"
+    },
+    {
+      "start": "2027-12-16",
+      "month": 9,
+      "year": 559,
+      "source": "computed"
+    },
+    {
+      "start": "2028-01-14",
+      "month": 10,
+      "year": 559,
+      "source": "computed"
+    },
+    {
+      "start": "2028-02-13",
+      "month": 11,
+      "year": 559,
+      "source": "computed"
+    },
+    {
+      "start": "2028-03-14",
+      "month": 0,
+      "year": 560,
+      "source": "computed"
+    },
+    {
+      "start": "2028-04-13",
+      "month": 1,
+      "year": 560,
+      "source": "computed"
+    },
+    {
+      "start": "2028-05-14",
+      "month": 2,
+      "year": 560,
+      "source": "computed"
+    },
+    {
+      "start": "2028-06-14",
+      "month": 3,
+      "year": 560,
+      "source": "computed"
+    },
+    {
+      "start": "2028-07-16",
+      "month": 4,
+      "year": 560,
+      "source": "computed"
+    },
+    {
+      "start": "2028-08-16",
+      "month": 5,
+      "year": 560,
+      "source": "computed"
+    },
+    {
+      "start": "2028-09-16",
+      "month": 6,
+      "year": 560,
+      "source": "computed"
+    },
+    {
+      "start": "2028-10-17",
+      "month": 7,
+      "year": 560,
+      "source": "computed"
+    },
+    {
+      "start": "2028-11-16",
+      "month": 8,
+      "year": 560,
+      "source": "computed"
+    },
+    {
+      "start": "2028-12-15",
+      "month": 9,
+      "year": 560,
+      "source": "computed"
+    },
+    {
+      "start": "2029-01-14",
+      "month": 10,
+      "year": 560,
+      "source": "computed"
+    },
+    {
+      "start": "2029-02-12",
+      "month": 11,
+      "year": 560,
+      "source": "computed"
+    },
+    {
+      "start": "2029-03-14",
+      "month": 0,
+      "year": 561,
+      "source": "computed"
+    }
+  ]
+}
