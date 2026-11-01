@@ -39,11 +39,11 @@
     "@about_section_heading": {
         "description": "ਐਪ ਬਾਰੇ ਸੈਕਸ਼ਨ ਸਿਰਲੇਖ"
     },
-    "about_section_p1": "ਸ੍ਰੀ ਦਰਬਾਰ ਸਾਹਿਬ, ਅੰਮ੍ਰਿਤਸਰ ਤੋਂ ਲਾਈਵ ਕੀਰਤਨ, ਤੁਸੀਂ ਜਿੱਥੇ ਵੀ ਹੋਵੋ।",
+    "about_section_p1": "ਸ੍ਰੀ ਦਰਬਾਰ ਸਾਹਿਬ, ਅੰਮ੍ਰਿਤਸਰ ਤੋਂ ਲਾਈਵ ਕੀਰਤਨ, ਅਤੇ ਰੋਜ਼ਾਨਾ ਹੁਕਮਨਾਮਾ ਤੇ ਕਥਾ।",
     "@about_section_p1": {
         "description": "ਐਪ ਕੀ ਕਰਦੀ ਹੈ, ਇੱਕ ਲਾਈਨ ਵਿੱਚ"
     },
-    "about_section_p2": "ਇਹ ਮੁਫ਼ਤ ਹੈ ਅਤੇ ਮੈਂ ਇਸ ਤੋਂ ਕੋਈ ਕਮਾਈ ਨਹੀਂ ਕਰਦਾ। ਇਹ ਅੱਗੇ ਵੀ ਇਵੇਂ ਹੀ ਰਹੇਗਾ।",
+    "about_section_p2": "ਇਹ ਐਪ ਮੁਫ਼ਤ ਹੈ, ਇਸ ਵਿੱਚ ਕੋਈ ਇਸ਼ਤਿਹਾਰ ਨਹੀਂ।",
     "@about_section_p2": {
         "description": "ਐਪ ਵਪਾਰਕ ਨਹੀਂ ਹੈ, ਇਹ ਦੱਸਦਾ ਹੈ"
     },
@@ -62,10 +62,6 @@
     "about_me_p2": "ਪੰਜਵੀਂ ਜਮਾਤ ਤੋਂ ਤਬਲਾ ਵਜਾ ਰਿਹਾ ਹਾਂ। ਅੰਮ੍ਰਿਤਸਰ ਵਿੱਚ ਸ਼ੁਰੂ ਕੀਤਾ ਸੀ। ਅੱਜਕੱਲ੍ਹ ਸ਼ਨੀਵਾਰ ਤੇ ਐਤਵਾਰ ਨਿਊਕੈਸਲ ਦੇ ਗੁਰਦੁਆਰਾ ਸਾਹਿਬ ਵਿੱਚ ਵਜਾਉਂਦਾ ਹਾਂ।",
     "@about_me_p2": {
         "description": "ਕੀਰਤਨ ਨਾਲ ਲੇਖਕ ਦਾ ਨਾਤਾ"
-    },
-    "about_me_motto": "Memento Homo. ਯਾਦ ਰੱਖ, ਤੂੰ ਸਿਰਫ਼ ਇੱਕ ਇਨਸਾਨ ਹੈਂ।",
-    "@about_me_motto": {
-        "description": "harksingh.com ਤੋਂ ਲਿਆ ਲੇਖਕ ਦਾ ਮਾਟੋ। Memento Homo ਲਾਤੀਨੀ ਹੈ, ਉਵੇਂ ਹੀ ਰਹਿੰਦਾ ਹੈ"
     },
     "about_me_website": "harksingh.com",
     "@about_me_website": {
@@ -147,7 +143,7 @@
     "@youtube": {
         "description": "ਯੂਟਿਊਬ ਵੀਡੀਓ"
     },
-    "mukhwak_pdf_title": "ਅੱਜ ਦਾ ਮੁੱਖਵਾਕ (PDF)",
+    "mukhwak_pdf_title": "ਅੱਜ ਦਾ ਹੁਕਮਨਾਮਾ (PDF)",
     "@mukhwak_pdf_title": {
         "description": "Title for the Daily Mukhwak PDF screen"
     },
@@ -155,7 +151,7 @@
     "@go_live": {
         "description": "Button that reconnects the stream to jump back to the live edge"
     },
-    "behind_live": "{seconds} ਸਕਿੰਟ ਪਿੱਛੇ",
+    "behind_live": "{minutes} ਮਿੰਟ ਪਿੱਛੇ",
     "@behind_live": {
         "description": "How far the playhead trails the live broadcast, shown after a long pause",
         "placeholders": {
@@ -188,7 +184,7 @@
     "@retry": {
         "description": "Button that retries a failed connection immediately"
     },
-    "mukhwak_load_failed": "ਅੱਜ ਦਾ ਮੁੱਖਵਾਕ ਲੋਡ ਨਹੀਂ ਹੋ ਸਕਿਆ",
+    "mukhwak_load_failed": "ਅੱਜ ਦਾ ਹੁਕਮਨਾਮਾ ਲੋਡ ਨਹੀਂ ਹੋ ਸਕਿਆ",
     "@mukhwak_load_failed": {
         "description": "Replaces a raw exception when the Mukhwak PDF fails to load"
     },
@@ -196,7 +192,7 @@
     "@yesterdays_recording": {
         "description": "Chip in the player saying the loaded Mukhwak or Katha is the previous day's, because today's has not been published yet"
     },
-    "mukhwak_from_yesterday": "ਬੀਤੇ ਕੱਲ੍ਹ ਦਾ ਮੁੱਖਵਾਕ। ਅੱਜ ਦਾ ਅਜੇ ਪ੍ਰਕਾਸ਼ਿਤ ਨਹੀਂ ਹੋਇਆ।",
+    "mukhwak_from_yesterday": "ਬੀਤੇ ਕੱਲ੍ਹ ਦਾ ਹੁਕਮਨਾਮਾ। ਅੱਜ ਦਾ ਅਜੇ ਜਾਰੀ ਨਹੀਂ ਹੋਇਆ।",
     "@mukhwak_from_yesterday": {
         "description": "Banner above the PDF viewer when the cached document is the previous day's"
     },
@@ -228,5 +224,56 @@
     "update_later": "ਹੁਣ ਨਹੀਂ",
     "@update_later": {
         "description": "Secondary button that dismisses the update sheet for this release"
-    }
+    },
+    "now_playing": "ਹੁਣ ਚੱਲ ਰਿਹਾ ਹੈ",
+    "@now_playing": {
+        "description": "Second line on the row that is currently sounding"
+    },
+    "live_from_darbar": "ਸ੍ਰੀ ਦਰਬਾਰ ਸਾਹਿਬ ਤੋਂ ਲਾਈਵ",
+    "@live_from_darbar": {
+        "description": "Second line on the live kirtan row when it is not playing"
+    },
+    "todays_recording": "ਅੱਜ ਦੀ ਰਿਕਾਰਡਿੰਗ",
+    "@todays_recording": {
+        "description": "Second line when the current day's audio is what will play"
+    },
+    "read_the_words": "ਸ਼ਬਦ ਪੜ੍ਹੋ",
+    "@read_the_words": {
+        "description": "Second line on the row that opens the Mukhwak PDF"
+    },
+    "about_this_app": "ਇਸ ਐਪ ਬਾਰੇ",
+    "@about_this_app": {
+        "description": "Row that opens the information screens"
+    },
+    "today": "ਅੱਜ",
+    "live_location": "ਸ੍ਰੀ ਹਰਿਮੰਦਰ ਸਾਹਿਬ, ਅੰਮ੍ਰਿਤਸਰ",
+    "katha_subtitle": "ਅੱਜ ਦੇ ਹੁਕਮਨਾਮੇ ਦੀ ਵਿਆਖਿਆ",
+    "read_hukamnama": "ਅੱਜ ਦਾ ਹੁਕਮਨਾਮਾ ਪੜ੍ਹੋ",
+    "read_hukamnama_detail": "ਜਿਵੇਂ SGPC ਨੇ ਜਾਰੀ ਕੀਤਾ",
+    "read": "ਪੜ੍ਹੋ",
+    "skip_back": "15 ਸਕਿੰਟ ਪਿੱਛੇ",
+    "skip_forward": "15 ਸਕਿੰਟ ਅੱਗੇ",
+    "privacy_policy": "ਪਰਦੇਦਾਰੀ ਨੀਤੀ",
+    "play": "ਚਲਾਓ",
+    "pause": "ਰੋਕੋ",
+    "katha": "ਕਥਾ",
+    "quality": "ਆਵਾਜ਼ ਦੀ ਕੁਆਲਿਟੀ",
+    "quality_automatic": "ਆਪਣੇ ਆਪ",
+    "quality_high": "ਉੱਚੀ",
+    "quality_data_saver": "ਡਾਟਾ ਬਚਤ",
+    "quality_automatic_detail": "ਉੱਚੀ ਕੁਆਲਿਟੀ, ਅਤੇ ਕਮਜ਼ੋਰ ਕਨੈਕਸ਼ਨ ਵੇਲੇ ਘੱਟ ਡਾਟਾ",
+    "quality_high_detail": "96 kbps, ਲਗਭਗ 43 MB ਪ੍ਰਤੀ ਘੰਟਾ",
+    "quality_data_saver_detail": "28 kbps, ਲਗਭਗ 13 MB ਪ੍ਰਤੀ ਘੰਟਾ",
+    "quality_note": "ਇਹ ਲਾਈਵ ਕੀਰਤਨ ਉੱਤੇ ਲਾਗੂ ਹੁੰਦਾ ਹੈ। ਹੁਕਮਨਾਮਾ ਅਤੇ ਕਥਾ ਦੀਆਂ ਰਿਕਾਰਡਿੰਗਾਂ ਹਮੇਸ਼ਾ ਇੱਕੋ ਜਿਹੀਆਂ ਰਹਿੰਦੀਆਂ ਹਨ।",
+    "listen": "ਸੁਣੋ",
+    "sgpc_pdf": "SGPC PDF",
+    "hukamnama_ang": "ਅੰਗ {ang}",
+    "text_source": "ਪਾਠ ਅਤੇ ਅਰਥ {source} ਤੋਂ",
+    "smaller_text": "ਛੋਟੇ ਅੱਖਰ",
+    "larger_text": "ਵੱਡੇ ਅੱਖਰ",
+    "hukamnama_unavailable": "ਅੱਜ ਦੇ ਹੁਕਮਨਾਮੇ ਦਾ ਪਾਠ ਲੋਡ ਨਹੀਂ ਹੋ ਸਕਿਆ",
+    "hukamnama_of": "{date} ਦਾ ਹੁਕਮਨਾਮਾ",
+    "hukamnama_not_out": "ਅੱਜ ਦਾ ਹੁਕਮਨਾਮਾ ਅਜੇ ਨਹੀਂ ਆਇਆ। ਇਹ {date} ਦਾ ਹੈ।",
+    "meaning": "ਅਰਥ",
+    "open_on_sgpc": "SGPC ਦੀ ਵੈੱਬਸਾਈਟ ਉੱਤੇ ਪੜ੍ਹੋ"
 }

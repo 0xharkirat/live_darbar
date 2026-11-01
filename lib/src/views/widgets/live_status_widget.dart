@@ -1,139 +1,160 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:live_darbar/l10n/app_localizations.dart';
 import 'package:live_darbar/src/controllers/audio_controller.dart';
 import 'package:live_darbar/src/controllers/connectivity_controller.dart';
+import 'package:live_darbar/src/core/app_type.dart';
+import 'package:live_darbar/src/core/motion.dart';
+import 'package:live_darbar/src/core/palette.dart';
 import 'package:live_darbar/src/models/live_playback_state.dart';
 import 'package:live_darbar/src/models/stream_quality.dart';
-import 'package:shadcn_ui/shadcn_ui.dart';
 
-/// Tells the listener what the player is doing when it is not simply working,
-/// and offers the one action that helps.
+/// One calm line about the connection, or nothing when all is well.
 ///
-/// It renders nothing in the ordinary case. Four things are worth interrupting
-/// for: the connection dropped and we are retrying, the recording loaded is
-/// not the day the listener asked for, we fell back to the low bitrate tier,
-/// or a long pause has left the playhead well behind the broadcast. Anything
-/// less and a badge would be noise.
-class LiveStatusWidget extends ConsumerWidget {
-  const LiveStatusWidget({super.key});
+/// Only one message shows at a time, in order of what the listener can act
+/// on: a dropped stream, then yesterday's recording, then being behind live,
+/// then the low-quality fallback. The offline case belongs to the banner at
+/// the top of the screen, so this says nothing while offline.
+class LiveStatusLine extends ConsumerWidget {
+  const LiveStatusLine({super.key, this.compact = false});
+
+  /// One short line for the mini player, with no action link.
+  final bool compact;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final live = ref.watch(livePlaybackProvider).value;
-    if (live == null) return const SizedBox.shrink();
-
+    final online = ref.watch(connectivityController).value ?? true;
     final l10n = AppLocalizations.of(context)!;
-    final theme = ShadTheme.of(context);
+    // Read lazily, only when an action runs, so drawing this line never
+    // creates the audio player.
+    AudioController controller() => ref.read(audioController);
 
+    final status = live == null ? null : _pick(live, online, l10n, controller);
+
+    return AnimatedSwitcher(
+      duration: Motion.quick,
+      switchInCurve: Motion.easeOut,
+      child: status == null
+          ? const SizedBox.shrink(key: ValueKey('none'))
+          : _Line(
+              key: ValueKey(status.label),
+              status: status,
+              compact: compact,
+            ),
+    );
+  }
+
+  static _Status? _pick(
+    LivePlaybackState live,
+    bool online,
+    AppLocalizations l10n,
+    AudioController Function() controller,
+  ) {
     if (live.status == LiveStatus.failed) {
-      // Say nothing here when the phone itself is offline. The banner across
-      // the top already covers that, and repeating it in the player would
-      // imply two separate problems.
-      final online = ref.watch(connectivityController).value ?? true;
-      if (!online) return const SizedBox.shrink();
-
-      // A failure always has a retry already scheduled, so the honest label is
-      // "reconnecting", not "failed". Only name it once enough attempts have
-      // gone by that the listener deserves to know it is not just a blip, and
-      // then name it accurately: we are online, so it is the stream that is
-      // unreachable, not the connection that is lost.
+      if (!online) return null;
       final givenUp = live.reconnectAttempt >= 3;
-      return _Chip(
-        color: theme.colorScheme.destructive,
-        icon: givenUp ? LucideIcons.circleAlert : null,
-        showSpinner: !givenUp,
+      return _Status(
         label: givenUp ? l10n.stream_unreachable : l10n.reconnecting,
+        color: Palette.danger,
+        icon: givenUp ? CupertinoIcons.exclamationmark_circle : null,
+        spinner: !givenUp,
         action: givenUp ? l10n.retry : null,
-        onAction:
-            givenUp ? () => ref.read(audioController).onNetworkRestored() : null,
+        onAction: givenUp ? () => controller().onNetworkRestored() : null,
       );
     }
-
-    // SGPC uploads the Hukamnama around half past five in the morning in
-    // Amritsar and the Katha around half past nine, so for a good part of
-    // every day the app is serving the previous day's recording because that
-    // is all there is. Playing it is right; playing it silently is not, since
-    // the shabad would not match the one being read at Darbar Sahib and the
-    // listener would have no way to tell why.
-    //
-    // Only the previous day earns a chip. Content from the undated endpoint is
-    // always the newest SGPC holds, so there is nothing true to say about it.
     if (live.edition?.isStale ?? false) {
-      return _Chip(
-        color: theme.colorScheme.mutedForeground,
-        icon: LucideIcons.calendarClock,
+      return _Status(
         label: l10n.yesterdays_recording,
+        color: Palette.muted,
+        icon: CupertinoIcons.calendar,
       );
     }
-
     if (live.isBehindLive) {
-      return _Chip(
-        color: theme.colorScheme.primary,
-        icon: LucideIcons.radio,
-        label: l10n.behind_live(live.behindLive.inSeconds),
+      return _Status(
+        label: l10n.behind_live(live.minutesBehind),
+        color: Palette.muted,
+        icon: CupertinoIcons.clock,
         action: l10n.go_live,
-        onAction: () => ref.read(audioController).skipToLive(),
+        onAction: () => controller().skipToLive(),
       );
     }
-
     if (live.isLiveSource &&
         live.quality == StreamQuality.low &&
         !StreamQuality.isWeb) {
-      // Only worth saying off web. On web the low tier is the only one there
-      // is, so calling it a downgrade would be misleading.
-      return _Chip(
-        color: theme.colorScheme.mutedForeground,
-        icon: LucideIcons.signalLow,
+      return _Status(
         label: l10n.low_quality_stream,
+        color: Palette.muted,
+        icon: CupertinoIcons.antenna_radiowaves_left_right,
       );
     }
-
-    return const SizedBox.shrink();
+    return null;
   }
 }
 
-class _Chip extends StatelessWidget {
-  const _Chip({
-    required this.color,
+class _Status {
+  const _Status({
     required this.label,
+    required this.color,
     this.icon,
-    this.showSpinner = false,
+    this.spinner = false,
     this.action,
     this.onAction,
   });
 
-  final Color color;
   final String label;
+  final Color color;
   final IconData? icon;
-  final bool showSpinner;
+  final bool spinner;
   final String? action;
   final VoidCallback? onAction;
+}
+
+class _Line extends StatelessWidget {
+  const _Line({super.key, required this.status, required this.compact});
+
+  final _Status status;
+  final bool compact;
 
   @override
   Widget build(BuildContext context) {
-    final theme = ShadTheme.of(context);
+    final style = AppType.footnote.copyWith(color: status.color);
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        if (showSpinner)
+        if (status.spinner)
           SizedBox.square(
             dimension: 12,
-            child: CircularProgressIndicator(strokeWidth: 1.5, color: color),
+            child: CircularProgressIndicator(
+              strokeWidth: 1.5,
+              color: status.color,
+            ),
           )
-        else if (icon != null)
-          Icon(icon, size: 14, color: color),
+        else if (status.icon != null)
+          Icon(status.icon, size: 14, color: status.color),
         const SizedBox(width: 6),
-        Text(
-          label,
-          style: theme.textTheme.muted.copyWith(color: color),
+        Flexible(
+          child: Text(
+            status.label,
+            style: style,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
         ),
-        if (action != null) ...[
-          const SizedBox(width: 8),
-          ShadButton.link(
-            padding: EdgeInsets.zero,
-            onPressed: onAction,
-            child: Text(action!, style: theme.textTheme.small),
+        if (!compact && status.action != null) ...[
+          const SizedBox(width: 4),
+          CupertinoButton(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            minimumSize: const Size(44, 44),
+            onPressed: status.onAction,
+            child: Text(
+              status.action!,
+              style: AppType.footnote.copyWith(
+                color: Palette.gold,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
           ),
         ],
       ],

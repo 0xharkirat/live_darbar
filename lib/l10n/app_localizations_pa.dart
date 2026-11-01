@@ -39,10 +39,10 @@ class AppLocalizationsPa extends AppLocalizations {
   String get about_section_heading => 'ਐਪ ਬਾਰੇ';
 
   @override
-  String get about_section_p1 => 'ਸ੍ਰੀ ਦਰਬਾਰ ਸਾਹਿਬ, ਅੰਮ੍ਰਿਤਸਰ ਤੋਂ ਲਾਈਵ ਕੀਰਤਨ, ਤੁਸੀਂ ਜਿੱਥੇ ਵੀ ਹੋਵੋ।';
+  String get about_section_p1 => 'ਸ੍ਰੀ ਦਰਬਾਰ ਸਾਹਿਬ, ਅੰਮ੍ਰਿਤਸਰ ਤੋਂ ਲਾਈਵ ਕੀਰਤਨ, ਅਤੇ ਰੋਜ਼ਾਨਾ ਹੁਕਮਨਾਮਾ ਤੇ ਕਥਾ।';
 
   @override
-  String get about_section_p2 => 'ਇਹ ਮੁਫ਼ਤ ਹੈ ਅਤੇ ਮੈਂ ਇਸ ਤੋਂ ਕੋਈ ਕਮਾਈ ਨਹੀਂ ਕਰਦਾ। ਇਹ ਅੱਗੇ ਵੀ ਇਵੇਂ ਹੀ ਰਹੇਗਾ।';
+  String get about_section_p2 => 'ਇਹ ਐਪ ਮੁਫ਼ਤ ਹੈ, ਇਸ ਵਿੱਚ ਕੋਈ ਇਸ਼ਤਿਹਾਰ ਨਹੀਂ।';
 
   @override
   String get about_section_contact => 'ਫੀਡਬੈਕ ਭੇਜੋ';
@@ -55,9 +55,6 @@ class AppLocalizationsPa extends AppLocalizations {
 
   @override
   String get about_me_p2 => 'ਪੰਜਵੀਂ ਜਮਾਤ ਤੋਂ ਤਬਲਾ ਵਜਾ ਰਿਹਾ ਹਾਂ। ਅੰਮ੍ਰਿਤਸਰ ਵਿੱਚ ਸ਼ੁਰੂ ਕੀਤਾ ਸੀ। ਅੱਜਕੱਲ੍ਹ ਸ਼ਨੀਵਾਰ ਤੇ ਐਤਵਾਰ ਨਿਊਕੈਸਲ ਦੇ ਗੁਰਦੁਆਰਾ ਸਾਹਿਬ ਵਿੱਚ ਵਜਾਉਂਦਾ ਹਾਂ।';
-
-  @override
-  String get about_me_motto => 'Memento Homo. ਯਾਦ ਰੱਖ, ਤੂੰ ਸਿਰਫ਼ ਇੱਕ ਇਨਸਾਨ ਹੈਂ।';
 
   @override
   String get about_me_website => 'harksingh.com';
@@ -120,14 +117,14 @@ class AppLocalizationsPa extends AppLocalizations {
   String get youtube => 'ਯੂਟਿਊਬ ਵੀਡੀਓ';
 
   @override
-  String get mukhwak_pdf_title => 'ਅੱਜ ਦਾ ਮੁੱਖਵਾਕ (PDF)';
+  String get mukhwak_pdf_title => 'ਅੱਜ ਦਾ ਹੁਕਮਨਾਮਾ (PDF)';
 
   @override
   String get go_live => 'ਲਾਈਵ \'ਤੇ ਜਾਓ';
 
   @override
-  String behind_live(int seconds) {
-    return '$seconds ਸਕਿੰਟ ਪਿੱਛੇ';
+  String behind_live(int minutes) {
+    return '$minutes ਮਿੰਟ ਪਿੱਛੇ';
   }
 
   @override
@@ -149,13 +146,13 @@ class AppLocalizationsPa extends AppLocalizations {
   String get retry => 'ਮੁੜ ਕੋਸ਼ਿਸ਼ ਕਰੋ';
 
   @override
-  String get mukhwak_load_failed => 'ਅੱਜ ਦਾ ਮੁੱਖਵਾਕ ਲੋਡ ਨਹੀਂ ਹੋ ਸਕਿਆ';
+  String get mukhwak_load_failed => 'ਅੱਜ ਦਾ ਹੁਕਮਨਾਮਾ ਲੋਡ ਨਹੀਂ ਹੋ ਸਕਿਆ';
 
   @override
   String get yesterdays_recording => 'ਬੀਤੇ ਕੱਲ੍ਹ ਦੀ ਰਿਕਾਰਡਿੰਗ';
 
   @override
-  String get mukhwak_from_yesterday => 'ਬੀਤੇ ਕੱਲ੍ਹ ਦਾ ਮੁੱਖਵਾਕ। ਅੱਜ ਦਾ ਅਜੇ ਪ੍ਰਕਾਸ਼ਿਤ ਨਹੀਂ ਹੋਇਆ।';
+  String get mukhwak_from_yesterday => 'ਬੀਤੇ ਕੱਲ੍ਹ ਦਾ ਹੁਕਮਨਾਮਾ। ਅੱਜ ਦਾ ਅਜੇ ਜਾਰੀ ਨਹੀਂ ਹੋਇਆ।';
 
   @override
   String get playback_error => 'ਪਲੇਬੈਕ ਵਿੱਚ ਸਮੱਸਿਆ';
@@ -176,4 +173,120 @@ class AppLocalizationsPa extends AppLocalizations {
 
   @override
   String get update_later => 'ਹੁਣ ਨਹੀਂ';
+
+  @override
+  String get now_playing => 'ਹੁਣ ਚੱਲ ਰਿਹਾ ਹੈ';
+
+  @override
+  String get live_from_darbar => 'ਸ੍ਰੀ ਦਰਬਾਰ ਸਾਹਿਬ ਤੋਂ ਲਾਈਵ';
+
+  @override
+  String get todays_recording => 'ਅੱਜ ਦੀ ਰਿਕਾਰਡਿੰਗ';
+
+  @override
+  String get read_the_words => 'ਸ਼ਬਦ ਪੜ੍ਹੋ';
+
+  @override
+  String get about_this_app => 'ਇਸ ਐਪ ਬਾਰੇ';
+
+  @override
+  String get today => 'ਅੱਜ';
+
+  @override
+  String get live_location => 'ਸ੍ਰੀ ਹਰਿਮੰਦਰ ਸਾਹਿਬ, ਅੰਮ੍ਰਿਤਸਰ';
+
+  @override
+  String get katha_subtitle => 'ਅੱਜ ਦੇ ਹੁਕਮਨਾਮੇ ਦੀ ਵਿਆਖਿਆ';
+
+  @override
+  String get read_hukamnama => 'ਅੱਜ ਦਾ ਹੁਕਮਨਾਮਾ ਪੜ੍ਹੋ';
+
+  @override
+  String get read_hukamnama_detail => 'ਜਿਵੇਂ SGPC ਨੇ ਜਾਰੀ ਕੀਤਾ';
+
+  @override
+  String get read => 'ਪੜ੍ਹੋ';
+
+  @override
+  String get skip_back => '15 ਸਕਿੰਟ ਪਿੱਛੇ';
+
+  @override
+  String get skip_forward => '15 ਸਕਿੰਟ ਅੱਗੇ';
+
+  @override
+  String get privacy_policy => 'ਪਰਦੇਦਾਰੀ ਨੀਤੀ';
+
+  @override
+  String get play => 'ਚਲਾਓ';
+
+  @override
+  String get pause => 'ਰੋਕੋ';
+
+  @override
+  String get katha => 'ਕਥਾ';
+
+  @override
+  String get quality => 'ਆਵਾਜ਼ ਦੀ ਕੁਆਲਿਟੀ';
+
+  @override
+  String get quality_automatic => 'ਆਪਣੇ ਆਪ';
+
+  @override
+  String get quality_high => 'ਉੱਚੀ';
+
+  @override
+  String get quality_data_saver => 'ਡਾਟਾ ਬਚਤ';
+
+  @override
+  String get quality_automatic_detail => 'ਉੱਚੀ ਕੁਆਲਿਟੀ, ਅਤੇ ਕਮਜ਼ੋਰ ਕਨੈਕਸ਼ਨ ਵੇਲੇ ਘੱਟ ਡਾਟਾ';
+
+  @override
+  String get quality_high_detail => '96 kbps, ਲਗਭਗ 43 MB ਪ੍ਰਤੀ ਘੰਟਾ';
+
+  @override
+  String get quality_data_saver_detail => '28 kbps, ਲਗਭਗ 13 MB ਪ੍ਰਤੀ ਘੰਟਾ';
+
+  @override
+  String get quality_note => 'ਇਹ ਲਾਈਵ ਕੀਰਤਨ ਉੱਤੇ ਲਾਗੂ ਹੁੰਦਾ ਹੈ। ਹੁਕਮਨਾਮਾ ਅਤੇ ਕਥਾ ਦੀਆਂ ਰਿਕਾਰਡਿੰਗਾਂ ਹਮੇਸ਼ਾ ਇੱਕੋ ਜਿਹੀਆਂ ਰਹਿੰਦੀਆਂ ਹਨ।';
+
+  @override
+  String get listen => 'ਸੁਣੋ';
+
+  @override
+  String get sgpc_pdf => 'SGPC PDF';
+
+  @override
+  String hukamnama_ang(int ang) {
+    return 'ਅੰਗ $ang';
+  }
+
+  @override
+  String text_source(String source) {
+    return 'ਪਾਠ ਅਤੇ ਅਰਥ $source ਤੋਂ';
+  }
+
+  @override
+  String get smaller_text => 'ਛੋਟੇ ਅੱਖਰ';
+
+  @override
+  String get larger_text => 'ਵੱਡੇ ਅੱਖਰ';
+
+  @override
+  String get hukamnama_unavailable => 'ਅੱਜ ਦੇ ਹੁਕਮਨਾਮੇ ਦਾ ਪਾਠ ਲੋਡ ਨਹੀਂ ਹੋ ਸਕਿਆ';
+
+  @override
+  String hukamnama_of(String date) {
+    return '$date ਦਾ ਹੁਕਮਨਾਮਾ';
+  }
+
+  @override
+  String hukamnama_not_out(String date) {
+    return 'ਅੱਜ ਦਾ ਹੁਕਮਨਾਮਾ ਅਜੇ ਨਹੀਂ ਆਇਆ। ਇਹ $date ਦਾ ਹੈ।';
+  }
+
+  @override
+  String get meaning => 'ਅਰਥ';
+
+  @override
+  String get open_on_sgpc => 'SGPC ਦੀ ਵੈੱਬਸਾਈਟ ਉੱਤੇ ਪੜ੍ਹੋ';
 }

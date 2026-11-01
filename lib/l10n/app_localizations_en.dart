@@ -15,10 +15,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get live_kirtan => 'Live Kirtan';
 
   @override
-  String get mukhwak => 'Mukhwak';
+  String get mukhwak => 'Hukamnama';
 
   @override
-  String get mukhwak_katha => 'Mukhwak Katha';
+  String get mukhwak_katha => 'Hukamnama Katha';
 
   @override
   String get loading => 'Loading...';
@@ -39,10 +39,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get about_section_heading => 'About the App';
 
   @override
-  String get about_section_p1 => 'Live kirtan from Sri Darbar Sahib in Amritsar, wherever you are.';
+  String get about_section_p1 => 'Live kirtan from Sri Darbar Sahib, Amritsar, and the daily Hukamnama and Katha.';
 
   @override
-  String get about_section_p2 => 'It is free and I make no money from it. That will not change.';
+  String get about_section_p2 => 'The app is free and has no ads.';
 
   @override
   String get about_section_contact => 'Send feedback';
@@ -55,9 +55,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get about_me_p2 => 'I have played tabla since year 5, back in Amritsar. These days it is the Newcastle Gurdwara on Saturdays and Sundays.';
-
-  @override
-  String get about_me_motto => 'Memento Homo. Remember, you are only a man.';
 
   @override
   String get about_me_website => 'harksingh.com';
@@ -120,14 +117,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get youtube => 'YouTube Video';
 
   @override
-  String get mukhwak_pdf_title => 'Daily Mukhwak (PDF)';
+  String get mukhwak_pdf_title => 'Today\'s Hukamnama (PDF)';
 
   @override
   String get go_live => 'Go live';
 
   @override
-  String behind_live(int seconds) {
-    return '${seconds}s behind';
+  String behind_live(int minutes) {
+    return '$minutes min behind';
   }
 
   @override
@@ -149,13 +146,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get retry => 'Retry';
 
   @override
-  String get mukhwak_load_failed => 'Could not load today\'s Mukhwak';
+  String get mukhwak_load_failed => 'Could not load today\'s Hukamnama';
 
   @override
   String get yesterdays_recording => 'Yesterday\'s recording';
 
   @override
-  String get mukhwak_from_yesterday => 'Yesterday\'s Mukhwak. Today\'s has not been published yet.';
+  String get mukhwak_from_yesterday => 'Yesterday\'s Hukamnama. Today\'s has not been published yet.';
 
   @override
   String get playback_error => 'Playback problem';
@@ -176,4 +173,120 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get update_later => 'Not now';
+
+  @override
+  String get now_playing => 'Playing now';
+
+  @override
+  String get live_from_darbar => 'Live from Sri Darbar Sahib';
+
+  @override
+  String get todays_recording => 'Today\'s recording';
+
+  @override
+  String get read_the_words => 'Read the words';
+
+  @override
+  String get about_this_app => 'About this app';
+
+  @override
+  String get today => 'Today';
+
+  @override
+  String get live_location => 'Sri Harmandir Sahib, Amritsar';
+
+  @override
+  String get katha_subtitle => 'The meaning of today\'s Hukamnama';
+
+  @override
+  String get read_hukamnama => 'Read today\'s Hukamnama';
+
+  @override
+  String get read_hukamnama_detail => 'As published by SGPC';
+
+  @override
+  String get read => 'Read';
+
+  @override
+  String get skip_back => 'Back 15 seconds';
+
+  @override
+  String get skip_forward => 'Forward 15 seconds';
+
+  @override
+  String get privacy_policy => 'Privacy policy';
+
+  @override
+  String get play => 'Play';
+
+  @override
+  String get pause => 'Pause';
+
+  @override
+  String get katha => 'Katha';
+
+  @override
+  String get quality => 'Sound quality';
+
+  @override
+  String get quality_automatic => 'Automatic';
+
+  @override
+  String get quality_high => 'High';
+
+  @override
+  String get quality_data_saver => 'Data saver';
+
+  @override
+  String get quality_automatic_detail => 'High quality, and less data when the connection is weak';
+
+  @override
+  String get quality_high_detail => '96 kbps, about 43 MB an hour';
+
+  @override
+  String get quality_data_saver_detail => '28 kbps, about 13 MB an hour';
+
+  @override
+  String get quality_note => 'Applies to live kirtan. Hukamnama and Katha recordings are always the same size.';
+
+  @override
+  String get listen => 'Listen';
+
+  @override
+  String get sgpc_pdf => 'SGPC PDF';
+
+  @override
+  String hukamnama_ang(int ang) {
+    return 'Ang $ang';
+  }
+
+  @override
+  String text_source(String source) {
+    return 'Text and meaning from $source';
+  }
+
+  @override
+  String get smaller_text => 'Smaller text';
+
+  @override
+  String get larger_text => 'Larger text';
+
+  @override
+  String get hukamnama_unavailable => 'Today\'s Hukamnama text could not be loaded';
+
+  @override
+  String hukamnama_of(String date) {
+    return 'Hukamnama of $date';
+  }
+
+  @override
+  String hukamnama_not_out(String date) {
+    return 'Today\'s Hukamnama is not out yet. This is the one from $date.';
+  }
+
+  @override
+  String get meaning => 'Meaning';
+
+  @override
+  String get open_on_sgpc => 'Read it on SGPC\'s website';
 }

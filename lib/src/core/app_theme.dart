@@ -1,76 +1,76 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:live_darbar/src/core/app_type.dart';
 import 'package:live_darbar/src/core/palette.dart';
-import 'package:shadcn_ui/shadcn_ui.dart';
 
-/// One theme, built from [Palette].
+/// One theme, built from [Palette] and [AppType]. Dark only.
 ///
-/// This used to expose seven selectable accent schemes through an
-/// `AppThemeColor` enum and a picker. All of it is gone: the app is dark only
-/// and one designed palette, which is a decision rather than a default.
-///
-/// Fonts are bundled assets rather than fetched by `google_fonts` at runtime.
-/// That was costing a network round trip on first launch, a visible swap from
-/// the fallback face, and on an offline first launch the intended face never
-/// arrived at all. Manrope carries no Gurmukhi, so Punjabi silently fell back
-/// to whatever the OS supplied and the app rendered in two unrelated
-/// typefaces. Noto Sans Gurmukhi is declared as a fallback on the same family,
-/// so each script gets a face that was chosen for it.
+/// The app draws its own components, so this theme only has to make the few
+/// stock widgets it still uses (scaffolds, sheets, progress indicators, text
+/// selection) agree with them. There is no UI kit underneath any more: the
+/// previous one shipped six icon fonts and a component look that belonged to
+/// the web, not to a phone in someone's hand.
 abstract final class AppTheme {
-  static const fontFamily = 'Manrope';
-  static const fontFamilyFallback = ['NotoSansGurmukhi'];
+  static ThemeData get material {
+    const scheme = ColorScheme.dark(
+      surface: Palette.background,
+      onSurface: Palette.foreground,
+      surfaceContainerHighest: Palette.surfaceHigh,
+      primary: Palette.gold,
+      onPrimary: Palette.onGold,
+      secondary: Palette.surfaceHigh,
+      onSecondary: Palette.foreground,
+      error: Palette.danger,
+      onError: Palette.onGold,
+      outline: Palette.border,
+    );
 
-  static ShadColorScheme get colorScheme => const ShadColorScheme(
-        background: Palette.background,
-        foreground: Palette.foreground,
-        card: Palette.surface,
-        cardForeground: Palette.foreground,
-        popover: Palette.surface,
-        popoverForeground: Palette.foreground,
-        primary: Palette.primary,
-        primaryForeground: Palette.onPrimary,
-        secondary: Palette.surfaceHigh,
-        secondaryForeground: Palette.foreground,
-        muted: Palette.surfaceHigh,
-        mutedForeground: Palette.muted,
-        accent: Palette.surfaceHigh,
-        accentForeground: Palette.foreground,
-        destructive: Palette.danger,
-        destructiveForeground: Palette.onPrimary,
-        border: Palette.border,
-        input: Palette.border,
-        ring: Palette.primary,
-        selection: Palette.surfaceHigh,
-      );
-
-  static ShadThemeData get shad => ShadThemeData(
-        colorScheme: colorScheme,
+    return ThemeData(
+      useMaterial3: true,
+      brightness: Brightness.dark,
+      colorScheme: scheme,
+      scaffoldBackgroundColor: Palette.background,
+      canvasColor: Palette.background,
+      fontFamily: AppType.sans,
+      fontFamilyFallback: AppType.sansFallback,
+      splashFactory: NoSplash.splashFactory,
+      highlightColor: Colors.transparent,
+      // iOS-style horizontal page transitions everywhere, with the edge swipe
+      // back, because the back gesture is the one people already know.
+      pageTransitionsTheme: const PageTransitionsTheme(
+        builders: {
+          TargetPlatform.android: CupertinoPageTransitionsBuilder(),
+          TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+          TargetPlatform.macOS: CupertinoPageTransitionsBuilder(),
+        },
+      ),
+      textSelectionTheme: const TextSelectionThemeData(
+        cursorColor: Palette.gold,
+        selectionColor: Color(0x55E8B04B),
+        selectionHandleColor: Palette.gold,
+      ),
+      progressIndicatorTheme: const ProgressIndicatorThemeData(
+        color: Palette.gold,
+        linearTrackColor: Palette.border,
+      ),
+      appBarTheme: const AppBarTheme(
+        backgroundColor: Palette.background,
+        surfaceTintColor: Colors.transparent,
+        foregroundColor: Palette.foreground,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        centerTitle: true,
+        titleTextStyle: AppType.headline,
+      ),
+      bottomSheetTheme: const BottomSheetThemeData(
+        backgroundColor: Palette.surface,
+        surfaceTintColor: Colors.transparent,
+        modalBarrierColor: Color(0x99000000),
+      ),
+      cupertinoOverrideTheme: const CupertinoThemeData(
         brightness: Brightness.dark,
-        textTheme: ShadTextTheme(
-          family: fontFamily,
-          package: null,
-        ).apply(
-          bodyColor: Palette.foreground,
-          displayColor: Palette.foreground,
-          fontFamilyFallback: fontFamilyFallback,
-        ),
-      );
-
-  static ThemeData get material => ThemeData(
-        useMaterial3: true,
-        brightness: Brightness.dark,
-        scaffoldBackgroundColor: Palette.background,
-        fontFamily: fontFamily,
-        fontFamilyFallback: fontFamilyFallback,
-        colorScheme: const ColorScheme.dark(
-          surface: Palette.background,
-          onSurface: Palette.foreground,
-          primary: Palette.primary,
-          onPrimary: Palette.onPrimary,
-          secondary: Palette.surfaceHigh,
-          onSecondary: Palette.foreground,
-          error: Palette.danger,
-          onError: Palette.onPrimary,
-          outline: Palette.border,
-        ),
-      );
+        primaryColor: Palette.gold,
+      ),
+    );
+  }
 }

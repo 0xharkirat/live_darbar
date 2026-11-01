@@ -70,10 +70,13 @@ class LivePlaybackState {
 
   /// Past this, offer the listener a way back to the live edge.
   ///
-  /// Below it the drift is either the normal buffer or a pause short enough
-  /// that nobody would notice, and interrupting playback to save a few seconds
-  /// would cost more than it returns.
-  static const behindLiveThreshold = Duration(seconds: 15);
+  /// Kirtan is continuous, and a minute or so behind changes nothing for the
+  /// listener. Below 2 minutes the note would only be noise, and going live
+  /// again costs a reconnect, so it is offered only once the gap is real.
+  static const behindLiveThreshold = Duration(minutes: 2);
+
+  /// Whole minutes behind, for display. Seconds would only flicker.
+  int get minutesBehind => behindLive.inMinutes;
 
   bool get isBehindLive => isLiveSource && behindLive > behindLiveThreshold;
 

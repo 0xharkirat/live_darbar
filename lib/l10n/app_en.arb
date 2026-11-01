@@ -7,11 +7,11 @@
     "@live_kirtan": {
         "description": "Live Kirtan"
     },
-    "mukhwak": "Mukhwak",
+    "mukhwak": "Hukamnama",
     "@mukhwak": {
         "description": "Mukhwak"
     },
-    "mukhwak_katha": "Mukhwak Katha",
+    "mukhwak_katha": "Hukamnama Katha",
     "@mukhwak_katha": {
         "description": "Mukhwak Katha"
     },
@@ -39,11 +39,11 @@
     "@about_section_heading": {
         "description": "About the App Section Heading"
     },
-    "about_section_p1": "Live kirtan from Sri Darbar Sahib in Amritsar, wherever you are.",
+    "about_section_p1": "Live kirtan from Sri Darbar Sahib, Amritsar, and the daily Hukamnama and Katha.",
     "@about_section_p1": {
         "description": "One line saying what the app does"
     },
-    "about_section_p2": "It is free and I make no money from it. That will not change.",
+    "about_section_p2": "The app is free and has no ads.",
     "@about_section_p2": {
         "description": "States that the app is non-commercial"
     },
@@ -62,10 +62,6 @@
     "about_me_p2": "I have played tabla since year 5, back in Amritsar. These days it is the Newcastle Gurdwara on Saturdays and Sundays.",
     "@about_me_p2": {
         "description": "The author's connection to kirtan"
-    },
-    "about_me_motto": "Memento Homo. Remember, you are only a man.",
-    "@about_me_motto": {
-        "description": "The author's motto, carried over from harksingh.com. Memento Homo is Latin and stays untranslated"
     },
     "about_me_website": "harksingh.com",
     "@about_me_website": {
@@ -147,7 +143,7 @@
     "@youtube": {
         "description": "Youtube video"
     },
-    "mukhwak_pdf_title": "Daily Mukhwak (PDF)",
+    "mukhwak_pdf_title": "Today's Hukamnama (PDF)",
     "@mukhwak_pdf_title": {
         "description": "Title for the Daily Mukhwak PDF screen"
     },
@@ -155,11 +151,11 @@
     "@go_live": {
         "description": "Button that reconnects the stream to jump back to the live edge"
     },
-    "behind_live": "{seconds}s behind",
+    "behind_live": "{minutes} min behind",
     "@behind_live": {
-        "description": "How far the playhead trails the live broadcast, shown after a long pause",
+        "description": "Shown when live playback is 2 minutes or more behind the broadcast",
         "placeholders": {
-            "seconds": {
+            "minutes": {
                 "type": "int"
             }
         }
@@ -188,7 +184,7 @@
     "@retry": {
         "description": "Button that retries a failed connection immediately"
     },
-    "mukhwak_load_failed": "Could not load today's Mukhwak",
+    "mukhwak_load_failed": "Could not load today's Hukamnama",
     "@mukhwak_load_failed": {
         "description": "Replaces a raw exception when the Mukhwak PDF fails to load"
     },
@@ -196,7 +192,7 @@
     "@yesterdays_recording": {
         "description": "Chip in the player saying the loaded Mukhwak or Katha is the previous day's, because today's has not been published yet"
     },
-    "mukhwak_from_yesterday": "Yesterday's Mukhwak. Today's has not been published yet.",
+    "mukhwak_from_yesterday": "Yesterday's Hukamnama. Today's has not been published yet.",
     "@mukhwak_from_yesterday": {
         "description": "Banner above the PDF viewer when the cached document is the previous day's"
     },
@@ -228,5 +224,169 @@
     "update_later": "Not now",
     "@update_later": {
         "description": "Secondary button that dismisses the update sheet for this release"
+    },
+    "now_playing": "Playing now",
+    "@now_playing": {
+        "description": "Second line on the row that is currently sounding"
+    },
+    "live_from_darbar": "Live from Sri Darbar Sahib",
+    "@live_from_darbar": {
+        "description": "Second line on the live kirtan row when it is not playing"
+    },
+    "todays_recording": "Today's recording",
+    "@todays_recording": {
+        "description": "Second line when the current day's audio is what will play"
+    },
+    "read_the_words": "Read the words",
+    "@read_the_words": {
+        "description": "Second line on the row that opens the Mukhwak PDF"
+    },
+    "about_this_app": "About this app",
+    "@about_this_app": {
+        "description": "Row that opens the information screens"
+    },
+    "today": "Today",
+    "@today": {
+        "description": "Section label above the daily Hukamnama and Katha"
+    },
+    "live_location": "Sri Harmandir Sahib, Amritsar",
+    "@live_location": {
+        "description": "Where the live kirtan comes from, under its title"
+    },
+    "katha_subtitle": "The meaning of today's Hukamnama",
+    "@katha_subtitle": {
+        "description": "Second line under the Katha tile"
+    },
+    "read_hukamnama": "Read today's Hukamnama",
+    "@read_hukamnama": {
+        "description": "Card that opens the Hukamnama text"
+    },
+    "read_hukamnama_detail": "As published by SGPC",
+    "@read_hukamnama_detail": {
+        "description": "Second line of the read card"
+    },
+    "read": "Read",
+    "@read": {
+        "description": "Short button in the player that opens the Hukamnama text"
+    },
+    "skip_back": "Back 15 seconds",
+    "@skip_back": {
+        "description": "Screen reader label for the skip back button"
+    },
+    "skip_forward": "Forward 15 seconds",
+    "@skip_forward": {
+        "description": "Screen reader label for the skip forward button"
+    },
+    "privacy_policy": "Privacy policy",
+    "@privacy_policy": {
+        "description": "Link on the About screen"
+    },
+    "play": "Play",
+    "@play": {
+        "description": "Screen reader label for the play button"
+    },
+    "pause": "Pause",
+    "@pause": {
+        "description": "Screen reader label for the pause button"
+    },
+    "katha": "Katha",
+    "@katha": {
+        "description": "Short name for the Hukamnama Katha, in the player source switcher"
+    },
+    "quality": "Sound quality",
+    "@quality": {
+        "description": "Button and sheet title for the stream quality setting"
+    },
+    "quality_automatic": "Automatic",
+    "@quality_automatic": {
+        "description": "Quality option: adapts to the connection"
+    },
+    "quality_high": "High",
+    "@quality_high": {
+        "description": "Quality option: always the 96 kbps stream"
+    },
+    "quality_data_saver": "Data saver",
+    "@quality_data_saver": {
+        "description": "Quality option: always the 28 kbps stream"
+    },
+    "quality_automatic_detail": "High quality, and less data when the connection is weak",
+    "@quality_automatic_detail": {
+        "description": "Explains the automatic quality option"
+    },
+    "quality_high_detail": "96 kbps, about 43 MB an hour",
+    "@quality_high_detail": {
+        "description": "Explains the high quality option"
+    },
+    "quality_data_saver_detail": "28 kbps, about 13 MB an hour",
+    "@quality_data_saver_detail": {
+        "description": "Explains the data saver option"
+    },
+    "quality_note": "Applies to live kirtan. Hukamnama and Katha recordings are always the same size.",
+    "@quality_note": {
+        "description": "Note under the quality options"
+    },
+    "listen": "Listen",
+    "@listen": {
+        "description": "Button in the Hukamnama reader that plays the recording"
+    },
+    "sgpc_pdf": "SGPC PDF",
+    "@sgpc_pdf": {
+        "description": "Button in the Hukamnama reader that opens SGPC's PDF"
+    },
+    "hukamnama_ang": "Ang {ang}",
+    "@hukamnama_ang": {
+        "description": "The page of Sri Guru Granth Sahib Ji the Hukamnama is from",
+        "placeholders": {
+            "ang": {
+                "type": "int"
+            }
+        }
+    },
+    "text_source": "Text and meaning from {source}",
+    "@text_source": {
+        "description": "Credit under the Hukamnama text",
+        "placeholders": {
+            "source": {
+                "type": "String"
+            }
+        }
+    },
+    "smaller_text": "Smaller text",
+    "@smaller_text": {
+        "description": "Screen reader label for the text size down button"
+    },
+    "larger_text": "Larger text",
+    "@larger_text": {
+        "description": "Screen reader label for the text size up button"
+    },
+    "hukamnama_unavailable": "Today's Hukamnama text could not be loaded",
+    "@hukamnama_unavailable": {
+        "description": "Shown when the Hukamnama text fails and nothing is stored"
+    },
+    "hukamnama_of": "Hukamnama of {date}",
+    "@hukamnama_of": {
+        "description": "Home card label while today's Hukamnama is not out; date like 1 November",
+        "placeholders": {
+            "date": {
+                "type": "String"
+            }
+        }
+    },
+    "hukamnama_not_out": "Today's Hukamnama is not out yet. This is the one from {date}.",
+    "@hukamnama_not_out": {
+        "description": "Note in the reader while showing an older Hukamnama",
+        "placeholders": {
+            "date": {
+                "type": "String"
+            }
+        }
+    },
+    "meaning": "Meaning",
+    "@meaning": {
+        "description": "Heading above the explanation of the Hukamnama"
+    },
+    "open_on_sgpc": "Read it on SGPC's website",
+    "@open_on_sgpc": {
+        "description": "Web only: link to the Hukamnama on SGPC's site"
     }
 }

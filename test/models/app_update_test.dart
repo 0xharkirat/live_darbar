@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:live_darbar/src/core/store_links.dart';
 import 'package:live_darbar/src/models/app_update.dart';
 
 /// A manifest shaped like the real one at darbar.live/version.json.

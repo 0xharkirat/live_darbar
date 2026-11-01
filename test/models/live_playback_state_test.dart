@@ -18,9 +18,15 @@ void main() {
       expect(state.isBehindLive, isFalse);
     });
 
-    test('a long pause counts as behind', () {
-      const state = LivePlaybackState(behindLive: Duration(seconds: 40));
+    test('a minute behind is not worth a note', () {
+      const state = LivePlaybackState(behindLive: Duration(seconds: 90));
+      expect(state.isBehindLive, isFalse);
+    });
+
+    test('a long pause counts as behind, in whole minutes', () {
+      const state = LivePlaybackState(behindLive: Duration(minutes: 5));
       expect(state.isBehindLive, isTrue);
+      expect(state.minutesBehind, 5);
     });
 
     test('a recording is never behind, however large the gap', () {

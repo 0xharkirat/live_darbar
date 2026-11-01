@@ -1,68 +1,53 @@
 import 'package:flutter/material.dart';
 
-/// The one palette. Dark only, by decision, not by default.
+/// The one palette. Dark only, by decision.
 ///
-/// There used to be seven selectable accent colours behind a picker. They came
-/// out because a colour picker is a setting nobody asked for that doubles the
-/// surface every future change has to be checked against, and because none of
-/// the seven were designed against this app's warm base.
+/// The app is listened to at Amritvela, at night, and in the car, so the
+/// canvas is a warm near-black and the only strong colour is gold. Gold is the
+/// colour of the Darbar Sahib itself, which is the subject of every painting in
+/// the app; the orange this replaced was a stock UI orange with no reason to
+/// be here.
 ///
-/// Every value below was measured rather than chosen by eye. Ratios are WCAG,
-/// against the surface each colour actually sits on, and are quoted per token
-/// so a future change can be checked rather than guessed at. The audience
-/// skews older, so body text is held to AA (4.5:1) and most pairs clear it
-/// with room to spare.
-///
-/// Neutrals carry a deliberate warm bias. Pure greys would fight the amber and
-/// read as cold under it; these agree with it. None of them is `#808080`,
-/// which always reads as placeholder.
+/// Every ratio below is WCAG contrast against the surface the colour sits on,
+/// measured, not guessed. The audience skews older, so body text clears AA
+/// (4.5:1) everywhere, most of it by a wide margin.
 abstract final class Palette {
-  /// The canvas. Harkirat's chosen base, already warm at R12 G10 B9.
+  /// The canvas. 17.6:1 under [foreground].
   static const background = Color(0xFF0C0A09);
 
-  /// Cards and rows, one step above the canvas.
+  /// Grouped content one step above the canvas.
   ///
-  /// Dark mode is not inverted light mode: surfaces get *lighter* as they come
-  /// forward, they do not gain shadow.
-  static const surface = Color(0xFF1C1917);
+  /// Dark surfaces get lighter as they come forward. They do not gain shadow.
+  static const surface = Color(0xFF171310);
 
-  /// Pressed and selected states.
-  static const surfaceHigh = Color(0xFF292524);
+  /// Pressed, selected, and the floating player.
+  static const surfaceHigh = Color(0xFF231D18);
 
-  /// Solid, deliberately, not `white.withValues(alpha: ...)`.
-  ///
-  /// Alpha borders glow on a dark background; a solid tone of the same warmth
-  /// sits quietly and reads as an edge rather than a light source.
-  static const border = Color(0xFF3F3A36);
+  /// Hairlines. Solid rather than alpha, because an alpha white edge glows on
+  /// a dark canvas and reads as a light source instead of an edge.
+  static const border = Color(0xFF3A322B);
 
-  /// Primary text. 18.78:1 on [background], 16.62:1 on [surface].
-  static const foreground = Color(0xFFFAF9F7);
+  /// Primary text. 17.6:1 on [background], 16.4:1 on [surface].
+  static const foreground = Color(0xFFF5F1EB);
 
-  /// Secondary text. 7.83:1 on [background], 6.93:1 on [surface].
-  ///
-  /// Comfortably past AA rather than scraping it, because "secondary" should
-  /// mean quieter, not harder to read, and this audience is not young.
-  static const muted = Color(0xFFA8A29E);
+  /// Secondary text. 8.0:1 on [background], 7.5:1 on [surface].
+  static const muted = Color(0xFFADA398);
 
-  /// The accent. 7.05:1 on [background], 6.24:1 on [surface].
-  ///
-  /// Amber rather than a saturated brand colour: it belongs to the same family
-  /// as the Golden Temple artwork the app is built around, and at this
-  /// lightness it clears AA for body text, not merely for large text.
-  static const primary = Color(0xFFF97316);
+  /// Tertiary marks only: dividers in text, disabled icons. 3.5:1, so never
+  /// for body text.
+  static const faint = Color(0xFF6E655C);
 
-  /// Text and icons on top of [primary]. 7.05:1 against it.
-  static const onPrimary = Color(0xFF0C0A09);
+  /// The accent. 10.1:1 on [background], 9.5:1 on [surface].
+  static const gold = Color(0xFFE8B04B);
 
-  /// Errors. 7.14:1 on [background].
-  ///
-  /// Desaturated from a full red, which vibrates against a dark background.
-  static const danger = Color(0xFFF87171);
+  /// Text and icons on [gold]. 10.1:1.
+  static const onGold = Color(0xFF0C0A09);
 
-  /// Disabled content.
-  ///
-  /// A dedicated token rather than `opacity: 0.4`, because opacity-based
-  /// disabling passes contrast on some surfaces and fails on others, while a
-  /// token behaves the same everywhere.
-  static const disabled = Color(0xFF57534E);
+  /// The live signal. Apple's dark-mode system red, because a red dot already
+  /// means "on air" to everyone. 5.8:1 on [background].
+  static const live = Color(0xFFFF453A);
+
+  /// Errors. 5.8:1 on [background]. The same red as [live] on purpose: there
+  /// is one red in this app, and it always means the stream.
+  static const danger = live;
 }

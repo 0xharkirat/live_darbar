@@ -1,11 +1,9 @@
 import 'package:flutter/foundation.dart';
+import 'package:live_darbar/src/core/store_links.dart';
 
-/// The store pages the update button opens. These are the same pages the
-/// download menu opens. The manifest never supplies a link: see
-/// [AppUpdate.fromManifest].
-const kPlayStoreUrl =
-    'https://play.google.com/store/apps/details?id=com.hsi.harki.live_darbar';
-const kAppStoreUrl = 'https://apps.apple.com/us/app/live-darbar/id6449766130';
+// The update button always opens the fixed store page for the platform,
+// from store_links.dart. The manifest never supplies a link: see
+// [AppUpdate.fromManifest].
 
 /// A newer release than the one running, and what to say about it.
 class AppUpdate {

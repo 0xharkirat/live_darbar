@@ -110,13 +110,13 @@ abstract class AppLocalizations {
   /// Mukhwak
   ///
   /// In en, this message translates to:
-  /// **'Mukhwak'**
+  /// **'Hukamnama'**
   String get mukhwak;
 
   /// Mukhwak Katha
   ///
   /// In en, this message translates to:
-  /// **'Mukhwak Katha'**
+  /// **'Hukamnama Katha'**
   String get mukhwak_katha;
 
   /// Loading...
@@ -158,13 +158,13 @@ abstract class AppLocalizations {
   /// One line saying what the app does
   ///
   /// In en, this message translates to:
-  /// **'Live kirtan from Sri Darbar Sahib in Amritsar, wherever you are.'**
+  /// **'Live kirtan from Sri Darbar Sahib, Amritsar, and the daily Hukamnama and Katha.'**
   String get about_section_p1;
 
   /// States that the app is non-commercial
   ///
   /// In en, this message translates to:
-  /// **'It is free and I make no money from it. That will not change.'**
+  /// **'The app is free and has no ads.'**
   String get about_section_p2;
 
   /// Button that opens the feedback form
@@ -190,12 +190,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'I have played tabla since year 5, back in Amritsar. These days it is the Newcastle Gurdwara on Saturdays and Sundays.'**
   String get about_me_p2;
-
-  /// The author's motto, carried over from harksingh.com. Memento Homo is Latin and stays untranslated
-  ///
-  /// In en, this message translates to:
-  /// **'Memento Homo. Remember, you are only a man.'**
-  String get about_me_motto;
 
   /// Link to the author's website. A domain name, so it is the same in every language
   ///
@@ -320,7 +314,7 @@ abstract class AppLocalizations {
   /// Title for the Daily Mukhwak PDF screen
   ///
   /// In en, this message translates to:
-  /// **'Daily Mukhwak (PDF)'**
+  /// **'Today\'s Hukamnama (PDF)'**
   String get mukhwak_pdf_title;
 
   /// Button that reconnects the stream to jump back to the live edge
@@ -329,11 +323,11 @@ abstract class AppLocalizations {
   /// **'Go live'**
   String get go_live;
 
-  /// How far the playhead trails the live broadcast, shown after a long pause
+  /// Shown when live playback is 2 minutes or more behind the broadcast
   ///
   /// In en, this message translates to:
-  /// **'{seconds}s behind'**
-  String behind_live(int seconds);
+  /// **'{minutes} min behind'**
+  String behind_live(int minutes);
 
   /// Shown while the app is retrying a dropped stream connection
   ///
@@ -374,7 +368,7 @@ abstract class AppLocalizations {
   /// Replaces a raw exception when the Mukhwak PDF fails to load
   ///
   /// In en, this message translates to:
-  /// **'Could not load today\'s Mukhwak'**
+  /// **'Could not load today\'s Hukamnama'**
   String get mukhwak_load_failed;
 
   /// Chip in the player saying the loaded Mukhwak or Katha is the previous day's, because today's has not been published yet
@@ -386,7 +380,7 @@ abstract class AppLocalizations {
   /// Banner above the PDF viewer when the cached document is the previous day's
   ///
   /// In en, this message translates to:
-  /// **'Yesterday\'s Mukhwak. Today\'s has not been published yet.'**
+  /// **'Yesterday\'s Hukamnama. Today\'s has not been published yet.'**
   String get mukhwak_from_yesterday;
 
   /// Replaces a raw exception in the player when progress cannot be read
@@ -424,6 +418,222 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Not now'**
   String get update_later;
+
+  /// Second line on the row that is currently sounding
+  ///
+  /// In en, this message translates to:
+  /// **'Playing now'**
+  String get now_playing;
+
+  /// Second line on the live kirtan row when it is not playing
+  ///
+  /// In en, this message translates to:
+  /// **'Live from Sri Darbar Sahib'**
+  String get live_from_darbar;
+
+  /// Second line when the current day's audio is what will play
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s recording'**
+  String get todays_recording;
+
+  /// Second line on the row that opens the Mukhwak PDF
+  ///
+  /// In en, this message translates to:
+  /// **'Read the words'**
+  String get read_the_words;
+
+  /// Row that opens the information screens
+  ///
+  /// In en, this message translates to:
+  /// **'About this app'**
+  String get about_this_app;
+
+  /// Section label above the daily Hukamnama and Katha
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get today;
+
+  /// Where the live kirtan comes from, under its title
+  ///
+  /// In en, this message translates to:
+  /// **'Sri Harmandir Sahib, Amritsar'**
+  String get live_location;
+
+  /// Second line under the Katha tile
+  ///
+  /// In en, this message translates to:
+  /// **'The meaning of today\'s Hukamnama'**
+  String get katha_subtitle;
+
+  /// Card that opens the Hukamnama text
+  ///
+  /// In en, this message translates to:
+  /// **'Read today\'s Hukamnama'**
+  String get read_hukamnama;
+
+  /// Second line of the read card
+  ///
+  /// In en, this message translates to:
+  /// **'As published by SGPC'**
+  String get read_hukamnama_detail;
+
+  /// Short button in the player that opens the Hukamnama text
+  ///
+  /// In en, this message translates to:
+  /// **'Read'**
+  String get read;
+
+  /// Screen reader label for the skip back button
+  ///
+  /// In en, this message translates to:
+  /// **'Back 15 seconds'**
+  String get skip_back;
+
+  /// Screen reader label for the skip forward button
+  ///
+  /// In en, this message translates to:
+  /// **'Forward 15 seconds'**
+  String get skip_forward;
+
+  /// Link on the About screen
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy policy'**
+  String get privacy_policy;
+
+  /// Screen reader label for the play button
+  ///
+  /// In en, this message translates to:
+  /// **'Play'**
+  String get play;
+
+  /// Screen reader label for the pause button
+  ///
+  /// In en, this message translates to:
+  /// **'Pause'**
+  String get pause;
+
+  /// Short name for the Hukamnama Katha, in the player source switcher
+  ///
+  /// In en, this message translates to:
+  /// **'Katha'**
+  String get katha;
+
+  /// Button and sheet title for the stream quality setting
+  ///
+  /// In en, this message translates to:
+  /// **'Sound quality'**
+  String get quality;
+
+  /// Quality option: adapts to the connection
+  ///
+  /// In en, this message translates to:
+  /// **'Automatic'**
+  String get quality_automatic;
+
+  /// Quality option: always the 96 kbps stream
+  ///
+  /// In en, this message translates to:
+  /// **'High'**
+  String get quality_high;
+
+  /// Quality option: always the 28 kbps stream
+  ///
+  /// In en, this message translates to:
+  /// **'Data saver'**
+  String get quality_data_saver;
+
+  /// Explains the automatic quality option
+  ///
+  /// In en, this message translates to:
+  /// **'High quality, and less data when the connection is weak'**
+  String get quality_automatic_detail;
+
+  /// Explains the high quality option
+  ///
+  /// In en, this message translates to:
+  /// **'96 kbps, about 43 MB an hour'**
+  String get quality_high_detail;
+
+  /// Explains the data saver option
+  ///
+  /// In en, this message translates to:
+  /// **'28 kbps, about 13 MB an hour'**
+  String get quality_data_saver_detail;
+
+  /// Note under the quality options
+  ///
+  /// In en, this message translates to:
+  /// **'Applies to live kirtan. Hukamnama and Katha recordings are always the same size.'**
+  String get quality_note;
+
+  /// Button in the Hukamnama reader that plays the recording
+  ///
+  /// In en, this message translates to:
+  /// **'Listen'**
+  String get listen;
+
+  /// Button in the Hukamnama reader that opens SGPC's PDF
+  ///
+  /// In en, this message translates to:
+  /// **'SGPC PDF'**
+  String get sgpc_pdf;
+
+  /// The page of Sri Guru Granth Sahib Ji the Hukamnama is from
+  ///
+  /// In en, this message translates to:
+  /// **'Ang {ang}'**
+  String hukamnama_ang(int ang);
+
+  /// Credit under the Hukamnama text
+  ///
+  /// In en, this message translates to:
+  /// **'Text and meaning from {source}'**
+  String text_source(String source);
+
+  /// Screen reader label for the text size down button
+  ///
+  /// In en, this message translates to:
+  /// **'Smaller text'**
+  String get smaller_text;
+
+  /// Screen reader label for the text size up button
+  ///
+  /// In en, this message translates to:
+  /// **'Larger text'**
+  String get larger_text;
+
+  /// Shown when the Hukamnama text fails and nothing is stored
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s Hukamnama text could not be loaded'**
+  String get hukamnama_unavailable;
+
+  /// Home card label while today's Hukamnama is not out; date like 1 November
+  ///
+  /// In en, this message translates to:
+  /// **'Hukamnama of {date}'**
+  String hukamnama_of(String date);
+
+  /// Note in the reader while showing an older Hukamnama
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s Hukamnama is not out yet. This is the one from {date}.'**
+  String hukamnama_not_out(String date);
+
+  /// Heading above the explanation of the Hukamnama
+  ///
+  /// In en, this message translates to:
+  /// **'Meaning'**
+  String get meaning;
+
+  /// Web only: link to the Hukamnama on SGPC's site
+  ///
+  /// In en, this message translates to:
+  /// **'Read it on SGPC\'s website'**
+  String get open_on_sgpc;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

@@ -50,7 +50,9 @@ app.*.map.json
 # Recovered agent research notes (local only)
 .research/
 
-# Agent worktrees and local Claude settings
+# Local agent tooling: worktrees created inside the repo, and any skills
+# installed here for project scope. Deliberately all of .claude/, because
+# none of it is this app's source and none of it should follow a clone.
 .claude/
 
 # Local agent and tool state

@@ -10,12 +10,12 @@ import 'package:just_audio_background/just_audio_background.dart';
 import 'package:live_darbar/src/controllers/audio_controller.dart';
 import 'package:live_darbar/src/controllers/locale_controller.dart';
 import 'package:live_darbar/src/core/app_theme.dart';
+import 'package:live_darbar/src/core/app_type.dart';
 import 'package:live_darbar/src/views/screens/home_screen.dart';
 import 'package:live_darbar/src/views/screens/mukhwak_pdf_viewer.dart';
 import 'package:live_darbar/src/views/widgets/offline_banner_widget.dart';
 import 'package:live_darbar/src/controllers/mukhwak_controller.dart';
 import 'package:quick_actions/quick_actions.dart';
-import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:live_darbar/l10n/app_localizations.dart';
 
 void main() async {
@@ -168,13 +168,13 @@ class _MyAppState extends ConsumerState<MyApp> {
   @override
   Widget build(BuildContext context) {
     final locale = ref.watch(localeController);
-    return ShadApp(
+    AppType.tracking = locale != 'pa';
+    return MaterialApp(
       navigatorKey: _navigatorKey,
       title: 'Live Darbar',
       debugShowCheckedModeBanner: false,
-      theme: AppTheme.shad,
-      darkTheme: AppTheme.shad,
-      materialThemeBuilder: (context, theme) => AppTheme.material,
+      theme: AppTheme.material,
+      darkTheme: AppTheme.material,
       themeMode: ThemeMode.dark,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,

@@ -1,0 +1,547 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
+import 'package:live_darbar/l10n/app_localizations.dart';
+import 'package:live_darbar/src/controllers/audio_controller.dart';
+import 'package:live_darbar/src/controllers/hukamnama_controller.dart';
+import 'package:live_darbar/src/controllers/locale_controller.dart';
+import 'package:live_darbar/src/controllers/now_playing_controller.dart';
+import 'package:live_darbar/src/controllers/reader_scale_controller.dart';
+import 'package:live_darbar/src/core/app_type.dart';
+import 'package:live_darbar/src/core/meaning_paragraphs.dart';
+import 'package:live_darbar/src/core/motion.dart';
+import 'package:live_darbar/src/core/open_link.dart';
+import 'package:live_darbar/src/core/palette.dart';
+import 'package:live_darbar/src/models/hukamnama.dart';
+import 'package:live_darbar/src/models/sgpc_day.dart';
+import 'package:live_darbar/src/views/screens/mukhwak_pdf_viewer.dart';
+import 'package:live_darbar/src/views/widgets/pressable.dart';
+
+/// Today's Hukamnama as words, line by line, with the meaning under each line.
+///
+/// The words come first and largest, in the serif Gurmukhi they are printed
+/// in. Under each line sits its meaning in the app's language, and in English
+/// the transliteration too, for the many who listen to Gurbani every day but
+/// do not read Gurmukhi. Text size has its own control here, because this is
+/// the one screen that is read slowly and closely.
+class HukamnamaScreen extends ConsumerWidget {
+  const HukamnamaScreen({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+    final state = ref.watch(hukamnamaProvider);
+
+    return Scaffold(
+      backgroundColor: Palette.background,
+      body: CustomScrollView(
+        slivers: [
+          CupertinoSliverNavigationBar(
+            largeTitle: Text(l10n.mukhwak, style: AppType.largeTitle),
+            middle: Text(l10n.mukhwak, style: AppType.headline),
+            alwaysShowMiddle: false,
+            previousPageTitle: l10n.app_title,
+            backgroundColor: Palette.background.withValues(alpha: 0.92),
+            border: null,
+            trailing: const _TextSizeControl(),
+          ),
+          // Stored text shows even while a refresh runs or after it fails;
+          // the failure screen is only for having nothing at all.
+          if (state.hasValue)
+            ..._content(context, ref, state.requireValue)
+          else if (state.hasError)
+            _Failure(l10n: l10n)
+          else
+            const SliverFillRemaining(
+              hasScrollBody: false,
+              child: Center(child: CupertinoActivityIndicator()),
+            ),
+        ],
+      ),
+    );
+  }
+
+  List<Widget> _content(BuildContext context, WidgetRef ref, Hukamnama h) {
+    final l10n = AppLocalizations.of(context)!;
+    final punjabi = ref.watch(localeController) == 'pa';
+    final scale = ref.watch(readerScaleProvider);
+    final stale = !h.isFor(sgpcDayNow());
+
+    // SGPC's own footer already carries the Nanakshahi date in both
+    // languages; the ang sits beside it.
+    final footer = punjabi ? h.footerGurmukhi : h.footerEnglish;
+    final meta = [
+      if (h.ang != null) l10n.hukamnama_ang(h.ang!),
+      if (footer != null) footer.trim(),
+    ].join('  ·  ');
+
+    return [
+      SliverPadding(
+        padding: const EdgeInsets.fromLTRB(20, 4, 20, 0),
+        sliver: SliverToBoxAdapter(
+          child: _Column(
+            children: [
+              if (meta.isNotEmpty) Text(meta, style: AppType.callout),
+              if (stale) ...[
+                const SizedBox(height: 12),
+                _Note(
+                  text: l10n.hukamnama_not_out(
+                    DateFormat('d MMMM', punjabi ? 'pa' : 'en').format(h.date),
+                  ),
+                ),
+              ],
+              const SizedBox(height: 16),
+              const _Actions(),
+              const SizedBox(height: 8),
+            ],
+          ),
+        ),
+      ),
+      if (h.headingGurmukhi != null)
+        SliverPadding(
+          padding: const EdgeInsets.fromLTRB(20, 16, 20, 4),
+          sliver: SliverToBoxAdapter(
+            child: _Column(
+              child: SelectableText(
+                h.headingGurmukhi!,
+                style: AppType.gurbani.copyWith(
+                  fontSize: 18 * scale,
+                  color: Palette.gold,
+                ),
+              ),
+            ),
+          ),
+        ),
+      SliverPadding(
+        padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
+        sliver: SliverList.separated(
+          itemCount: h.lines.length,
+          separatorBuilder: (_, __) => const SizedBox(height: 14),
+          itemBuilder: (context, i) => _Column(
+            child: _Line(line: h.lines[i], punjabi: punjabi, scale: scale),
+          ),
+        ),
+      ),
+      if (h.punjabiMeaning != null || h.englishMeaning != null)
+        SliverPadding(
+          padding: const EdgeInsets.fromLTRB(20, 36, 20, 0),
+          sliver: SliverToBoxAdapter(
+            child: _Column(
+              child: _Meaning(hukamnama: h, scale: scale),
+            ),
+          ),
+        ),
+      SliverSafeArea(
+        top: false,
+        sliver: SliverPadding(
+          padding: const EdgeInsets.fromLTRB(20, 40, 20, 32),
+          sliver: SliverToBoxAdapter(
+            child: _Column(
+              child: Center(
+                child: CupertinoButton(
+                  onPressed: () => openLink(kHukamnamaSourceUrl),
+                  child: Text(
+                    l10n.text_source(kHukamnamaSourceName),
+                    style: AppType.footnote.copyWith(color: Palette.faint),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    ];
+  }
+}
+
+/// Keeps reading width comfortable on a tablet or a Mac window.
+class _Column extends StatelessWidget {
+  const _Column({this.child, this.children});
+
+  final Widget? child;
+  final List<Widget>? children;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 620),
+        // Full width, so a short line sits at the left edge with the rest
+        // instead of floating in the middle.
+        child: child != null
+            ? SizedBox(width: double.infinity, child: child)
+            : Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: children!,
+              ),
+      ),
+    );
+  }
+}
+
+class _Line extends StatelessWidget {
+  const _Line({required this.line, required this.punjabi, required this.scale});
+
+  final HukamnamaLine line;
+  final bool punjabi;
+  final double scale;
+
+  @override
+  Widget build(BuildContext context) {
+    final meaning = punjabi
+        ? (line.punjabi ?? line.english)
+        : (line.english ?? line.punjabi);
+    final roman = punjabi ? null : line.transliteration;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SelectableText(
+          line.gurmukhi,
+          style: AppType.gurbani.copyWith(fontSize: 22 * scale),
+        ),
+        if (roman != null) ...[
+          const SizedBox(height: 4),
+          Text(
+            roman,
+            style: AppType.callout.copyWith(
+              fontSize: 15 * scale,
+              fontStyle: FontStyle.italic,
+              color: Palette.gold.withValues(alpha: 0.85),
+            ),
+          ),
+        ],
+        if (meaning != null) ...[
+          const SizedBox(height: 6),
+          SelectableText(
+            meaning,
+            style: AppType.body.copyWith(
+              fontSize: 16 * scale,
+              color: Palette.muted,
+            ),
+          ),
+        ],
+      ],
+    );
+  }
+}
+
+/// SGPC's explanation of the whole Hukamnama, in Punjabi or English.
+///
+/// It starts in the app's language, and the toggle switches only this text,
+/// so someone reading the app in Punjabi can check the English without going
+/// back to change the whole app.
+class _Meaning extends ConsumerStatefulWidget {
+  const _Meaning({required this.hukamnama, required this.scale});
+
+  final Hukamnama hukamnama;
+  final double scale;
+
+  @override
+  ConsumerState<_Meaning> createState() => _MeaningState();
+}
+
+class _MeaningState extends ConsumerState<_Meaning> {
+  bool? _punjabi;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final h = widget.hukamnama;
+    final hasPa = h.punjabiMeaning != null;
+    final hasEn = h.englishMeaning != null;
+    final appPunjabi = ref.watch(localeController) == 'pa';
+    final punjabi = (_punjabi ?? appPunjabi) ? hasPa : !hasEn;
+    final text = punjabi ? h.punjabiMeaning! : h.englishMeaning!;
+
+    Widget option(String label, bool forPunjabi, bool available) {
+      final active = punjabi == forPunjabi;
+      return Semantics(
+        button: true,
+        selected: active,
+        child: GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: available && !active
+              ? () => setState(() => _punjabi = forPunjabi)
+              : null,
+          child: AnimatedContainer(
+            duration: Motion.quick,
+            curve: Motion.easeOut,
+            height: 34,
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            alignment: Alignment.center,
+            decoration: ShapeDecoration(
+              color: active ? Palette.surfaceHigh : Colors.transparent,
+              shape: RoundedSuperellipseBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+            child: Text(
+              label,
+              style: AppType.footnote.copyWith(
+                color: active ? Palette.foreground : Palette.muted,
+                fontWeight: active ? FontWeight.w700 : FontWeight.w500,
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Expanded(child: Text(l10n.meaning, style: AppType.title2)),
+            if (hasPa && hasEn)
+              Container(
+                padding: const EdgeInsets.all(3),
+                decoration: ShapeDecoration(
+                  shape: RoundedSuperellipseBorder(
+                    borderRadius: BorderRadius.circular(13),
+                    side: const BorderSide(color: Palette.border),
+                  ),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    option('ਪੰਜਾਬੀ', true, hasPa),
+                    option('English', false, hasEn),
+                  ],
+                ),
+              ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        AnimatedSwitcher(
+          duration: Motion.quick,
+          child: Column(
+            key: ValueKey(punjabi),
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              for (final (i, paragraph) in meaningParagraphs(text).indexed) ...[
+                if (i > 0) const SizedBox(height: 14),
+                SelectableText(
+                  paragraph,
+                  style: AppType.body.copyWith(
+                    fontSize: 17 * widget.scale,
+                    height: 1.6,
+                  ),
+                ),
+              ],
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _Actions extends ConsumerWidget {
+  const _Actions();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+    final now = ref.watch(nowPlayingProvider);
+    final playing = now.index == kMukhwakIndex && now.isPlaying;
+
+    Widget pill({
+      required IconData icon,
+      required String label,
+      required VoidCallback onTap,
+      bool primary = false,
+    }) =>
+        Pressable(
+          semanticLabel: label,
+          onTap: onTap,
+          child: Container(
+            height: 44,
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            decoration: ShapeDecoration(
+              color: primary ? Palette.gold : Palette.surfaceHigh,
+              shape: RoundedSuperellipseBorder(
+                borderRadius: BorderRadius.circular(14),
+                side: primary
+                    ? BorderSide.none
+                    : const BorderSide(color: Palette.border),
+              ),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  icon,
+                  size: 17,
+                  color: primary ? Palette.onGold : Palette.gold,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  label,
+                  style: AppType.headline.copyWith(
+                    fontSize: 15,
+                    color: primary ? Palette.onGold : Palette.foreground,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+
+    return Wrap(
+      spacing: 10,
+      runSpacing: 10,
+      children: [
+        pill(
+          icon: playing ? CupertinoIcons.pause_fill : CupertinoIcons.play_fill,
+          label: playing ? l10n.pause : l10n.listen,
+          primary: true,
+          onTap: () => togglePlayback(ref, kMukhwakIndex),
+        ),
+        pill(
+          icon: CupertinoIcons.doc_text,
+          label: l10n.sgpc_pdf,
+          onTap: () => Navigator.of(context).push(
+            CupertinoPageRoute<void>(builder: (_) => const MukhwakPdfViewer()),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _TextSizeControl extends ConsumerWidget {
+  const _TextSizeControl();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+    ref.watch(readerScaleProvider);
+    final scale = ref.read(readerScaleProvider.notifier);
+
+    Widget button(String label, String semantic, bool enabled, VoidCallback f) {
+      return Semantics(
+        button: true,
+        label: semantic,
+        excludeSemantics: true,
+        child: CupertinoButton(
+          padding: EdgeInsets.zero,
+          minimumSize: const Size(44, 44),
+          onPressed: enabled ? f : null,
+          child: AnimatedOpacity(
+            duration: Motion.quick,
+            opacity: enabled ? 1 : 0.35,
+            child: Text(
+              label,
+              style: AppType.headline.copyWith(color: Palette.gold),
+            ),
+          ),
+        ),
+      );
+    }
+
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        button('A−', l10n.smaller_text, scale.canShrink, scale.shrink),
+        button('A+', l10n.larger_text, scale.canGrow, scale.grow),
+      ],
+    );
+  }
+}
+
+class _Note extends StatelessWidget {
+  const _Note({required this.text});
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
+      decoration: ShapeDecoration(
+        color: Palette.surfaceHigh,
+        shape: RoundedSuperellipseBorder(
+          borderRadius: BorderRadius.circular(14),
+        ),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Padding(
+            padding: EdgeInsets.only(top: 2),
+            child:
+                Icon(CupertinoIcons.calendar, size: 16, color: Palette.muted),
+          ),
+          const SizedBox(width: 10),
+          Expanded(child: Text(text, style: AppType.footnote)),
+        ],
+      ),
+    );
+  }
+}
+
+class _Failure extends ConsumerWidget {
+  const _Failure({required this.l10n});
+
+  final AppLocalizations l10n;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    const web = kIsWeb;
+    return SliverFillRemaining(
+      hasScrollBody: false,
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(CupertinoIcons.book, size: 32, color: Palette.faint),
+            const SizedBox(height: 12),
+            Text(
+              l10n.hukamnama_unavailable,
+              textAlign: TextAlign.center,
+              style: AppType.callout,
+            ),
+            // The browser cannot call SGPC's feed, so the web app sends the
+            // reader to SGPC's own site instead of offering a retry.
+            if (web) ...[
+              const SizedBox(height: 8),
+              CupertinoButton(
+                onPressed: () => openLink(kHukamnamaSourceUrl),
+                child: Text(
+                  l10n.open_on_sgpc,
+                  style: AppType.callout.copyWith(color: Palette.gold),
+                ),
+              ),
+            ],
+            if (!web) ...[
+              const SizedBox(height: 8),
+              CupertinoButton(
+                onPressed: () => ref.read(hukamnamaProvider.notifier).refresh(),
+                child: Text(
+                  l10n.retry,
+                  style: AppType.callout.copyWith(color: Palette.gold),
+                ),
+              ),
+              CupertinoButton(
+                onPressed: () => Navigator.of(context).push(
+                  CupertinoPageRoute<void>(
+                    builder: (_) => const MukhwakPdfViewer(),
+                  ),
+                ),
+                child: Text(
+                  l10n.sgpc_pdf,
+                  style: AppType.callout.copyWith(color: Palette.gold),
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+}
