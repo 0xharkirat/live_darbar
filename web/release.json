@@ -1,16 +1,16 @@
 {
   "_comment": "Served from https://darbar.live/release.json. NOT version.json: the Flutter web build generates its own version.json for PWA versioning and would overwrite this one on every deploy, with a shape this app rejects, so updates would silently never appear. Firebase Hosting serves real files before applying the catch-all rewrite in firebase.json, so this reaches the app rather than index.html. UPDATE THIS IN THE SAME COMMIT THAT BUMPS pubspec.yaml, and deploy the web build, or the app will keep telling people they are up to date. Build numbers are compared, not version strings.",
   "android": {
-    "version": "2.1.0",
-    "build": 7
+    "version": "2.2.0",
+    "build": 8
   },
   "ios": {
-    "version": "2.1.0",
-    "build": 7
+    "version": "2.2.0",
+    "build": 8
   },
   "macos": {
-    "version": "2.1.0",
-    "build": 7
+    "version": "2.2.0",
+    "build": 8
   },
   "stores": {
     "android": "https://play.google.com/store/apps/details?id=com.hsi.harki.live_darbar",
@@ -19,18 +19,18 @@
   },
   "notes": {
     "en": [
-      "Live kirtan starts straight away",
-      "Reconnects on its own if your connection drops",
-      "Tells you when you have fallen behind live, and catches you up",
-      "Playback controls now work from the notification",
-      "A clear notice when your phone has no internet"
+      "A new design, made for easy listening",
+      "Read today's Hukamnama, with its meaning in Punjabi and English",
+      "Today's Nanakshahi date on the first screen",
+      "Data saver for slow or costly internet",
+      "Kirtan keeps playing through calls, headphones and network drops"
     ],
     "pa": [
-      "ਲਾਈਵ ਕੀਰਤਨ ਤੁਰੰਤ ਸ਼ੁਰੂ ਹੁੰਦਾ ਹੈ",
-      "ਕੁਨੈਕਸ਼ਨ ਟੁੱਟਣ 'ਤੇ ਆਪਣੇ ਆਪ ਮੁੜ ਜੁੜ ਜਾਂਦਾ ਹੈ",
-      "ਦੱਸਦਾ ਹੈ ਕਿ ਤੁਸੀਂ ਲਾਈਵ ਤੋਂ ਕਿੰਨਾ ਪਿੱਛੇ ਹੋ",
-      "ਪਲੇ ਅਤੇ ਪੌਜ਼ ਹੁਣ ਨੋਟੀਫਿਕੇਸ਼ਨ ਤੋਂ ਚੱਲਦੇ ਹਨ",
-      "ਇੰਟਰਨੈੱਟ ਨਾ ਹੋਣ 'ਤੇ ਸਾਫ਼ ਸੁਨੇਹਾ"
+      "ਨਵਾਂ ਡਿਜ਼ਾਈਨ, ਸੌਖਾ ਸੁਣਨ ਲਈ",
+      "ਅੱਜ ਦਾ ਹੁਕਮਨਾਮਾ ਪੜ੍ਹੋ, ਪੰਜਾਬੀ ਅਤੇ ਅੰਗਰੇਜ਼ੀ ਅਰਥਾਂ ਨਾਲ",
+      "ਪਹਿਲੀ ਸਕਰੀਨ ਉੱਤੇ ਅੱਜ ਦੀ ਨਾਨਕਸ਼ਾਹੀ ਤਾਰੀਖ਼",
+      "ਹੌਲੀ ਜਾਂ ਮਹਿੰਗੇ ਇੰਟਰਨੈੱਟ ਲਈ ਡਾਟਾ ਬਚਤ",
+      "ਕਾਲ, ਹੈੱਡਫ਼ੋਨ ਜਾਂ ਨੈੱਟਵਰਕ ਟੁੱਟਣ ਵੇਲੇ ਵੀ ਕੀਰਤਨ ਚੱਲਦਾ ਰਹਿੰਦਾ ਹੈ"
     ]
   }
 }
