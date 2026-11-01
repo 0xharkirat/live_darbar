@@ -1,5 +1,12 @@
 import 'package:flutter/foundation.dart';
 
+/// The store pages the update button opens. These are the same pages the
+/// download menu opens. The manifest never supplies a link: see
+/// [AppUpdate.fromManifest].
+const kPlayStoreUrl =
+    'https://play.google.com/store/apps/details?id=com.hsi.harki.live_darbar';
+const kAppStoreUrl = 'https://apps.apple.com/us/app/live-darbar/id6449766130';
+
 /// A newer release than the one running, and what to say about it.
 class AppUpdate {
   const AppUpdate({
@@ -28,6 +35,16 @@ class AppUpdate {
   /// Reads the manifest, or returns null when this platform has no entry, the
   /// shape is wrong, or there is simply nothing newer.
   ///
+  /// The manifest supplies the version, the build and the notes, and nothing
+  /// else. Where the button goes is fixed in the app ([kPlayStoreUrl],
+  /// [kAppStoreUrl]), whatever the file's `stores` block says. A host check
+  /// is not enough: `play.google.com/store/apps/details?id=com.evil.clone`
+  /// passes one and still opens somebody else's app, and the manifest is
+  /// fetched over the network.
+  ///
+  /// `web/release.json` keeps its `stores` block anyway. Builds already
+  /// installed read it, and refuse the whole manifest without it.
+  ///
   /// Every failure here is silent by design. An update prompt is a courtesy,
   /// and a courtesy that shows an error when it cannot reach a JSON file is
   /// worse than one that stays quiet.
@@ -46,19 +63,18 @@ class AppUpdate {
     if (build is! int || version is! String) return null;
     if (build <= currentBuild) return null;
 
-    final stores = json['stores'];
-    final storeUrl = stores is Map ? stores[key] : null;
-    if (storeUrl is! String || storeUrl.isEmpty) return null;
-
     final notes = json['notes'];
     return AppUpdate(
       version: version,
       build: build,
-      storeUrl: storeUrl,
+      storeUrl: _storeUrlFor(key),
       notesEn: _notes(notes, 'en'),
       notesPa: _notes(notes, 'pa'),
     );
   }
+
+  static String _storeUrlFor(String platformKey) =>
+      platformKey == 'android' ? kPlayStoreUrl : kAppStoreUrl;
 
   static List<String> _notes(Object? notes, String code) {
     if (notes is! Map) return const [];

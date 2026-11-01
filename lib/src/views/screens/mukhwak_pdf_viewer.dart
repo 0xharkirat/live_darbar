@@ -69,7 +69,10 @@ class _Document extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final viewer = SfPdfViewer.file(File(document.filePath));
+    final viewer = SfPdfViewer.file(
+      File(document.filePath),
+      enableHyperlinkNavigation: false,
+    );
     if (!document.isStale) return viewer;
 
     // Named rather than merely shown, for the same reason the player says it.

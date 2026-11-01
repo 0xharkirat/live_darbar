@@ -52,3 +52,10 @@ app.*.map.json
 
 # Agent worktrees and local Claude settings
 .claude/
+
+# Local agent and tool state
+.codex/
+.gemini/
+.opencode/
+.windsurf/
+.playwright-mcp/

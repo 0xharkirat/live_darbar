@@ -38,7 +38,7 @@ void main() {
       expect(update, isNotNull);
       expect(update!.build, 9);
       expect(update.version, '2.1.0');
-      expect(update.storeUrl, contains('play.google.com'));
+      expect(update.storeUrl, kPlayStoreUrl);
     });
 
     test('says nothing when the installed build is current', () {
@@ -64,13 +64,6 @@ void main() {
   });
 
   group('AppUpdate.fromManifest rejects broken manifests', () {
-    test('missing store url', () {
-      expect(
-        AppUpdate.fromManifest(manifest(stores: const {}), currentBuild: 6),
-        isNull,
-      );
-    });
-
     test('build number sent as a string', () {
       final broken = manifest();
       broken['android'] = {'version': '2.1.0', 'build': '9'};
@@ -91,6 +84,90 @@ void main() {
       );
       expect(update, isNotNull);
       expect(update!.notesEn, isEmpty);
+    });
+  });
+
+  group('AppUpdate store url', () {
+    // The manifest is fetched over the network, so its links are never used.
+    // A host check would not be enough: a Play Store link for another app is
+    // still a play.google.com link.
+    String urlFor(Object? stores) => AppUpdate.fromManifest(
+          manifest(stores: stores),
+          currentBuild: 6,
+        )!
+            .storeUrl;
+
+    final hostile = {
+      'a different app on the Play Store':
+          'https://play.google.com/store/apps/details?id=com.evil.clone',
+      'a different app on the App Store':
+          'https://apps.apple.com/us/app/evil/id1',
+      'plain http': 'http://play.google.com/store/apps/details?id=x',
+      'android intent': 'intent://details?id=x#Intent;scheme=market;end',
+      'market scheme': 'market://details?id=x',
+      'javascript': 'javascript:alert(1)',
+      'file': 'file:///etc/passwd',
+      'other host': 'https://example.com/store/apps/details?id=x',
+      'look-alike host': 'https://play.google.com.example.com/x',
+      'credentials': 'https://play.google.com@example.com/x',
+      'not a url': 'http://[::1',
+      'blank': '   ',
+    };
+
+    for (final entry in hostile.entries) {
+      test('android ignores ${entry.key}', () {
+        final stores = {'android': entry.value, 'ios': entry.value};
+        expect(urlFor(stores), kPlayStoreUrl);
+      });
+    }
+
+    test('android uses the fixed Play Store page', () {
+      expect(urlFor(const <String, dynamic>{}), kPlayStoreUrl);
+    });
+
+    test('ios uses the fixed App Store page', () {
+      debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+      expect(urlFor(const {'ios': 'https://example.com/x'}), kAppStoreUrl);
+    });
+
+    test('macos uses the fixed App Store page', () {
+      debugDefaultTargetPlatformOverride = TargetPlatform.macOS;
+      expect(urlFor(const {'macos': 'https://example.com/x'}), kAppStoreUrl);
+    });
+
+    test('a manifest with no stores block still offers the update', () {
+      final json = manifest()..remove('stores');
+      final update = AppUpdate.fromManifest(json, currentBuild: 6);
+      expect(update, isNotNull);
+      expect(update!.storeUrl, kPlayStoreUrl);
+    });
+
+    test('a manifest with garbage for stores still offers the update', () {
+      expect(urlFor('not a map'), kPlayStoreUrl);
+      expect(urlFor(42), kPlayStoreUrl);
+      expect(urlFor(null), kPlayStoreUrl);
+    });
+
+    test('a well formed link in the manifest is still not followed', () {
+      // Even the real-looking, correct-host, correct-scheme case: the link
+      // comes from the network, so it is not trusted.
+      expect(
+        urlFor(const {
+          'android': 'https://play.google.com/store/apps/details?id=other'
+        }),
+        kPlayStoreUrl,
+      );
+    });
+
+    test('the fixed pages are https links on the store hosts', () {
+      final play = Uri.parse(kPlayStoreUrl);
+      expect(play.scheme, 'https');
+      expect(play.host, 'play.google.com');
+      expect(play.queryParameters['id'], 'com.hsi.harki.live_darbar');
+
+      final apple = Uri.parse(kAppStoreUrl);
+      expect(apple.scheme, 'https');
+      expect(apple.host, 'apps.apple.com');
     });
   });
 

@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
+import 'package:live_darbar/src/models/capped_download.dart';
 import 'package:live_darbar/src/models/daily_edition.dart';
 import 'package:live_darbar/src/models/mukhwak_document.dart';
 import 'package:live_darbar/src/models/sgpc_day.dart';
@@ -223,10 +224,21 @@ class MukhwakController extends AsyncNotifier<MukhwakDocument?> {
 
   Future<Uint8List?> _pdfBytes(String url, Duration timeout) async {
     try {
-      final response = await _client.get(Uri.parse(url)).timeout(timeout);
-      if (response.statusCode != 200) return null;
-      if (!MukhwakDocument.looksLikePdf(response.bodyBytes)) return null;
-      return response.bodyBytes;
+      // Streamed and capped, with redirects checked by hand, rather than
+      // `get`, which buffers whatever the server sends and follows a redirect
+      // anywhere, including to plain http. A refusal is thrown and lands in
+      // the catch below like any other failed fetch.
+      //
+      // The deadline goes to the download itself, not a `.timeout` around it:
+      // that would give up waiting while the socket kept reading.
+      final bytes = await downloadCapped(
+        _client,
+        Uri.parse(url),
+        deadline: timeout,
+      );
+      if (bytes == null) return null;
+      if (!MukhwakDocument.looksLikePdf(bytes)) return null;
+      return bytes;
     } catch (e) {
       if (!kReleaseMode) debugPrint('[mukhwak] fetch failed for $url: $e');
       return null;

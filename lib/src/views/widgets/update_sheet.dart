@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:live_darbar/l10n/app_localizations.dart';
@@ -113,10 +114,18 @@ class _UpdateSheet extends ConsumerWidget {
                 onPressed: () async {
                   Navigator.of(context).pop();
                   await ref.read(updateController.notifier).dismiss();
-                  await launchUrl(
-                    Uri.parse(update.storeUrl),
-                    mode: LaunchMode.externalApplication,
-                  );
+                  // The sheet is already closed and the prompt dismissed, so a
+                  // failed launch (no store app, no handler for the link) has
+                  // nowhere to show an error. Swallow it rather than leave an
+                  // unhandled exception behind a button that did its best.
+                  try {
+                    await launchUrl(
+                      Uri.parse(update.storeUrl),
+                      mode: LaunchMode.externalApplication,
+                    );
+                  } catch (e) {
+                    if (!kReleaseMode) debugPrint('[update] launch failed: $e');
+                  }
                 },
                 child: Text(l10n.update_now),
               ),
