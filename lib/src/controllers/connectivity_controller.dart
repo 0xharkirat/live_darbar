@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:live_darbar/src/models/network_snapshot.dart';
 
 /// Whether the device has a network interface at all.
 ///
@@ -40,3 +41,28 @@ final connectivityController =
     StreamNotifierProvider<ConnectivityController, bool>(
   ConnectivityController.new,
 );
+
+/// Which interface the phone is on, emitted whenever that changes.
+///
+/// [connectivityController] answers "online or not" and drops repeats, which
+/// is right for a banner and wrong for playback: Wi-Fi to mobile data is
+/// online both before and after, so it never emitted. This provider keeps the
+/// distinction, so the audio controller can tell a handoff from a repeat. See
+/// [classifyTransition].
+///
+/// A move between two online interfaces waits for the readings to settle,
+/// because a handoff arrives as a burst. Going offline and coming back pass
+/// straight through, so a short outage is never swallowed. See
+/// [settleHandoffs].
+final networkSnapshotProvider = StreamProvider<NetworkSnapshot>((ref) async* {
+  final connectivity = Connectivity();
+  final initial =
+      NetworkSnapshot.fromResults(await connectivity.checkConnectivity());
+
+  yield initial;
+
+  yield* settleHandoffs(
+    connectivity.onConnectivityChanged.map(NetworkSnapshot.fromResults),
+    initial: initial,
+  );
+});

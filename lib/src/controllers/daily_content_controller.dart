@@ -27,8 +27,8 @@ class DailyContentResolver {
   final http.Client _client;
   final DateTime Function() _now;
 
-  /// Long enough for a slow mobile connection, short enough that nobody sits
-  /// through it twice while the fallback is tried.
+  /// Long enough for a slow mobile connection. Both days are probed at once,
+  /// so this is also the longest anyone waits on the probes in total.
   ///
   /// Any request without one of these is the bug that started this work:
   /// `hukamnamapdf.php` completes its TLS handshake and then sends nothing,
@@ -75,19 +75,33 @@ class DailyContentResolver {
     // error, so take the undated URL directly and say nothing about the day.
     if (kIsWeb || kIsWasm) return DailyEdition.latest(asset);
 
-    for (final (day, freshness) in <(DateTime, DailyFreshness)>[
-      (today, DailyFreshness.today),
-      (previousSgpcDay(today), DailyFreshness.previousDay),
-    ]) {
-      final url = asset.urlFor(day);
-      if (await _exists(url)) {
-        return _remember(DailyEdition(
-          asset: asset,
-          url: url,
-          freshness: freshness,
-          day: day,
-        ));
-      }
+    // Both days are asked at once. Asked one after the other, a server that
+    // accepts the connection and then goes quiet cost the full probe timeout
+    // twice before anything played: 12 seconds of spinner on a weak link.
+    // Together the worst case is one timeout, and the common case, where
+    // today is up, is no slower than before because today's answer is taken
+    // the moment it arrives without waiting for yesterday's. The spare probe
+    // is one small HEAD, and `_exists` cannot throw, so letting it finish
+    // unobserved is safe.
+    final previous = previousSgpcDay(today);
+    final todayProbe = _exists(asset.urlFor(today));
+    final previousProbe = _exists(asset.urlFor(previous));
+
+    if (await todayProbe) {
+      return _remember(DailyEdition(
+        asset: asset,
+        url: asset.urlFor(today),
+        freshness: DailyFreshness.today,
+        day: today,
+      ));
+    }
+    if (await previousProbe) {
+      return _remember(DailyEdition(
+        asset: asset,
+        url: asset.urlFor(previous),
+        freshness: DailyFreshness.previousDay,
+        day: previous,
+      ));
     }
 
     return _remember(DailyEdition.latest(asset));

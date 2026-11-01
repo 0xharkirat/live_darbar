@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:developer';
+import 'package:audio_session/audio_session.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -24,6 +25,22 @@ void main() async {
     DeviceOrientation.portraitUp,
   ]);
   if (!kIsWeb && !kIsWasm) {
+    // Say what kind of audio this is, before any player exists.
+    //
+    // `just_audio` applies a music profile when nothing has been configured,
+    // so this changes no behaviour today. It makes the choice explicit rather
+    // than inherited: playback category on iOS, and media usage with music
+    // content on Android, which is what routes the sound to a Bluetooth
+    // headset or a car stereo and lets the system pause it for a call. Native
+    // apps only. The session plugin has nothing to configure on web.
+    try {
+      final session = await AudioSession.instance;
+      await session.configure(const AudioSessionConfiguration.music());
+    } catch (e) {
+      // Not worth stopping the app for. The player falls back to its default.
+      debugPrint('Audio session not configured: $e');
+    }
+
     // Enable background audio playback
     //
     // The channel id is copied from just_audio_background's own example and

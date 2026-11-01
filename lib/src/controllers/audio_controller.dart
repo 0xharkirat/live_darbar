@@ -9,7 +9,12 @@ import 'package:live_darbar/src/controllers/connectivity_controller.dart';
 import 'package:live_darbar/src/controllers/daily_content_controller.dart';
 import 'package:live_darbar/src/models/audio_progress_state.dart';
 import 'package:live_darbar/src/models/daily_edition.dart';
+import 'package:live_darbar/src/controllers/quality_mode_controller.dart';
+import 'package:live_darbar/src/core/artwork_store.dart';
 import 'package:live_darbar/src/models/live_playback_state.dart';
+import 'package:live_darbar/src/models/network_snapshot.dart';
+import 'package:live_darbar/src/models/quality_policy.dart';
+import 'package:live_darbar/src/models/resume_point.dart';
 import 'package:live_darbar/src/models/sgpc_day.dart';
 import 'package:live_darbar/src/models/stream_quality.dart';
 import 'package:rxdart/rxdart.dart';
@@ -19,15 +24,12 @@ const kLiveIndex = 0;
 const kMukhwakIndex = 1;
 const kKathaIndex = 2;
 
-/// Artwork for the lock screen and notification.
+/// What a car or Bluetooth display shows beside the title.
 ///
-/// Pinned to `main` rather than the old `audio-controller` feature branch,
-/// which could be deleted at any time and would take the artwork with it.
-/// Serving this from the bundled asset instead would remove the network
-/// dependency entirely, but that needs the image copied to a real file first,
-/// because `MediaItem.artUri` cannot address a Flutter asset.
-const _kArtUrl =
-    'https://raw.githubusercontent.com/0xharkirat/live_darbar/refs/heads/main/assets/images/splash_logo.png';
+/// Those screens read artist and album from the media session and show a blank
+/// where there is none, so the title was the only thing on them.
+const _kArtist = 'Sri Harmandir Sahib, Amritsar';
+const _kAlbum = 'Live Darbar';
 
 /// Owns the player and everything about keeping the live stream alive.
 ///
@@ -49,14 +51,39 @@ const _kArtUrl =
 /// download, so the playhead falls behind by however long you paused. That is
 /// worth reporting and offering to fix, not worth silently reconnecting over.
 class AudioController {
-  AudioController(this._player, this._daily) {
-    _quality = StreamQuality.initial;
+  /// [policy] decides which live tier to open and when to change it.
+  ///
+  /// [savedMode] is the listener's stored quality setting, which arrives a few
+  /// milliseconds after launch. The first connection waits for it, so someone
+  /// on Data Saver never opens the high tier first.
+  AudioController(
+    this._player,
+    this._daily, {
+    QualityPolicy? policy,
+    Future<QualityMode>? savedMode,
+    ArtworkStore? artwork,
+  })  : _policy = policy ?? QualityPolicy(),
+        _artwork = artwork ?? ArtworkStore() {
+    _quality = _policy.preferred;
     _live.add(LivePlaybackState(quality: _quality));
+    _settingsReady = savedMode == null
+        ? Future<void>.value()
+        : savedMode.then(_applySavedMode, onError: (Object _) {});
     _attachListeners();
     unawaited(_warmUp());
   }
 
   final AudioPlayer _player;
+
+  final QualityPolicy _policy;
+
+  /// Completes once the saved quality mode is in [_policy].
+  late final Future<void> _settingsReady;
+
+  final ArtworkStore _artwork;
+
+  /// Local artwork per source index, filled in by the first load.
+  Map<int, Uri> _artUris = const {};
 
   /// Settles which day's Mukhwak or Katha is actually available before the
   /// player is handed a URL. See [DailyContentResolver] for why that has to
@@ -85,7 +112,20 @@ class AudioController {
   /// window a resume has to reconnect whether the listener asked for it or not.
   static const _staleAfter = Duration(seconds: 45);
 
+  /// How long a load may take before it counts as a failure.
+  ///
+  /// `setAudioSource` has no deadline of its own. On a link that accepts the
+  /// connection and then sends nothing, which is what a weak signal or a
+  /// captive portal does, the future never completes and the listener watches
+  /// a spinner for as long as the platform keeps the socket open. Ten seconds
+  /// is several times a normal connect, and short enough that the backoff and
+  /// the tier fallback get their turn.
+  static const _connectTimeout = Duration(seconds: 10);
+
   late StreamQuality _quality;
+
+  /// Where Mukhwak or Katha was, so a reload does not start them over.
+  final _resume = ResumePoint();
 
   final _live = BehaviorSubject<LivePlaybackState>.seeded(
     const LivePlaybackState(),
@@ -97,6 +137,12 @@ class AudioController {
   /// What the listener last asked for, kept across reconnects so that a
   /// recovery resumes playback rather than leaving them staring at a play
   /// button they already pressed.
+  ///
+  /// It follows the player, not just this class. A pause from a headset
+  /// button, the notification, a headphone unplug or a phone call never passes
+  /// through [pause], so [_onPlayingChanged] copies the player's own playing
+  /// flag in here. Without that, a reconnect minutes later would start sound
+  /// the listener had stopped.
   bool _wantsPlayback = false;
 
   /// False between loading a source and the first play on it.
@@ -107,6 +153,14 @@ class AudioController {
   bool _playedSinceLoad = false;
 
   DateTime? _pausedAt;
+
+  /// The tier a retry of the preferred tier left, while that retry is still
+  /// connecting. Null otherwise. See [_onFailure].
+  StreamQuality? _retryingFrom;
+
+  /// The open live connection belongs to a network that is gone. Set by a
+  /// handoff while nobody is listening, read by [_shouldReopenLive].
+  bool _connectionStale = false;
 
   /// Times the only number that matters: tap to sound.
   ///
@@ -127,18 +181,29 @@ class AudioController {
 
   int _failures = 0;
   Timer? _reconnectTimer;
-  Timer? _driftTimer;
+  Timer? _tickTimer;
   StreamSubscription<PlayerException>? _errorSub;
   StreamSubscription<PlayerState>? _stateSub;
+  StreamSubscription<bool>? _playingSub;
+  PlayerState? _lastState;
   Stream<AudioProgressState>? _progressStream;
   bool _disposed = false;
 
   // ---------------------------------------------------------------- sources
 
-  MediaItem _tag(String id, String title) => MediaItem(
-        id: id,
+  /// The media session entry for source [index].
+  ///
+  /// The id stays the index as a string, because the views read it back from
+  /// the sequence state to know which source is current.
+  ///
+  /// Artwork is a `file:` URI to a local copy of the painting, or null when
+  /// there is none (web, or the copy failed). See [ArtworkStore].
+  MediaItem _tag(int index, String title) => MediaItem(
+        id: '$index',
         title: title,
-        artUri: Uri.parse(_kArtUrl),
+        artist: _kArtist,
+        album: _kAlbum,
+        artUri: _artUris[index],
       );
 
   /// The daily recording behind [index], or null for the live stream.
@@ -157,17 +222,17 @@ class AudioController {
       case kLiveIndex:
         return AudioSource.uri(
           Uri.parse(_quality.url),
-          tag: _tag('0', 'Live Kirtan'),
+          tag: _tag(kLiveIndex, 'Live Kirtan'),
         );
       case kMukhwakIndex:
         return AudioSource.uri(
           Uri.parse(edition?.url ?? DailyAsset.hukamnama.latestUrl),
-          tag: _tag('1', 'Mukhwak'),
+          tag: _tag(kMukhwakIndex, 'Mukhwak'),
         );
       case kKathaIndex:
         return AudioSource.uri(
           Uri.parse(edition?.url ?? DailyAsset.katha.latestUrl),
-          tag: _tag('2', 'Mukhwak Katha'),
+          tag: _tag(kKathaIndex, 'Mukhwak Katha'),
         );
       default:
         throw ArgumentError.value(index, 'index', 'no such audio source');
@@ -197,12 +262,22 @@ class AudioController {
     _wantsPlayback = true;
     _cancelReconnect();
 
-    final needsLoad = _loadedIndex != index || _isDead;
+    // Choosing a different source starts it from the beginning. Asking for the
+    // same one again, after a drop for example, picks up where it left off.
+    if (_requestedIndex != index) _resume.clear();
+
+    // The loaded source and the requested one can differ without a failure: a
+    // tap on Mukhwak replaces the playlist at once, but if that load then
+    // times out while the platform keeps connecting, `_loadedIndex` still says
+    // live. Trusting it alone would call the next tap on Live a no-op, and
+    // Mukhwak would start when its connection finally came up.
+    final switching = _requestedIndex != index || _loadedIndex != index;
+    final needsLoad = switching || _isDead;
     if (needsLoad) {
       // Switching away from a failed attempt is a fresh start, so go back to
       // the preferred tier rather than staying stuck on a fallback forever.
-      if (_loadedIndex != index) {
-        _quality = StreamQuality.initial;
+      if (switching) {
+        _quality = _policy.preferred;
         _failures = 0;
       }
       final ok = await _load(index);
@@ -212,17 +287,26 @@ class AudioController {
       if (!ok) return;
     }
 
+    // A load takes a second or more, and the listener can pause in that time
+    // with a headset button or a call. Starting sound now would undo it.
+    if (!_wantsPlayback) return;
+
     _pausedAt = null;
     _playedSinceLoad = true;
     unawaited(_player.play());
   }
 
-  /// Resume whatever is loaded, without changing source.
-  Future<void> resume() => play(_loadedIndex < 0 ? kLiveIndex : _loadedIndex);
+  /// Resume whatever the listener last had, without changing source.
+  Future<void> resume() => play(_retryIndex);
 
   Future<void> pause() async {
     _wantsPlayback = false;
     _pausedAt = DateTime.now();
+    // A reconnect still waiting on its backoff would fire after the pause. It
+    // would reload the stream and show connecting over a paused player, for
+    // nobody. An outside pause already cancels it, in _onPlayingChanged.
+    _cancelReconnect();
+    _rememberPosition();
     await _player.pause();
     _emit(status: LiveStatus.paused);
   }
@@ -230,6 +314,7 @@ class AudioController {
   Future<void> stop() async {
     _wantsPlayback = false;
     _cancelReconnect();
+    _resume.clear();
     await _player.stop();
     await _player.seek(Duration.zero);
     _emit(
@@ -251,7 +336,7 @@ class AudioController {
     if (_loadedIndex != kLiveIndex) return;
     _wantsPlayback = true;
     final ok = await _load(kLiveIndex, force: true);
-    if (ok) unawaited(_player.play());
+    if (ok && _wantsPlayback) unawaited(_player.play());
   }
 
   /// Act on the network coming back, without waiting out the backoff.
@@ -264,28 +349,93 @@ class AudioController {
   /// again so the next tap is still instant.
   Future<void> onNetworkRestored() async {
     if (_disposed) return;
+    // Whatever failed before says nothing about the network that is here now.
+    _policy.networkChanged();
+    _retryingFrom = null;
     if (_wantsPlayback) {
       _cancelReconnect();
       _failures = 0;
-      _quality = StreamQuality.initial;
-      final ok = await _load(
-        _loadedIndex < 0 ? kLiveIndex : _loadedIndex,
-        force: true,
-      );
-      if (ok) unawaited(_player.play());
+      _quality = _policy.preferred;
+      final ok = await _load(_retryIndex, force: true);
+      if (ok && _wantsPlayback) unawaited(_player.play());
     } else if (_loadedIndex < 0) {
       unawaited(_warmUp());
     }
   }
 
-  /// Switch tier because the listener asked, not because something broke.
-  Future<void> setQuality(StreamQuality quality) async {
-    if (quality == _quality) return;
-    _quality = quality;
+  /// Act on one network replacing another, Wi-Fi to mobile data or back.
+  ///
+  /// There is no gap for [onNetworkRestored] to notice. The stream socket is
+  /// bound to the interface that went away, so it is dead, but the player does
+  /// not find out until a read times out, which is many seconds of silence.
+  /// Reloading straight away skips most of that.
+  ///
+  /// Live only. A recording that loses its socket fails through the error
+  /// path and reopens at the saved position.
+  Future<void> onNetworkHandoff() async {
+    if (_disposed) return;
+    _policy.networkChanged();
+    _retryingFrom = null;
+    if (_retryIndex != kLiveIndex) return;
+    if (_wantsPlayback) {
+      _cancelReconnect();
+      _failures = 0;
+      _quality = _policy.preferred;
+      final ok = await _load(kLiveIndex, force: true);
+      if (ok && _wantsPlayback) unawaited(_player.play());
+    } else if (_loadedIndex == kLiveIndex) {
+      // Paused, or warm and unused. Do not spend data on a stream nobody is
+      // hearing. Mark it dead instead, so the next play reopens it rather than
+      // resuming into a connection that no longer exists.
+      _connectionStale = true;
+    }
+  }
+
+  /// Apply the listener's quality setting to the stream that is playing.
+  ///
+  /// Called by the provider on every change of `qualityModeProvider`, so a UI
+  /// only has to set the provider. A change that moves the preferred tier
+  /// reloads live straight away: Data Saver should not keep spending data on
+  /// the high tier until the next reconnect. A change that keeps it, such as
+  /// Automatic to High, reloads nothing.
+  Future<void> setQualityMode(QualityMode mode) async {
+    if (_disposed || mode == _policy.mode) return;
+    _policy.mode = mode;
+    final target = _policy.preferred;
+    if (target != _quality) await _switchTier(target);
+  }
+
+  /// The stored setting, once read. Nothing has connected yet, or it waited
+  /// for this, so a change of tier here costs nothing.
+  void _applySavedMode(QualityMode mode) {
+    if (_disposed || mode == _policy.mode) return;
+    _policy.mode = mode;
+    if (_loadedIndex < 0) {
+      _quality = _policy.preferred;
+      _emit(quality: _quality);
+    }
+  }
+
+  /// Move the live stream to [next], reloading it if it is the thing playing.
+  ///
+  /// Used for a setting change, a stall-driven drop and a retry of the
+  /// preferred tier. Forced, because a plain load would join one already in
+  /// flight, and that one is on the old URL.
+  ///
+  /// [retryingFrom] is set only when the move is a retry of the preferred tier,
+  /// and names the tier to go back to if the retry cannot connect.
+  Future<void> _switchTier(
+    StreamQuality next, {
+    StreamQuality? retryingFrom,
+  }) async {
+    _retryingFrom = retryingFrom;
+    _quality = next;
     _failures = 0;
-    _emit(quality: quality);
-    if (_loadedIndex != kLiveIndex) return;
-    final ok = await _load(kLiveIndex);
+    _emit(quality: next);
+    // Recordings have no tiers: the next live load picks [next] up by itself.
+    if (_loadedIndex != kLiveIndex || _requestedIndex != kLiveIndex) return;
+    _cancelReconnect();
+    final ok = await _load(kLiveIndex, force: true);
     if (ok && _wantsPlayback) unawaited(_player.play());
   }
 
@@ -331,6 +481,7 @@ class AudioController {
   /// or when a pause has run long enough that the server has probably hung up
   /// on us anyway.
   bool get _shouldReopenLive {
+    if (_connectionStale) return true;
     if (!_playedSinceLoad) {
       return _drift > LivePlaybackState.behindLiveThreshold;
     }
@@ -380,6 +531,8 @@ class AudioController {
   Future<bool> _performLoad(int index) async {
     if (_disposed) return false;
     _requestedIndex = index;
+    // A retry only means something for the live stream it was started on.
+    if (index != kLiveIndex) _retryingFrom = null;
     _emit(
       status: LiveStatus.connecting,
       clearError: true,
@@ -388,6 +541,33 @@ class AudioController {
       clearEdition: true,
     );
     try {
+      // After every await below, a newer request for another source means this
+      // load is stale and must stop. Resolving a cold Mukhwak can take 6
+      // seconds, and a tap on Live in that time starts and finishes its own
+      // load. Carrying on would then replace live with Mukhwak.
+
+      // The saved quality setting is read from disk, so it can land a few
+      // milliseconds after launch. Opening the stream before it does would
+      // spend a warm-up buffer on the wrong tier. Already complete after the
+      // first load, so this costs a microtask.
+      if (index == kLiveIndex) {
+        await _settingsReady.timeout(
+          const Duration(milliseconds: 500),
+          onTimeout: () {},
+        );
+        if (_disposed || _requestedIndex != index) return false;
+      }
+
+      // The first run copies three paintings to disk, which takes a few
+      // milliseconds. Later runs find them there. Bounded, because a slow disk
+      // should cost the notification its picture and never the listener their
+      // sound, and the same copy is picked up by whichever load comes next.
+      _artUris = await _artwork.prepare().timeout(
+            const Duration(seconds: 3),
+            onTimeout: () => _artUris,
+          );
+      if (_disposed || _requestedIndex != index) return false;
+
       // Resolved before the player is touched, not after it fails. A dated
       // file that is not up yet answers 404, which the retry loop below would
       // treat as a transient fault and hammer on a backoff, and it is not one:
@@ -397,21 +577,53 @@ class AudioController {
       // because it is the latency-critical path and it has no day.
       final asset = _assetFor(index);
       final edition = asset == null ? null : await _daily.resolve(asset);
-      if (_disposed) return false;
+      if (_disposed || _requestedIndex != index) return false;
 
-      await _player.setAudioSource(_sourceFor(index, edition), preload: true);
+      final isLive = index == kLiveIndex;
+      // A deliberate reload of a healthy recording should land where the
+      // playhead is now, not where the last once-a-second sample saw it. After
+      // a failure the player has nothing better than that sample to offer.
+      if (!isLive && _loadedIndex == index) _rememberPosition();
+      final startAt = isLive ? null : _resume.startFor(index, DateTime.now());
+      final tier = _quality;
+
+      // The live stream has no position, so it always opens at the live edge.
+      // A recording reopens where it stopped: without this, every drop sent
+      // Mukhwak and Katha back to 0:00.
+      await _player
+          .setAudioSource(
+            _sourceFor(index, edition),
+            preload: true,
+            initialPosition: startAt,
+          )
+          .timeout(_connectTimeout);
+      // The request moved on while the platform connected. The newer load will
+      // replace this source, so do not record it as the loaded one.
+      if (_disposed || _requestedIndex != index) return false;
       _loadedIndex = index;
+      _retryingFrom = null;
       _failures = 0;
       _pausedAt = null;
       _playedSinceLoad = false;
+      _connectionStale = false;
       _emit(
         status: _player.playing ? LiveStatus.playing : LiveStatus.buffering,
         reconnectAttempt: 0,
         clearError: true,
         edition: edition,
       );
-      _startDriftTracking(index == kLiveIndex);
+      _startTicker(index);
+      // The tier moved while this connected, for example the listener picked
+      // Data Saver during the load. What is playing no longer matches what was
+      // asked for, so go again on the right one.
+      if (isLive && tier != _quality) unawaited(_switchTier(_quality));
       return true;
+    } on PlayerInterruptedException {
+      // A newer load replaced this one, for example a tap on Mukhwak while the
+      // warm-up was still connecting. That is not a failure: the newer load
+      // owns the result, and reporting this one would schedule a retry of a
+      // source nobody wants any more.
+      return false;
     } catch (e) {
       _onFailure(e);
       return false;
@@ -424,13 +636,27 @@ class AudioController {
     // hit. Nothing in the old code listened to it at all.
     _errorSub = _player.errorStream.listen(_onFailure);
 
+    _playingSub = _player.playingStream.listen(_onPlayingChanged);
+
     _stateSub = _player.playerStateStream.listen((state) {
       if (_disposed) return;
+      final previous = _lastState;
+      _lastState = state;
+
+      // Only clean playback counts towards trying the high tier again. A
+      // pause, a stall and a reload each restart that clock.
+      if (state.processingState == ProcessingState.ready && state.playing) {
+        _policy.playbackHealthy(DateTime.now());
+      } else {
+        _policy.playbackInterrupted();
+      }
+
       switch (state.processingState) {
         case ProcessingState.loading:
           _emit(status: LiveStatus.connecting);
         case ProcessingState.buffering:
           _emit(status: LiveStatus.buffering);
+          if (_isStall(previous, state)) _onStall();
         case ProcessingState.ready:
           if (state.playing) _reportTapToSound();
           _emit(status: state.playing ? LiveStatus.playing : LiveStatus.paused);
@@ -439,6 +665,15 @@ class AudioController {
           // server. Treat it as a failure so it reconnects.
           if (_loadedIndex == kLiveIndex && _wantsPlayback) {
             _onFailure(Exception('stream ended'));
+          } else if (_loadedIndex != kLiveIndex) {
+            // A recording that played to its end is finished, not interrupted.
+            // The player keeps its playing flag, so without this a later
+            // network change would reload the file and start it over unasked,
+            // and the next play would resume from the final second. Pausing
+            // the player makes its own flag agree with the intent.
+            _wantsPlayback = false;
+            _resume.clear();
+            unawaited(_player.pause());
           }
         case ProcessingState.idle:
           break;
@@ -446,27 +681,130 @@ class AudioController {
     });
   }
 
-  /// Sample the gap between the playhead and the newest buffered audio.
+  /// Whether the move from [previous] to [now] is audio running dry.
   ///
-  /// Once a second is plenty for a readout measured in seconds, and it costs
-  /// nothing next to subscribing to `positionStream`, which fires about
-  /// sixty-two times a second on a live source.
-  void _startDriftTracking(bool isLive) {
-    _driftTimer?.cancel();
-    if (!isLive) return;
-    _driftTimer = Timer.periodic(const Duration(seconds: 1), (_) {
+  /// A stall is playing, ready and then buffering again, on the live stream.
+  /// Buffering that follows a load, a seek or a pause is the player getting
+  /// started, and says nothing about the link, so it must not count.
+  bool _isStall(PlayerState? previous, PlayerState now) =>
+      _loadedIndex == kLiveIndex &&
+      previous != null &&
+      previous.processingState == ProcessingState.ready &&
+      previous.playing &&
+      now.playing;
+
+  /// The live stream stalled once. The policy decides whether it was the
+  /// third in a minute, which is the point to give up on the high tier.
+  void _onStall() {
+    final next = _policy.recordStall(DateTime.now(), _quality);
+    if (!kReleaseMode) {
+      debugPrint('[audio] stall on ${_quality.name}'
+          '${next == null ? '' : ', dropping to ${next.name}'}');
+    }
+    if (next != null) unawaited(_switchTier(next));
+  }
+
+  /// Keep [_wantsPlayback] in step with the player.
+  ///
+  /// Every change this class makes to the player's playing flag follows a
+  /// change to [_wantsPlayback], so a flag that already agrees is our own
+  /// doing and needs nothing. A flag that disagrees came from outside, and the
+  /// listener meant it.
+  ///
+  /// Outside pauses are the headset or notification button, a headphone
+  /// unplug, a phone call, and another app taking audio focus. `just_audio`
+  /// pauses itself for the last three and resumes itself after a call on iOS.
+  /// That resume arrives here as an outside play, and runs the same path as a
+  /// tap, so a call that outlasted the stream reconnects at the live edge
+  /// instead of resuming into a dead connection.
+  void _onPlayingChanged(bool playing) {
+    if (_disposed || playing == _wantsPlayback) return;
+    if (playing) {
+      unawaited(play(_retryIndex));
+      return;
+    }
+    _wantsPlayback = false;
+    _pausedAt = DateTime.now();
+    _rememberPosition();
+    // A pending reconnect would start sound the listener has just stopped.
+    _cancelReconnect();
+    _emit(status: LiveStatus.paused);
+  }
+
+  /// Run the once-a-second housekeeping for the source at [index].
+  ///
+  /// Once a second is plenty for everything done here, and it costs nothing
+  /// next to subscribing to `positionStream`, which fires about sixty-two
+  /// times a second on a live source.
+  void _startTicker(int index) {
+    _tickTimer?.cancel();
+    _tickTimer = Timer.periodic(const Duration(seconds: 1), (_) {
       if (_disposed) return;
-      final raw = _player.bufferedPosition - _player.position;
-      final gap = raw.isNegative ? Duration.zero : raw;
-      // The readout is in whole seconds, so emitting sub-second changes would
-      // rebuild the widget for nothing.
-      if (gap.inSeconds == _live.value.behindLive.inSeconds) return;
-      _emit(behindLive: gap);
+      if (index == kLiveIndex) {
+        _trackDrift();
+        _maybeRetryPreferredTier();
+      } else if (_player.playing) {
+        _rememberPosition();
+      }
     });
+  }
+
+  /// Sample the gap between the playhead and the newest buffered audio.
+  void _trackDrift() {
+    final raw = _player.bufferedPosition - _player.position;
+    final gap = raw.isNegative ? Duration.zero : raw;
+    // The readout is in whole seconds, so emitting sub-second changes would
+    // rebuild the widget for nothing.
+    if (gap.inSeconds == _live.value.behindLive.inSeconds) return;
+    _emit(behindLive: gap);
+  }
+
+  /// Go back to the preferred tier once the link has earned it.
+  ///
+  /// Dropping to the low tier is only ever a response to a bad stretch, so
+  /// without this the listener would stay on a third of the bitrate for the
+  /// rest of the session after one tunnel. Only while sound is actually
+  /// playing: reloading a stream nobody is hearing would spend data to
+  /// improve nothing, and a pause restarts the policy's clock anyway.
+  void _maybeRetryPreferredTier() {
+    if (!_wantsPlayback || !_player.playing) return;
+    if (_player.processingState != ProcessingState.ready) return;
+    if (_loadedIndex != kLiveIndex || _requestedIndex != kLiveIndex) return;
+    final now = DateTime.now();
+    final target = _policy.retryTarget(now, _quality);
+    if (target == null) return;
+    if (!kReleaseMode) debugPrint('[audio] trying ${target.name} again');
+    _policy.recordRetry(now);
+    unawaited(_switchTier(target, retryingFrom: _quality));
+  }
+
+  /// Note where the loaded recording is, for the next reload.
+  ///
+  /// Sampled while playing rather than on demand because a failure is the case
+  /// that matters, and by then the player has often already reset itself.
+  void _rememberPosition() {
+    if (_loadedIndex < 0 || _loadedIndex == kLiveIndex) return;
+    final state = _player.processingState;
+    if (state != ProcessingState.ready && state != ProcessingState.buffering) {
+      return;
+    }
+    _resume.remember(_loadedIndex, _player.position, DateTime.now());
   }
 
   void _onFailure(Object error) {
     if (_disposed) return;
+
+    // A retry of the preferred tier that cannot connect means that tier is out
+    // of reach on this network, typically port 7339 blocked. Go straight back
+    // to the tier that was working rather than failing twice first, and stop
+    // trying. Each retry otherwise tears down a working stream for about 20
+    // seconds, every 10 to 40 minutes, for as long as the app is open.
+    final retriedFrom = _retryingFrom;
+    if (retriedFrom != null) {
+      _retryingFrom = null;
+      _policy.recordRetryFailed();
+      _quality = retriedFrom;
+    }
 
     // A failure with nobody listening must not start a retry loop.
     //
@@ -479,7 +817,7 @@ class AudioController {
     if (!_wantsPlayback) {
       _failures = 0;
       _loadedIndex = -1;
-      _driftTimer?.cancel();
+      _tickTimer?.cancel();
       _emit(
         status: LiveStatus.idle,
         behindLive: Duration.zero,
@@ -496,7 +834,12 @@ class AudioController {
     // second tier, so this is a no-op there and it just keeps retrying.
     if (_failures % _failuresBeforeTierSwitch == 0) {
       final next = _quality.fallback;
-      if (next != null) _quality = next;
+      if (next != null) {
+        _quality = next;
+        // Landing off the preferred tier is a fallback to be undone later,
+        // not a new home. Landing back on it needs no follow-up.
+        if (next != _policy.preferred) _policy.noteFellBack(DateTime.now());
+      }
     }
 
     final delay = _backoff[math.min(_failures - 1, _backoff.length - 1)];
@@ -610,9 +953,10 @@ class AudioController {
   void dispose() {
     _disposed = true;
     _cancelReconnect();
-    _driftTimer?.cancel();
+    _tickTimer?.cancel();
     _errorSub?.cancel();
     _stateSub?.cancel();
+    _playingSub?.cancel();
     _live.close();
     _player.dispose();
   }
@@ -651,14 +995,36 @@ final audioController = Provider<AudioController>((ref) {
       ),
     ),
   );
-  final controller = AudioController(player, ref.read(dailyContentResolver));
+  final quality = ref.read(qualityModeProvider.notifier);
+  final controller = AudioController(
+    player,
+    ref.read(dailyContentResolver),
+    policy: QualityPolicy(mode: ref.read(qualityModeProvider)),
+    // The saved setting lands a moment after launch. The controller holds its
+    // first connection back for it.
+    savedMode: quality.ready.then((_) => ref.read(qualityModeProvider)),
+  );
+
+  // A change from a settings screen applies to the stream that is playing.
+  ref.listen<QualityMode>(qualityModeProvider, (previous, next) {
+    unawaited(controller.setQualityMode(next));
+  });
 
   // Reconnect the moment the radio comes back rather than waiting out a
-  // backoff that was only ever a guess about why the connection died.
-  ref.listen<AsyncValue<bool>>(connectivityController, (previous, next) {
-    final wasOffline = previous?.value == false;
-    if (wasOffline && next.value == true) {
-      unawaited(controller.onNetworkRestored());
+  // backoff that was only ever a guess about why the connection died. A move
+  // from Wi-Fi to mobile data has no offline moment to wait for, and kills the
+  // stream socket just the same, so it gets its own reload.
+  ref.listen<AsyncValue<NetworkSnapshot>>(networkSnapshotProvider,
+      (previous, next) {
+    final snapshot = next.value;
+    if (snapshot == null) return;
+    switch (classifyTransition(previous?.value, snapshot)) {
+      case NetworkTransition.restored:
+        unawaited(controller.onNetworkRestored());
+      case NetworkTransition.handoff:
+        unawaited(controller.onNetworkHandoff());
+      case NetworkTransition.lost || NetworkTransition.none:
+        break;
     }
   });
 

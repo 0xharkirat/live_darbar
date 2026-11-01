@@ -55,7 +55,7 @@ void main() {
       expect(edition.isStale, isTrue);
     });
 
-    test('tries today before yesterday', () async {
+    test('asks about today first', () async {
       final log = <String>[];
       final resolver = DailyContentResolver(
         client: _server({DailyAsset.katha.urlFor(yesterday)}, log: log),
@@ -68,6 +68,53 @@ void main() {
         DailyAsset.katha.urlFor(today),
         DailyAsset.katha.urlFor(yesterday),
       ]);
+    });
+
+    test('asks about both days before either has answered', () async {
+      final pending = <String, Completer<http.Response>>{};
+      final resolver = DailyContentResolver(
+        client: MockClient((request) {
+          return (pending[request.url.toString()] = Completer<http.Response>())
+              .future;
+        }),
+        clock: () => _morning,
+      );
+      addTearDown(resolver.dispose);
+
+      final result = resolver.resolve(DailyAsset.katha);
+      await Future<void>.delayed(Duration.zero);
+
+      // Neither probe has answered, and both are already out.
+      expect(pending.keys, [
+        DailyAsset.katha.urlFor(today),
+        DailyAsset.katha.urlFor(yesterday),
+      ]);
+
+      pending[DailyAsset.katha.urlFor(today)]!
+          .complete(http.Response('', 404));
+      pending[DailyAsset.katha.urlFor(yesterday)]!
+          .complete(http.Response('', 200));
+      expect((await result).freshness, DailyFreshness.previousDay);
+    });
+
+    test('takes today without waiting for yesterday to answer', () async {
+      final yesterdayAnswer = Completer<http.Response>();
+      final resolver = DailyContentResolver(
+        client: MockClient((request) {
+          if (request.url.toString() == DailyAsset.katha.urlFor(today)) {
+            return Future.value(http.Response('', 200));
+          }
+          return yesterdayAnswer.future;
+        }),
+        clock: () => _morning,
+      );
+      addTearDown(resolver.dispose);
+
+      final edition = await resolver
+          .resolve(DailyAsset.katha)
+          .timeout(const Duration(seconds: 5));
+      expect(edition.freshness, DailyFreshness.today);
+      yesterdayAnswer.complete(http.Response('', 404));
     });
 
     test('settles for the undated URL when neither day answers', () async {
@@ -109,8 +156,11 @@ void main() {
       addTearDown(resolver.dispose);
 
       await resolver.resolve(DailyAsset.hukamnama);
+      final probed = log.length;
       await resolver.resolve(DailyAsset.hukamnama);
-      expect(log, hasLength(1));
+      // One pair of probes for the first call, none for the second.
+      expect(probed, 2);
+      expect(log, hasLength(probed));
     });
 
     test('a yesterday answer is rechecked, so today lands when it does',
@@ -196,7 +246,7 @@ void main() {
       );
     });
 
-    test('concurrent callers share one probe', () async {
+    test('concurrent callers share one pair of probes', () async {
       final log = <String>[];
       final resolver = DailyContentResolver(
         client: _server({DailyAsset.hukamnama.urlFor(today)}, log: log),
@@ -209,7 +259,7 @@ void main() {
         resolver.resolve(DailyAsset.hukamnama),
         resolver.resolve(DailyAsset.hukamnama),
       ]);
-      expect(log, hasLength(1));
+      expect(log, hasLength(2));
       expect(
         results.map((e) => e.freshness),
         everyElement(DailyFreshness.today),
