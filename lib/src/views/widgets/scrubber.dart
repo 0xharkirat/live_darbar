@@ -69,7 +69,7 @@ class _LiveRail extends StatelessWidget {
             Text(
               label,
               style: AppType.timecode.copyWith(
-                letterSpacing: AppType.tracking ? 1 : 0,
+                letterSpacing: AppType.tracking ? 0.8 : 0,
               ),
             ),
           ],
@@ -170,7 +170,7 @@ class _ScrubberState extends State<_Scrubber> {
                   Text(_format(elapsed), style: AppType.timecode),
                   const Spacer(),
                   Text(
-                    hasDuration ? '-${_format(remaining)}' : '--:--',
+                    hasDuration ? '−${_format(remaining)}' : '--:--',
                     style: AppType.timecode,
                   ),
                 ],

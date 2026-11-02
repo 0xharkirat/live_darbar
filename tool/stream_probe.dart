@@ -12,8 +12,7 @@
 // are not hidden behind a client that pools connections. Note the caveat: on
 // Android the audio itself is fetched by ExoPlayer, which is native code with
 // its own networking, so treat these numbers as the shape of the problem
-// rather than as ExoPlayer's exact behaviour. For the Mukhwak PDF, which the
-// app really does fetch with package:http, they are exact.
+// rather than as ExoPlayer's exact behaviour.
 
 import 'dart:async';
 import 'dart:io';
@@ -37,7 +36,7 @@ const _readDeadline = Duration(seconds: 30);
 /// than assumed, and it is also the quickest way to see whether the dated file
 /// for the day has been uploaded yet.
 Map<String, String> endpoints() {
-  final today = sgpcDayNow();
+  final today = sgpcDayOf(DateTime.now());
   final yesterday = previousSgpcDay(today);
   return <String, String>{
     'live 96k cleartext': 'http://live.sgpc.net:7339/;',
@@ -48,7 +47,6 @@ Map<String, String> endpoints() {
     'katha mp3 dated today': DailyAsset.katha.urlFor(today),
     'katha mp3 dated yesterday': DailyAsset.katha.urlFor(yesterday),
     'katha mp3 undated': DailyAsset.katha.latestUrl,
-    'hukamnama pdf undated': kLatestHukamnamaPdfUrl,
   };
 }
 
@@ -240,8 +238,8 @@ Future<void> main(List<String> args) async {
       filters.add(a);
     }
   }
-  stdout.writeln('SGPC day: ${sgpcDayIso(sgpcDayNow())} '
-      '(stamp ${sgpcDayStamp(sgpcDayNow())})');
+  stdout.writeln('SGPC day: ${sgpcDayIso(sgpcDayOf(DateTime.now()))} '
+      '(stamp ${sgpcDayStamp(sgpcDayOf(DateTime.now()))})');
   for (final entry in endpoints().entries) {
     if (filters.isNotEmpty && !filters.any(entry.key.contains)) continue;
     await run(entry.key, entry.value, runs);

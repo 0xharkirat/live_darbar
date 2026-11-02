@@ -28,16 +28,24 @@ class HukamnamaNotPublishedException extends HukamnamaException {
   final DateTime day;
 }
 
-/// The text cannot be fetched on web.
+/// Where the web app reads the Hukamnama: a branch of this repository.
 ///
 /// `hs.sgpc.net` sends no `Access-Control-Allow-Origin` header, on the call or
-/// on its preflight, so a browser blocks the response. The service fails at
-/// once on web rather than after a request that cannot work. A screen should
-/// show a link to [kHukamnamaSourceUrl] instead of the text.
-class HukamnamaWebUnsupportedException extends HukamnamaException {
-  const HukamnamaWebUnsupportedException()
-      : super('SGPC does not allow a web page to fetch the Hukamnama.');
-}
+/// on its preflight, so a browser blocks the response. A CI job
+/// (`.github/workflows/hukamnama-mirror.yml`) copies SGPC's answer to the
+/// `hukamnama-data` branch. `raw.githubusercontent.com` serves it with
+/// `access-control-allow-origin: *` and `cache-control: max-age=300`, checked
+/// on 3 November 2026. The native apps do not use this.
+///
+/// The files are `<this>/hukamnama/YYYY-MM-DD.json`. Overridable, so a web
+/// build can be tried against a folder on the developer's machine:
+///
+///   flutter build web --dart-define=HUKAMNAMA_MIRROR_URL=http://localhost:8141/mirror
+const kHukamnamaMirrorUrl = String.fromEnvironment(
+  'HUKAMNAMA_MIRROR_URL',
+  defaultValue:
+      'https://raw.githubusercontent.com/0xharkirat/live_darbar/hukamnama-data',
+);
 
 /// Fetches one day's Hukamnama as text from SGPC.
 ///
@@ -48,9 +56,8 @@ class HukamnamaWebUnsupportedException extends HukamnamaException {
 ///
 /// ## The request
 ///
-/// `POST https://hs.sgpc.net/hssearchhukmanamaTestCalender.php` (the same
-/// endpoint `MukhwakController` uses for the PDF id) with a form body
-/// `selected_date=YYYY-MM-DD`. Checked against the live server on
+/// `POST https://hs.sgpc.net/hssearchhukmanamaTestCalender.php` with a form
+/// body `selected_date=YYYY-MM-DD`. Checked against the live server on
 /// 2 November 2026:
 /// - The header `X-Requested-With: XMLHttpRequest` is required. Without it the
 ///   server answers `200` with an empty `text/html` body, even for a day that
@@ -76,47 +83,52 @@ class HukamnamaWebUnsupportedException extends HukamnamaException {
 ///
 /// ## Web
 ///
-/// The server sends no CORS header, so [fetch] throws
-/// [HukamnamaWebUnsupportedException] on web before it sends anything.
+/// The server sends no CORS header, so a browser cannot read its answer. On web
+/// [fetch] never calls SGPC. It reads a copy of SGPC's answer from the mirror
+/// ([kHukamnamaMirrorUrl]), one file for each day, and parses it with the same
+/// code as the native answer. The mirror only holds answers that passed the
+/// checks of its script, so:
+/// - a day with no file (HTTP 404) is a day not posted yet, as SGPC's own
+///   `supported: false` is: [HukamnamaNotPublishedException];
+/// - any other status is a fault: [HukamnamaException], so the controller's
+///   retry and stale-text logic works as it does on native.
 class HukamnamaService {
   HukamnamaService({
     http.Client? client,
     this.timeout = const Duration(seconds: 8),
     bool? isWeb,
+    String mirrorUrl = kHukamnamaMirrorUrl,
   })  : _client = client ?? http.Client(),
-        _isWeb = isWeb ?? (kIsWeb || kIsWasm);
+        _isWeb = isWeb ?? (kIsWeb || kIsWasm),
+        _mirrorUrl = mirrorUrl.replaceFirst(RegExp(r'/+$'), '');
 
   final http.Client _client;
   final bool _isWeb;
+  final String _mirrorUrl;
 
   /// How long to wait for the whole response. A request with no deadline can
   /// leave a screen on a spinner forever, so every request has one.
   final Duration timeout;
 
-  /// Whether [fetch] can work on this platform. False on web.
-  bool get isSupported => !_isWeb;
-
   /// The Hukamnama for [day], an SGPC day.
   ///
-  /// Throws [HukamnamaWebUnsupportedException] on web,
-  /// [HukamnamaNotPublishedException] when SGPC has no text for the day,
+  /// Throws [HukamnamaNotPublishedException] when there is no text for the day,
   /// [TimeoutException] after [timeout], and [HukamnamaException] for any other
   /// answer it cannot use. A phone that is offline surfaces the client's own
   /// error (`SocketException` or `ClientException`).
   Future<Hukamnama> fetch(DateTime day) async {
-    if (_isWeb) throw const HukamnamaWebUnsupportedException();
-
     final want = DateTime.utc(day.year, day.month, day.day);
-    final response = await _client
-        .post(
-          Uri.parse(kHukamnamaArchiveUrl),
-          headers: const {'X-Requested-With': 'XMLHttpRequest'},
-          body: {'selected_date': sgpcDayIso(want)},
-        )
+    final response = await (_isWeb ? _getFromMirror(want) : _postToSgpc(want))
         .timeout(timeout);
 
+    // A file the mirror does not have is a day that is not posted yet.
+    if (_isWeb && response.statusCode == 404) {
+      throw HukamnamaNotPublishedException(want);
+    }
     if (response.statusCode != 200) {
-      throw HukamnamaException('HTTP ${response.statusCode} from SGPC.');
+      throw HukamnamaException(
+        'HTTP ${response.statusCode} from ${_isWeb ? 'the mirror' : 'SGPC'}.',
+      );
     }
 
     final Map<String, dynamic> body;
@@ -151,6 +163,18 @@ class HukamnamaService {
     }
     return parsed;
   }
+
+  Future<http.Response> _postToSgpc(DateTime day) => _client.post(
+        Uri.parse(kHukamnamaArchiveUrl),
+        headers: const {'X-Requested-With': 'XMLHttpRequest'},
+        body: {'selected_date': sgpcDayIso(day)},
+      );
+
+  /// A plain GET with no headers of our own, so the browser sends a simple
+  /// request and no CORS preflight.
+  Future<http.Response> _getFromMirror(DateTime day) => _client.get(
+        Uri.parse('$_mirrorUrl/hukamnama/${sgpcDayIso(day)}.json'),
+      );
 
   void close() => _client.close();
 }

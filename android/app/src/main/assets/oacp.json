@@ -129,7 +129,7 @@
     },
     {
       "id": "view_mukhwak_pdf",
-      "description": "Open and display today's Mukhwak (Hukumnama) as a PDF document.",
+      "description": "Open SGPC's page for today's Mukhwak (Hukumnama) PDF in an in-app browser, where the PDF can be downloaded and read.",
       "domain": "religion",
       "aliases": [
         "view mukhwak", "show mukhwak", "read mukhwak",
@@ -148,12 +148,12 @@
       "keywords": ["view", "show", "read", "open", "mukhwak", "hukumnama", "pdf", "text", "display"],
       "disambiguationHints": [
         "Use this when the user wants to SEE/READ the mukhwak text (PDF).",
-        "This opens the visual PDF viewer, not audio playback.",
+        "This opens SGPC's Hukumnama PDF page in an in-app browser, not audio playback.",
         "For LISTENING to the hukumnama, use play_mukhwak instead."
       ],
       "parameters": [],
       "confirmation": "never",
-      "executionMessage": "Opening Mukhwak PDF.",
+      "executionMessage": "Opening the Mukhwak PDF page.",
       "visibility": "public",
       "requiresForeground": true,
       "completionMode": "foreground_handoff",

@@ -31,8 +31,9 @@ const kHukamnamaRetryInterval = Duration(minutes: 15);
 /// The value is a [Hukamnama] with its own [Hukamnama.date]. That date is not
 /// always today. Until SGPC posts each morning, and whenever the phone cannot
 /// reach the service, the newest text on hand is an earlier day's. The screen
-/// must compare it with the SGPC day (`hukamnama.isFor(sgpcDayNow())`) and
-/// label an earlier day as such. Yesterday's text must never be shown as
+/// must compare it with the SGPC day, read through `clockProvider`
+/// (`hukamnama.isFor(sgpcDayOf(ref.read(clockProvider)()))`), and label an
+/// earlier day as such. Yesterday's text must never be shown as
 /// today's.
 ///
 /// What the listener sees, in order:
@@ -55,7 +56,7 @@ const kHukamnamaRetryInterval = Duration(minutes: 15);
 /// SGPC posts, or after a failure left it with yesterday's text or none), it
 /// asks again every [kHukamnamaRetryInterval], for as long as it is alive. It
 /// stops as soon as it holds today's text, and starts again at the next SGPC
-/// midnight. On web, where the service cannot fetch, it never retries.
+/// midnight. This is the same on web, where the service reads the mirror.
 class HukamnamaController extends AsyncNotifier<Hukamnama> {
   Timer? _rollover;
   Timer? _retry;
@@ -158,8 +159,6 @@ class HukamnamaController extends AsyncNotifier<Hukamnama> {
     _retry?.cancel();
     _retry = null;
     if (!ref.mounted) return;
-    // Web cannot fetch at all, so asking again would only fail again.
-    if (!ref.read(hukamnamaServiceProvider).isSupported) return;
     if (shown != null && shown.isFor(_today())) return;
 
     _retry = Timer(kHukamnamaRetryInterval, () {

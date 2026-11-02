@@ -63,6 +63,9 @@ class UpdateController extends AsyncNotifier<AppUpdate?> {
   }
 
   Future<AppUpdate?> _check() async {
+    // On the web a reload is the update, and AppUpdate.fromManifest says so
+    // too. Return before the fetch, so the page makes no request for nothing.
+    if (kIsWeb || kIsWasm) return null;
     final info = await PackageInfo.fromPlatform();
     final currentBuild = int.tryParse(info.buildNumber);
     // Without a build number there is nothing safe to compare, so say nothing

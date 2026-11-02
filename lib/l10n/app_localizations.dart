@@ -122,7 +122,7 @@ abstract class AppLocalizations {
   /// Loading...
   ///
   /// In en, this message translates to:
-  /// **'Loading...'**
+  /// **'Loading…'**
   String get loading;
 
   /// Error
@@ -260,7 +260,7 @@ abstract class AppLocalizations {
   /// Attribution for the app logo
   ///
   /// In en, this message translates to:
-  /// **'App logo, used under Flaticon\'s free licence.'**
+  /// **'App logo, used under Flaticon’s free licence.'**
   String get licensing_logo;
 
   /// Link text for the artwork attribution. The name of a studio, so it is the same in every language
@@ -311,12 +311,6 @@ abstract class AppLocalizations {
   /// **'YouTube Video'**
   String get youtube;
 
-  /// Title for the Daily Mukhwak PDF screen
-  ///
-  /// In en, this message translates to:
-  /// **'Today\'s Hukamnama (PDF)'**
-  String get mukhwak_pdf_title;
-
   /// Button that reconnects the stream to jump back to the live edge
   ///
   /// In en, this message translates to:
@@ -332,7 +326,7 @@ abstract class AppLocalizations {
   /// Shown while the app is retrying a dropped stream connection
   ///
   /// In en, this message translates to:
-  /// **'Reconnecting...'**
+  /// **'Reconnecting…'**
   String get reconnecting;
 
   /// Shown when playback has fallen back to the 28 kbps tier
@@ -356,7 +350,7 @@ abstract class AppLocalizations {
   /// Shown when the device is online but the SGPC server cannot be reached
   ///
   /// In en, this message translates to:
-  /// **'Can\'t reach the kirtan stream'**
+  /// **'Can’t reach the kirtan stream'**
   String get stream_unreachable;
 
   /// Button that retries a failed connection immediately
@@ -365,23 +359,11 @@ abstract class AppLocalizations {
   /// **'Retry'**
   String get retry;
 
-  /// Replaces a raw exception when the Mukhwak PDF fails to load
-  ///
-  /// In en, this message translates to:
-  /// **'Could not load today\'s Hukamnama'**
-  String get mukhwak_load_failed;
-
   /// Chip in the player saying the loaded Mukhwak or Katha is the previous day's, because today's has not been published yet
   ///
   /// In en, this message translates to:
-  /// **'Yesterday\'s recording'**
+  /// **'Yesterday’s recording'**
   String get yesterdays_recording;
-
-  /// Banner above the PDF viewer when the cached document is the previous day's
-  ///
-  /// In en, this message translates to:
-  /// **'Yesterday\'s Hukamnama. Today\'s has not been published yet.'**
-  String get mukhwak_from_yesterday;
 
   /// Replaces a raw exception in the player when progress cannot be read
   ///
@@ -434,7 +416,7 @@ abstract class AppLocalizations {
   /// Second line when the current day's audio is what will play
   ///
   /// In en, this message translates to:
-  /// **'Today\'s recording'**
+  /// **'Today’s recording'**
   String get todays_recording;
 
   /// Second line on the row that opens the Mukhwak PDF
@@ -464,13 +446,13 @@ abstract class AppLocalizations {
   /// Second line under the Katha tile
   ///
   /// In en, this message translates to:
-  /// **'The meaning of today\'s Hukamnama'**
+  /// **'The meaning of today’s Hukamnama'**
   String get katha_subtitle;
 
   /// Card that opens the Hukamnama text
   ///
   /// In en, this message translates to:
-  /// **'Read today\'s Hukamnama'**
+  /// **'Read today’s Hukamnama'**
   String get read_hukamnama;
 
   /// Second line of the read card
@@ -581,11 +563,11 @@ abstract class AppLocalizations {
   /// **'SGPC PDF'**
   String get sgpc_pdf;
 
-  /// The page of Sri Guru Granth Sahib Ji the Hukamnama is from
+  /// The page of Sri Guru Granth Sahib Ji the Hukamnama is from. The number arrives already written: Gurmukhi digits in Punjabi, Latin digits in English
   ///
   /// In en, this message translates to:
   /// **'Ang {ang}'**
-  String hukamnama_ang(int ang);
+  String hukamnama_ang(String ang);
 
   /// Credit under the Hukamnama text
   ///
@@ -608,7 +590,7 @@ abstract class AppLocalizations {
   /// Shown when the Hukamnama text fails and nothing is stored
   ///
   /// In en, this message translates to:
-  /// **'Today\'s Hukamnama text could not be loaded'**
+  /// **'Today’s Hukamnama text could not be loaded'**
   String get hukamnama_unavailable;
 
   /// Home card label while today's Hukamnama is not out; date like 1 November
@@ -620,7 +602,7 @@ abstract class AppLocalizations {
   /// Note in the reader while showing an older Hukamnama
   ///
   /// In en, this message translates to:
-  /// **'Today\'s Hukamnama is not out yet. This is the one from {date}.'**
+  /// **'Today’s Hukamnama is not out yet. This is the one from {date}.'**
   String hukamnama_not_out(String date);
 
   /// Heading above the explanation of the Hukamnama
@@ -629,10 +611,10 @@ abstract class AppLocalizations {
   /// **'Meaning'**
   String get meaning;
 
-  /// Web only: link to the Hukamnama on SGPC's site
+  /// Web only: link to SGPC's site, shown beside Retry when the Hukamnama text could not be loaded
   ///
   /// In en, this message translates to:
-  /// **'Read it on SGPC\'s website'**
+  /// **'Read it on SGPC’s website'**
   String get open_on_sgpc;
 }
 

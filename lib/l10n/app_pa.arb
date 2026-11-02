@@ -15,7 +15,7 @@
     "@mukhwak_katha": {
         "description": "ਹੁਕਮਨਾਮਾ ਕਥਾ"
     },
-    "loading": "ਲੋਡ ਹੋ ਰਿਹਾ ਹੈ...",
+    "loading": "ਲੋਡ ਹੋ ਰਿਹਾ ਹੈ…",
     "@loading": {
         "description": "ਲੋਡ ਹੋ ਰਿਹਾ ਹੈ..."
     },
@@ -143,10 +143,6 @@
     "@youtube": {
         "description": "ਯੂਟਿਊਬ ਵੀਡੀਓ"
     },
-    "mukhwak_pdf_title": "ਅੱਜ ਦਾ ਹੁਕਮਨਾਮਾ (PDF)",
-    "@mukhwak_pdf_title": {
-        "description": "Title for the Daily Mukhwak PDF screen"
-    },
     "go_live": "ਲਾਈਵ 'ਤੇ ਜਾਓ",
     "@go_live": {
         "description": "Button that reconnects the stream to jump back to the live edge"
@@ -160,7 +156,7 @@
             }
         }
     },
-    "reconnecting": "ਮੁੜ ਜੁੜ ਰਿਹਾ ਹੈ...",
+    "reconnecting": "ਮੁੜ ਜੁੜ ਰਿਹਾ ਹੈ…",
     "@reconnecting": {
         "description": "Shown while the app is retrying a dropped stream connection"
     },
@@ -184,17 +180,9 @@
     "@retry": {
         "description": "Button that retries a failed connection immediately"
     },
-    "mukhwak_load_failed": "ਅੱਜ ਦਾ ਹੁਕਮਨਾਮਾ ਲੋਡ ਨਹੀਂ ਹੋ ਸਕਿਆ",
-    "@mukhwak_load_failed": {
-        "description": "Replaces a raw exception when the Mukhwak PDF fails to load"
-    },
     "yesterdays_recording": "ਬੀਤੇ ਕੱਲ੍ਹ ਦੀ ਰਿਕਾਰਡਿੰਗ",
     "@yesterdays_recording": {
         "description": "Chip in the player saying the loaded Mukhwak or Katha is the previous day's, because today's has not been published yet"
-    },
-    "mukhwak_from_yesterday": "ਬੀਤੇ ਕੱਲ੍ਹ ਦਾ ਹੁਕਮਨਾਮਾ। ਅੱਜ ਦਾ ਅਜੇ ਜਾਰੀ ਨਹੀਂ ਹੋਇਆ।",
-    "@mukhwak_from_yesterday": {
-        "description": "Banner above the PDF viewer when the cached document is the previous day's"
     },
     "playback_error": "ਪਲੇਬੈਕ ਵਿੱਚ ਸਮੱਸਿਆ",
     "@playback_error": {

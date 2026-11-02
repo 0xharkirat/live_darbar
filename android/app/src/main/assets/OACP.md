@@ -1,7 +1,7 @@
 # Live Darbar — OACP Context
 
 ## What this app does
-Live Darbar streams live Gurbani Kirtan from Sri Darbar Sahib (Golden Temple), Amritsar. It also plays the daily Mukhwak (Hukumnama) audio, the Mukhwak Katha (discourse/explanation), and displays the Hukumnama as a PDF document.
+Live Darbar streams live Gurbani Kirtan from Sri Darbar Sahib (Golden Temple), Amritsar. It also plays the daily Mukhwak (Hukumnama) audio, the Mukhwak Katha (discourse/explanation), and opens SGPC's Hukumnama PDF page for reading.
 
 ## Vocabulary
 - **Kirtan**: Sikh devotional singing/music
@@ -15,7 +15,7 @@ Live Darbar streams live Gurbani Kirtan from Sri Darbar Sahib (Golden Temple), A
 - play_live_kirtan: Starts the live kirtan audio stream from Darbar Sahib
 - play_mukhwak: Plays today's Hukumnama audio recording
 - play_katha: Plays today's Katha (discourse on the Hukumnama)
-- view_mukhwak_pdf: Opens the daily Hukumnama PDF for reading
+- view_mukhwak_pdf: Opens SGPC's page for the daily Hukumnama PDF in an in-app browser
 
 ## Disambiguation
 - "play kirtan" / "start gurbani" / "golden temple live" → play_live_kirtan

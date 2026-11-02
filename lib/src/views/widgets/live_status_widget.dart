@@ -4,17 +4,20 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:live_darbar/l10n/app_localizations.dart';
 import 'package:live_darbar/src/controllers/audio_controller.dart';
 import 'package:live_darbar/src/controllers/connectivity_controller.dart';
+import 'package:live_darbar/src/controllers/quality_mode_controller.dart';
 import 'package:live_darbar/src/core/app_type.dart';
 import 'package:live_darbar/src/core/motion.dart';
 import 'package:live_darbar/src/core/palette.dart';
 import 'package:live_darbar/src/models/live_playback_state.dart';
+import 'package:live_darbar/src/models/quality_policy.dart';
 import 'package:live_darbar/src/models/stream_quality.dart';
 
 /// One calm line about the connection, or nothing when all is well.
 ///
 /// Only one message shows at a time, in order of what the listener can act
 /// on: a dropped stream, then yesterday's recording, then being behind live,
-/// then the low-quality fallback. The offline case belongs to the banner at
+/// then the low-quality fallback, which shows only in Automatic mode, where
+/// the app chose it. The offline case belongs to the banner at
 /// the top of the screen, so this says nothing while offline.
 class LiveStatusLine extends ConsumerWidget {
   const LiveStatusLine({super.key, this.compact = false});
@@ -26,12 +29,14 @@ class LiveStatusLine extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final live = ref.watch(livePlaybackProvider).value;
     final online = ref.watch(connectivityController).value ?? true;
+    final mode = ref.watch(qualityModeProvider);
     final l10n = AppLocalizations.of(context)!;
     // Read lazily, only when an action runs, so drawing this line never
     // creates the audio player.
     AudioController controller() => ref.read(audioController);
 
-    final status = live == null ? null : _pick(live, online, l10n, controller);
+    final status =
+        live == null ? null : _pick(live, online, mode, l10n, controller);
 
     return AnimatedSwitcher(
       duration: Motion.quick,
@@ -49,6 +54,7 @@ class LiveStatusLine extends ConsumerWidget {
   static _Status? _pick(
     LivePlaybackState live,
     bool online,
+    QualityMode mode,
     AppLocalizations l10n,
     AudioController Function() controller,
   ) {
@@ -80,8 +86,12 @@ class LiveStatusLine extends ConsumerWidget {
         onAction: () => controller().skipToLive(),
       );
     }
+    // Only a drop the app made on its own is news. Someone who chose Data
+    // saver already knows the stream is low, and the player says so beside
+    // the LIVE badge.
     if (live.isLiveSource &&
         live.quality == StreamQuality.low &&
+        mode == QualityMode.automatic &&
         !StreamQuality.isWeb) {
       return _Status(
         label: l10n.low_quality_stream,

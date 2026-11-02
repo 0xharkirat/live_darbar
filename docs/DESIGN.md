@@ -32,9 +32,10 @@ All tokens live in `lib/src/core/`.
 
 ### Type
 
-- Titles: Noto Serif, with Noto Serif Gurmukhi behind it, so a title has 1 voice in either language.
-- Everything else: Manrope, with Noto Sans Gurmukhi behind it.
-- Gurbani: Noto Serif Gurmukhi.
+- Titles: Geist Serif (the face darbar.live uses), with Tiro Gurmukhi behind it, so a title is serif in either language.
+- Geist Serif and Tiro Gurmukhi each have 1 weight, 400. Titles and Gurbani are 400 in both languages. A 600 request would get a synthesized bold, which adds about 15% ink and smears the strokes.
+- Everything else: Geist, the sans that pairs with Geist Serif and the face of darbar.live, with Noto Sans Gurmukhi behind it.
+- Gurbani: Tiro Gurmukhi.
 - Large titles pull letters in. Small labels let them out.
 - Every font file holds the glyphs it claims. Check a new font with `fonttools` before you bundle it: the 2.1 Noto Sans Gurmukhi files held 0 Gurmukhi glyphs.
 
@@ -89,4 +90,7 @@ Use it to check a change, and as the source for store screenshots.
 - A second accent colour, or a light theme.
 - A row of identical bordered cards.
 - An icon-only control for anything a first-time listener needs.
+  The one exception is sound quality, a setting to set once.
+  It is a quiet round button at the top right of the player (`QualityButton`).
+  Data saver shows as a small pill beside the LIVE badge.
 - Queue, shuffle, playback speed, listener counts, or streaks. The 2026-08 player research rejected each one for a devotional app.

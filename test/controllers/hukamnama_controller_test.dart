@@ -37,13 +37,22 @@ List<int> _notPostedBody(DateTime day) => utf8.encode(
 
 /// A stand-in for SGPC that has the listed days posted, can go offline,
 /// and records which day each request asked for (`yyyy-MM-dd`).
+///
+/// It also stands in for the web mirror, which has the same days. A GET for
+/// `/hukamnama/yyyy-MM-dd.json` is answered from the mirror's files: the same
+/// body as SGPC's, or a 404 for a day that is not posted.
 class FakeSgpc {
   FakeSgpc(this.posted);
 
   final Set<DateTime> posted;
   bool offline = false;
   bool hang = false;
+
+  /// The days asked of SGPC (POST requests).
   final List<String> log = [];
+
+  /// The days asked of the mirror (GET requests).
+  final List<String> mirrorLog = [];
 
   /// A day listed here is answered only once its completer completes, so a
   /// test can make one request slower than another.
@@ -53,8 +62,13 @@ class FakeSgpc {
   final Map<DateTime, List<int>> bodies = {};
 
   late final MockClient client = MockClient((request) async {
-    final asked = request.bodyFields['selected_date']!;
-    log.add(asked);
+    final isMirror = request.method == 'GET';
+    final asked = isMirror
+        ? RegExp(r'(\d{4}-\d{2}-\d{2})\.json$')
+            .firstMatch(request.url.path)!
+            .group(1)!
+        : request.bodyFields['selected_date']!;
+    (isMirror ? mirrorLog : log).add(asked);
     final day = DateTime.parse('${asked}T00:00:00Z');
     // The server's state at the moment it answers, not at the moment it was
     // asked, which is what a held-back answer needs.
@@ -62,7 +76,9 @@ class FakeSgpc {
     if (offline) throw const SocketException('Failed host lookup');
     if (hang) return Completer<http.Response>().future;
     if (!posted.contains(day)) {
-      return http.Response.bytes(_notPostedBody(day), 200);
+      return isMirror
+          ? http.Response('404: Not Found', 404)
+          : http.Response.bytes(_notPostedBody(day), 200);
     }
     return http.Response.bytes(bodies[day] ?? _bodyFor(day), 200);
   });
@@ -693,21 +709,66 @@ void main() {
       );
 
       fakeTimeTest(
-        'never asks on web, where it cannot fetch',
+        'on web, reads the mirror and never asks SGPC',
         morning,
         FakeSgpc({nov2}),
         isWeb: true,
         (async, container, server) {
-          final state = container.read(hukamnamaProvider);
-          expect(state.hasError, isTrue);
-          expect(state.error, isA<HukamnamaWebUnsupportedException>());
+          expect(shown(container)?.date, nov2);
+          expect(server.mirrorLog, ['2026-11-02']);
 
           async.elapse(const Duration(hours: 3));
           expect(server.log, isEmpty);
-          expect(container.read(hukamnamaProvider).error,
-              isA<HukamnamaWebUnsupportedException>());
-          // Only the midnight timer is left. No 15-minute retry.
+          // It holds today's text, so only the midnight timer is left.
           expect(async.pendingTimers, hasLength(1));
+        },
+      );
+
+      fakeTimeTest(
+        'on web, falls back to yesterday and retries every 15 minutes, as '
+        'native does',
+        beforeDawn,
+        FakeSgpc({nov1}),
+        isWeb: true,
+        (async, container, server) {
+          // The mirror has no file for today yet (404), so it reads
+          // yesterday's.
+          expect(shown(container)?.date, nov1);
+          expect(server.mirrorLog, ['2026-11-02', '2026-11-01']);
+
+          async.elapse(step);
+          expect(server.mirrorLog, ['2026-11-02', '2026-11-01', '2026-11-02']);
+          expect(shown(container)?.date, nov1);
+
+          // The job copies today's text. The next ask finds it.
+          server.posted.add(nov2);
+          async.elapse(step);
+          expect(shown(container)?.date, nov2);
+
+          // It has today's text now, so it stops asking.
+          final asks = server.mirrorLog.length;
+          async.elapse(const Duration(hours: 3));
+          expect(server.mirrorLog, hasLength(asks));
+          expect(server.log, isEmpty);
+        },
+      );
+
+      fakeTimeTest(
+        'on web, keeps asking after a failure left it with nothing',
+        morning,
+        FakeSgpc({nov2})..offline = true,
+        isWeb: true,
+        (async, container, server) {
+          expect(container.read(hukamnamaProvider).hasError, isTrue);
+          final first = server.mirrorLog.length;
+
+          async.elapse(step);
+          expect(server.mirrorLog.length, greaterThan(first));
+
+          server.offline = false;
+          async.elapse(step);
+          expect(shown(container)?.date, nov2);
+          expect(server.log, isEmpty);
         },
       );
     });

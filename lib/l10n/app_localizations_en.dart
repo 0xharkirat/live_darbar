@@ -21,7 +21,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get mukhwak_katha => 'Hukamnama Katha';
 
   @override
-  String get loading => 'Loading...';
+  String get loading => 'Loading…';
 
   @override
   String get error => 'Error';
@@ -90,7 +90,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get licensing_logo_source => 'Punjab icons created by Freepik - Flaticon';
 
   @override
-  String get licensing_logo => 'App logo, used under Flaticon\'s free licence.';
+  String get licensing_logo => 'App logo, used under Flaticon’s free licence.';
 
   @override
   String get licensing_images_source => 'Art of Punjab';
@@ -117,9 +117,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get youtube => 'YouTube Video';
 
   @override
-  String get mukhwak_pdf_title => 'Today\'s Hukamnama (PDF)';
-
-  @override
   String get go_live => 'Go live';
 
   @override
@@ -128,7 +125,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get reconnecting => 'Reconnecting...';
+  String get reconnecting => 'Reconnecting…';
 
   @override
   String get low_quality_stream => 'Low quality stream';
@@ -140,19 +137,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get offline_banner_detail => 'Playback will resume when you are back online';
 
   @override
-  String get stream_unreachable => 'Can\'t reach the kirtan stream';
+  String get stream_unreachable => 'Can’t reach the kirtan stream';
 
   @override
   String get retry => 'Retry';
 
   @override
-  String get mukhwak_load_failed => 'Could not load today\'s Hukamnama';
-
-  @override
-  String get yesterdays_recording => 'Yesterday\'s recording';
-
-  @override
-  String get mukhwak_from_yesterday => 'Yesterday\'s Hukamnama. Today\'s has not been published yet.';
+  String get yesterdays_recording => 'Yesterday’s recording';
 
   @override
   String get playback_error => 'Playback problem';
@@ -181,7 +172,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get live_from_darbar => 'Live from Sri Darbar Sahib';
 
   @override
-  String get todays_recording => 'Today\'s recording';
+  String get todays_recording => 'Today’s recording';
 
   @override
   String get read_the_words => 'Read the words';
@@ -196,10 +187,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get live_location => 'Sri Harmandir Sahib, Amritsar';
 
   @override
-  String get katha_subtitle => 'The meaning of today\'s Hukamnama';
+  String get katha_subtitle => 'The meaning of today’s Hukamnama';
 
   @override
-  String get read_hukamnama => 'Read today\'s Hukamnama';
+  String get read_hukamnama => 'Read today’s Hukamnama';
 
   @override
   String get read_hukamnama_detail => 'As published by SGPC';
@@ -256,7 +247,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sgpc_pdf => 'SGPC PDF';
 
   @override
-  String hukamnama_ang(int ang) {
+  String hukamnama_ang(String ang) {
     return 'Ang $ang';
   }
 
@@ -272,7 +263,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get larger_text => 'Larger text';
 
   @override
-  String get hukamnama_unavailable => 'Today\'s Hukamnama text could not be loaded';
+  String get hukamnama_unavailable => 'Today’s Hukamnama text could not be loaded';
 
   @override
   String hukamnama_of(String date) {
@@ -281,12 +272,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String hukamnama_not_out(String date) {
-    return 'Today\'s Hukamnama is not out yet. This is the one from $date.';
+    return 'Today’s Hukamnama is not out yet. This is the one from $date.';
   }
 
   @override
   String get meaning => 'Meaning';
 
   @override
-  String get open_on_sgpc => 'Read it on SGPC\'s website';
+  String get open_on_sgpc => 'Read it on SGPC’s website';
 }

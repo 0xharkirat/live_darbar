@@ -15,3 +15,27 @@ Future<void> openLink(String url) async {
     if (!kReleaseMode) debugPrint('[link] could not open $url: $e');
   }
 }
+
+/// Opens an https link in the system's in-app browser, and stays quiet when
+/// it cannot.
+///
+/// That is a Chrome Custom Tab on Android and a Safari view on iOS, and a new
+/// tab on the web. Both native ones are the real browser, with its downloads
+/// and saved sign-ins, shown over the app, so the app carries no WebView and
+/// the reader taps back to return.
+///
+/// When the in-app browser will not open, the link goes to the browser as
+/// [openLink] would send it.
+Future<void> openLinkInApp(String url) async {
+  try {
+    final opened = await launchUrl(
+      Uri.parse(url),
+      mode: LaunchMode.inAppBrowserView,
+      webOnlyWindowName: '_blank',
+    );
+    if (opened) return;
+  } catch (e) {
+    if (!kReleaseMode) debugPrint('[link] in-app browser failed for $url: $e');
+  }
+  await openLink(url);
+}

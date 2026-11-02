@@ -24,6 +24,8 @@ library;
 
 import 'dart:convert';
 
+import 'package:live_darbar/src/models/sgpc_day.dart';
+
 /// Month names in the order the year runs, Chet first.
 ///
 /// The Gurmukhi spellings are the ones SGPC prints in its own date footer.
@@ -85,6 +87,15 @@ String toGurmukhiNumerals(int n) => n
     .join();
 
 /// One day in the Nanakshahi calendar as SGPC prints it.
+/// The everyday date that sits under the Sikh date.
+///
+/// Both lines must name the same day: the SGPC day in Amritsar, which is
+/// the day [sikh] was computed for. The phone's local day can differ. In
+/// Canada at 8 pm, Amritsar is already on the next morning. When the Sikh
+/// date is not known, the SGPC day of [now] is used, for the same reason.
+DateTime everydayDateFor(SikhDate? sikh, DateTime now) =>
+    sikh?.gregorian ?? sgpcDayOf(now);
+
 class SikhDate {
   SikhDate({
     required this.day,
@@ -132,6 +143,12 @@ class SikhDate {
 
   /// The English counterpart: `17 Katak (Samvat 558 Nanakshahi)`.
   String get englishLabel => '$day $monthEnglish (Samvat $year Nanakshahi)';
+
+  /// Day, month and year with no era, for a tight line: `੧੭ ਕੱਤਕ ੫੫੮`.
+  String get shortGurmukhi => '$dayGurmukhi $monthGurmukhi $yearGurmukhi';
+
+  /// The English counterpart of [shortGurmukhi]: `17 Katak 558`.
+  String get shortEnglish => '$day $monthEnglish $year';
 
   @override
   bool operator ==(Object other) =>

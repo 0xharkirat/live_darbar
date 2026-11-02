@@ -266,6 +266,22 @@ void main() {
     });
   });
 
+  group('the everyday date under the Sikh date', () {
+    // 20:00 on Monday 2 November in Toronto is 06:30 on Tuesday 3 November
+    // in Amritsar.
+    final torontoEvening = DateTime.parse('2026-11-02T20:00:00-05:00');
+
+    test('names the Sikh date\'s own day', () {
+      final sikh = table.sikhDateFor(day(2026, 11, 3))!;
+      expect(everydayDateFor(sikh, torontoEvening), day(2026, 11, 3));
+    });
+
+    test('without a Sikh date, names the day in Amritsar, not the phone\'s',
+        () {
+      expect(everydayDateFor(null, torontoEvening), DateTime.utc(2026, 11, 3));
+    });
+  });
+
   group('SikhDate', () {
     test('writes Gurmukhi digits', () {
       expect(toGurmukhiNumerals(0), '੦');
@@ -281,6 +297,12 @@ void main() {
       // SGPC printed: ਸੋਮਵਾਰ, ੧੭ ਕੱਤਕ (ਸੰਮਤ ੫੫੮ ਨਾਨਕਸ਼ਾਹੀ)
       expect(d.dayGurmukhi, '੧੭');
       expect(d.yearGurmukhi, '੫੫੮');
+    });
+
+    test('short labels drop the era', () {
+      final d = table.sikhDateFor(day(2026, 11, 2))!;
+      expect(d.shortGurmukhi, '੧੭ ਕੱਤਕ ੫੫੮');
+      expect(d.shortEnglish, '17 Katak 558');
     });
 
     test('equal dates are equal', () {

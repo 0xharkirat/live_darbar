@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:live_darbar/l10n/app_localizations.dart';
 import 'package:live_darbar/src/controllers/audio_controller.dart';
@@ -16,16 +17,20 @@ import 'package:live_darbar/src/controllers/connectivity_controller.dart';
 import 'package:live_darbar/src/controllers/hukamnama_controller.dart';
 import 'package:live_darbar/src/controllers/locale_controller.dart';
 import 'package:live_darbar/src/controllers/now_playing_controller.dart';
+import 'package:live_darbar/src/controllers/quality_mode_controller.dart';
 import 'package:live_darbar/src/controllers/sikh_date_controller.dart';
 import 'package:live_darbar/src/controllers/update_controller.dart';
 import 'package:live_darbar/src/core/app_theme.dart';
 import 'package:live_darbar/src/core/app_type.dart';
+import 'package:live_darbar/src/core/clock.dart';
 import 'package:live_darbar/src/core/app_version.dart';
 import 'package:live_darbar/src/models/app_update.dart';
 import 'package:live_darbar/src/models/audio_progress_state.dart';
 import 'package:live_darbar/src/models/hukamnama.dart';
 import 'package:live_darbar/src/models/live_playback_state.dart';
+import 'package:live_darbar/src/models/quality_policy.dart';
 import 'package:live_darbar/src/models/sikh_date.dart';
+import 'package:live_darbar/src/models/stream_quality.dart';
 import 'package:live_darbar/src/views/screens/about_screen.dart';
 import 'package:live_darbar/src/views/screens/home_screen.dart';
 import 'package:live_darbar/src/views/screens/hukamnama_screen.dart';
@@ -60,7 +65,8 @@ void main() {
 
   testWidgets('home, scrolled to the end', (tester) async {
     await _pump(tester, const HomeScreen(), now: _hukamnamaPlaying);
-    await tester.drag(find.byType(SingleChildScrollView), const Offset(0, -900));
+    await tester.drag(
+        find.byType(SingleChildScrollView), const Offset(0, -900));
     await tester.pump(const Duration(seconds: 1));
     await _shot(tester, 'home_scrolled_en');
   });
@@ -78,6 +84,28 @@ void main() {
       await _shot(tester, 'now_playing_${name}_en');
     });
   }
+
+  testWidgets('now playing, live, data saver', (tester) async {
+    await _pump(
+      tester,
+      const HomeScreen(),
+      now: const NowPlaying(
+        index: kLiveIndex,
+        action: PlayAction.stop,
+        started: true,
+        live: LivePlaybackState(
+          status: LiveStatus.playing,
+          quality: StreamQuality.low,
+        ),
+      ),
+      quality: QualityMode.dataSaver,
+    );
+    showNowPlaying(tester.element(find.byType(HomeScreen)));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    await _precache(tester);
+    await _shot(tester, 'now_playing_live_datasaver_en');
+  });
 
   for (final locale in ['en', 'pa']) {
     testWidgets('hukamnama reader, $locale', (tester) async {
@@ -130,8 +158,9 @@ const _targets = {
   'appstore': (size: Size(1290, 2796), top: 177.0, bottom: 102.0),
 };
 
-String get _shotDir =>
-    _shotTarget == 'iphone17pro' ? 'build/screens' : 'build/screens/$_shotTarget';
+String get _shotDir => _shotTarget == 'iphone17pro'
+    ? 'build/screens'
+    : 'build/screens/$_shotTarget';
 
 const _idle = NowPlaying(
   index: kLiveIndex,
@@ -159,6 +188,8 @@ Future<void> _pump(
   Widget home, {
   String locale = 'en',
   NowPlaying now = _idle,
+  QualityMode? quality,
+  List<Override> overrides = const [],
 }) async {
   // The app shell does this in the real app; see AppType.tracking.
   AppType.tracking = locale != 'pa';
@@ -179,6 +210,9 @@ Future<void> _pump(
     RepaintBoundary(
       key: _shotKey,
       child: ProviderScope(
+        // Riverpod retries a provider whose build throws and shows it as
+        // loading meanwhile; a screenshot of an error needs the error.
+        retry: (_, __) => null,
         overrides: [
           nowPlayingProvider.overrideWithValue(now),
           livePlaybackProvider.overrideWith((ref) => Stream.value(now.live!)),
@@ -187,6 +221,8 @@ Future<void> _pump(
           updateController.overrideWith(_NoUpdate.new),
           localeController.overrideWith(() => _Locale(locale)),
           appVersionProvider.overrideWith((ref) async => '2.2.0 (8)'),
+          // The renders show 2 November in Amritsar, whatever day they run on.
+          clockProvider.overrideWithValue(() => DateTime.utc(2026, 11, 2, 6)),
           sikhDateProvider.overrideWith(
             (ref) async => SikhDate(
               day: 17,
@@ -196,6 +232,14 @@ Future<void> _pump(
             ),
           ),
           hukamnamaProvider.overrideWith(_Fixture.new),
+          sangrandTableProvider.overrideWith(
+            (ref) async => SangrandTable.fromJsonString(
+              File('assets/data/sgpc_sangrands.json').readAsStringSync(),
+            ),
+          ),
+          if (quality != null)
+            qualityModeProvider.overrideWith(() => _Quality(quality)),
+          ...overrides,
         ],
         child: MaterialApp(
           debugShowCheckedModeBanner: false,
@@ -246,21 +290,18 @@ Future<void> _loadFonts() async {
     await loader.load();
   }
 
-  await family('Manrope', [
-    'assets/fonts/Manrope-400.ttf',
-    'assets/fonts/Manrope-500.ttf',
-    'assets/fonts/Manrope-700.ttf',
+  await family('Geist', [
+    'assets/fonts/Geist-400.ttf',
+    'assets/fonts/Geist-500.ttf',
+    'assets/fonts/Geist-700.ttf',
   ]);
   await family('NotoSansGurmukhi', [
     'assets/fonts/NotoSansGurmukhi-400.ttf',
     'assets/fonts/NotoSansGurmukhi-500.ttf',
     'assets/fonts/NotoSansGurmukhi-700.ttf',
   ]);
-  await family('NotoSerif', ['assets/fonts/NotoSerif-600.ttf']);
-  await family('NotoSerifGurmukhi', [
-    'assets/fonts/NotoSerifGurmukhi-400.ttf',
-    'assets/fonts/NotoSerifGurmukhi-600.ttf',
-  ]);
+  await family('GeistSerif', ['assets/fonts/GeistSerif-400.ttf']);
+  await family('TiroGurmukhi', ['assets/fonts/TiroGurmukhi-400.ttf']);
   await family('packages/cupertino_icons/CupertinoIcons', [
     'packages/cupertino_icons/assets/CupertinoIcons.ttf',
   ]);
@@ -270,9 +311,21 @@ Future<void> _loadFonts() async {
 class _Fixture extends HukamnamaController {
   @override
   Future<Hukamnama> build() async {
-    final json = File('test/fixtures/sgpc_hukamnama_2026_11_02.json')
-        .readAsStringSync();
+    final json =
+        File('test/fixtures/sgpc_hukamnama_2026_11_02.json').readAsStringSync();
     return Hukamnama.fromSgpc(jsonDecode(json) as Map<String, dynamic>);
+  }
+}
+
+class _Quality extends QualityModeController {
+  _Quality(this.mode);
+
+  final QualityMode mode;
+
+  @override
+  QualityMode build() {
+    ready = Future.value();
+    return mode;
   }
 }
 

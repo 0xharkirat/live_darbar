@@ -11,10 +11,11 @@ import 'package:live_darbar/src/controllers/audio_controller.dart';
 import 'package:live_darbar/src/controllers/locale_controller.dart';
 import 'package:live_darbar/src/core/app_theme.dart';
 import 'package:live_darbar/src/core/app_type.dart';
+import 'package:live_darbar/src/core/open_link.dart';
+import 'package:live_darbar/src/models/sgpc_day.dart';
+import 'package:live_darbar/src/services/legacy_pdf_cleanup.dart';
 import 'package:live_darbar/src/views/screens/home_screen.dart';
-import 'package:live_darbar/src/views/screens/mukhwak_pdf_viewer.dart';
 import 'package:live_darbar/src/views/widgets/offline_banner_widget.dart';
-import 'package:live_darbar/src/controllers/mukhwak_controller.dart';
 import 'package:quick_actions/quick_actions.dart';
 import 'package:live_darbar/l10n/app_localizations.dart';
 
@@ -81,7 +82,6 @@ class _MyAppState extends ConsumerState<MyApp> {
       MethodChannel('com.hsi.harki.live_darbar/audio');
   static const MethodChannel _oacpChannel =
       MethodChannel('com.hsi.harki.live_darbar/oacp');
-  final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
 
   @override
   void initState() {
@@ -92,6 +92,7 @@ class _MyAppState extends ConsumerState<MyApp> {
     }
 
     unawaited(init());
+    unawaited(deleteLegacyHukamnamaPdfs());
 
     _channel.setMethodCallHandler((call) async {
       if (call.method == "playLiveDarbar") {
@@ -121,9 +122,6 @@ class _MyAppState extends ConsumerState<MyApp> {
         localizedTitle: 'Mukhwak Katha',
       ),
     ]);
-
-    // Prefetch daily Mukhwak PDF
-    ref.read(mukhwakController.notifier).fetchAndCache();
   }
 
   @override
@@ -154,11 +152,7 @@ class _MyAppState extends ConsumerState<MyApp> {
       case 'play_katha':
         ref.read(audioController).play(2);
       case 'view_mukhwak_pdf':
-        _navigatorKey.currentState?.push(
-          MaterialPageRoute(
-            builder: (_) => const MukhwakPdfViewer(),
-          ),
-        );
+        await openLinkInApp(kHukamnamaPdfPageUrl);
     }
   }
 
@@ -177,7 +171,6 @@ class _MyAppState extends ConsumerState<MyApp> {
     final locale = ref.watch(localeController);
     AppType.tracking = locale != 'pa';
     return MaterialApp(
-      navigatorKey: _navigatorKey,
       title: 'Live Darbar',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.material,
