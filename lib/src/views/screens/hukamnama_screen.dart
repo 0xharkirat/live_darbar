@@ -511,27 +511,26 @@ class _Failure extends ConsumerWidget {
               textAlign: TextAlign.center,
               style: AppType.callout,
             ),
-            // The browser cannot call SGPC's feed, so the web app sends the
-            // reader to SGPC's own site instead of offering a retry.
-            if (web) ...[
-              const SizedBox(height: 8),
+            const SizedBox(height: 8),
+            CupertinoButton(
+              onPressed: () => ref.read(hukamnamaProvider.notifier).refresh(),
+              child: Text(
+                l10n.retry,
+                style: AppType.callout.copyWith(color: Palette.gold),
+              ),
+            ),
+            // The web app reads a copy of SGPC's text, which can be late or
+            // down, so it also sends the reader to SGPC's own site. The PDF
+            // page needs the in-app browser, which web does not have.
+            if (web)
               CupertinoButton(
                 onPressed: () => openLink(kHukamnamaSourceUrl),
                 child: Text(
                   l10n.open_on_sgpc,
                   style: AppType.callout.copyWith(color: Palette.gold),
                 ),
-              ),
-            ],
-            if (!web) ...[
-              const SizedBox(height: 8),
-              CupertinoButton(
-                onPressed: () => ref.read(hukamnamaProvider.notifier).refresh(),
-                child: Text(
-                  l10n.retry,
-                  style: AppType.callout.copyWith(color: Palette.gold),
-                ),
-              ),
+              )
+            else
               CupertinoButton(
                 onPressed: () => openLinkInApp(kHukamnamaPdfPageUrl),
                 child: Text(
@@ -539,7 +538,6 @@ class _Failure extends ConsumerWidget {
                   style: AppType.callout.copyWith(color: Palette.gold),
                 ),
               ),
-            ],
           ],
         ),
       ),

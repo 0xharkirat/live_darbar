@@ -611,7 +611,7 @@ abstract class AppLocalizations {
   /// **'Meaning'**
   String get meaning;
 
-  /// Web only: link to the Hukamnama on SGPC's site
+  /// Web only: link to SGPC's site, shown beside Retry when the Hukamnama text could not be loaded
   ///
   /// In en, this message translates to:
   /// **'Read it on SGPC’s website'**

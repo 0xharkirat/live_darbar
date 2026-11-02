@@ -12,8 +12,8 @@ import 'package:live_darbar/src/models/sgpc_day.dart';
 /// where it comes from near the text.
 const kHukamnamaSourceName = 'SGPC';
 
-/// See [kHukamnamaSourceName]. Where web, which cannot call the feed, sends the
-/// reader instead.
+/// See [kHukamnamaSourceName]. The credit under the text links here, and the
+/// web app links here when its copy of the text cannot be loaded.
 const kHukamnamaSourceUrl = 'https://www.sgpc.net';
 
 /// One line of the shabad.

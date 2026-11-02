@@ -1,0 +1,113 @@
+name: Hukamnama mirror
+
+# Copies SGPC's Hukamnama text to the `hukamnama-data` branch.
+#
+# Why: SGPC's feed sends no CORS header, so the web app cannot read it. The web
+# app reads the copy from raw.githubusercontent.com instead, which sends
+# `access-control-allow-origin: *`. The native apps read SGPC directly.
+#
+# The branch is an orphan. It holds only `hukamnama/` and a README, and this
+# job creates it on the first run.
+#
+# Two limits of GitHub's schedule:
+# - GitHub turns off scheduled workflows after 60 days with no repository
+#   activity. The web app then stops getting new text. Enable the workflow
+#   again in the Actions tab.
+# - A scheduled run starts late, often by 5 to 15 minutes, and a busy hour can
+#   skip one. The dense window below makes up for that.
+
+on:
+  schedule:
+    # SGPC posts between 05:00 and 08:00 IST, which is 23:30 to 02:30 UTC.
+    # Every 10 minutes in that window.
+    - cron: '30,40,50 23 * * *'
+    - cron: '*/10 0,1 * * *'
+    - cron: '0,10,20,30 2 * * *'
+    # Once an hour the rest of the day. Minute 7, not minute 0, because GitHub
+    # delays the runs at the top of the hour the most.
+    - cron: '7 3-23 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+# Two runs must never push to the data branch at once. A run that waits is not
+# cancelled, because it may hold the only copy of a new day.
+concurrency:
+  group: hukamnama-mirror
+  cancel-in-progress: false
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      DATA_BRANCH: hukamnama-data
+    steps:
+      # The script comes from the default branch, where the schedule runs from.
+      - name: Check out the script
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          path: src
+          persist-credentials: false
+
+      - name: Set up Dart
+        uses: dart-lang/setup-dart@6afc89df92d6eb3834022f73cd65adc8cdfcb92d # v1.8.1
+        with:
+          sdk: stable
+
+      # Clones the data branch, or starts it as an orphan when it does not
+      # exist yet. `git ls-remote --exit-code` exits 2 when the branch is
+      # missing. Any other failure stops the run, so a network fault never
+      # looks like a missing branch.
+      - name: Check out the data branch
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh auth setup-git
+          url="https://github.com/${GITHUB_REPOSITORY}.git"
+          status=0
+          git ls-remote --exit-code --heads "$url" "$DATA_BRANCH" >/dev/null || status=$?
+          case "$status" in
+            0) git clone --quiet --depth 1 --branch "$DATA_BRANCH" "$url" data ;;
+            2)
+              echo "No $DATA_BRANCH branch yet. Creating it."
+              git init --quiet --initial-branch "$DATA_BRANCH" data
+              git -C data remote add origin "$url"
+              ;;
+            *) exit "$status" ;;
+          esac
+
+      # The README lives on the default branch, so it can change without
+      # touching the data branch by hand.
+      - name: Add the README
+        run: cp src/tool/hukamnama_data_README.md data/README.md
+
+      # Writes whatever it accepted, then exits 1 if SGPC sent a bad answer.
+      # The next steps still run, so a good day is saved even when the other
+      # day fails. The last step turns the failure into a red run.
+      - name: Copy SGPC's Hukamnama
+        id: mirror
+        continue-on-error: true
+        run: dart src/tool/hukamnama_mirror.dart --out data
+
+      - name: Commit and push changes
+        run: |
+          set -euo pipefail
+          cd data
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add --all
+          if git diff --cached --quiet; then
+            echo 'No file changed. Nothing to push.'
+            exit 0
+          fi
+          git commit --quiet -m "Update the Hukamnama mirror" -m "$(git diff --cached --name-status)"
+          git push --set-upstream origin "$DATA_BRANCH"
+
+      - name: Fail the run if SGPC sent a bad answer
+        if: steps.mirror.outcome == 'failure'
+        run: |
+          echo '::error::SGPC sent an answer that the mirror could not use. See the "Copy SGPC'"'"'s Hukamnama" step.'
+          exit 1

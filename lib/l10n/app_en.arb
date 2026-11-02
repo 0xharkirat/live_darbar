@@ -375,6 +375,6 @@
     },
     "open_on_sgpc": "Read it on SGPC’s website",
     "@open_on_sgpc": {
-        "description": "Web only: link to the Hukamnama on SGPC's site"
+        "description": "Web only: link to SGPC's site, shown beside Retry when the Hukamnama text could not be loaded"
     }
 }
