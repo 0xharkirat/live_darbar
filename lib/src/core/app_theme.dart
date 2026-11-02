@@ -67,10 +67,39 @@ abstract final class AppTheme {
         surfaceTintColor: Colors.transparent,
         modalBarrierColor: Color(0x99000000),
       ),
-      cupertinoOverrideTheme: const CupertinoThemeData(
+      cupertinoOverrideTheme: CupertinoThemeData(
         brightness: Brightness.dark,
         primaryColor: Palette.gold,
+        textTheme: _cupertinoText,
       ),
+    );
+  }
+
+  /// Cupertino's own text styles, set in the app's sans.
+  ///
+  /// Cupertino widgets take their type from the Cupertino theme, not the
+  /// Material one, and its defaults name `CupertinoSystemText`, the system
+  /// font. That resolves to San Francisco on Apple devices and to nothing
+  /// anywhere else, where the web falls back to Roboto. The back label in the
+  /// navigation bar is the one place the app shows it. Sizes, weights and
+  /// tracking stay Cupertino's, so only the face changes.
+  static CupertinoTextThemeData get _cupertinoText {
+    const base = CupertinoTextThemeData(primaryColor: Palette.gold);
+    TextStyle sans(TextStyle style) => style.copyWith(
+          fontFamily: AppType.sans,
+          fontFamilyFallback: AppType.sansFallback,
+        );
+    return CupertinoTextThemeData(
+      primaryColor: Palette.gold,
+      textStyle: sans(base.textStyle),
+      actionTextStyle: sans(base.actionTextStyle),
+      actionSmallTextStyle: sans(base.actionSmallTextStyle),
+      tabLabelTextStyle: sans(base.tabLabelTextStyle),
+      navTitleTextStyle: sans(base.navTitleTextStyle),
+      navLargeTitleTextStyle: sans(base.navLargeTitleTextStyle),
+      navActionTextStyle: sans(base.navActionTextStyle),
+      pickerTextStyle: sans(base.pickerTextStyle),
+      dateTimePickerTextStyle: sans(base.dateTimePickerTextStyle),
     );
   }
 }

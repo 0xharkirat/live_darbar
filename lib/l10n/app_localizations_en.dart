@@ -208,6 +208,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get privacy_policy => 'Privacy policy';
 
   @override
+  String get about_site => 'darbar.live';
+
+  @override
   String get play => 'Play';
 
   @override

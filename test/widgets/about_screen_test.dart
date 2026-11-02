@@ -4,7 +4,24 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:live_darbar/l10n/app_localizations.dart';
 import 'package:live_darbar/src/core/app_theme.dart';
 import 'package:live_darbar/src/core/app_version.dart';
+import 'package:live_darbar/src/core/platform.dart';
 import 'package:live_darbar/src/views/screens/about_screen.dart';
+import 'package:url_launcher_platform_interface/link.dart';
+import 'package:url_launcher_platform_interface/url_launcher_platform_interface.dart';
+
+/// Stands in for the platform behind `url_launcher` and records each launch.
+class _FakeLauncher extends UrlLauncherPlatform {
+  final launches = <({String url, PreferredLaunchMode mode})>[];
+
+  @override
+  LinkDelegate? get linkDelegate => null;
+
+  @override
+  Future<bool> launchUrl(String url, LaunchOptions options) async {
+    launches.add((url: url, mode: options.mode));
+    return true;
+  }
+}
 
 /// Guards the About screen against a missing translation.
 ///
@@ -12,7 +29,16 @@ import 'package:live_darbar/src/views/screens/about_screen.dart';
 /// by hand. A key added to English alone still compiles, so the only thing
 /// that catches it is rendering both locales.
 void main() {
-  Future<AppLocalizations> pump(WidgetTester tester, String locale) async {
+  late UrlLauncherPlatform original;
+
+  setUp(() => original = UrlLauncherPlatform.instance);
+  tearDown(() => UrlLauncherPlatform.instance = original);
+
+  Future<AppLocalizations> pump(
+    WidgetTester tester,
+    String locale, {
+    bool web = false,
+  }) async {
     tester.view.physicalSize = const Size(1170, 2532);
     tester.view.devicePixelRatio = 3;
     addTearDown(tester.view.reset);
@@ -21,6 +47,7 @@ void main() {
       ProviderScope(
         overrides: [
           appVersionProvider.overrideWith((ref) async => '2.2.0 (8)'),
+          isWebProvider.overrideWithValue(web),
         ],
         child: MaterialApp(
           theme: AppTheme.material,
@@ -58,4 +85,39 @@ void main() {
       expect(find.text(l10n.licensing_images_source), findsOneWidget);
     });
   }
+
+  group('the link back to the site', () {
+    testWidgets('is on the web, and opens darbar.live in a new tab', (
+      tester,
+    ) async {
+      final launcher = _FakeLauncher();
+      UrlLauncherPlatform.instance = launcher;
+      final l10n = await pump(tester, 'en', web: true);
+
+      await tester.tap(find.text(l10n.about_site));
+      await tester.pump();
+
+      expect(launcher.launches.map((l) => l.url), ['https://darbar.live']);
+      expect(
+        launcher.launches.single.mode,
+        PreferredLaunchMode.externalApplication,
+        reason: 'a new tab, so the kirtan keeps playing',
+      );
+    });
+
+    testWidgets('is not in the apps, which have no site to go back to', (
+      tester,
+    ) async {
+      final l10n = await pump(tester, 'en');
+
+      expect(find.text(l10n.about_site), findsNothing);
+    });
+
+    testWidgets('reads the same in Punjabi', (tester) async {
+      final l10n = await pump(tester, 'pa', web: true);
+
+      expect(find.text(l10n.about_site), findsOneWidget);
+      expect(l10n.about_site, 'darbar.live');
+    });
+  });
 }

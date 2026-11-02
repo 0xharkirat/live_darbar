@@ -10,7 +10,7 @@ import 'package:live_darbar/src/core/app_type.dart';
 import 'package:live_darbar/src/core/motion.dart';
 import 'package:live_darbar/src/core/palette.dart';
 import 'package:live_darbar/src/models/stream_quality.dart';
-import 'package:live_darbar/src/views/screens/hukamnama_screen.dart';
+import 'package:live_darbar/src/views/app_router.dart';
 import 'package:live_darbar/src/views/widgets/artwork.dart';
 import 'package:live_darbar/src/views/widgets/live_badge.dart';
 import 'package:live_darbar/src/views/widgets/live_status_widget.dart';
@@ -25,14 +25,41 @@ import 'package:live_darbar/src/views/widgets/source_switcher.dart';
 /// The sheet pushes the home screen back and lets a downward drag, or a quick
 /// flick, close it, tracking the finger 1:1 the whole way. That is the
 /// gesture people already use to dismiss Apple Music's player.
+///
+/// A tap on the dimmed home above it closes it too. Flutter's Cupertino sheet
+/// leaves that out, as an iOS sheet does, but a mouse cannot swipe, and a
+/// finger often goes for the dim first.
 Future<void> showNowPlaying(BuildContext context) {
-  return showCupertinoSheet<void>(
-    context: context,
-    showDragHandle: true,
-    topGap: 0.06,
-    scrollableBuilder: (context, controller) =>
-        NowPlayingScreen(scrollController: controller),
+  return Navigator.of(context, rootNavigator: true).push(
+    _PlayerSheetRoute(
+      barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
+    ),
   );
+}
+
+/// [showCupertinoSheet]'s route, with a barrier that dismisses.
+///
+/// It is named `/`, the page it sits on, because the address bar follows the
+/// top route's name. Without a name, closing the reader that the player opened
+/// would leave `#/hukamnama` showing over a player.
+class _PlayerSheetRoute extends CupertinoSheetRoute<void> {
+  _PlayerSheetRoute({required String barrierLabel})
+      : _barrierLabel = barrierLabel,
+        super(
+          settings: const RouteSettings(name: AppRoutes.home),
+          showDragHandle: true,
+          topGap: 0.06,
+          scrollableBuilder: (context, controller) =>
+              NowPlayingScreen(scrollController: controller),
+        );
+
+  final String _barrierLabel;
+
+  @override
+  bool get barrierDismissible => true;
+
+  @override
+  String? get barrierLabel => _barrierLabel;
 }
 
 class NowPlayingScreen extends ConsumerWidget {
@@ -335,9 +362,8 @@ class _ReadButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Pressable(
       semanticLabel: label,
-      onTap: () => Navigator.of(context, rootNavigator: true).push(
-        CupertinoPageRoute<void>(builder: (_) => const HukamnamaScreen()),
-      ),
+      onTap: () => Navigator.of(context, rootNavigator: true)
+          .pushNamed(AppRoutes.hukamnama),
       child: Container(
         height: 40,
         padding: const EdgeInsets.symmetric(horizontal: 14),

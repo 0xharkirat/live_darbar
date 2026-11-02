@@ -21,8 +21,7 @@ import 'package:live_darbar/src/models/app_update.dart';
 import 'package:live_darbar/src/models/hukamnama.dart';
 import 'package:live_darbar/src/models/sgpc_day.dart';
 import 'package:live_darbar/src/models/sikh_date.dart';
-import 'package:live_darbar/src/views/screens/about_screen.dart';
-import 'package:live_darbar/src/views/screens/hukamnama_screen.dart';
+import 'package:live_darbar/src/views/app_router.dart';
 import 'package:live_darbar/src/views/widgets/artwork.dart';
 import 'package:live_darbar/src/views/widgets/equalizer.dart';
 import 'package:live_darbar/src/views/widgets/language_switch.dart';
@@ -456,9 +455,7 @@ class _ReadCard extends ConsumerWidget {
         side: const BorderSide(color: Palette.border),
       ),
     );
-    void open() => Navigator.of(context).push(
-          CupertinoPageRoute<void>(builder: (_) => const HukamnamaScreen()),
-        );
+    void open() => Navigator.of(context).pushNamed(AppRoutes.hukamnama);
 
     if (line != null) {
       // Before SGPC posts today's (about 05:30 to 07:00 in India), the card
@@ -599,9 +596,7 @@ class _Footer extends ConsumerWidget {
       children: [
         link(
           l10n.about_this_app,
-          () => Navigator.of(context).push(
-            CupertinoPageRoute<void>(builder: (_) => const AboutScreen()),
-          ),
+          () => Navigator.of(context).pushNamed(AppRoutes.about),
         ),
         // On the web, the site is often someone's first contact with the
         // app, so it offers the real thing.

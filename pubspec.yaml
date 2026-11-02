@@ -116,6 +116,16 @@ flutter:
           weight: 500
         - asset: assets/fonts/Geist-700.ttf
           weight: 700
+    # CanvasKit, the web renderer, downloads Roboto from fonts.gstatic.com on
+    # every load, as the face it falls back to, unless the app declares a
+    # family with that name. This is Geist under the name Roboto: the request
+    # goes away, and anything that ever lands on the fallback is set in the
+    # app's own sans instead of a font the app never chose. Native apps never
+    # ask for it.
+    - family: Roboto
+      fonts:
+        - asset: assets/fonts/Geist-400.ttf
+          weight: 400
     - family: NotoSansGurmukhi
       fonts:
         - asset: assets/fonts/NotoSansGurmukhi-400.ttf

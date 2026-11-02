@@ -14,6 +14,7 @@ import 'package:live_darbar/src/core/app_type.dart';
 import 'package:live_darbar/src/core/open_link.dart';
 import 'package:live_darbar/src/models/sgpc_day.dart';
 import 'package:live_darbar/src/services/legacy_pdf_cleanup.dart';
+import 'package:live_darbar/src/views/app_router.dart';
 import 'package:live_darbar/src/views/screens/home_screen.dart';
 import 'package:live_darbar/src/views/widgets/offline_banner_widget.dart';
 import 'package:quick_actions/quick_actions.dart';
@@ -189,7 +190,10 @@ class _MyAppState extends ConsumerState<MyApp> {
           Expanded(child: child ?? const SizedBox.shrink()),
         ],
       ),
+      // Pages are pushed by name, so the web shows them in the address bar.
+      // See AppRoutes.
       home: const HomeScreen(),
+      onGenerateRoute: AppRoutes.generator(),
     );
   }
 }

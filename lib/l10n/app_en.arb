@@ -269,6 +269,10 @@
     "@privacy_policy": {
         "description": "Link on the About screen"
     },
+    "about_site": "darbar.live",
+    "@about_site": {
+        "description": "Link on the About screen, web only, to the Live Darbar site. A domain name, so it is the same in every language"
+    },
     "play": "Play",
     "@play": {
         "description": "Screen reader label for the play button"

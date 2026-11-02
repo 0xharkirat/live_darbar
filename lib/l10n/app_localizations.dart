@@ -485,6 +485,12 @@ abstract class AppLocalizations {
   /// **'Privacy policy'**
   String get privacy_policy;
 
+  /// Link on the About screen, web only, to the Live Darbar site. A domain name, so it is the same in every language
+  ///
+  /// In en, this message translates to:
+  /// **'darbar.live'**
+  String get about_site;
+
   /// Screen reader label for the play button
   ///
   /// In en, this message translates to:

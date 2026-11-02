@@ -6,7 +6,9 @@ import 'package:live_darbar/src/core/app_type.dart';
 import 'package:live_darbar/src/core/app_version.dart';
 import 'package:live_darbar/src/core/open_link.dart';
 import 'package:live_darbar/src/core/palette.dart';
+import 'package:live_darbar/src/core/platform.dart';
 import 'package:live_darbar/src/core/store_links.dart';
+import 'package:live_darbar/src/views/widgets/app_nav_bar.dart';
 import 'package:live_darbar/src/views/widgets/language_switch.dart';
 import 'package:live_darbar/src/views/widgets/pressable.dart';
 
@@ -18,6 +20,9 @@ import 'package:live_darbar/src/views/widgets/pressable.dart';
 class AboutScreen extends ConsumerWidget {
   const AboutScreen({super.key});
 
+  /// The widest the page runs. The nav bar lines up with it on the web.
+  static const maxWidth = 540.0;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
@@ -27,14 +32,7 @@ class AboutScreen extends ConsumerWidget {
       backgroundColor: Palette.background,
       body: CustomScrollView(
         slivers: [
-          CupertinoSliverNavigationBar(
-            largeTitle: Text(l10n.about_this_app, style: AppType.largeTitle),
-            middle: Text(l10n.about_this_app, style: AppType.headline),
-            alwaysShowMiddle: false,
-            backgroundColor: Palette.background.withValues(alpha: 0.92),
-            border: null,
-            previousPageTitle: l10n.app_title,
-          ),
+          AppNavBar(title: l10n.about_this_app, contentWidth: maxWidth),
           SliverSafeArea(
             top: false,
             sliver: SliverPadding(
@@ -42,7 +40,7 @@ class AboutScreen extends ConsumerWidget {
               sliver: SliverToBoxAdapter(
                 child: Center(
                   child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 540),
+                    constraints: const BoxConstraints(maxWidth: maxWidth),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
@@ -87,6 +85,15 @@ class AboutScreen extends ConsumerWidget {
                               label: l10n.privacy_policy,
                               url: kPrivacyPolicyUrl,
                             ),
+                            // Someone who arrived on the site and wandered
+                            // into the app can get back to the site. It opens
+                            // in a new tab, so the kirtan keeps playing.
+                            if (ref.watch(isWebProvider))
+                              _LinkRow(
+                                icon: CupertinoIcons.house,
+                                label: l10n.about_site,
+                                url: kSiteUrl,
+                              ),
                           ],
                         ),
                         const SizedBox(height: 36),

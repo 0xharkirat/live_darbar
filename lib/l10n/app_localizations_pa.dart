@@ -208,6 +208,9 @@ class AppLocalizationsPa extends AppLocalizations {
   String get privacy_policy => 'ਪਰਦੇਦਾਰੀ ਨੀਤੀ';
 
   @override
+  String get about_site => 'darbar.live';
+
+  @override
   String get play => 'ਚਲਾਓ';
 
   @override

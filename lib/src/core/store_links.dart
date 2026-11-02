@@ -8,3 +8,6 @@ const kAppStoreUrl = 'https://apps.apple.com/us/app/live-darbar/id6449766130';
 const kPrivacyPolicyUrl =
     'https://www.freeprivacypolicy.com/live/04ba243a-1119-41eb-a8cd-30e8e95fcf4f';
 const kFeedbackUrl = 'https://forms.gle/HKZtyYzdEYstgbby7';
+
+/// The Live Darbar site. The web app, served from /app/ on it, links back.
+const kSiteUrl = 'https://darbar.live';

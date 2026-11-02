@@ -18,6 +18,7 @@ import 'package:live_darbar/src/core/palette.dart';
 import 'package:live_darbar/src/core/reader_numbers.dart';
 import 'package:live_darbar/src/models/hukamnama.dart';
 import 'package:live_darbar/src/models/sgpc_day.dart';
+import 'package:live_darbar/src/views/widgets/app_nav_bar.dart';
 import 'package:live_darbar/src/views/widgets/busy_icon.dart';
 import 'package:live_darbar/src/views/widgets/in_app_link.dart';
 import 'package:live_darbar/src/views/widgets/pressable.dart';
@@ -41,13 +42,9 @@ class HukamnamaScreen extends ConsumerWidget {
       backgroundColor: Palette.background,
       body: CustomScrollView(
         slivers: [
-          CupertinoSliverNavigationBar(
-            largeTitle: Text(l10n.mukhwak, style: AppType.largeTitle),
-            middle: Text(l10n.mukhwak, style: AppType.headline),
-            alwaysShowMiddle: false,
-            previousPageTitle: l10n.app_title,
-            backgroundColor: Palette.background.withValues(alpha: 0.92),
-            border: null,
+          AppNavBar(
+            title: l10n.mukhwak,
+            contentWidth: _Column.maxWidth,
             trailing: const _TextSizeControl(),
           ),
           // Stored text shows even while a refresh runs or after it fails;
@@ -168,6 +165,9 @@ class HukamnamaScreen extends ConsumerWidget {
 class _Column extends StatelessWidget {
   const _Column({this.child, this.children});
 
+  /// The widest the text runs. The nav bar lines up with it on the web.
+  static const maxWidth = 620.0;
+
   final Widget? child;
   final List<Widget>? children;
 
@@ -175,7 +175,7 @@ class _Column extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 620),
+        constraints: const BoxConstraints(maxWidth: maxWidth),
         // Full width, so a short line sits at the left edge with the rest
         // instead of floating in the middle.
         child: child != null
