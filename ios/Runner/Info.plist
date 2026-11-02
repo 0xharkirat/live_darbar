@@ -24,6 +24,11 @@
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<!-- The app uses only the encryption built into iOS (HTTPS), which is
+	     exempt from export rules. Saying so here skips the export compliance
+	     question on every TestFlight upload. -->
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<!-- The live Icecast stream is cleartext on live.sgpc.net:7339 and the
