@@ -5,12 +5,12 @@
     "build": 8
   },
   "ios": {
-    "version": "2.2.0",
-    "build": 8
+    "version": "2.1.0",
+    "build": 7
   },
   "macos": {
-    "version": "2.2.0",
-    "build": 8
+    "version": "2.1.0",
+    "build": 7
   },
   "stores": {
     "android": "https://play.google.com/store/apps/details?id=com.hsi.harki.live_darbar",
