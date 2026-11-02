@@ -93,6 +93,10 @@ jobs:
         run: dart src/tool/hukamnama_mirror.dart --out data
 
       - name: Commit and push changes
+        # The data-branch step set git to sign in through gh. gh needs the
+        # token here too, or git falls back to asking for a username.
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
           cd data
