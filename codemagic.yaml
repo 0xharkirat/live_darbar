@@ -1,10 +1,14 @@
 # Codemagic builds for the iPhone app.
 #
-# The Android release does not live here. It is the Workflow Editor's
-# "Default Workflow" in the Codemagic app live_darbar.
+# The Android builds do not live here. They are Workflow Editor workflows in
+# the Codemagic app live_darbar, because the upload keystore lives there:
+# "Default Workflow" builds the app bundle, and "Android release" builds it
+# and publishes it to the Production track on Google Play. Google Play takes
+# its What's New from release_notes.json, and publishes only the languages
+# that the store listing has.
 #
-# Neither workflow has a trigger. Each one starts by hand, from Codemagic or
-# from its REST API, so a push never starts a build.
+# No workflow has a trigger. A build starts only when Hark asks for it, from
+# Codemagic or from its REST API, so a push never starts a build.
 #
 # - ios-check builds the iPhone app for release without signing. It needs no
 #   Apple account, and shows that the app still compiles for a device.

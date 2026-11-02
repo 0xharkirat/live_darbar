@@ -149,13 +149,16 @@ final _shotKey = GlobalKey();
 ///
 /// - `iphone17pro` (default): for review, into build/screens/.
 /// - `play`: Google Play phone screenshots, 9:16 at 1080 x 1920.
-/// - `appstore`: the App Store's 6.9-inch size, 1290 x 2796.
+/// - `appstore`: the App Store's 6.9-inch iPhone size, 1290 x 2796.
+/// - `ipad13`: the App Store's 13-inch iPad size, 2064 x 2752, at 2x. The
+///   app runs on iPad, so the App Store asks for these too.
 const _shotTarget = String.fromEnvironment('SHOT', defaultValue: 'iphone17pro');
 
 const _targets = {
-  'iphone17pro': (size: Size(1206, 2622), top: 186.0, bottom: 102.0),
-  'play': (size: Size(1080, 1920), top: 72.0, bottom: 48.0),
-  'appstore': (size: Size(1290, 2796), top: 177.0, bottom: 102.0),
+  'iphone17pro': (size: Size(1206, 2622), dpr: 3.0, top: 186.0, bottom: 102.0),
+  'play': (size: Size(1080, 1920), dpr: 3.0, top: 72.0, bottom: 48.0),
+  'appstore': (size: Size(1290, 2796), dpr: 3.0, top: 177.0, bottom: 102.0),
+  'ipad13': (size: Size(2064, 2752), dpr: 2.0, top: 48.0, bottom: 40.0),
 };
 
 String get _shotDir => _shotTarget == 'iphone17pro'
@@ -195,7 +198,7 @@ Future<void> _pump(
   AppType.tracking = locale != 'pa';
   final target = _targets[_shotTarget]!;
   tester.view.physicalSize = target.size;
-  tester.view.devicePixelRatio = 3;
+  tester.view.devicePixelRatio = target.dpr;
   tester.view.padding = FakeViewPadding(top: target.top, bottom: target.bottom);
   addTearDown(tester.view.reset);
 
@@ -220,7 +223,7 @@ Future<void> _pump(
           connectivityController.overrideWith(_Online.new),
           updateController.overrideWith(_NoUpdate.new),
           localeController.overrideWith(() => _Locale(locale)),
-          appVersionProvider.overrideWith((ref) async => '2.2.0 (8)'),
+          appVersionProvider.overrideWith((ref) async => '3.0.0 (10)'),
           // The renders show 2 November in Amritsar, whatever day they run on.
           clockProvider.overrideWithValue(() => DateTime.utc(2026, 11, 2, 6)),
           sikhDateProvider.overrideWith(
@@ -273,7 +276,7 @@ Future<void> _shot(WidgetTester tester, String name) async {
     find.byKey(_shotKey),
   );
   await tester.runAsync(() async {
-    final image = await boundary.toImage(pixelRatio: 3);
+    final image = await boundary.toImage(pixelRatio: _targets[_shotTarget]!.dpr);
     final bytes = await image.toByteData(format: ui.ImageByteFormat.png);
     File('$_shotDir/$name.png')
       ..createSync(recursive: true)
