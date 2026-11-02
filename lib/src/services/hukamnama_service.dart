@@ -48,9 +48,8 @@ class HukamnamaWebUnsupportedException extends HukamnamaException {
 ///
 /// ## The request
 ///
-/// `POST https://hs.sgpc.net/hssearchhukmanamaTestCalender.php` (the same
-/// endpoint `MukhwakController` uses for the PDF id) with a form body
-/// `selected_date=YYYY-MM-DD`. Checked against the live server on
+/// `POST https://hs.sgpc.net/hssearchhukmanamaTestCalender.php` with a form
+/// body `selected_date=YYYY-MM-DD`. Checked against the live server on
 /// 2 November 2026:
 /// - The header `X-Requested-With: XMLHttpRequest` is required. Without it the
 ///   server answers `200` with an empty `text/html` body, even for a day that

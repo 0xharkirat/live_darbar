@@ -396,7 +396,7 @@ The EmbeddingGemma model matches based on `aliases`, `examples`, and `keywords` 
 | `play_live_kirtan` | activity | Starts live kirtan stream from Darbar Sahib |
 | `play_mukhwak` | activity | Plays today's Hukumnama audio |
 | `play_katha` | activity | Plays Mukhwak Katha discourse |
-| `view_mukhwak_pdf` | activity | Opens daily Hukumnama PDF viewer |
+| `view_mukhwak_pdf` | activity | Opens SGPC's Hukumnama PDF page in an in-app browser |
 
 ## File Overview
 

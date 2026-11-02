@@ -15,7 +15,7 @@
     "@mukhwak_katha": {
         "description": "Mukhwak Katha"
     },
-    "loading": "Loading...",
+    "loading": "Loading…",
     "@loading": {
         "description": "Loading..."
     },
@@ -107,7 +107,7 @@
     "@licensing_logo_source": {
         "description": "Link text for the logo attribution. Flaticon's free licence requires this exact credit line, so leave it in English"
     },
-    "licensing_logo": "App logo, used under Flaticon's free licence.",
+    "licensing_logo": "App logo, used under Flaticon’s free licence.",
     "@licensing_logo": {
         "description": "Attribution for the app logo"
     },
@@ -143,10 +143,6 @@
     "@youtube": {
         "description": "Youtube video"
     },
-    "mukhwak_pdf_title": "Today's Hukamnama (PDF)",
-    "@mukhwak_pdf_title": {
-        "description": "Title for the Daily Mukhwak PDF screen"
-    },
     "go_live": "Go live",
     "@go_live": {
         "description": "Button that reconnects the stream to jump back to the live edge"
@@ -160,7 +156,7 @@
             }
         }
     },
-    "reconnecting": "Reconnecting...",
+    "reconnecting": "Reconnecting…",
     "@reconnecting": {
         "description": "Shown while the app is retrying a dropped stream connection"
     },
@@ -176,7 +172,7 @@
     "@offline_banner_detail": {
         "description": "Second line of the offline banner, telling the user they need do nothing"
     },
-    "stream_unreachable": "Can't reach the kirtan stream",
+    "stream_unreachable": "Can’t reach the kirtan stream",
     "@stream_unreachable": {
         "description": "Shown when the device is online but the SGPC server cannot be reached"
     },
@@ -184,17 +180,9 @@
     "@retry": {
         "description": "Button that retries a failed connection immediately"
     },
-    "mukhwak_load_failed": "Could not load today's Hukamnama",
-    "@mukhwak_load_failed": {
-        "description": "Replaces a raw exception when the Mukhwak PDF fails to load"
-    },
-    "yesterdays_recording": "Yesterday's recording",
+    "yesterdays_recording": "Yesterday’s recording",
     "@yesterdays_recording": {
         "description": "Chip in the player saying the loaded Mukhwak or Katha is the previous day's, because today's has not been published yet"
-    },
-    "mukhwak_from_yesterday": "Yesterday's Hukamnama. Today's has not been published yet.",
-    "@mukhwak_from_yesterday": {
-        "description": "Banner above the PDF viewer when the cached document is the previous day's"
     },
     "playback_error": "Playback problem",
     "@playback_error": {
@@ -233,7 +221,7 @@
     "@live_from_darbar": {
         "description": "Second line on the live kirtan row when it is not playing"
     },
-    "todays_recording": "Today's recording",
+    "todays_recording": "Today’s recording",
     "@todays_recording": {
         "description": "Second line when the current day's audio is what will play"
     },
@@ -253,11 +241,11 @@
     "@live_location": {
         "description": "Where the live kirtan comes from, under its title"
     },
-    "katha_subtitle": "The meaning of today's Hukamnama",
+    "katha_subtitle": "The meaning of today’s Hukamnama",
     "@katha_subtitle": {
         "description": "Second line under the Katha tile"
     },
-    "read_hukamnama": "Read today's Hukamnama",
+    "read_hukamnama": "Read today’s Hukamnama",
     "@read_hukamnama": {
         "description": "Card that opens the Hukamnama text"
     },
@@ -335,10 +323,10 @@
     },
     "hukamnama_ang": "Ang {ang}",
     "@hukamnama_ang": {
-        "description": "The page of Sri Guru Granth Sahib Ji the Hukamnama is from",
+        "description": "The page of Sri Guru Granth Sahib Ji the Hukamnama is from. The number arrives already written: Gurmukhi digits in Punjabi, Latin digits in English",
         "placeholders": {
             "ang": {
-                "type": "int"
+                "type": "String"
             }
         }
     },
@@ -359,7 +347,7 @@
     "@larger_text": {
         "description": "Screen reader label for the text size up button"
     },
-    "hukamnama_unavailable": "Today's Hukamnama text could not be loaded",
+    "hukamnama_unavailable": "Today’s Hukamnama text could not be loaded",
     "@hukamnama_unavailable": {
         "description": "Shown when the Hukamnama text fails and nothing is stored"
     },
@@ -372,7 +360,7 @@
             }
         }
     },
-    "hukamnama_not_out": "Today's Hukamnama is not out yet. This is the one from {date}.",
+    "hukamnama_not_out": "Today’s Hukamnama is not out yet. This is the one from {date}.",
     "@hukamnama_not_out": {
         "description": "Note in the reader while showing an older Hukamnama",
         "placeholders": {
@@ -385,7 +373,7 @@
     "@meaning": {
         "description": "Heading above the explanation of the Hukamnama"
     },
-    "open_on_sgpc": "Read it on SGPC's website",
+    "open_on_sgpc": "Read it on SGPC’s website",
     "@open_on_sgpc": {
         "description": "Web only: link to the Hukamnama on SGPC's site"
     }

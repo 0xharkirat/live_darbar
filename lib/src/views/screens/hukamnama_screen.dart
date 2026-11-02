@@ -2,21 +2,22 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
 import 'package:live_darbar/l10n/app_localizations.dart';
 import 'package:live_darbar/src/controllers/audio_controller.dart';
 import 'package:live_darbar/src/controllers/hukamnama_controller.dart';
 import 'package:live_darbar/src/controllers/locale_controller.dart';
 import 'package:live_darbar/src/controllers/now_playing_controller.dart';
 import 'package:live_darbar/src/controllers/reader_scale_controller.dart';
+import 'package:live_darbar/src/controllers/sikh_date_controller.dart';
 import 'package:live_darbar/src/core/app_type.dart';
+import 'package:live_darbar/src/core/clock.dart';
 import 'package:live_darbar/src/core/meaning_paragraphs.dart';
 import 'package:live_darbar/src/core/motion.dart';
 import 'package:live_darbar/src/core/open_link.dart';
 import 'package:live_darbar/src/core/palette.dart';
+import 'package:live_darbar/src/core/reader_numbers.dart';
 import 'package:live_darbar/src/models/hukamnama.dart';
 import 'package:live_darbar/src/models/sgpc_day.dart';
-import 'package:live_darbar/src/views/screens/mukhwak_pdf_viewer.dart';
 import 'package:live_darbar/src/views/widgets/pressable.dart';
 
 /// Today's Hukamnama as words, line by line, with the meaning under each line.
@@ -67,15 +68,20 @@ class HukamnamaScreen extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
     final punjabi = ref.watch(localeController) == 'pa';
     final scale = ref.watch(readerScaleProvider);
-    final stale = !h.isFor(sgpcDayNow());
+    final stale = !h.isFor(sgpcDayOf(ref.read(clockProvider)()));
 
-    // SGPC's own footer already carries the Nanakshahi date in both
-    // languages; the ang sits beside it.
-    final footer = punjabi ? h.footerGurmukhi : h.footerEnglish;
+    // One short line: the ang, the Sikh date of the Hukamnama's own day, and
+    // the everyday date. SGPC's footer ("Monday, 17th Katak (Samvat 558
+    // Nanakshahi)") is too long, so the date comes from the sangrand table
+    // instead. Without a table or a row for the day, the Sikh date is left out
+    // rather than guessed.
+    final sikh = ref.watch(sangrandTableProvider).value?.sikhDateFor(h.date);
     final meta = [
-      if (h.ang != null) l10n.hukamnama_ang(h.ang!),
-      if (footer != null) footer.trim(),
-    ].join('  ·  ');
+      if (h.ang != null)
+        l10n.hukamnama_ang(readerNumber(h.ang!, punjabi: punjabi)),
+      if (sikh != null) punjabi ? sikh.shortGurmukhi : sikh.shortEnglish,
+      readerDate(h.date, punjabi: punjabi),
+    ].join(' · ');
 
     return [
       SliverPadding(
@@ -88,7 +94,7 @@ class HukamnamaScreen extends ConsumerWidget {
                 const SizedBox(height: 12),
                 _Note(
                   text: l10n.hukamnama_not_out(
-                    DateFormat('d MMMM', punjabi ? 'pa' : 'en').format(h.date),
+                    readerDate(h.date, punjabi: punjabi),
                   ),
                 ),
               ],
@@ -204,11 +210,12 @@ class _Line extends StatelessWidget {
         ),
         if (roman != null) ...[
           const SizedBox(height: 4),
+          // Gold marks it as a transliteration. Not italic: Geist ships no
+          // italic file, so the engine would slant the upright face.
           Text(
             roman,
             style: AppType.callout.copyWith(
               fontSize: 15 * scale,
-              fontStyle: FontStyle.italic,
               color: Palette.gold.withValues(alpha: 0.85),
             ),
           ),
@@ -404,9 +411,7 @@ class _Actions extends ConsumerWidget {
         pill(
           icon: CupertinoIcons.doc_text,
           label: l10n.sgpc_pdf,
-          onTap: () => Navigator.of(context).push(
-            CupertinoPageRoute<void>(builder: (_) => const MukhwakPdfViewer()),
-          ),
+          onTap: () => openLinkInApp(kHukamnamaPdfPageUrl),
         ),
       ],
     );
@@ -528,11 +533,7 @@ class _Failure extends ConsumerWidget {
                 ),
               ),
               CupertinoButton(
-                onPressed: () => Navigator.of(context).push(
-                  CupertinoPageRoute<void>(
-                    builder: (_) => const MukhwakPdfViewer(),
-                  ),
-                ),
+                onPressed: () => openLinkInApp(kHukamnamaPdfPageUrl),
                 child: Text(
                   l10n.sgpc_pdf,
                   style: AppType.callout.copyWith(color: Palette.gold),

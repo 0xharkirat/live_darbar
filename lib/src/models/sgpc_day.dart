@@ -7,15 +7,13 @@
 /// anybody.
 ///
 /// That is not a theoretical worry. Every layer between the app and Amritsar
-/// keys on the URL: the on-device file cache in `MukhwakController`,
-/// ExoPlayer's and AVPlayer's own caches, the browser on web, and Cloudflare in
-/// front of hs.sgpc.net. Ask any of them for `uploadhukamnama/hukamnama.mp3`
-/// and a copy from last week is a *correct* answer, because as far as they can
-/// tell the resource never changed. Putting the date in the path makes
-/// yesterday's bytes unreachable rather than merely unlikely.
+/// keys on the URL: the on-device Hukamnama text cache, ExoPlayer's and
+/// AVPlayer's own caches, the browser on web, and Cloudflare in front of
+/// hs.sgpc.net. Ask any of them for `uploadhukamnama/hukamnama.mp3` and a copy
+/// from last week is a *correct* answer, because as far as they can tell the
+/// resource never changed. Putting the date in the path makes yesterday's
+/// bytes unreachable rather than merely unlikely.
 library;
-
-import 'dart:convert';
 
 /// India Standard Time, as a fixed offset from UTC.
 ///
@@ -34,47 +32,19 @@ const _kKathaAudioPrefix = 'https://hs.sgpc.net/kathaaudio/katha';
 /// The undocumented JSON endpoint behind SGPC's archive calendar.
 ///
 /// Takes `selected_date=yyyy-MM-dd` as a form post and answers with the day's
-/// shabad, its Nanakshahi date, and the id of the generated PDF. Only the PDF
-/// id is used here. It answers HTTP 200 either way: a day it does not have
-/// comes back as `{"supported": false, ..., "pdfFiles": []}`, so the status
-/// code alone tells you nothing.
+/// shabad and its Nanakshahi date. It answers HTTP 200 either way: a day it
+/// does not have comes back as `{"supported": false, ...}`, so the status code
+/// alone tells you nothing.
 const kHukamnamaArchiveUrl =
     'https://hs.sgpc.net/hssearchhukmanamaTestCalender.php';
 
-/// The PDF SGPC regenerates on every request, for whatever day is current.
+/// The SGPC page that builds the Hukamnama PDF in the reader's browser.
 ///
-/// Kept only as a last resort. It is server-rendered rather than served from
-/// disk, which shows: measured from Sydney on 2026-08-12 it took a median
-/// 4.1 s to produce its first byte across five runs, against 0.37 s for the
-/// dated file holding the same document. Under load that gap is where the
-/// hang comes from.
-const kLatestHukamnamaPdfUrl = 'https://hs.sgpc.net/hukamnamapdf.php';
-
-/// Where the already-generated PDF for one archive entry lives.
-String hukamnamaPdfUrl(int fileId) =>
-    'https://hs.sgpc.net/intdep/pdfdownload.php?id=$fileId';
-
-/// The PDF id in an archive response, or null when SGPC has no entry.
-///
-/// Every branch here is a real answer the endpoint gives, not defensive
-/// padding. It replies HTTP 200 for a day it does not have, so `supported` is
-/// the only thing separating "here is the Hukamnama" from "that day has not
-/// happened yet", and the latter is the normal state of affairs for several
-/// hours after midnight in Amritsar rather than a fault worth reporting.
-int? hukamnamaPdfIdFrom(String body) {
-  try {
-    final decoded = jsonDecode(body);
-    if (decoded is! Map<String, dynamic>) return null;
-    if (decoded['supported'] != true) return null;
-
-    final files = decoded['pdfFiles'];
-    if (files is! List || files.isEmpty) return null;
-    final first = files.first;
-    return first is Map ? first['id'] as int? : null;
-  } on FormatException {
-    return null;
-  }
-}
+/// SGPC no longer serves a PDF file: its own script (html2pdf.js) turns the
+/// day's JSON into the PDF, so there is nothing for the app to download. The
+/// app opens this page in the system's in-app browser, where the page has a
+/// "Download & View Hukamnama PDF" button.
+const kHukamnamaPdfPageUrl = 'https://hs.sgpc.net/hspdf.php';
 
 /// The Gregorian day at Sri Harmandir Sahib containing [instant].
 ///
@@ -88,14 +58,6 @@ DateTime sgpcDayOf(DateTime instant) {
   final india = instant.toUtc().add(kIndiaOffset);
   return DateTime.utc(india.year, india.month, india.day);
 }
-
-/// The day currently being observed at Darbar Sahib.
-///
-/// Deliberately not the user's local day. A listener in Vancouver opening the
-/// app at 20:00 on Tuesday is asking for Wednesday's Hukamnama, because that
-/// is the one being read. Keying off their calendar would ask for a file
-/// published eight hours ago and label it tomorrow's.
-DateTime sgpcDayNow() => sgpcDayOf(DateTime.now());
 
 /// The day before [day], as another UTC midnight.
 DateTime previousSgpcDay(DateTime day) =>

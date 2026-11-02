@@ -31,8 +31,9 @@ const kHukamnamaRetryInterval = Duration(minutes: 15);
 /// The value is a [Hukamnama] with its own [Hukamnama.date]. That date is not
 /// always today. Until SGPC posts each morning, and whenever the phone cannot
 /// reach the service, the newest text on hand is an earlier day's. The screen
-/// must compare it with the SGPC day (`hukamnama.isFor(sgpcDayNow())`) and
-/// label an earlier day as such. Yesterday's text must never be shown as
+/// must compare it with the SGPC day, read through `clockProvider`
+/// (`hukamnama.isFor(sgpcDayOf(ref.read(clockProvider)()))`), and label an
+/// earlier day as such. Yesterday's text must never be shown as
 /// today's.
 ///
 /// What the listener sees, in order:

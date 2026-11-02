@@ -10,36 +10,81 @@ import 'package:live_darbar/src/core/palette.dart';
 import 'package:live_darbar/src/models/quality_policy.dart';
 import 'package:live_darbar/src/views/widgets/pressable.dart';
 
-/// The current quality, as a quiet button that opens the choice.
+/// A small round button that opens the quality choice.
 ///
-/// It names the current setting, so nobody has to open it to know.
-class QualityButton extends ConsumerWidget {
+/// Icon only, and quiet: sound quality is a setting to set once, not a
+/// control to reach for while listening. It has a 44 point target around a
+/// 32 point circle, and the screen reader says "Sound quality". The current
+/// setting is not named here. [DataSaverPill] shows the one state worth
+/// seeing at a glance.
+class QualityButton extends StatelessWidget {
   const QualityButton({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context)!;
-    final mode = ref.watch(qualityModeProvider);
-
-    return CupertinoButton(
-      padding: const EdgeInsets.symmetric(horizontal: 12),
-      minimumSize: const Size(44, 44),
-      onPressed: () => showQualitySheet(context),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Icon(
-            CupertinoIcons.waveform,
-            size: 16,
-            color: Palette.muted,
+  Widget build(BuildContext context) {
+    return Pressable(
+      semanticLabel: AppLocalizations.of(context)!.quality,
+      onTap: () => showQualitySheet(context),
+      child: const SizedBox.square(
+        dimension: 44,
+        child: Center(
+          child: DecoratedBox(
+            decoration: ShapeDecoration(
+              color: Palette.surface,
+              shape: CircleBorder(side: BorderSide(color: Palette.border)),
+            ),
+            child: SizedBox.square(
+              dimension: 32,
+              child: Icon(
+                CupertinoIcons.slider_horizontal_3,
+                size: 18,
+                color: Palette.muted,
+              ),
+            ),
           ),
-          const SizedBox(width: 6),
-          Text(
-            '${l10n.quality}: ${_name(l10n, mode)}',
-            style: AppType.footnote,
-          ),
-        ],
+        ),
       ),
+    );
+  }
+}
+
+/// "Data saver" in a small pill, beside the LIVE badge, and nothing in any
+/// other mode.
+///
+/// Data saver is the one setting that changes what the listener hears, so it
+/// stays in view without a label on the button that opens the choice.
+class DataSaverPill extends ConsumerWidget {
+  const DataSaverPill({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final active = ref.watch(qualityModeProvider) == QualityMode.dataSaver;
+
+    return AnimatedSwitcher(
+      duration: Motion.quick,
+      switchInCurve: Motion.easeOut,
+      child: !active
+          ? const SizedBox.shrink(key: ValueKey('off'))
+          : DecoratedBox(
+              key: const ValueKey('on'),
+              decoration: ShapeDecoration(
+                color: Palette.surface,
+                shape: RoundedSuperellipseBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                child: Text(
+                  AppLocalizations.of(context)!.quality_data_saver,
+                  style: AppType.footnote.copyWith(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                    color: Palette.gold,
+                  ),
+                ),
+              ),
+            ),
     );
   }
 }

@@ -2,24 +2,25 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
 import 'package:live_darbar/l10n/app_localizations.dart';
 import 'package:live_darbar/src/controllers/audio_controller.dart';
 import 'package:live_darbar/src/controllers/connectivity_controller.dart';
 import 'package:live_darbar/src/controllers/hukamnama_controller.dart';
 import 'package:live_darbar/src/controllers/locale_controller.dart';
-import 'package:live_darbar/src/controllers/mukhwak_controller.dart';
 import 'package:live_darbar/src/controllers/now_playing_controller.dart';
 import 'package:live_darbar/src/controllers/sikh_date_controller.dart';
 import 'package:live_darbar/src/controllers/update_controller.dart';
 import 'package:live_darbar/src/core/app_type.dart';
+import 'package:live_darbar/src/core/clock.dart';
 import 'package:live_darbar/src/core/app_version.dart';
 import 'package:live_darbar/src/core/open_link.dart';
 import 'package:live_darbar/src/core/store_links.dart';
 import 'package:live_darbar/src/core/palette.dart';
+import 'package:live_darbar/src/core/reader_numbers.dart';
 import 'package:live_darbar/src/models/app_update.dart';
 import 'package:live_darbar/src/models/hukamnama.dart';
 import 'package:live_darbar/src/models/sgpc_day.dart';
+import 'package:live_darbar/src/models/sikh_date.dart';
 import 'package:live_darbar/src/views/screens/about_screen.dart';
 import 'package:live_darbar/src/views/screens/hukamnama_screen.dart';
 import 'package:live_darbar/src/views/widgets/artwork.dart';
@@ -180,9 +181,6 @@ class _DailyRefreshState extends ConsumerState<_DailyRefresh> {
   void _refresh() {
     ref.invalidate(sikhDateProvider);
     ref.read(hukamnamaProvider.notifier).refresh();
-    // The PDF used to be fetched once per launch, so an app left open
-    // overnight kept showing yesterday's until it was closed.
-    ref.read(mukhwakController.notifier).fetchAndCache();
   }
 
   @override
@@ -222,13 +220,17 @@ class _DateAndLanguage extends ConsumerWidget {
     final sikh = ref.watch(sikhDateProvider).value;
     final punjabi = locale == 'pa';
     // Day before month, the way it is written in India and in Australia.
-    final date = DateFormat('EEEE, d MMMM', locale).format(DateTime.now());
+    final date = readerDate(
+      everydayDateFor(sikh, ref.read(clockProvider)()),
+      punjabi: punjabi,
+      weekday: true,
+    );
 
     final sikhLine = sikh == null
         ? null
         : punjabi
-            ? '${sikh.dayGurmukhi} ${sikh.monthGurmukhi} ${sikh.yearGurmukhi}'
-            : '${sikh.day} ${sikh.monthEnglish} ${sikh.year}';
+            ? sikh.shortGurmukhi
+            : sikh.shortEnglish;
 
     String caps(String s) => punjabi ? s : s.toUpperCase();
 
@@ -260,7 +262,6 @@ class _DateAndLanguage extends ConsumerWidget {
     );
   }
 }
-
 
 /// Live kirtan: the painting, the words on it, and the biggest button on the
 /// screen.
@@ -411,9 +412,15 @@ class _DailyTile extends ConsumerWidget {
             title,
             style: AppType.title2.copyWith(fontSize: 19),
             maxLines: 2,
+            overflow: TextOverflow.ellipsis,
           ),
           const SizedBox(height: 2),
-          Text(subtitle, style: AppType.footnote, maxLines: 2),
+          Text(
+            subtitle,
+            style: AppType.footnote,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
         ],
       ),
     );
@@ -456,12 +463,13 @@ class _ReadCard extends ConsumerWidget {
     if (line != null) {
       // Before SGPC posts today's (about 05:30 to 07:00 in India), the card
       // shows yesterday's and says so, rather than passing it off as today's.
-      final stale = !hukamnama!.isFor(sgpcDayNow());
+      final stale = !hukamnama!.isFor(sgpcDayOf(ref.read(clockProvider)()));
       final eyebrow = [
         stale
-            ? l10n.hukamnama_of(_shortDate(hukamnama.date, punjabi))
+            ? l10n.hukamnama_of(readerDate(hukamnama.date, punjabi: punjabi))
             : l10n.read_hukamnama,
-        if (hukamnama.ang != null) l10n.hukamnama_ang(hukamnama.ang!),
+        if (hukamnama.ang != null)
+          l10n.hukamnama_ang(readerNumber(hukamnama.ang!, punjabi: punjabi)),
       ].join('  ·  ');
       return Pressable(
         semanticLabel: l10n.read_hukamnama,
@@ -555,9 +563,6 @@ class _ReadCard extends ConsumerWidget {
       ),
     );
   }
-
-  static String _shortDate(DateTime d, bool punjabi) =>
-      DateFormat('d MMMM', punjabi ? 'pa' : 'en').format(d);
 
   /// The Rahao line if there is one: the line the whole shabad turns on.
   /// Otherwise the first real verse, skipping short labels such as ਸਲੋਕੁ ॥.

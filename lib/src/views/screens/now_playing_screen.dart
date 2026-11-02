@@ -50,6 +50,9 @@ class NowPlayingScreen extends ConsumerWidget {
       _ => l10n.live_kirtan,
     };
     final subtitle = now.isLive ? l10n.live_location : l10n.todays_recording;
+    // Quality only applies to the broadcast, and the web has a single tier, so
+    // its control shows only where it can change something.
+    final hasQuality = now.isLive && !StreamQuality.isWeb;
 
     return Material(
       color: Palette.background,
@@ -62,10 +65,10 @@ class NowPlayingScreen extends ConsumerWidget {
             child: LayoutBuilder(
               builder: (context, constraints) => SingleChildScrollView(
                 controller: scrollController,
-                padding: const EdgeInsets.fromLTRB(24, 20, 24, 16),
+                padding: const EdgeInsets.fromLTRB(24, _topInset, 24, 16),
                 child: ConstrainedBox(
                   constraints: BoxConstraints(
-                    minHeight: constraints.maxHeight - 52,
+                    minHeight: constraints.maxHeight - _topInset - 32,
                   ),
                   child: Center(
                     child: ConstrainedBox(
@@ -86,7 +89,15 @@ class NowPlayingScreen extends ConsumerWidget {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     if (now.isLive) ...[
-                                      LiveBadge(playing: now.isPlaying),
+                                      Row(
+                                        children: [
+                                          LiveBadge(playing: now.isPlaying),
+                                          if (hasQuality) ...[
+                                            const SizedBox(width: 10),
+                                            const DataSaverPill(),
+                                          ],
+                                        ],
+                                      ),
                                       const SizedBox(height: 8),
                                     ],
                                     AnimatedSwitcher(
@@ -112,11 +123,6 @@ class NowPlayingScreen extends ConsumerWidget {
                           _Transport(isLive: now.isLive, index: now.index),
                           const SizedBox(height: 8),
                           const Center(child: LiveStatusLine()),
-                          // Quality only applies to the broadcast, and the
-                          // web has a single tier, so it shows only where it
-                          // can change something.
-                          if (now.isLive && !StreamQuality.isWeb)
-                            const Center(child: QualityButton()),
                           const SizedBox(height: 24),
                           const SourceSwitcher(),
                         ],
@@ -127,11 +133,21 @@ class NowPlayingScreen extends ConsumerWidget {
               ),
             ),
           ),
+          // Top right, level with the sheet's drag handle. The circle is 32
+          // points inside a 44 point target, so 18 points in from the edge
+          // puts the circle on the 24 point margin the content uses.
+          if (hasQuality)
+            const Positioned(top: 0, right: 18, child: QualityButton()),
         ],
       ),
     );
   }
 }
+
+/// Space above the content for the quality button, which sits beside the
+/// sheet's drag handle. The same for every source, so switching between live
+/// and a recording does not move the artwork.
+const _topInset = 44.0;
 
 /// The painting, blurred into a wash of its own colours, behind everything.
 ///

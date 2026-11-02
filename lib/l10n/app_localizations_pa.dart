@@ -21,7 +21,7 @@ class AppLocalizationsPa extends AppLocalizations {
   String get mukhwak_katha => 'ਹੁਕਮਨਾਮਾ ਕਥਾ';
 
   @override
-  String get loading => 'ਲੋਡ ਹੋ ਰਿਹਾ ਹੈ...';
+  String get loading => 'ਲੋਡ ਹੋ ਰਿਹਾ ਹੈ…';
 
   @override
   String get error => 'ਗਲਤੀ';
@@ -117,9 +117,6 @@ class AppLocalizationsPa extends AppLocalizations {
   String get youtube => 'ਯੂਟਿਊਬ ਵੀਡੀਓ';
 
   @override
-  String get mukhwak_pdf_title => 'ਅੱਜ ਦਾ ਹੁਕਮਨਾਮਾ (PDF)';
-
-  @override
   String get go_live => 'ਲਾਈਵ \'ਤੇ ਜਾਓ';
 
   @override
@@ -128,7 +125,7 @@ class AppLocalizationsPa extends AppLocalizations {
   }
 
   @override
-  String get reconnecting => 'ਮੁੜ ਜੁੜ ਰਿਹਾ ਹੈ...';
+  String get reconnecting => 'ਮੁੜ ਜੁੜ ਰਿਹਾ ਹੈ…';
 
   @override
   String get low_quality_stream => 'ਘੱਟ ਕੁਆਲਿਟੀ ਸਟ੍ਰੀਮ';
@@ -146,13 +143,7 @@ class AppLocalizationsPa extends AppLocalizations {
   String get retry => 'ਮੁੜ ਕੋਸ਼ਿਸ਼ ਕਰੋ';
 
   @override
-  String get mukhwak_load_failed => 'ਅੱਜ ਦਾ ਹੁਕਮਨਾਮਾ ਲੋਡ ਨਹੀਂ ਹੋ ਸਕਿਆ';
-
-  @override
   String get yesterdays_recording => 'ਬੀਤੇ ਕੱਲ੍ਹ ਦੀ ਰਿਕਾਰਡਿੰਗ';
-
-  @override
-  String get mukhwak_from_yesterday => 'ਬੀਤੇ ਕੱਲ੍ਹ ਦਾ ਹੁਕਮਨਾਮਾ। ਅੱਜ ਦਾ ਅਜੇ ਜਾਰੀ ਨਹੀਂ ਹੋਇਆ।';
 
   @override
   String get playback_error => 'ਪਲੇਬੈਕ ਵਿੱਚ ਸਮੱਸਿਆ';
@@ -256,7 +247,7 @@ class AppLocalizationsPa extends AppLocalizations {
   String get sgpc_pdf => 'SGPC PDF';
 
   @override
-  String hukamnama_ang(int ang) {
+  String hukamnama_ang(String ang) {
     return 'ਅੰਗ $ang';
   }
 
