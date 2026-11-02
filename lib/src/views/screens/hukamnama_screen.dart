@@ -33,6 +33,16 @@ import 'package:live_darbar/src/views/widgets/pressable.dart';
 class HukamnamaScreen extends ConsumerWidget {
   const HukamnamaScreen({super.key});
 
+  /// The route's name. Whoever opens the reader from outside a screen (the
+  /// home screen widget) uses it to tell whether the reader is already open.
+  static const routeName = '/hukamnama';
+
+  /// The page transition that every screen opens the reader with.
+  static Route<void> route() => CupertinoPageRoute<void>(
+        settings: const RouteSettings(name: routeName),
+        builder: (_) => const HukamnamaScreen(),
+      );
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;

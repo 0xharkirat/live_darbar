@@ -349,4 +349,54 @@ void main() {
           throwsFormatException);
     });
   });
+
+  group('hukamnamaPreviewLine', () {
+    Hukamnama of(List<String> lines) => Hukamnama(
+          date: DateTime.utc(2026, 11, 2),
+          lines: [for (final l in lines) HukamnamaLine(gurmukhi: l)],
+        );
+
+    test('is the Rahao line of the recorded 2 November shabad', () {
+      final line = hukamnamaPreviewLine(Hukamnama.fromSgpc(fixture()))!;
+      expect(line.gurmukhi, contains('ਰਹਾਉ'));
+    });
+
+    test('is the first Rahao line when a shabad has a second pause', () {
+      final h = Hukamnama.fromSgpc(rahauDoojaFixture());
+      final line = hukamnamaPreviewLine(h)!;
+      expect(line.gurmukhi, contains('ਰਹਾਉ'));
+      expect(
+        h.lines.where((l) => l.gurmukhi.contains('ਰਹਾਉ')).first,
+        line,
+      );
+    });
+
+    test('prefers the Rahao line to an earlier long verse', () {
+      final h = of([
+        'ਗੁਰ ਪ੍ਰਸਾਦਿ ਸਾਧਸੰਗਿ ਮਿਲਿ ਹਰਿ ਨਾਮੁ ਜਪਿਓ ॥੧॥',
+        'ਹਰਿ ਹਰਿ ਨਾਮੁ ਮੇਰੈ ਮਨਿ ਭਾਵੈ ॥੧॥ ਰਹਾਉ ॥',
+      ]);
+      expect(hukamnamaPreviewLine(h)!.gurmukhi, contains('ਰਹਾਉ'));
+    });
+
+    test('skips a short section label when there is no Rahao line', () {
+      final h = of([
+        'ਸਲੋਕੁ ॥',
+        'ਗੁਰ ਪ੍ਰਸਾਦਿ ਸਾਧਸੰਗਿ ਮਿਲਿ ਹਰਿ ਨਾਮੁ ਜਪਿਓ ॥੧॥',
+      ]);
+      expect(
+        hukamnamaPreviewLine(h)!.gurmukhi,
+        'ਗੁਰ ਪ੍ਰਸਾਦਿ ਸਾਧਸੰਗਿ ਮਿਲਿ ਹਰਿ ਨਾਮੁ ਜਪਿਓ ॥੧॥',
+      );
+    });
+
+    test('falls back to the first line when every line is short', () {
+      final h = of(['ਸਲੋਕੁ ॥', 'ਪਉੜੀ ॥']);
+      expect(hukamnamaPreviewLine(h)!.gurmukhi, 'ਸਲੋਕੁ ॥');
+    });
+
+    test('is null for a Hukamnama with no lines', () {
+      expect(hukamnamaPreviewLine(of(const [])), isNull);
+    });
+  });
 }

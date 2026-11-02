@@ -7,6 +7,10 @@
     "@live_kirtan": {
         "description": "ਲਾਈਵ ਕੀਰਤਨ"
     },
+    "play_live_kirtan": "ਲਾਈਵ ਕੀਰਤਨ ਚਲਾਓ",
+    "@play_live_kirtan": {
+        "description": "ਹੋਮ ਸਕ੍ਰੀਨ ਵਿਜੇਟ ਦੇ ਲਾਈਵ ਪਲੇ ਬਟਨ ਲਈ ਸਕ੍ਰੀਨ ਰੀਡਰ ਕੀ ਬੋਲਦਾ ਹੈ"
+    },
     "mukhwak": "ਹੁਕਮਨਾਮਾ",
     "@mukhwak": {
         "description": "ਹੁਕਮਨਾਮਾ"
@@ -267,5 +271,7 @@
     "hukamnama_of": "{date} ਦਾ ਹੁਕਮਨਾਮਾ",
     "hukamnama_not_out": "ਅੱਜ ਦਾ ਹੁਕਮਨਾਮਾ ਅਜੇ ਨਹੀਂ ਆਇਆ। ਇਹ {date} ਦਾ ਹੈ।",
     "meaning": "ਅਰਥ",
-    "open_on_sgpc": "SGPC ਦੀ ਵੈੱਬਸਾਈਟ ਉੱਤੇ ਪੜ੍ਹੋ"
+    "open_on_sgpc": "SGPC ਦੀ ਵੈੱਬਸਾਈਟ ਉੱਤੇ ਪੜ੍ਹੋ",
+    "widget_live_control": "{state, select, loading{ਲਾਈਵ ਕੀਰਤਨ ਸ਼ੁਰੂ ਹੋ ਰਿਹਾ ਹੈ। ਰੱਦ ਕਰਨ ਲਈ ਦੋ ਵਾਰ ਟੈਪ ਕਰੋ।} playing{ਲਾਈਵ ਕੀਰਤਨ ਚੱਲ ਰਿਹਾ ਹੈ। ਬੰਦ ਕਰਨ ਲਈ ਦੋ ਵਾਰ ਟੈਪ ਕਰੋ।} paused{ਲਾਈਵ ਕੀਰਤਨ ਰੁਕਿਆ ਹੋਇਆ ਹੈ। ਚਲਾਉਣ ਲਈ ਦੋ ਵਾਰ ਟੈਪ ਕਰੋ।} other{ਲਾਈਵ ਕੀਰਤਨ ਚਲਾਓ}}",
+    "widget_hukamnama_control": "{state, select, loading{ਹੁਕਮਨਾਮਾ ਸ਼ੁਰੂ ਹੋ ਰਿਹਾ ਹੈ। ਰੱਦ ਕਰਨ ਲਈ ਦੋ ਵਾਰ ਟੈਪ ਕਰੋ।} playing{ਹੁਕਮਨਾਮਾ ਚੱਲ ਰਿਹਾ ਹੈ। ਰੋਕਣ ਲਈ ਦੋ ਵਾਰ ਟੈਪ ਕਰੋ।} paused{ਹੁਕਮਨਾਮਾ ਰੁਕਿਆ ਹੋਇਆ ਹੈ। ਮੁੜ ਚਲਾਉਣ ਲਈ ਦੋ ਵਾਰ ਟੈਪ ਕਰੋ।} other{ਅੱਜ ਦਾ ਹੁਕਮਨਾਮਾ ਸੁਣੋ}}"
 }

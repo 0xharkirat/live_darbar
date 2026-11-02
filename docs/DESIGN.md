@@ -73,6 +73,90 @@ All tokens live in `lib/src/core/`.
 | Hukamnama | `views/screens/hukamnama_screen.dart` | Gurmukhi first, meaning under each line, own text size control. |
 | About | `views/screens/about_screen.dart` | 1 scrolling page with grouped link rows. |
 
+## Home screen widget
+
+Android only for now. The iOS widget waits for the Apple developer membership.
+The widget plays: a listener does not have to open the app.
+
+| Part | Rule |
+| --- | --- |
+| Size | 1 layout, 4 x 2 cells: the top line, the Rahao line, and 2 buttons side by side. It is always 4 cells wide, because at 3 the button names are cut and at 2 the Rahao line has no room. It resizes in height only, from 2 rows up. |
+| Top line | 1 line says what the widget is: `Hukamnama · 2 Nov · Ang 668`. The title is gold, and the rest muted. The date is the day of the Rahao line, so an old text names its own day. With no text, it is today's date. It shrinks from 13 sp to 11 sp before it cuts the Ang. |
+| Line | The Rahao line in Gurmukhi, up to 2 lines. |
+| Buttons | 2 buttons of the same size: `Hukamnama`, then `Live Kirtan` in gold. Each keeps its name in every state. Only the icon beside the name changes, so the listener always knows which button is which. |
+| Taps | The 2 buttons play with no screen. A tap anywhere else opens the Hukamnama reader. The widget has no way to open the player. Its notification does that. |
+| Targets | Each button is a 40 dp capsule in a 48 dp target, with a ripple that starts on touch-down. |
+| Loading | A source that is opening shows a still "…" in place of its icon, and the button is dimmed. A widget cannot spin. |
+| Screen reader | Each button says its name, its state, and what a double tap does: `Live kirtan, playing. Double tap to stop.` |
+| Type | Gurbani is the app's Tiro Gurmukhi on Android 8 and newer. Older phones use the system serif. The top line and the button names use the phone's sans. No letter spacing, because Gurmukhi never gets it. |
+| Size | Nothing is under 11 sp. Gurbani is never set under 12 sp. The button names are 14 sp. |
+
+### States
+
+The widget has 4 states: idle, loading, playing and paused. Each belongs to 1 source: live, the Hukamnama, or the Katha.
+
+| State | Hukamnama button | Live Kirtan button |
+| --- | --- | --- |
+| Idle | Play | Play |
+| Loading live | Play | Dimmed `…`, a tap cancels |
+| Playing live | Play | Stop |
+| Paused live | Play | Play |
+| Loading the Hukamnama | Dimmed `…`, a tap cancels | Play |
+| Playing the Hukamnama | Pause | Play |
+| Paused Hukamnama | Play | Play |
+| Katha, in any state | Play | Play |
+
+Live has no pause, because the broadcast does not wait.
+A tap on the button for another source switches to it.
+
+### How a tap reaches the player
+
+1. The launcher sends the tap to `WidgetControlReceiver`. No other app can reach it.
+2. The widget writes "loading" for the source and draws again, so it answers at once.
+3. The receiver starts audio_service's service as a foreground service. Android 12 and newer allow this from a widget tap.
+4. The receiver binds to the media session and calls `playFromMediaId`, `pause` or `stop`, as Android Auto does. The ids are the ones in `MediaCatalog`: `0` live, `1` the Hukamnama.
+5. The app plays, and `WidgetPlaybackSync` writes each state it reaches. The first one replaces the widget's own.
+
+This works with the app process dead. If the app does not answer in 7 seconds, the receiver stops the service and the widget goes back to idle. The system ends an app that starts a foreground service and does not use it within 10 seconds.
+
+### How the state stays true
+
+- The widget listens to the audio handler's playback state, so it follows the app, the notification, a headset, the car and the widget. A change reaches the widget in about 1 second.
+- The state in the store carries the time of the write. A state from before the process started belongs to a session that ended, so the widget draws idle. It never says playing for a process that is gone.
+- A force stop makes the launcher clear the widget, and the next draw says idle. A crash leaves the old state until the next draw: a tap on any control, the hourly update, a reboot, or the app starting. A tap on a stale stop button draws idle and starts nothing.
+- A state that the widget wrote on a tap lapses after 15 seconds if the app never confirms it.
+
+`lib/src/home_screen_widget/widget_playback.dart` writes the state, and `android/.../widget/WidgetPlayback.kt` holds the rules. The rules are plain Kotlin with a JVM test.
+
+```sh
+cd android && ./gradlew :app:testDebugUnitTest
+```
+
+A launcher draws the widget, so the Tiro Gurmukhi file lives in `res/font` as a copy of `assets/fonts/TiroGurmukhi-400.ttf`.
+A test fails when the files differ.
+Change both files together.
+
+The text comes from Flutter, in the app's language, through `home_widget`.
+`lib/src/home_screen_widget/` makes it, and `android/.../widget/` draws it.
+The button names, and what a screen reader says for each button in each state, come from Flutter too, as `ld_labels`, because the widget changes state while the app is closed.
+The colours in `res/values/widget.xml` copy `palette.dart`. Change both together.
+
+The widget works out the day from the clock each time it draws.
+Flutter writes a week of dates ahead, so the date stays right when the app does not run for days.
+Only a new Hukamnama needs a fetch.
+WorkManager fetches it at 00:10 and 09:00 India time, with the app closed.
+Android can delay that work, so a widget with an old text always says which day the text is from.
+
+The picker shows `res/layout/widget_preview.xml` on Android 12 and newer.
+It is a still copy of the 4 x 2 layout, idle, with fixed text.
+Change both layouts together.
+Older phones show an image, which a test draws with the real fonts:
+
+```sh
+taskpolicy -b flutter test test/screens/widget_preview_test.dart --tags screens
+cp build/screens/widget_preview.png android/app/src/main/res/drawable-nodpi/widget_preview.png
+```
+
 ## Motion
 
 - Respond on touch-down, within 120 ms.

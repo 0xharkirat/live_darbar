@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+        The Gurbani line in the app's own face. A font in res/font loads by
+        reference from Android 8, and the launcher inflates the widget with
+        this app's resources, so it finds the file. res/font/tirogurmukhi.ttf
+        is a copy of assets/fonts/TiroGurmukhi-400.ttf, and a test fails when
+        the two differ.
+    -->
+    <style name="WidgetGurbani">
+        <item name="android:fontFamily">@font/tirogurmukhi</item>
+    </style>
+</resources>

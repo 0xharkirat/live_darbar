@@ -285,6 +285,23 @@ List<String> splitHukamnamaLines(String text) {
   return lines;
 }
 
+/// The line to show when there is room for one: a card on the home screen, a
+/// home screen widget.
+///
+/// The Rahao line if there is one, because it is the line the whole shabad
+/// turns on. Otherwise the first real verse, skipping short labels such as
+/// `ਸਲੋਕੁ ॥`. A shabad of short lines only gives its first line, and null means
+/// [Hukamnama.lines] is empty, which a parsed Hukamnama never is.
+HukamnamaLine? hukamnamaPreviewLine(Hukamnama hukamnama) {
+  for (final line in hukamnama.lines) {
+    if (line.gurmukhi.contains('ਰਹਾਉ')) return line;
+  }
+  for (final line in hukamnama.lines) {
+    if (line.gurmukhi.length > 20) return line;
+  }
+  return hukamnama.lines.isEmpty ? null : hukamnama.lines.first;
+}
+
 /// [ang] when it is a page of Sri Guru Granth Sahib Ji (1 to 1430), else null.
 int? _validAng(int? ang) => ang != null && ang >= 1 && ang <= 1430 ? ang : null;
 

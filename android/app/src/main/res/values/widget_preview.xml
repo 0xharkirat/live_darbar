@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+        The fixed words of widget_preview.xml: the recorded 2 November 2026
+        Hukamnama (Dhanaasree, Ang 668). The Gurbani is the same in every
+        language. The leading space of the date and Ang is kept by the quotes.
+    -->
+    <string name="widget_preview_meta">" · 2 Nov · Ang 668"</string>
+    <string name="widget_preview_line" translatable="false">ਜਿਉ ਬਿਨੁ ਅਮਲੈ ਅਮਲੀ ਮਰਿ ਜਾਈ ਹੈ ਤਿਉ ਹਰਿ ਬਿਨੁ ਹਮ ਮਰਿ ਜਾਤੀ ॥ ਰਹਾਉ ॥</string>
+</resources>

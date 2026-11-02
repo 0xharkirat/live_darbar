@@ -1,5 +1,21 @@
 <resources>
-    <string-array name="PlayLiveDarbarQueries">
+    <!-- Voice query patterns. English only, so there is no Punjabi copy. -->
+    <string-array name="PlayLiveDarbarQueries" translatable="false">
         <item>play live darbar</item>
     </string-array>
+
+    <!--
+        The home screen widget. The picker shows the name and the description in
+        the phone's language. The words on the widget itself come from Flutter in
+        the app's language (lib/src/home_screen_widget/widget_data.dart), and the
+        ones below are what it shows before Flutter has written any.
+    -->
+    <string name="widget_name">Hukamnama and Live Kirtan</string>
+    <string name="widget_description">Today\'s Hukamnama, with its date, Ang and Rahao line, and buttons to play it and live kirtan from Sri Darbar Sahib without opening the app.</string>
+    <string name="widget_empty">Open Live Darbar to load today\'s Hukamnama.</string>
+    <string name="widget_hukamnama">Hukamnama</string>
+    <string name="widget_live_kirtan">Live Kirtan</string>
+    <string name="widget_hukamnama_label">Play today\'s Hukamnama</string>
+    <string name="widget_play_label">Play live kirtan</string>
+    <string name="widget_open_label">Read today\'s Hukamnama</string>
 </resources>

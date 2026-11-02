@@ -7,6 +7,10 @@
     "@live_kirtan": {
         "description": "Live Kirtan"
     },
+    "play_live_kirtan": "Play live kirtan",
+    "@play_live_kirtan": {
+        "description": "What a screen reader says for the live play button on the home screen widget"
+    },
     "mukhwak": "Hukamnama",
     "@mukhwak": {
         "description": "Mukhwak"
@@ -380,5 +384,23 @@
     "open_on_sgpc": "Read it on SGPC’s website",
     "@open_on_sgpc": {
         "description": "Web only: link to SGPC's site, shown beside Retry when the Hukamnama text could not be loaded"
+    },
+    "widget_live_control": "{state, select, loading{Live kirtan, starting. Double tap to cancel.} playing{Live kirtan, playing. Double tap to stop.} paused{Live kirtan, paused. Double tap to play.} other{Play live kirtan}}",
+    "@widget_live_control": {
+        "description": "What a screen reader says for the big gold button on the home screen widget. The state is idle, loading, playing or paused, and it describes live kirtan",
+        "placeholders": {
+            "state": {
+                "type": "String"
+            }
+        }
+    },
+    "widget_hukamnama_control": "{state, select, loading{Hukamnama, starting. Double tap to cancel.} playing{Hukamnama, playing. Double tap to pause.} paused{Hukamnama, paused. Double tap to resume.} other{Play today’s Hukamnama}}",
+    "@widget_hukamnama_control": {
+        "description": "What a screen reader says for the Hukamnama button on the home screen widget. The state is idle, loading, playing or paused, and it describes the Hukamnama recording",
+        "placeholders": {
+            "state": {
+                "type": "String"
+            }
+        }
     }
 }

@@ -1,0 +1,89 @@
+# Codemagic builds for the iPhone app.
+#
+# The Android release does not live here. It is the Workflow Editor's
+# "Default Workflow" in the Codemagic app live_darbar.
+#
+# Neither workflow has a trigger. Each one starts by hand, from Codemagic or
+# from its REST API, so a push never starts a build.
+#
+# - ios-check builds the iPhone app for release without signing. It needs no
+#   Apple account, and shows that the app still compiles for a device.
+# - ios-release signs the app, uploads it to App Store Connect, and submits
+#   it to App Store review with the notes in ios/whats_new.txt. Apple
+#   releases it to everyone as soon as it is approved. There is no TestFlight
+#   step. It needs an active Apple Developer membership, and these in
+#   Codemagic: the App Store Connect API key "Live Darbar", an Apple
+#   Distribution certificate, and the App Store profile for
+#   com.hsiharki.liveDarbar.
+
+definitions:
+  environment: &environment
+    flutter: 3.47.4
+    xcode: latest
+    cocoapods: default
+
+workflows:
+  ios-check:
+    name: iOS build check (unsigned)
+    instance_type: mac_mini_m2
+    max_build_duration: 60
+    environment:
+      <<: *environment
+    scripts:
+      - name: Get Flutter packages
+        script: flutter pub get
+      - name: Analyze
+        script: flutter analyze
+      - name: Build the iPhone app for release, without signing
+        script: flutter build ios --release --no-codesign
+    artifacts:
+      - build/ios/iphoneos/Runner.app
+      - /tmp/xcodebuild_logs/*.log
+
+  ios-release:
+    name: iOS release to the App Store
+    instance_type: mac_mini_m2
+    max_build_duration: 120
+    integrations:
+      app_store_connect: Live Darbar
+    environment:
+      <<: *environment
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.hsiharki.liveDarbar
+      vars:
+        # The app's Apple ID, from its App Store link (id6449766130).
+        APP_STORE_APPLE_ID: 6449766130
+    scripts:
+      - name: Set up code signing on the Xcode project
+        script: xcode-project use-profiles
+      - name: Get Flutter packages
+        script: flutter pub get
+      - name: Build the signed IPA
+        script: |
+          # The version name comes from pubspec.yaml. The build number is
+          # the one in pubspec.yaml, or one more than the last uploaded build
+          # when that is higher, so a second upload is never refused.
+          PUBSPEC_BUILD=$(grep '^version:' pubspec.yaml | sed -E 's/^version: *[^+]+\+([0-9]+).*/\1/')
+          LATEST=$(app-store-connect get-latest-testflight-build-number "$APP_STORE_APPLE_ID" 2>/dev/null || echo 0)
+          BUILD_NUMBER=$(( LATEST + 1 > PUBSPEC_BUILD ? LATEST + 1 : PUBSPEC_BUILD ))
+          echo "Build number: $BUILD_NUMBER"
+          flutter build ipa --release \
+            --build-number="$BUILD_NUMBER" \
+            --export-options-plist=/Users/builder/export_options.plist
+      - name: Upload, and submit to App Store review
+        script: |
+          # Waits until Apple has processed the build, then makes the App
+          # Store version from pubspec.yaml, sets its What's New in the app's
+          # primary language, and submits it for review. Apple releases it
+          # as soon as it is approved, to everyone at once.
+          app-store-connect publish \
+            --path "$(find build/ios/ipa -name '*.ipa' | head -n 1)" \
+            --app-store \
+            --release-type AFTER_APPROVAL \
+            --no-phased-release \
+            --whats-new "$(cat ios/whats_new.txt)"
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+      - build/ios/archive/Runner.xcarchive/dSYMs/*.dSYM

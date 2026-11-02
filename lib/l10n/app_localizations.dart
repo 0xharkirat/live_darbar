@@ -107,6 +107,12 @@ abstract class AppLocalizations {
   /// **'Live Kirtan'**
   String get live_kirtan;
 
+  /// What a screen reader says for the live play button on the home screen widget
+  ///
+  /// In en, this message translates to:
+  /// **'Play live kirtan'**
+  String get play_live_kirtan;
+
   /// Mukhwak
   ///
   /// In en, this message translates to:
@@ -622,6 +628,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Read it on SGPC’s website'**
   String get open_on_sgpc;
+
+  /// What a screen reader says for the big gold button on the home screen widget. The state is idle, loading, playing or paused, and it describes live kirtan
+  ///
+  /// In en, this message translates to:
+  /// **'{state, select, loading{Live kirtan, starting. Double tap to cancel.} playing{Live kirtan, playing. Double tap to stop.} paused{Live kirtan, paused. Double tap to play.} other{Play live kirtan}}'**
+  String widget_live_control(String state);
+
+  /// What a screen reader says for the Hukamnama button on the home screen widget. The state is idle, loading, playing or paused, and it describes the Hukamnama recording
+  ///
+  /// In en, this message translates to:
+  /// **'{state, select, loading{Hukamnama, starting. Double tap to cancel.} playing{Hukamnama, playing. Double tap to pause.} paused{Hukamnama, paused. Double tap to resume.} other{Play today’s Hukamnama}}'**
+  String widget_hukamnama_control(String state);
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

@@ -21,6 +21,7 @@ void main() {
   ArtworkStore store({
     Map<String, String>? contents,
     bool isWeb = false,
+    bool isAndroid = false,
     List<String>? loads,
   }) {
     final data = contents ??
@@ -36,6 +37,7 @@ void main() {
         return bytesOf(text);
       },
       isWeb: isWeb,
+      isAndroid: isAndroid,
     );
   }
 
@@ -121,6 +123,59 @@ void main() {
     );
 
     expect(await broken.prepare(), isEmpty);
+  });
+
+  group('on Android', () {
+    test('names the content provider, not a private file', () async {
+      final uris = await store(isAndroid: true).prepare();
+
+      expect(uris.keys, ArtworkStore.assets.keys);
+      expect(uris[0].toString(),
+          'content://com.hsi.harki.live_darbar.artwork/0.jpg');
+      expect(uris[1].toString(),
+          'content://com.hsi.harki.live_darbar.artwork/1.jpg');
+      expect(uris[2].toString(),
+          'content://com.hsi.harki.live_darbar.artwork/2.jpg');
+    });
+
+    test('still copies the files the provider serves', () async {
+      await store(isAndroid: true).prepare();
+
+      // The provider reads files/artwork/<n>.jpg.
+      for (final name in ['0.jpg', '1.jpg', '2.jpg']) {
+        expect(
+          File('${support.path}/${ArtworkStore.directoryName}/$name')
+              .existsSync(),
+          isTrue,
+          reason: name,
+        );
+      }
+    });
+
+    test('a painting that failed to copy gets no URI', () async {
+      final contents = {
+        'assets/images/0.jpg': 'zero',
+        'assets/images/2.jpg': 'two',
+      };
+
+      final uris =
+          await store(isAndroid: true, contents: contents).prepare();
+
+      expect(uris.keys, unorderedEquals([0, 2]));
+    });
+
+    test('the authority matches the manifest', () {
+      final manifest = File('android/app/src/main/AndroidManifest.xml')
+          .readAsStringSync();
+      expect(manifest, contains('android:authorities="\${applicationId}.artwork"'));
+      expect(ArtworkStore.providerAuthority,
+          'com.hsi.harki.live_darbar.artwork');
+    });
+  });
+
+  test('other platforms keep the file URIs', () async {
+    final uris = await store(isAndroid: false).prepare();
+    expect(uris.values.every((uri) => uri.scheme == 'file'), isTrue);
   });
 
   test('web gets no file URIs and touches no files', () async {

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+        The widget's colours. They are the tokens of lib/src/core/palette.dart,
+        and docs/DESIGN.md says what each one is for. Gold is the one accent.
+    -->
+    <color name="widget_canvas">#0C0A09</color>
+    <color name="widget_surface_high">#231D18</color>
+    <color name="widget_border">#3A322B</color>
+    <color name="widget_foreground">#F5F1EB</color>
+    <color name="widget_muted">#ADA398</color>
+    <color name="widget_gold">#E8B04B</color>
+    <color name="widget_on_gold">#0C0A09</color>
+
+    <!-- Android 12 and newer set the corner to match the launcher. -->
+    <dimen name="widget_corner">20dp</dimen>
+
+    <!--
+        The face of the Gurbani line. Android 8 and newer draw the app's own
+        Tiro Gurmukhi (values-v26/widget.xml). Older phones, which cannot load
+        a font file here, draw the system serif.
+    -->
+    <style name="WidgetGurbani">
+        <item name="android:fontFamily">serif</item>
+    </style>
+</resources>

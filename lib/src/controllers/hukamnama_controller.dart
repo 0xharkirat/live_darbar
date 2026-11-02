@@ -1,11 +1,11 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:live_darbar/src/core/clock.dart';
 import 'package:live_darbar/src/models/hukamnama.dart';
 import 'package:live_darbar/src/models/sgpc_day.dart';
 import 'package:live_darbar/src/services/hukamnama_cache.dart';
+import 'package:live_darbar/src/services/hukamnama_loader.dart';
 import 'package:live_darbar/src/services/hukamnama_service.dart';
 
 final hukamnamaServiceProvider = Provider<HukamnamaService>((ref) {
@@ -167,36 +167,14 @@ class HukamnamaController extends AsyncNotifier<Hukamnama> {
     });
   }
 
-  /// The newest text the service has for [today], stored on disk.
-  ///
-  /// Today's if it is posted, else yesterday's. When [have] is given it is
-  /// the fallback for every failure, so this only throws when there is nothing
-  /// to show. It also skips asking for yesterday when [have] is already
-  /// yesterday's or newer, so an app opened at 03:00 IST does not make a second
-  /// request to learn what it holds.
-  Future<Hukamnama> _load(DateTime today, {Hukamnama? have}) async {
-    final service = ref.read(hukamnamaServiceProvider);
-    final cache = ref.read(hukamnamaCacheProvider);
-    final yesterday = previousSgpcDay(today);
-
-    try {
-      try {
-        final fresh = await service.fetch(today);
-        await cache.write(fresh);
-        return fresh;
-      } on HukamnamaNotPublishedException {
-        if (have != null && !have.date.isBefore(yesterday)) return have;
-        final fresh = await service.fetch(yesterday);
-        await cache.write(fresh);
-        return fresh;
-      }
-    } catch (e) {
-      // Offline, a timeout, or an answer that could not be read.
-      if (have == null) rethrow;
-      if (!kReleaseMode) debugPrint('[hukamnama] keeping ${have.date}: $e');
-      return have;
-    }
-  }
+  /// The newest text the service has for [today]. See [loadLatestHukamnama].
+  Future<Hukamnama> _load(DateTime today, {Hukamnama? have}) =>
+      loadLatestHukamnama(
+        service: ref.read(hukamnamaServiceProvider),
+        cache: ref.read(hukamnamaCacheProvider),
+        today: today,
+        have: have,
+      );
 }
 
 /// The latest Hukamnama text. See [HukamnamaController].

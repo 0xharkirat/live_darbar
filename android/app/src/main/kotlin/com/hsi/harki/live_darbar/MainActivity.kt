@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import com.hsi.harki.live_darbar.widget.WidgetActions
 import com.ryanheise.audioservice.AudioServicePlugin
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
@@ -136,6 +137,13 @@ class MainActivity : FlutterActivity() {
         val payload = hashMapOf<String, Any>(
             "requestId" to UUID.randomUUID().toString()
         )
+
+        // The home screen widget's two taps. Each action is compared as a whole
+        // string, and nothing else on the intent is read.
+        WidgetActions.commandFor(action)?.let { command ->
+            payload["command"] = command
+            return payload
+        }
 
         when {
             action.endsWith(".oacp.ACTION_PLAY_LIVE_KIRTAN") -> {

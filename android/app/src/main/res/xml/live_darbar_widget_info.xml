@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    How the launcher lists and sizes the widget.
+
+    The widget is 4 cells wide, always: the one layout needs that width for
+    the Rahao line and the two buttons side by side. At 3 cells the button
+    names are cut. So it resizes in height only, from 2 rows up, which gives
+    the Rahao line more room. Before Android 12 the launcher works cells out from
+    minWidth and minHeight (70 dp a cell, less 30), and from Android 12 it
+    reads targetCellWidth and targetCellHeight.
+
+    The picker shows previewLayout on Android 12 and newer, which is a still
+    copy of the real layout. Older phones ignore that attribute and show
+    previewImage, a picture drawn by test/screens/widget_preview_test.dart.
+
+    updatePeriodMillis asks for a draw once an hour, which is the most often
+    Android allows without a battery cost. The draw reads the store and the
+    clock only, with no network. It is what moves the date at SGPC midnight if
+    nothing else has by then. The background refresh does the fetching.
+-->
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    android:description="@string/widget_description"
+    android:initialLayout="@layout/widget_medium"
+    android:minWidth="250dp"
+    android:minHeight="110dp"
+    android:minResizeHeight="110dp"
+    android:previewImage="@drawable/widget_preview"
+    android:previewLayout="@layout/widget_preview"
+    android:resizeMode="vertical"
+    android:targetCellWidth="4"
+    android:targetCellHeight="2"
+    android:updatePeriodMillis="3600000"
+    android:widgetCategory="home_screen" />

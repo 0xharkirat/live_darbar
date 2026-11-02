@@ -62,6 +62,16 @@ kotlin {
 dependencies {
     implementation files("libs/oacp-android-release.aar")
     implementation "androidx.annotation:annotation:1.7.1"
+    // The widget's background refresh. home_widget already brings this version
+    // in, but it keeps it private to the plugin.
+    implementation "androidx.work:work-runtime:2.11.2"
+    // The widget's controls talk to the media session with a MediaBrowserCompat.
+    // audio_service brings this version in, and keeps it private to the plugin.
+    implementation "androidx.media:media:1.7.0"
+
+    // The widget's rules for what to believe and what to draw are plain
+    // Kotlin, so a JVM test runs them without a phone.
+    testImplementation "junit:junit:4.13.2"
 }
 
 flutter {

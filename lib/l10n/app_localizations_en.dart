@@ -15,6 +15,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get live_kirtan => 'Live Kirtan';
 
   @override
+  String get play_live_kirtan => 'Play live kirtan';
+
+  @override
   String get mukhwak => 'Hukamnama';
 
   @override
@@ -283,4 +286,32 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get open_on_sgpc => 'Read it on SGPC’s website';
+
+  @override
+  String widget_live_control(String state) {
+    String _temp0 = intl.Intl.selectLogic(
+      state,
+      {
+        'loading': 'Live kirtan, starting. Double tap to cancel.',
+        'playing': 'Live kirtan, playing. Double tap to stop.',
+        'paused': 'Live kirtan, paused. Double tap to play.',
+        'other': 'Play live kirtan',
+      },
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String widget_hukamnama_control(String state) {
+    String _temp0 = intl.Intl.selectLogic(
+      state,
+      {
+        'loading': 'Hukamnama, starting. Double tap to cancel.',
+        'playing': 'Hukamnama, playing. Double tap to pause.',
+        'paused': 'Hukamnama, paused. Double tap to resume.',
+        'other': 'Play today’s Hukamnama',
+      },
+    );
+    return '$_temp0';
+  }
 }

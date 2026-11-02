@@ -1,0 +1,10 @@
+<resources>
+    <string name="widget_name">ਹੁਕਮਨਾਮਾ ਅਤੇ ਲਾਈਵ ਕੀਰਤਨ</string>
+    <string name="widget_description">ਅੱਜ ਦਾ ਹੁਕਮਨਾਮਾ, ਤਾਰੀਖ਼, ਅੰਗ ਅਤੇ ਰਹਾਉ ਵਾਲੀ ਤੁਕ ਨਾਲ, ਅਤੇ ਇਸ ਨੂੰ ਅਤੇ ਸ੍ਰੀ ਦਰਬਾਰ ਸਾਹਿਬ ਤੋਂ ਲਾਈਵ ਕੀਰਤਨ ਨੂੰ ਐਪ ਖੋਲ੍ਹੇ ਬਿਨਾਂ ਸੁਣਨ ਦੇ ਬਟਨ।</string>
+    <string name="widget_empty">ਅੱਜ ਦਾ ਹੁਕਮਨਾਮਾ ਲੋਡ ਕਰਨ ਲਈ ਲਾਈਵ ਦਰਬਾਰ ਖੋਲ੍ਹੋ।</string>
+    <string name="widget_hukamnama">ਹੁਕਮਨਾਮਾ</string>
+    <string name="widget_live_kirtan">ਲਾਈਵ ਕੀਰਤਨ</string>
+    <string name="widget_hukamnama_label">ਅੱਜ ਦਾ ਹੁਕਮਨਾਮਾ ਸੁਣੋ</string>
+    <string name="widget_play_label">ਲਾਈਵ ਕੀਰਤਨ ਚਲਾਓ</string>
+    <string name="widget_open_label">ਅੱਜ ਦਾ ਹੁਕਮਨਾਮਾ ਪੜ੍ਹੋ</string>
+</resources>

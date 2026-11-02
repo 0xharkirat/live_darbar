@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    What the widget picker shows on Android 12 and newer (android:previewLayout).
+
+    A still copy of widget_medium, idle, with fixed text: the Rahao line, the
+    date and the Ang of the recorded 2 November 2026 Hukamnama. The picker
+    draws it with the real layout machinery, so it shows the real fonts,
+    spacing and corners instead of a drawing of them. Older phones show
+    widget_preview.png.
+
+    Change the layout and this copy together. The words are in
+    values/widget_preview.xml and values-pa/widget_preview.xml, and the button
+    names are the widget's own strings.
+-->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/widget_background">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingStart="16dp"
+        android:paddingTop="14dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="10dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="24dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-medium"
+                android:maxLines="1"
+                android:text="@string/widget_hukamnama"
+                android:textColor="@color/widget_gold"
+                android:textSize="13sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:fontFamily="sans-serif-medium"
+                android:maxLines="1"
+                android:text="@string/widget_preview_meta"
+                android:textColor="@color/widget_muted"
+                android:textSize="13sp" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="4dp"
+            android:layout_weight="1"
+            android:autoSizeMaxTextSize="20sp"
+            android:autoSizeMinTextSize="13sp"
+            android:autoSizeStepGranularity="1sp"
+            android:autoSizeTextType="uniform"
+            android:ellipsize="end"
+            android:gravity="center_vertical"
+            android:maxLines="2"
+            android:textColor="@color/widget_foreground"
+            android:text="@string/widget_preview_line"
+            android:textSize="17sp"
+            style="@style/WidgetGurbani" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:background="@drawable/widget_pill"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:paddingStart="12dp"
+                android:paddingEnd="14dp">
+
+                <ImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:layout_marginEnd="6dp"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_widget_play"
+                    android:tint="@color/widget_foreground" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:fontFamily="sans-serif-medium"
+                    android:maxLines="1"
+                    android:text="@string/widget_hukamnama"
+                    android:textColor="@color/widget_foreground"
+                    android:textSize="14sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="8dp"
+                android:layout_weight="1"
+                android:background="@drawable/widget_button_gold"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:paddingStart="12dp"
+                android:paddingEnd="14dp">
+
+                <ImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:layout_marginEnd="6dp"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_widget_play"
+                    android:tint="@color/widget_on_gold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:fontFamily="sans-serif-medium"
+                    android:maxLines="1"
+                    android:text="@string/widget_live_kirtan"
+                    android:textColor="@color/widget_on_gold"
+                    android:textSize="14sp" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+</FrameLayout>

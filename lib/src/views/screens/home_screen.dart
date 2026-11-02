@@ -439,7 +439,7 @@ class _ReadCard extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
     final hukamnama = ref.watch(hukamnamaProvider).value;
     final punjabi = ref.watch(localeController) == 'pa';
-    final line = hukamnama == null ? null : _previewLine(hukamnama);
+    final line = hukamnama == null ? null : hukamnamaPreviewLine(hukamnama);
     // SGPC explains the shabad as a whole, so the preview shows the start of
     // that explanation under the line.
     final meaning = hukamnama == null
@@ -559,18 +559,6 @@ class _ReadCard extends ConsumerWidget {
         ),
       ),
     );
-  }
-
-  /// The Rahao line if there is one: the line the whole shabad turns on.
-  /// Otherwise the first real verse, skipping short labels such as ਸਲੋਕੁ ॥.
-  static HukamnamaLine? _previewLine(Hukamnama h) {
-    for (final line in h.lines) {
-      if (line.gurmukhi.contains('ਰਹਾਉ')) return line;
-    }
-    for (final line in h.lines) {
-      if (line.gurmukhi.length > 20) return line;
-    }
-    return h.lines.isEmpty ? null : h.lines.first;
   }
 }
 

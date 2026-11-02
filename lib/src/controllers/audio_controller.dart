@@ -1,12 +1,13 @@
 import 'dart:async';
 import 'dart:math' as math;
 
+import 'package:audio_service/audio_service.dart' show MediaItem;
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:just_audio_background/just_audio_background.dart';
 import 'package:live_darbar/src/controllers/connectivity_controller.dart';
 import 'package:live_darbar/src/controllers/daily_content_controller.dart';
+import 'package:live_darbar/src/media_session/media_catalog.dart';
 import 'package:live_darbar/src/models/audio_progress_state.dart';
 import 'package:live_darbar/src/models/daily_edition.dart';
 import 'package:live_darbar/src/controllers/quality_mode_controller.dart';
@@ -16,20 +17,14 @@ import 'package:live_darbar/src/models/network_snapshot.dart';
 import 'package:live_darbar/src/models/quality_policy.dart';
 import 'package:live_darbar/src/models/resume_point.dart';
 import 'package:live_darbar/src/models/sgpc_day.dart';
+import 'package:live_darbar/src/models/source_index.dart';
 import 'package:live_darbar/src/models/stream_quality.dart';
 import 'package:rxdart/rxdart.dart';
 
-/// Index of the live kirtan stream in the source list.
-const kLiveIndex = 0;
-const kMukhwakIndex = 1;
-const kKathaIndex = 2;
-
-/// What a car or Bluetooth display shows beside the title.
-///
-/// Those screens read artist and album from the media session and show a blank
-/// where there is none, so the title was the only thing on them.
-const _kArtist = 'Sri Harmandir Sahib, Amritsar';
-const _kAlbum = 'Live Darbar';
+// The views import the source indexes from here, so they stay reachable from
+// this file. They live in `source_index.dart` so the media session can read
+// them without importing the player.
+export 'package:live_darbar/src/models/source_index.dart';
 
 /// Owns the player and everything about keeping the live stream alive.
 ///
@@ -131,6 +126,9 @@ class AudioController {
     const LivePlaybackState(),
   );
 
+  /// [_requestedIndex], as a stream, for the media session.
+  final _source = BehaviorSubject<int>.seeded(kLiveIndex);
+
   /// Index currently handed to the player, or -1 when nothing is loaded.
   int _loadedIndex = -1;
 
@@ -144,6 +142,9 @@ class AudioController {
   /// flag in here. Without that, a reconnect minutes later would start sound
   /// the listener had stopped.
   bool _wantsPlayback = false;
+
+  /// Set by [stop], cleared by the next [play]. See [isStopped].
+  bool _stopped = false;
 
   /// False between loading a source and the first play on it.
   ///
@@ -194,17 +195,13 @@ class AudioController {
   /// The media session entry for source [index].
   ///
   /// The id stays the index as a string, because the views read it back from
-  /// the sequence state to know which source is current.
+  /// the sequence state to know which source is current. [MediaCatalog] owns
+  /// it, along with the title and artist, so the tag, the notification and the
+  /// browse tree in a car always agree.
   ///
   /// Artwork is a `file:` URI to a local copy of the painting, or null when
   /// there is none (web, or the copy failed). See [ArtworkStore].
-  MediaItem _tag(int index, String title) => MediaItem(
-        id: '$index',
-        title: title,
-        artist: _kArtist,
-        album: _kAlbum,
-        artUri: _artUris[index],
-      );
+  MediaItem _tag(int index) => MediaCatalog.item(index, artUri: _artUris[index]);
 
   /// The daily recording behind [index], or null for the live stream.
   DailyAsset? _assetFor(int index) => switch (index) {
@@ -222,17 +219,17 @@ class AudioController {
       case kLiveIndex:
         return AudioSource.uri(
           Uri.parse(_quality.url),
-          tag: _tag(kLiveIndex, 'Live Kirtan'),
+          tag: _tag(kLiveIndex),
         );
       case kMukhwakIndex:
         return AudioSource.uri(
           Uri.parse(edition?.url ?? DailyAsset.hukamnama.latestUrl),
-          tag: _tag(kMukhwakIndex, 'Mukhwak'),
+          tag: _tag(kMukhwakIndex),
         );
       case kKathaIndex:
         return AudioSource.uri(
           Uri.parse(edition?.url ?? DailyAsset.katha.latestUrl),
-          tag: _tag(kKathaIndex, 'Mukhwak Katha'),
+          tag: _tag(kKathaIndex),
         );
       default:
         throw ArgumentError.value(index, 'index', 'no such audio source');
@@ -247,6 +244,65 @@ class AudioController {
 
   StreamQuality get quality => _quality;
 
+  // What the media session reads. It sits beside the player rather than on
+  // top of it, so none of this changes how playback behaves.
+
+  /// The source the listener last asked for. Live until they ask for another,
+  /// because live is what the app warms up at launch.
+  int get sourceIndex => _requestedIndex < 0 ? kLiveIndex : _requestedIndex;
+
+  /// [sourceIndex], each time it changes.
+  Stream<int> get sourceStream => _source.stream.distinct();
+
+  /// Whether the listener wants sound right now, whatever the player says.
+  ///
+  /// True from the tap, through a connection that is still opening, so a
+  /// media session can say "connecting" instead of "idle" in that second.
+  bool get wantsPlayback => _wantsPlayback;
+
+  /// Whether the listener ended playback with [stop], and has not asked for
+  /// sound since.
+  ///
+  /// A pause is not a stop, and neither is a stream the server dropped while
+  /// it was paused. Only this lets the media session go, so the foreground
+  /// service survives until somebody ends it. See `isSessionEngaged`.
+  bool get isStopped => _stopped;
+
+  /// Whether the loaded source is a recording that can be moved along.
+  ///
+  /// False for the live stream, which has no timeline, and for a recording
+  /// that is still loading, when the player still holds the source before it.
+  bool get canSeek =>
+      _loadedIndex > kLiveIndex &&
+      _loadedIndex == _requestedIndex &&
+      _player.duration != null;
+
+  PlayerState get playerState => _player.playerState;
+
+  /// Everything the player reports, as it reports it: state, position, buffer
+  /// and length. A media session wants to hear about all of them.
+  Stream<PlaybackEvent> get playbackEventStream => _player.playbackEventStream;
+
+  Duration get position => _player.position;
+
+  Duration get bufferedPosition => _player.bufferedPosition;
+
+  /// Null for the live stream, and until a recording has loaded.
+  Duration? get duration => _player.duration;
+
+  /// The local paintings for the three sources, ready to hand to the media
+  /// session. Empty on web, and bounded by a timeout. See [ArtworkStore].
+  Future<Map<int, Uri>> artworkUris() async {
+    // The first run copies three paintings to disk, which takes a few
+    // milliseconds. Later runs find them there. Bounded, because a slow disk
+    // should cost the notification its picture and never the listener their
+    // sound, and the same copy is picked up by whichever load comes next.
+    return _artUris = await _artwork.prepare().timeout(
+          const Duration(seconds: 3),
+          onTimeout: () => _artUris,
+        );
+  }
+
   /// Start, or resume, the source at [index].
   ///
   /// The whole point of this method is what it does *not* do: if the source is
@@ -260,6 +316,7 @@ class AudioController {
     // case worth measuring.
     _tapToSound = Stopwatch()..start();
     _wantsPlayback = true;
+    _stopped = false;
     _cancelReconnect();
 
     // Choosing a different source starts it from the beginning. Asking for the
@@ -313,6 +370,7 @@ class AudioController {
 
   Future<void> stop() async {
     _wantsPlayback = false;
+    _stopped = true;
     _cancelReconnect();
     _resume.clear();
     await _player.stop();
@@ -531,6 +589,7 @@ class AudioController {
   Future<bool> _performLoad(int index) async {
     if (_disposed) return false;
     _requestedIndex = index;
+    _source.add(index);
     // A retry only means something for the live stream it was started on.
     if (index != kLiveIndex) _retryingFrom = null;
     _emit(
@@ -558,14 +617,7 @@ class AudioController {
         if (_disposed || _requestedIndex != index) return false;
       }
 
-      // The first run copies three paintings to disk, which takes a few
-      // milliseconds. Later runs find them there. Bounded, because a slow disk
-      // should cost the notification its picture and never the listener their
-      // sound, and the same copy is picked up by whichever load comes next.
-      _artUris = await _artwork.prepare().timeout(
-            const Duration(seconds: 3),
-            onTimeout: () => _artUris,
-          );
+      await artworkUris();
       if (_disposed || _requestedIndex != index) return false;
 
       // Resolved before the player is touched, not after it fails. A dated
@@ -958,6 +1010,7 @@ class AudioController {
     _stateSub?.cancel();
     _playingSub?.cancel();
     _live.close();
+    _source.close();
     _player.dispose();
   }
 }

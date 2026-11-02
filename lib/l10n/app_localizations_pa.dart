@@ -15,6 +15,9 @@ class AppLocalizationsPa extends AppLocalizations {
   String get live_kirtan => 'ਲਾਈਵ ਕੀਰਤਨ';
 
   @override
+  String get play_live_kirtan => 'ਲਾਈਵ ਕੀਰਤਨ ਚਲਾਓ';
+
+  @override
   String get mukhwak => 'ਹੁਕਮਨਾਮਾ';
 
   @override
@@ -283,4 +286,32 @@ class AppLocalizationsPa extends AppLocalizations {
 
   @override
   String get open_on_sgpc => 'SGPC ਦੀ ਵੈੱਬਸਾਈਟ ਉੱਤੇ ਪੜ੍ਹੋ';
+
+  @override
+  String widget_live_control(String state) {
+    String _temp0 = intl.Intl.selectLogic(
+      state,
+      {
+        'loading': 'ਲਾਈਵ ਕੀਰਤਨ ਸ਼ੁਰੂ ਹੋ ਰਿਹਾ ਹੈ। ਰੱਦ ਕਰਨ ਲਈ ਦੋ ਵਾਰ ਟੈਪ ਕਰੋ।',
+        'playing': 'ਲਾਈਵ ਕੀਰਤਨ ਚੱਲ ਰਿਹਾ ਹੈ। ਬੰਦ ਕਰਨ ਲਈ ਦੋ ਵਾਰ ਟੈਪ ਕਰੋ।',
+        'paused': 'ਲਾਈਵ ਕੀਰਤਨ ਰੁਕਿਆ ਹੋਇਆ ਹੈ। ਚਲਾਉਣ ਲਈ ਦੋ ਵਾਰ ਟੈਪ ਕਰੋ।',
+        'other': 'ਲਾਈਵ ਕੀਰਤਨ ਚਲਾਓ',
+      },
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String widget_hukamnama_control(String state) {
+    String _temp0 = intl.Intl.selectLogic(
+      state,
+      {
+        'loading': 'ਹੁਕਮਨਾਮਾ ਸ਼ੁਰੂ ਹੋ ਰਿਹਾ ਹੈ। ਰੱਦ ਕਰਨ ਲਈ ਦੋ ਵਾਰ ਟੈਪ ਕਰੋ।',
+        'playing': 'ਹੁਕਮਨਾਮਾ ਚੱਲ ਰਿਹਾ ਹੈ। ਰੋਕਣ ਲਈ ਦੋ ਵਾਰ ਟੈਪ ਕਰੋ।',
+        'paused': 'ਹੁਕਮਨਾਮਾ ਰੁਕਿਆ ਹੋਇਆ ਹੈ। ਮੁੜ ਚਲਾਉਣ ਲਈ ਦੋ ਵਾਰ ਟੈਪ ਕਰੋ।',
+        'other': 'ਅੱਜ ਦਾ ਹੁਕਮਨਾਮਾ ਸੁਣੋ',
+      },
+    );
+    return '$_temp0';
+  }
 }

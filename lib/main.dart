@@ -6,9 +6,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intelligence/intelligence.dart';
-import 'package:just_audio_background/just_audio_background.dart';
 import 'package:live_darbar/src/controllers/audio_controller.dart';
 import 'package:live_darbar/src/controllers/locale_controller.dart';
+import 'package:live_darbar/src/home_screen_widget/widget_actions.dart';
+import 'package:live_darbar/src/home_screen_widget/widget_background.dart';
+import 'package:live_darbar/src/home_screen_widget/widget_playback.dart';
+import 'package:live_darbar/src/home_screen_widget/widget_publisher.dart';
+import 'package:live_darbar/src/home_screen_widget/widget_sync.dart';
+import 'package:live_darbar/src/media_session/live_darbar_audio_handler.dart';
 import 'package:live_darbar/src/core/app_theme.dart';
 import 'package:live_darbar/src/core/app_type.dart';
 import 'package:live_darbar/src/core/open_link.dart';
@@ -20,12 +25,28 @@ import 'package:live_darbar/src/views/widgets/offline_banner_widget.dart';
 import 'package:quick_actions/quick_actions.dart';
 import 'package:live_darbar/l10n/app_localizations.dart';
 
+/// Where the home screen widget's background refresh starts, with the app
+/// closed. `WidgetRefresh.kt` starts it by this name in an engine of its own.
+///
+/// It lives in this file so that it is part of the program. The compiler keeps
+/// only what `main` can reach, and no screen reaches the refresh. The work
+/// itself is in `widget_background.dart`.
+@pragma('vm:entry-point')
+Future<void> widgetRefreshEntry(List<String> args) => widgetRefreshMain(args);
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // Lock the UI to portrait up orientation
-  await SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp,
-  ]);
+  // Lock the UI to portrait up orientation.
+  //
+  // Not awaited. A service can start this engine with no activity, for a tap
+  // on the home screen widget, the notification or a car. Then nothing on the
+  // Android side answers this call, and an await would wait for ever, and
+  // with it the media session below. The activity locks portrait itself
+  // (`screenOrientation` in AndroidManifest.xml), so nothing is lost.
+  unawaited(
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]),
+  );
+  final container = ProviderContainer();
   if (!kIsWeb && !kIsWasm) {
     // Say what kind of audio this is, before any player exists.
     //
@@ -43,29 +64,35 @@ void main() async {
       debugPrint('Audio session not configured: $e');
     }
 
-    // Enable background audio playback
+    // Connect the media session: the notification, the lock screen, headset
+    // buttons, Android Auto and voice assistants.
     //
-    // The channel id is copied from just_audio_background's own example and
-    // reads oddly, but leave it alone. Android keys notification channels by
-    // id and never deletes an old one short of an uninstall, so renaming it
-    // would leave every existing user with two "Audio playback" entries in
-    // their notification settings. The id is invisible to users; only the name
-    // shows. Nothing is gained by fixing it and something is lost.
-    await JustAudioBackground.init(
-      androidNotificationChannelId: 'com.ryanheise.bg_demo.channel.audio',
-      androidNotificationChannelName: 'Audio playback',
-      // Stay in the foreground while paused. A phone call pauses kirtan; if
-      // the service left the foreground then, Android 12+ may refuse to let
-      // it back in when playback resumes in the background after the call,
-      // and the kirtan would not come back. The cost: the notification stays
-      // until the listener stops or closes the app, instead of becoming
-      // swipeable on pause.
-      androidNotificationOngoing: false,
-      androidStopForegroundOnPause: false,
-    );
+    // Before the first frame, and with a container made here rather than by
+    // the widget tree. A car or an assistant can start the app with no screen
+    // at all, and a command from it finds a handler on a controller that is
+    // already there. A provider that waited for a widget to read it would
+    // wait for ever.
+    try {
+      final handler =
+          await LiveDarbarAudioHandler.init(container.read(audioController));
+      // Tell the home screen widget what the session does, from here, so that
+      // it follows the app, the notification, a headset, the car and the
+      // widget itself. The widget's own taps can wake the app with no screen,
+      // and this runs without one.
+      if (HomeWidgetPublisher.isSupported) {
+        WidgetPlaybackSync(
+          playbackState: handler.playbackState,
+          mediaItem: handler.mediaItem,
+          publisher: container.read(widgetPublisherProvider),
+        ).start();
+      }
+    } catch (e) {
+      // The app still plays. It just has no controls outside itself.
+      debugPrint('Media session not started: $e');
+    }
   }
 
-  runApp(const ProviderScope(child: MyApp()));
+  runApp(UncontrolledProviderScope(container: container, child: const MyApp()));
 }
 
 class MyApp extends ConsumerStatefulWidget {
@@ -83,6 +110,10 @@ class _MyAppState extends ConsumerState<MyApp> {
       MethodChannel('com.hsi.harki.live_darbar/audio');
   static const MethodChannel _oacpChannel =
       MethodChannel('com.hsi.harki.live_darbar/oacp');
+
+  // The widget's tap opens the reader from outside the widget tree, so the
+  // app needs a handle on its navigator.
+  final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
 
   @override
   void initState() {
@@ -123,6 +154,10 @@ class _MyAppState extends ConsumerState<MyApp> {
         localizedTitle: 'Mukhwak Katha',
       ),
     ]);
+
+    // Keep the home screen widget's text in step with the date and the
+    // Hukamnama. Android only for now.
+    if (HomeWidgetPublisher.isSupported) ref.read(widgetSyncProvider);
   }
 
   @override
@@ -146,8 +181,11 @@ class _MyAppState extends ConsumerState<MyApp> {
     log('OACP command received: $command');
 
     switch (command) {
-      case 'play_live_kirtan':
-        ref.read(audioController).play(0);
+      case kPlayLiveCommand:
+        ref.read(audioController).play(kLiveIndex);
+      // What a tap on the widget, away from its buttons, sends.
+      case kOpenHukamnamaCommand:
+        openHukamnamaReader(_navigatorKey.currentState);
       case 'play_mukhwak':
         ref.read(audioController).play(1);
       case 'play_katha':
@@ -172,6 +210,7 @@ class _MyAppState extends ConsumerState<MyApp> {
     final locale = ref.watch(localeController);
     AppType.tracking = locale != 'pa';
     return MaterialApp(
+      navigatorKey: _navigatorKey,
       title: 'Live Darbar',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.material,

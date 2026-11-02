@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    The Live Kirtan button while live opens: the same capsule at about half
+    strength, so it reads as "working" and not as ready. A RemoteViews cannot
+    spin, so the dimmed capsule and the still "…" inside it are the whole
+    animation. The ripple is the same as the ready button's.
+-->
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="#400C0A09">
+    <item>
+        <inset
+            android:insetBottom="4dp"
+            android:insetTop="4dp">
+            <shape android:shape="rectangle">
+                <solid android:color="#99E8B04B" />
+                <corners android:radius="20dp" />
+            </shape>
+        </inset>
+    </item>
+    <item android:id="@android:id/mask">
+        <inset
+            android:insetBottom="4dp"
+            android:insetTop="4dp">
+            <shape android:shape="rectangle">
+                <solid android:color="#FFFFFFFF" />
+                <corners android:radius="20dp" />
+            </shape>
+        </inset>
+    </item>
+</ripple>

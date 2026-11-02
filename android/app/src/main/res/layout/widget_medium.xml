@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    The widget's one layout, 4 cells wide and 2 rows or more high.
+
+    Top to bottom: one line that says what this is, "Hukamnama · 2 Nov ·
+    Ang 668", then the Rahao line, then the two buttons.
+
+    - widget_hukamnama_button plays today's Hukamnama recording, and while it
+      plays, pauses it.
+    - widget_live_button, in gold, plays live kirtan, and while it plays,
+      stops it.
+    - A tap anywhere else opens the Hukamnama reader.
+
+    Every control is 48 dp or more. Text and pictures are filled in by
+    WidgetRenderer. Only classes that RemoteViews allows appear here. No text
+    sets letter spacing.
+-->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/widget_background"
+    android:foreground="@drawable/widget_ripple">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingStart="16dp"
+        android:paddingTop="14dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="10dp">
+
+        <!--
+            The top line: the title in gold, then the date and Ang in the
+            muted colour. It shrinks from 13 sp down to 11 sp before it ends
+            in an ellipsis, so the Ang stays on a 3 cell widget. Autosizing
+            fits to the fixed height, and 24 dp holds Gurmukhi at 13 sp.
+        -->
+        <TextView
+            android:id="@+id/widget_heading"
+            android:layout_width="match_parent"
+            android:layout_height="24dp"
+            android:autoSizeMaxTextSize="13sp"
+            android:autoSizeMinTextSize="11sp"
+            android:autoSizeStepGranularity="1sp"
+            android:autoSizeTextType="uniform"
+            android:ellipsize="end"
+            android:fontFamily="sans-serif-medium"
+            android:gravity="center_vertical"
+            android:maxLines="1"
+            android:textColor="@color/widget_muted"
+            android:textSize="12sp" />
+
+        <!--
+            The Rahao line, in up to 2 lines. It shrinks to fit, from 20 sp down
+            to 13 sp, before it gives up and ends in an ellipsis. Autosizing
+            starts at Android 8. Before that the line stays at 17 sp.
+
+            No extra line spacing. Tiro Gurmukhi's own line height is already
+            1.3 times its size, which clears the vowel signs. More spacing
+            would make autosizing pick a smaller size for Gurbani.
+        -->
+        <TextView
+            android:id="@+id/widget_line"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="4dp"
+            android:layout_weight="1"
+            android:autoSizeMaxTextSize="20sp"
+            android:autoSizeMinTextSize="13sp"
+            android:autoSizeStepGranularity="1sp"
+            android:autoSizeTextType="uniform"
+            android:ellipsize="end"
+            android:gravity="center_vertical"
+            android:maxLines="2"
+            android:textColor="@color/widget_foreground"
+            android:textSize="17sp"
+            style="@style/WidgetGurbani" />
+
+        <!--
+            The two buttons, the same size side by side: Hukamnama, then Live
+            Kirtan in gold. Each keeps its name in every state. The picture
+            beside the name shows what a tap does: play, pause, stop, or a
+            dimmed "…" while the source opens. Each is a 40 dp capsule inside
+            a 48 dp target. WidgetRenderer fills in the words and pictures.
+        -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:id="@+id/widget_hukamnama_button"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:background="@drawable/widget_pill"
+                android:foreground="@drawable/widget_pill_ripple"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:paddingStart="12dp"
+                android:paddingEnd="14dp">
+
+                <ImageView
+                    android:id="@+id/widget_hukamnama_icon"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:layout_marginEnd="6dp"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_widget_play"
+                    android:tint="@color/widget_foreground" />
+
+                <TextView
+                    android:id="@+id/widget_hukamnama_word"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:fontFamily="sans-serif-medium"
+                    android:maxLines="1"
+                    android:text="@string/widget_hukamnama"
+                    android:textColor="@color/widget_foreground"
+                    android:textSize="14sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/widget_live_button"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="8dp"
+                android:layout_weight="1"
+                android:background="@drawable/widget_button_gold"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:paddingStart="12dp"
+                android:paddingEnd="14dp">
+
+                <ImageView
+                    android:id="@+id/widget_live_icon"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:layout_marginEnd="6dp"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_widget_play"
+                    android:tint="@color/widget_on_gold" />
+
+                <TextView
+                    android:id="@+id/widget_live_word"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:fontFamily="sans-serif-medium"
+                    android:maxLines="1"
+                    android:text="@string/widget_live_kirtan"
+                    android:textColor="@color/widget_on_gold"
+                    android:textSize="14sp" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+</FrameLayout>
