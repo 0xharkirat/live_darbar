@@ -48,7 +48,10 @@ All tokens live in `lib/src/core/`.
 
 | Component | File | Rule |
 | --- | --- | --- |
-| `Pressable` | `views/widgets/pressable.dart` | Every tappable thing bigger than an icon. Sinks to 97% on touch-down. |
+| `Pressable` | `views/widgets/pressable.dart` | Every tappable thing bigger than an icon. Sinks to 97% on touch-down. Small targets add a `PressFill`, and a row in a group takes scale 1 and the fill alone. Choices set `selected` for the screen reader. |
+| `showAppSheet` | `views/widgets/app_sheet.dart` | Every bottom sheet. Drawer curve in, faster exit. Reduce Motion: the sheet stays put and fades. |
+| `InAppLink` | `views/widgets/in_app_link.dart` | A button that opens the in-app browser. Busy until the browser covers the app, so a second tap cannot open a second tab. |
+| `BusyIcon` | `views/widgets/busy_icon.dart` | An icon that swaps for a spinner with a scale and blur cross-fade. |
 | `PlayButton` | `views/widgets/play_button.dart` | 1 gold button per screen. Others use `glass` or `bare`. |
 | `LiveBadge` | `views/widgets/live_badge.dart` | Red dot when idle, red bars when playing. No pulse. |
 | `Equalizer` | `views/widgets/equalizer.dart` | The only looping motion. It runs only while sound plays. |
@@ -73,6 +76,8 @@ All tokens live in `lib/src/core/`.
 - Anything a finger drags is a spring.
 - The artwork grows when sound plays and settles back when it stops.
 - Reduce Motion swaps movement for a short fade. It keeps the feedback.
+- Flutter runs every `AnimationController` at 5% of its length when Reduce Motion is on, so a fade is one frame long.
+  Where a fade must be seen, give the controller `AnimationBehavior.preserve`, as `showAppSheet` does.
 
 ## Screenshots
 
@@ -90,7 +95,9 @@ Use it to check a change, and as the source for store screenshots.
 - A second accent colour, or a light theme.
 - A row of identical bordered cards.
 - An icon-only control for anything a first-time listener needs.
-  The one exception is sound quality, a setting to set once.
-  It is a quiet round button at the top right of the player (`QualityButton`).
-  Data saver shows as a small pill beside the LIVE badge.
+  Sound quality is a setting to set once, so its control is quiet, but it still has a word on it.
+  `QualityButton` is a capsule at the top right of the player: a waveform icon and "Sound quality".
+  A sliders icon alone said "settings" and nothing else.
+  Data saver shows as a small pill beside the LIVE badge, and a tap on it opens the same sheet.
+  The badge row keeps the pill's height with or without the pill, so the layout never jumps.
 - Queue, shuffle, playback speed, listener counts, or streaks. The 2026-08 player research rejected each one for a devotional app.

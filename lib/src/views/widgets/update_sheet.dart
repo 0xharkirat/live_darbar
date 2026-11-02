@@ -1,5 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:live_darbar/l10n/app_localizations.dart';
 import 'package:live_darbar/src/controllers/locale_controller.dart';
@@ -8,6 +7,7 @@ import 'package:live_darbar/src/core/app_type.dart';
 import 'package:live_darbar/src/core/open_link.dart';
 import 'package:live_darbar/src/core/palette.dart';
 import 'package:live_darbar/src/models/app_update.dart';
+import 'package:live_darbar/src/views/widgets/app_sheet.dart';
 import 'package:live_darbar/src/views/widgets/pressable.dart';
 
 /// Offers a newer release, once, as a sheet the listener can wave away.
@@ -15,12 +15,7 @@ import 'package:live_darbar/src/views/widgets/pressable.dart';
 /// A sheet rather than a dialog: it never blocks the kirtan that may already
 /// be playing, and a downward swipe dismisses it like any other sheet.
 Future<void> showUpdateSheet(BuildContext context, AppUpdate update) {
-  return showModalBottomSheet<void>(
-    context: context,
-    isScrollControlled: true,
-    backgroundColor: Colors.transparent,
-    builder: (_) => _UpdateSheet(update: update),
-  );
+  return showAppSheet<void>(context, (_) => _UpdateSheet(update: update));
 }
 
 class _UpdateSheet extends ConsumerWidget {

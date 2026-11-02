@@ -18,6 +18,8 @@ import 'package:live_darbar/src/core/palette.dart';
 import 'package:live_darbar/src/core/reader_numbers.dart';
 import 'package:live_darbar/src/models/hukamnama.dart';
 import 'package:live_darbar/src/models/sgpc_day.dart';
+import 'package:live_darbar/src/views/widgets/busy_icon.dart';
+import 'package:live_darbar/src/views/widgets/in_app_link.dart';
 import 'package:live_darbar/src/views/widgets/pressable.dart';
 
 /// Today's Hukamnama as words, line by line, with the meaning under each line.
@@ -359,41 +361,51 @@ class _Actions extends ConsumerWidget {
     Widget pill({
       required IconData icon,
       required String label,
-      required VoidCallback onTap,
+      required VoidCallback? onTap,
       bool primary = false,
+      bool external = false,
+      bool busy = false,
     }) =>
         Pressable(
           semanticLabel: label,
           onTap: onTap,
-          child: Container(
-            height: 44,
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            decoration: ShapeDecoration(
-              color: primary ? Palette.gold : Palette.surfaceHigh,
-              shape: RoundedSuperellipseBorder(
-                borderRadius: BorderRadius.circular(14),
-                side: primary
-                    ? BorderSide.none
-                    : const BorderSide(color: Palette.border),
+          // The label above is the whole of what the reader says.
+          child: ExcludeSemantics(
+            child: Container(
+              height: 44,
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              decoration: ShapeDecoration(
+                color: primary ? Palette.gold : Palette.surfaceHigh,
+                shape: RoundedSuperellipseBorder(
+                  borderRadius: BorderRadius.circular(14),
+                  side: primary
+                      ? BorderSide.none
+                      : const BorderSide(color: Palette.border),
+                ),
               ),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(
-                  icon,
-                  size: 17,
-                  color: primary ? Palette.onGold : Palette.gold,
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  label,
-                  style: AppType.headline.copyWith(
-                    fontSize: 15,
-                    color: primary ? Palette.onGold : Palette.foreground,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  BusyIcon(
+                    busy: busy,
+                    icon: icon,
+                    size: 17,
+                    color: primary ? Palette.onGold : Palette.gold,
                   ),
-                ),
-              ],
+                  const SizedBox(width: 8),
+                  Text(
+                    label,
+                    style: AppType.headline.copyWith(
+                      fontSize: 15,
+                      color: primary ? Palette.onGold : Palette.foreground,
+                    ),
+                  ),
+                  if (external) ...[
+                    const SizedBox(width: 6),
+                    const _LeavesTheApp(),
+                  ],
+                ],
+              ),
             ),
           ),
         );
@@ -408,10 +420,15 @@ class _Actions extends ConsumerWidget {
           primary: true,
           onTap: () => togglePlayback(ref, kMukhwakIndex),
         ),
-        pill(
-          icon: CupertinoIcons.doc_text,
-          label: l10n.sgpc_pdf,
-          onTap: () => openLinkInApp(kHukamnamaPdfPageUrl),
+        InAppLink(
+          url: kHukamnamaPdfPageUrl,
+          builder: (context, opening, open) => pill(
+            icon: CupertinoIcons.doc_text,
+            label: l10n.sgpc_pdf,
+            external: true,
+            busy: opening,
+            onTap: open,
+          ),
         ),
       ],
     );
@@ -512,33 +529,96 @@ class _Failure extends ConsumerWidget {
               style: AppType.callout,
             ),
             const SizedBox(height: 8),
-            CupertinoButton(
-              onPressed: () => ref.read(hukamnamaProvider.notifier).refresh(),
-              child: Text(
-                l10n.retry,
-                style: AppType.callout.copyWith(color: Palette.gold),
-              ),
+            _FailureLink(
+              label: l10n.retry,
+              onTap: () => ref.read(hukamnamaProvider.notifier).refresh(),
             ),
             // The web app reads a copy of SGPC's text, which can be late or
             // down, so it also sends the reader to SGPC's own site. The PDF
             // page needs the in-app browser, which web does not have.
             if (web)
-              CupertinoButton(
-                onPressed: () => openLink(kHukamnamaSourceUrl),
-                child: Text(
-                  l10n.open_on_sgpc,
-                  style: AppType.callout.copyWith(color: Palette.gold),
-                ),
+              _FailureLink(
+                label: l10n.open_on_sgpc,
+                external: true,
+                onTap: () => openLink(kHukamnamaSourceUrl),
               )
             else
-              CupertinoButton(
-                onPressed: () => openLinkInApp(kHukamnamaPdfPageUrl),
-                child: Text(
-                  l10n.sgpc_pdf,
-                  style: AppType.callout.copyWith(color: Palette.gold),
+              InAppLink(
+                url: kHukamnamaPdfPageUrl,
+                builder: (context, opening, open) => _FailureLink(
+                  label: l10n.sgpc_pdf,
+                  external: true,
+                  busy: opening,
+                  onTap: open,
                 ),
               ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+/// The small arrow that says a button leaves the app, for the browser. While
+/// [busy] it is a spinner, for a button that has no other icon to swap.
+class _LeavesTheApp extends StatelessWidget {
+  const _LeavesTheApp({this.busy = false});
+
+  final bool busy;
+
+  @override
+  Widget build(BuildContext context) {
+    return BusyIcon(
+      busy: busy,
+      icon: CupertinoIcons.arrow_up_right,
+      size: 13,
+      color: Palette.muted,
+    );
+  }
+}
+
+/// A text button under the failure message. It is a [Pressable], like the
+/// pills above it, so the same action has the same press feedback whichever
+/// screen it is on.
+class _FailureLink extends StatelessWidget {
+  const _FailureLink({
+    required this.label,
+    required this.onTap,
+    this.external = false,
+    this.busy = false,
+  });
+
+  final String label;
+  final VoidCallback? onTap;
+  final bool external;
+
+  /// The browser is on its way: the arrow becomes a spinner.
+  final bool busy;
+
+  @override
+  Widget build(BuildContext context) {
+    return Pressable(
+      onTap: onTap,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Center(
+            widthFactor: 1,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  label,
+                  style: AppType.callout.copyWith(color: Palette.gold),
+                ),
+                if (external) ...[
+                  const SizedBox(width: 6),
+                  _LeavesTheApp(busy: busy),
+                ],
+              ],
+            ),
+          ),
         ),
       ),
     );

@@ -88,18 +88,29 @@ class NowPlayingScreen extends ConsumerWidget {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    if (now.isLive) ...[
-                                      Row(
-                                        children: [
-                                          LiveBadge(playing: now.isPlaying),
-                                          if (hasQuality) ...[
-                                            const SizedBox(width: 10),
-                                            const DataSaverPill(),
-                                          ],
-                                        ],
-                                      ),
-                                      const SizedBox(height: 8),
-                                    ],
+                                    // The badge row is as tall as the Data saver
+                                    // pill whether the pill shows or not, and
+                                    // a recording holds the same space empty.
+                                    // So neither the pill appearing nor a
+                                    // change of source moves the artwork or the
+                                    // title.
+                                    SizedBox(
+                                      height: DataSaverPill.height,
+                                      child: now.isLive
+                                          ? Row(
+                                              children: [
+                                                LiveBadge(
+                                                  playing: now.isPlaying,
+                                                ),
+                                                if (hasQuality) ...[
+                                                  const SizedBox(width: 10),
+                                                  const DataSaverPill(),
+                                                ],
+                                              ],
+                                            )
+                                          : null,
+                                    ),
+                                    const SizedBox(height: 8),
                                     AnimatedSwitcher(
                                       duration: Motion.quick,
                                       child: Text(
@@ -133,11 +144,30 @@ class NowPlayingScreen extends ConsumerWidget {
               ),
             ),
           ),
-          // Top right, level with the sheet's drag handle. The circle is 32
-          // points inside a 44 point target, so 18 points in from the edge
-          // puts the circle on the 24 point margin the content uses.
+          // Top right, level with the sheet's drag handle, and on the content
+          // column's right edge at every width. The column is 460 wide and
+          // centred inside the 24 point margin, so this box is 460 + 2 * 24
+          // wide and centred the same way, and the button sits 24 points in
+          // from its right edge. On a phone the box is the screen.
           if (hasQuality)
-            const Positioned(top: 0, right: 18, child: QualityButton()),
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 460 + 2 * 24),
+                  child: const Align(
+                    alignment: Alignment.centerRight,
+                    heightFactor: 1,
+                    child: Padding(
+                      padding: EdgeInsets.only(right: 24),
+                      child: QualityButton(),
+                    ),
+                  ),
+                ),
+              ),
+            ),
         ],
       ),
     );
@@ -145,9 +175,10 @@ class NowPlayingScreen extends ConsumerWidget {
 }
 
 /// Space above the content for the quality button, which sits beside the
-/// sheet's drag handle. The same for every source, so switching between live
-/// and a recording does not move the artwork.
-const _topInset = 44.0;
+/// sheet's drag handle. The same for every source, and the badge row below the
+/// artwork holds its height too, so switching between live and a recording
+/// does not move the artwork.
+const _topInset = 48.0;
 
 /// The painting, blurred into a wash of its own colours, behind everything.
 ///
