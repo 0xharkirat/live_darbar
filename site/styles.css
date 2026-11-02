@@ -1,0 +1,877 @@
+/* Live Darbar landing page. One file for /, /pa/ and the 404 page.
+   Tokens match lib/src/core/palette.dart. Dark only, by decision.
+
+   One centred column: the icon, the headline, the 3 buttons, then the demo.
+   The page follows the product pages of Kit Langton (Scrawl). Nothing moves
+   on its own. The film plays when a person presses play. */
+
+/* Geist, for all Latin text. The variable file holds every weight. SIL Open
+   Font License: site/fonts/GEIST-OFL.txt. */
+@font-face {
+  font-family: "Geist";
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("/fonts/geist-variable.woff2") format("woff2");
+}
+/* Geist Serif, for the English headings. It has 1 weight, 400, so headings
+   never ask for bold: the browser would smear a fake one. Same licence file.
+   It holds no Gurmukhi. The unicode-range says so, so a /pa/ page, whose
+   headings are Tiro Gurmukhi, does not download it. */
+@font-face {
+  font-family: "Geist Serif";
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/geist-serif-regular.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* Tiro Gurmukhi, for the /pa/ headings: a serif with 1 weight, 400, the same
+   as Geist Serif, so both pages have 1 voice. A subset of Gurmukhi, the
+   dandas and basic punctuation. SIL Open Font License:
+   site/fonts/TIRO-GURMUKHI-OFL.txt. */
+@font-face {
+  font-family: "Tiro Gurmukhi Web";
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/tiro-gurmukhi-400.woff2") format("woff2");
+}
+/* While Geist and Geist Serif load, the page sets in these 2 system faces,
+   scaled and spaced to match them, so the headline does not jump when the web
+   face arrives. The numbers were computed over the page's own text. */
+@font-face {
+  font-family: "Geist Fallback";
+  src: local("Arial");
+  size-adjust: 104.7%;
+  ascent-override: 87.9%;
+  descent-override: 21%;
+  line-gap-override: 9.6%;
+}
+@font-face {
+  font-family: "Geist Serif Fallback";
+  src: local("Georgia");
+  size-adjust: 103.6%;
+  ascent-override: 97%;
+  descent-override: 28.5%;
+  line-gap-override: 0%;
+}
+/* The Gurmukhi files hold Gurmukhi, the dandas and basic punctuation, and no
+   Latin letters. Geist comes first in the stack, so Latin letters on a /pa/
+   page are Geist. */
+@font-face {
+  font-family: "Noto Sans Gurmukhi Web";
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/noto-sans-gurmukhi-400.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Noto Sans Gurmukhi Web";
+  font-weight: 700;
+  font-display: swap;
+  src: url("/fonts/noto-sans-gurmukhi-700.woff2") format("woff2");
+}
+
+:root {
+  color-scheme: dark;
+  --bg: #0c0a09;
+  --fg: #f5f1eb;
+  --muted: #a89f94;
+  --faint: #8a8176;
+  --line: rgba(245, 241, 235, 0.1);
+  --line-strong: rgba(245, 241, 235, 0.22);
+  --gold: #e8b04b;
+  --on-gold: #0c0a09;
+  --sans: "Geist", "Geist Fallback", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --serif: "Geist Serif", "Geist Serif Fallback", Georgia, serif;
+  /* Strong ease-out for things that enter, and for press feedback. */
+  --ease: cubic-bezier(0.23, 1, 0.32, 1);
+  /* The icon swap in the play button. */
+  --ease-swap: cubic-bezier(0.25, 0.1, 0, 1);
+  --gutter: 20px;
+  /* The height of every button in the hero: ours and the stores' badges. */
+  --btn-h: 48px;
+  /* The corner radius they share. The App Store badge is drawn with about
+     this radius at this height. */
+  --btn-r: 8px;
+}
+
+/* Punjabi: Geist for any Latin letter, Noto Sans Gurmukhi for the rest. The
+   headings take Tiro Gurmukhi first, and Geist Serif for any Latin letter. */
+:root:lang(pa) {
+  --sans: "Geist", "Geist Fallback", "Noto Sans Gurmukhi Web", "Noto Sans Gurmukhi", "Gurmukhi MN",
+    "Nirmala UI", system-ui, sans-serif;
+  --serif: "Tiro Gurmukhi Web", "Geist Serif", "Geist Serif Fallback", "Noto Sans Gurmukhi Web",
+    Georgia, serif;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--bg);
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font: 400 1rem/1.55 var(--sans);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+:root:lang(pa) body {
+  font-size: 1.0625rem;
+  line-height: 1.6;
+}
+
+h1,
+h2 {
+  margin: 0;
+  font-family: var(--serif);
+  font-weight: 400;
+  /* Both heading faces have 1 weight. Never fake a bold. */
+  font-synthesis: none;
+  text-wrap: balance;
+}
+
+p {
+  margin: 0;
+  text-wrap: pretty;
+}
+
+ul,
+ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+a {
+  color: inherit;
+}
+
+img,
+video {
+  display: block;
+  max-width: 100%;
+}
+
+.wrap {
+  width: 100%;
+  max-width: 1040px;
+  margin: 0 auto;
+  padding-left: var(--gutter);
+  padding-right: var(--gutter);
+}
+
+.skip {
+  position: absolute;
+  left: 20px;
+  top: -80px;
+  z-index: 10;
+  padding: 10px 16px;
+  border-radius: var(--btn-r);
+  background: var(--gold);
+  color: var(--on-gold);
+  font-weight: 600;
+  text-decoration: none;
+}
+.skip:focus {
+  top: 12px;
+}
+
+:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+/* ---------- Top bar ---------- */
+.top {
+  max-width: 1200px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 12px;
+  padding-bottom: 12px;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+.brand img {
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
+}
+.lang {
+  /* A 44 px target round a small word. */
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 4px;
+  color: var(--muted);
+  font-size: 0.9375rem;
+  text-decoration: none;
+}
+/* On the English page this label is Gurmukhi. It uses the system's Gurmukhi
+   font, so the English page does not download one. */
+.lang[hreflang="pa"] {
+  font-family: "Noto Sans Gurmukhi", "Gurmukhi MN", "Nirmala UI", Raavi, system-ui, sans-serif;
+}
+@media (hover: hover) and (pointer: fine) {
+  .lang:hover {
+    color: var(--fg);
+  }
+}
+
+/* Gurmukhi words on the English page use the system's Gurmukhi font. */
+:root:not(:lang(pa)) [lang="pa"] {
+  font-family: "Noto Sans Gurmukhi", "Gurmukhi MN", "Nirmala UI", Raavi, system-ui, sans-serif;
+}
+
+/* ---------- Hero ---------- */
+.hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 48px;
+  padding-bottom: 56px;
+  text-align: center;
+}
+.hero-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 14px;
+}
+h1 {
+  max-width: 14em;
+  margin-top: 28px;
+  font-size: clamp(2.25rem, 9.4vw, 4rem);
+  line-height: 1.1;
+  letter-spacing: -0.025em;
+}
+.note {
+  margin-top: 16px;
+  color: var(--muted);
+  font-size: 1.125rem;
+}
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 32px;
+}
+.meta {
+  margin-top: 20px;
+  color: var(--faint);
+  font-size: 0.875rem;
+}
+
+/* Our own button, the same height and corner radius as the 2 badges. */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  height: var(--btn-h);
+  padding: 0 20px;
+  border: 0;
+  border-radius: var(--btn-r);
+  background: var(--fg);
+  color: var(--bg);
+  font: 600 1rem/1 var(--sans);
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: transform 150ms var(--ease), background-color 150ms var(--ease);
+}
+.btn svg {
+  flex: none;
+  width: 20px;
+  height: 20px;
+}
+.btn:active {
+  transform: scale(0.97);
+}
+@media (hover: hover) and (pointer: fine) {
+  .btn:hover {
+    background: #fff;
+  }
+}
+
+/* The stores' own badges, as they send them. Apple's is drawn to the edge of
+   its file. Google's PNG carries clear space round the badge (41 px of a
+   646 x 250 file), so a negative margin takes that space back and both badges
+   stand --btn-h tall. Both are clipped to the corner radius of our button. */
+.badge {
+  display: inline-flex;
+  overflow: hidden;
+  border-radius: var(--btn-r);
+  transition: transform 150ms var(--ease);
+}
+.badge img {
+  width: auto;
+  max-width: none;
+  height: var(--btn-h);
+}
+.badge-google {
+  /* The clipped box is the badge itself, without the PNG's clear space. */
+  height: var(--btn-h);
+}
+.badge-google img {
+  height: calc(var(--btn-h) * 250 / 168);
+  margin: calc(var(--btn-h) * -41 / 168);
+}
+.badge:active {
+  transform: scale(0.97);
+}
+@media (hover: hover) and (pointer: fine) {
+  .badge {
+    transition: transform 150ms var(--ease), opacity 150ms var(--ease);
+  }
+  .badge:hover {
+    opacity: 0.85;
+  }
+}
+
+/* ---------- The demo ---------- */
+.demo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-bottom: 72px;
+}
+
+/* The phone, drawn in CSS around the real recording. Nothing sits on the
+   screen but the cursor. */
+.device {
+  --dw: min(340px, 80vw, calc((100svh - 150px) * 0.47));
+  position: relative;
+  width: max(var(--dw), 200px);
+  padding: calc(var(--dw) * 0.03);
+  border-radius: calc(var(--dw) * 0.16);
+  background: linear-gradient(150deg, #2a2420, #0f0d0c 55%, #1a1612);
+  box-shadow: 0 0 0 1px rgba(245, 241, 235, 0.14), 0 0 0 calc(var(--dw) * 0.008) #050404,
+    0 40px 80px -30px rgba(0, 0, 0, 0.9);
+  user-select: none;
+  -webkit-user-select: none;
+}
+.screen {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 1206 / 2622;
+  border-radius: calc(var(--dw) * 0.135);
+  background: #000;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.screen video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* The cursor is an overlay that the script moves by the video's own clock,
+   so it stays sharp and stays in step after a jump or a replay. */
+.cursor {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 0;
+  height: 0;
+  opacity: 0;
+  pointer-events: none;
+  will-change: transform;
+}
+.cursor.on {
+  opacity: 1;
+}
+.cursor-arrow,
+.cursor-touch,
+.cursor-ripple {
+  position: absolute;
+  left: 0;
+  top: 0;
+  pointer-events: none;
+}
+/* The arrow's tip is the point that clicks. */
+.cursor-arrow {
+  width: 22px;
+  height: 22px;
+  /* The tip of the arrow sits at (2, 1.5) in its own box. */
+  margin: -1.5px 0 0 -2px;
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.5));
+  transform-origin: 2px 1.5px;
+  transform: scale(var(--press, 1));
+}
+.cursor-touch {
+  width: 40px;
+  height: 40px;
+  margin: -20px 0 0 -20px;
+  border-radius: 50%;
+  /* Light, with a dark edge, so it shows on the gold buttons and on the dark. */
+  background: rgba(255, 255, 255, 0.5);
+  box-shadow: 0 0 0 1.5px rgba(0, 0, 0, 0.4), 0 2px 10px rgba(0, 0, 0, 0.4);
+  transform: scale(calc(var(--press, 1) * 0.96 + 0.04));
+}
+.cursor-ripple {
+  width: 44px;
+  height: 44px;
+  margin: -22px 0 0 -22px;
+  border-radius: 50%;
+  border: 2px solid rgba(245, 241, 235, 0.85);
+  opacity: 0;
+}
+.cursor-touch {
+  display: block;
+}
+.cursor-arrow {
+  display: none;
+}
+@media (hover: hover) and (pointer: fine) {
+  .cursor-arrow {
+    display: block;
+  }
+  .cursor-touch {
+    display: none;
+  }
+}
+
+/* With no script the control bar has nothing to drive, so the video keeps the
+   browser's own controls instead. */
+html:not(.js) .controls {
+  display: none;
+}
+
+/* The control bar under the phone. */
+.controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: min(100%, 560px);
+  margin-top: 28px;
+}
+.transport {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.play,
+.replay {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 44px;
+  border: 0;
+  border-radius: 999px;
+  font: 600 0.9375rem/1 var(--sans);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 150ms var(--ease), background-color 150ms var(--ease);
+}
+.play {
+  gap: 8px;
+  /* Wide enough for the longest label, so the row does not move when it changes. */
+  min-width: 172px;
+  padding: 0 20px 0 14px;
+  background: var(--gold);
+  color: var(--on-gold);
+}
+.replay {
+  width: 44px;
+  background: rgba(245, 241, 235, 0.1);
+  color: var(--fg);
+}
+.play:active,
+.replay:active {
+  transform: scale(0.97);
+}
+@media (hover: hover) and (pointer: fine) {
+  .play:hover {
+    background: #f0bd62;
+  }
+  .replay:hover {
+    background: rgba(245, 241, 235, 0.18);
+  }
+}
+.play .ico-wrap {
+  position: relative;
+  flex: none;
+  width: 18px;
+  height: 18px;
+}
+.ico {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  fill: currentColor;
+  transition: opacity 220ms var(--ease-swap), transform 220ms var(--ease-swap),
+    filter 220ms var(--ease-swap);
+}
+/* The icon not in use waits shrunk, faded and blurred. */
+.ico-pause,
+.play[data-state="playing"] .ico-play {
+  opacity: 0;
+  transform: scale(0.3);
+  filter: blur(3px);
+}
+.play[data-state="playing"] .ico-pause {
+  opacity: 1;
+  transform: none;
+  filter: none;
+}
+.replay svg {
+  width: 20px;
+  height: 20px;
+}
+
+.chapters {
+  display: flex;
+  gap: 6px;
+  width: 100%;
+}
+.chapters li {
+  flex: 1 1 0;
+  min-width: 0;
+}
+.chapters button {
+  display: block;
+  width: 100%;
+  min-height: 44px;
+  padding: 14px 0 4px;
+  border: 0;
+  background: none;
+  color: var(--faint);
+  font: 500 0.75rem/1.3 var(--sans);
+  text-align: left;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: color 150ms var(--ease);
+}
+.chapters button[aria-current="true"] {
+  color: var(--fg);
+}
+@media (hover: hover) and (pointer: fine) {
+  .chapters button:hover {
+    color: var(--fg);
+  }
+}
+.chapters .bar {
+  display: block;
+  height: 3px;
+  margin-bottom: 8px;
+  border-radius: 2px;
+  background: var(--line-strong);
+  overflow: hidden;
+}
+/* The fill is set by the script from the video's clock, once a frame: a
+   transform, never a width. */
+.chapters .bar i {
+  display: block;
+  height: 100%;
+  background: var(--gold);
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+}
+.chapters .n {
+  color: var(--faint);
+  font-variant-numeric: tabular-nums;
+}
+:root:lang(pa) .chapters button {
+  font-size: 0.8125rem;
+  line-height: 1.5;
+}
+
+/* ---------- Sections below the demo ---------- */
+.sect {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 56px var(--gutter) 0;
+}
+h2 {
+  margin-bottom: 20px;
+  font-size: 1.5rem;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+
+/* Screenshots: small, in a row, a caption under each. */
+.shots {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px 16px;
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 0 var(--gutter);
+}
+.shots figure {
+  margin: 0;
+}
+.shots img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 402 / 874;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: #151210;
+}
+/* The Hukamnama is a page of text. Its picture shows the top of the reader, the
+   title, the 2 buttons and the first verses, and fades out under them. The
+   fade is a smoothstep curve, like the painting's. */
+.shots .peek img {
+  -webkit-mask-image: linear-gradient(to bottom, #000 52%, rgb(0 0 0 / 0.972) 56.2%, rgb(0 0 0 / 0.896) 60.4%, rgb(0 0 0 / 0.784) 64.6%, rgb(0 0 0 / 0.648) 68.8%, rgb(0 0 0 / 0.5) 73%, rgb(0 0 0 / 0.352) 77.2%, rgb(0 0 0 / 0.216) 81.4%, rgb(0 0 0 / 0.104) 85.6%, rgb(0 0 0 / 0.028) 89.8%, transparent 94%);
+  mask-image: linear-gradient(to bottom, #000 52%, rgb(0 0 0 / 0.972) 56.2%, rgb(0 0 0 / 0.896) 60.4%, rgb(0 0 0 / 0.784) 64.6%, rgb(0 0 0 / 0.648) 68.8%, rgb(0 0 0 / 0.5) 73%, rgb(0 0 0 / 0.352) 77.2%, rgb(0 0 0 / 0.216) 81.4%, rgb(0 0 0 / 0.104) 85.6%, rgb(0 0 0 / 0.028) 89.8%, transparent 94%);
+}
+.shots figcaption {
+  margin-top: 10px;
+  color: var(--muted);
+  font-size: 0.875rem;
+  text-align: center;
+}
+
+/* Roadmap */
+.road li {
+  display: flex;
+  gap: 12px;
+  align-items: baseline;
+  padding: 12px 0;
+  border-top: 1px solid var(--line);
+}
+.road li:last-child {
+  border-bottom: 1px solid var(--line);
+}
+.road li::before {
+  content: "";
+  flex: none;
+  width: 8px;
+  height: 8px;
+  transform: translateY(-1px);
+  border: 1.5px solid var(--faint);
+  border-radius: 50%;
+}
+.road li.on::before {
+  border-color: var(--gold);
+  background: var(--gold);
+}
+.road b {
+  font-weight: 600;
+}
+
+/* Credits. 656 px of text is about 86 characters a line, so the lines stop
+   at 62 characters. */
+.credits li {
+  max-width: 62ch;
+  padding: 12px 0;
+  border-top: 1px solid var(--line);
+}
+.credits li:last-child {
+  border-bottom: 1px solid var(--line);
+}
+.credits a {
+  font-weight: 600;
+  text-underline-offset: 4px;
+}
+.credits span {
+  color: var(--muted);
+}
+
+/* ---------- Footer ---------- */
+.foot {
+  max-width: 720px;
+  margin: 56px auto 0;
+  padding: 0 var(--gutter) 48px;
+}
+.foot ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 24px;
+}
+.foot a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--muted);
+  font-size: 0.9375rem;
+  text-underline-offset: 4px;
+}
+.foot p {
+  margin-top: 4px;
+  color: var(--faint);
+  font-size: 0.875rem;
+}
+.foot p a {
+  min-height: 0;
+  color: inherit;
+}
+@media (hover: hover) and (pointer: fine) {
+  .foot a:hover {
+    color: var(--fg);
+  }
+}
+
+/* ---------- Footer painting ---------- */
+/* William Carpenter's watercolour of the Golden Temple, 1854, the last thing on
+   the page and edge to edge. The whole scene shows at every desktop width:
+   the domes, the temple, its reflection in the sarovar, and the people on the
+   near bank. The file is that band, cut full width at 2.2 : 1, and the image
+   keeps its natural height instead of being cropped to a strip. The top is sky
+   and spire, and a mask fades it into the page, so the painting has no top
+   edge. The fade is long and eased, so the pale sky never makes a band
+   against the dark page: it runs for a quarter of the height (never under
+   72 px) along a smoothstep curve, which starts and ends with no slope. It is
+   dimmed a little, to sit on the dark page, and saturate keeps the gold warm.
+
+   On a narrow phone the natural height would be under 200 px, so min-height
+   holds it at 200 px and object-fit crops the sides instead. object-position
+   keeps the temple in view. Nothing moves. */
+.painting {
+  display: block;
+  width: 100%;
+}
+.painting img {
+  width: 100%;
+  height: auto;
+  min-height: 200px;
+  object-fit: cover;
+  object-position: 27% 50%;
+  filter: brightness(0.82) saturate(1.12);
+  --fade: max(72px, 26%);
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    rgb(0 0 0 / 0.028) calc(var(--fade) * 0.1),
+    rgb(0 0 0 / 0.104) calc(var(--fade) * 0.2),
+    rgb(0 0 0 / 0.216) calc(var(--fade) * 0.3),
+    rgb(0 0 0 / 0.352) calc(var(--fade) * 0.4),
+    rgb(0 0 0 / 0.5) calc(var(--fade) * 0.5),
+    rgb(0 0 0 / 0.648) calc(var(--fade) * 0.6),
+    rgb(0 0 0 / 0.784) calc(var(--fade) * 0.7),
+    rgb(0 0 0 / 0.896) calc(var(--fade) * 0.8),
+    rgb(0 0 0 / 0.972) calc(var(--fade) * 0.9),
+    #000 var(--fade)
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    rgb(0 0 0 / 0.028) calc(var(--fade) * 0.1),
+    rgb(0 0 0 / 0.104) calc(var(--fade) * 0.2),
+    rgb(0 0 0 / 0.216) calc(var(--fade) * 0.3),
+    rgb(0 0 0 / 0.352) calc(var(--fade) * 0.4),
+    rgb(0 0 0 / 0.5) calc(var(--fade) * 0.5),
+    rgb(0 0 0 / 0.648) calc(var(--fade) * 0.6),
+    rgb(0 0 0 / 0.784) calc(var(--fade) * 0.7),
+    rgb(0 0 0 / 0.896) calc(var(--fade) * 0.8),
+    rgb(0 0 0 / 0.972) calc(var(--fade) * 0.9),
+    #000 var(--fade)
+  );
+}
+
+/* ---------- 404 ---------- */
+.lost {
+  min-height: 70svh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-align: center;
+}
+.lost .note {
+  margin-top: 4px;
+}
+
+/* ---------- Narrow screens ---------- */
+/* Five labels share one row. The numbers go, so that each label has the room.
+   At 12 px a word such as "Hukamnama" is wider than a fifth of a phone, so
+   no label gets less than its longest word, and the others share the rest. */
+@media (max-width: 639px) {
+  .chapters .n {
+    display: none;
+  }
+  .chapters li {
+    min-width: min-content;
+  }
+}
+
+/* ---------- Wider screens ---------- */
+@media (min-width: 640px) {
+  :root {
+    --gutter: 32px;
+  }
+  .shots {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .chapters button {
+    font-size: 0.8125rem;
+  }
+}
+
+/* Under Reduce Motion nothing eases. The film still plays when it is pressed. */
+@media (prefers-reduced-motion: reduce) {
+  .btn,
+  .badge,
+  .play,
+  .replay,
+  .chapters button,
+  .ico {
+    transition: none;
+  }
+  .btn:active,
+  .badge:active,
+  .play:active,
+  .replay:active {
+    transform: none;
+  }
+}
+
+/* Gurmukhi vowel signs sit on their letters by position. Letter-spacing pushes
+   them off. Nothing on a /pa/ page may carry any, whatever a rule above says.
+   Capitals do not exist in Gurmukhi, so uppercase is off too. */
+:root:lang(pa) *,
+:root:lang(pa) *::before,
+:root:lang(pa) *::after {
+  letter-spacing: 0 !important;
+  text-transform: none !important;
+}
+/* Marks reach far above and below a Gurmukhi line, so a heading never goes
+   under 1.3. The face is Tiro Gurmukhi at 400, from --serif. */
+:root:lang(pa) h1,
+:root:lang(pa) h2 {
+  line-height: 1.3;
+}
+:root:lang(pa) .btn {
+  font-size: 1.0625rem;
+}
+/* Gurmukhi marks sit outside a box of line-height 1, so these labels, which
+   .btn and .play set to 1, take 1.3. Their heights are fixed, so nothing moves. */
+:root:lang(pa) .btn,
+:root:lang(pa) .play {
+  line-height: 1.3;
+}
+/* The Punjabi play label is longer: "Play the demo, with sound". The button
+   stays as wide as that when its label is "Pause" or "Play". */
+:root:lang(pa) .play {
+  min-width: 196px;
+}
+:root:lang(pa) .play,
+:root:lang(pa) .btn,
+:root:lang(pa) .credits a,
+:root:lang(pa) .road b {
+  font-weight: 700;
+}
