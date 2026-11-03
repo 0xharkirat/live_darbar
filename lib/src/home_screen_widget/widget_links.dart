@@ -3,10 +3,14 @@ import 'package:live_darbar/src/home_screen_widget/widget_playback.dart';
 /// The links the iPhone widget opens, and what each tap does.
 ///
 /// An Android widget sends its taps to the media session with no screen (see
-/// WidgetControlReceiver.kt). An iPhone widget cannot: a Flutter app started
-/// in the background has no engine to play with. So each part of the iPhone
-/// widget is a link that opens the app, and the app does what the button
-/// showed. Siri's intents work the same way (`openAppWhenRun`).
+/// WidgetControlReceiver.kt). An iPhone widget on iOS 17 and newer does the
+/// same: each button is an `AudioPlaybackIntent` that runs in the app's
+/// process, and WidgetRemote (widget_remote.dart) answers it. On iOS 16 a
+/// widget cannot do that, so each part of the iPhone widget is also a link
+/// that opens the app, and the app does what the button showed. The links are
+/// the iOS 16 buttons, and the part of the widget away from its buttons, which
+/// opens the reader on every version. Siri's intents work the same way
+/// (`openAppWhenRun`).
 ///
 /// The links are fixed, and the app reads nothing from them but which one it
 /// is. Any app or web page can open a custom scheme, so the worst a forged

@@ -14,6 +14,7 @@ import 'package:live_darbar/src/home_screen_widget/widget_background.dart';
 import 'package:live_darbar/src/home_screen_widget/widget_links.dart';
 import 'package:live_darbar/src/home_screen_widget/widget_playback.dart';
 import 'package:live_darbar/src/home_screen_widget/widget_publisher.dart';
+import 'package:live_darbar/src/home_screen_widget/widget_remote.dart';
 import 'package:live_darbar/src/home_screen_widget/widget_sync.dart';
 import 'package:live_darbar/src/media_session/live_darbar_audio_handler.dart';
 import 'package:live_darbar/src/core/app_theme.dart';
@@ -95,6 +96,19 @@ void main() async {
           playbackState: handler.playbackState,
           mediaItem: handler.mediaItem,
           publisher: container.read(widgetPublisherProvider),
+        ).start();
+      }
+      // On iPhone, the widget's play buttons are intents that run in this
+      // process with the app in the background, and no screen. They talk to
+      // the player through this, never through a widget. See widget_remote.dart.
+      if (defaultTargetPlatform == TargetPlatform.iOS) {
+        WidgetRemote(
+          audio: container.read(audioController),
+          now: () => widgetPlaybackFor(
+            handler.playbackState.value,
+            handler.mediaItem.value,
+          ),
+          playing: handler.playbackState.map((s) => s.playing),
         ).start();
       }
     } catch (e) {
@@ -206,23 +220,16 @@ class _MyAppState extends ConsumerState<MyApp> {
             session.playbackState.value,
             session.mediaItem.value,
           );
-    final audio = ref.read(audioController);
-    switch (widgetTapFor(link, now)) {
-      case WidgetTap.playLive:
-        audio.play(kLiveIndex);
-      case WidgetTap.stop:
-        audio.stop();
-      case WidgetTap.playHukamnama:
-        audio.play(kMukhwakIndex);
-      case WidgetTap.pause:
-        audio.pause();
-      case WidgetTap.openReader:
-        try {
-          openHukamnamaReader(_navigatorKey.currentState);
-        } on PlatformException catch (e) {
-          debugPrint('Reader not opened: $e');
-        }
+    final tap = widgetTapFor(link, now);
+    if (tap == WidgetTap.openReader) {
+      try {
+        openHukamnamaReader(_navigatorKey.currentState);
+      } on PlatformException catch (e) {
+        debugPrint('Reader not opened: $e');
+      }
+      return;
     }
+    unawaited(runWidgetTap(tap, ref.read(audioController)));
   }
 
   void _handleSelection(String id) {

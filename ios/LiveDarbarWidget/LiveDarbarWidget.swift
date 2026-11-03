@@ -4,9 +4,11 @@ import WidgetKit
 /// The iPhone home screen widget: today's Hukamnama, with a Hukamnama button
 /// and a Live Kirtan button. 1 size, medium, like the Android widget.
 ///
-/// Each part is a link that opens the app, which then plays, pauses or
-/// stops. An iPhone widget cannot start a Flutter app's player with no
-/// screen. See lib/src/home_screen_widget/widget_links.dart.
+/// On iOS 17 and newer, each button is an App Intent that plays, pauses or
+/// stops in the app's process, with the app in the background. See
+/// ios/Runner/WidgetPlayIntents.swift. On iOS 16, and for the part of the
+/// widget away from its buttons, each part is a link that opens the app. See
+/// lib/src/home_screen_widget/widget_links.dart.
 @main
 struct LiveDarbarWidgetBundle: WidgetBundle {
   var body: some Widget {

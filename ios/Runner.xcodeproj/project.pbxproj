@@ -20,15 +20,19 @@
 		4C2A15B97D64426004498778 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AAE7ADD2FB984D1902448632 /* Foundation.framework */; };
 		7480B41BB51A8203A356F564 /* LiveDarbarWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 5B70ED582F6D237C85A69206 /* LiveDarbarWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		74858FAF1ED2DC5600515810 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74858FAE1ED2DC5600515810 /* AppDelegate.swift */; };
+		770A1A78D4C3EF331A9F5A6B /* WidgetPlayIntents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 698008555716E7C8DC5BF1E6 /* WidgetPlayIntents.swift */; };
 		77B2EB6A0BDB3D4BEF1EFD92 /* Pods_RunnerTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 07B734B1A336DD5858EC3B15 /* Pods_RunnerTests.framework */; };
 		78A318202AECB46A00862997 /* FlutterGeneratedPluginSwiftPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 78A3181F2AECB46A00862997 /* FlutterGeneratedPluginSwiftPackage */; };
 		868EDDC4B0211AA53C28E347 /* LiveDarbarWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B72572AA9DBD1128BD2647B /* LiveDarbarWidget.swift */; };
 		97C146FC1CF9000F007C117D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
 		97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FD1CF9000F007C117D /* Assets.xcassets */; };
 		97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
+		A30306256BA56A9AD991DE13 /* WidgetPlayHost.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA633346B996047F61CED85D /* WidgetPlayHost.swift */; };
 		B65D3B8E7FDACDAAD48A9D2C /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B92A2BB389FA4AC01EA95F8A /* SwiftUI.framework */; };
+		E260C1575E1D6417D8D8A101 /* WidgetPlayIntents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 698008555716E7C8DC5BF1E6 /* WidgetPlayIntents.swift */; };
 		EF1F918074BEAF6E721B6E56 /* WidgetStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2985D00F2194449925F2E7ED /* WidgetStore.swift */; };
 		F0BBF0AD8A10C96A78CB92EE /* TiroGurmukhi-400.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0E36923B666893EAB6D68495 /* TiroGurmukhi-400.ttf */; };
+		F903574FEAA36E2205DB128E /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76511289DF20A047E0DB9A95 /* SceneDelegate.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -91,9 +95,11 @@
 		45D2B91A00DBB795057A24EA /* Pods-Runner.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig"; sourceTree = "<group>"; };
 		4B72572AA9DBD1128BD2647B /* LiveDarbarWidget.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LiveDarbarWidget.swift; sourceTree = "<group>"; };
 		5B70ED582F6D237C85A69206 /* LiveDarbarWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = LiveDarbarWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		698008555716E7C8DC5BF1E6 /* WidgetPlayIntents.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = WidgetPlayIntents.swift; sourceTree = "<group>"; };
 		6CBD1531B5BA09A9923C2F4A /* Pods-RunnerTests.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.profile.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.profile.xcconfig"; sourceTree = "<group>"; };
 		74858FAD1ED2DC5600515810 /* Runner-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Runner-Bridging-Header.h"; sourceTree = "<group>"; };
 		74858FAE1ED2DC5600515810 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		76511289DF20A047E0DB9A95 /* SceneDelegate.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		78E0A7A72DC9AD7400C4905E /* FlutterGeneratedPluginSwiftPackage */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = FlutterGeneratedPluginSwiftPackage; path = Flutter/ephemeral/Packages/FlutterGeneratedPluginSwiftPackage; sourceTree = "<group>"; };
 		7AFA3C8E1D35360C0083082E /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Release.xcconfig; path = Flutter/Release.xcconfig; sourceTree = "<group>"; };
 		7B09BCFBB84549BE810E8269 /* Widget.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = Widget.xcconfig; sourceTree = "<group>"; };
@@ -114,6 +120,7 @@
 		B38976BDA83BD66AB760BA91 /* LiveDarbarWidget.entitlements */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.entitlements; path = LiveDarbarWidget.entitlements; sourceTree = "<group>"; };
 		B92A2BB389FA4AC01EA95F8A /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.0.sdk/System/Library/Frameworks/SwiftUI.framework; sourceTree = DEVELOPER_DIR; };
 		C0E6B6E52B95926599799E8D /* LiveDarbarWidgetView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LiveDarbarWidgetView.swift; sourceTree = "<group>"; };
+		EA633346B996047F61CED85D /* WidgetPlayHost.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = WidgetPlayHost.swift; sourceTree = "<group>"; };
 		F5E96C9536E3BE080F49A082 /* Pods-RunnerTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.debug.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -235,6 +242,9 @@
 				74858FAD1ED2DC5600515810 /* Runner-Bridging-Header.h */,
 				0986A7842D24DD2D001C1518 /* LiveKirtanIntent.swift */,
 				7C4C4FB905DB0713BAAA57FB /* Runner.entitlements */,
+				698008555716E7C8DC5BF1E6 /* WidgetPlayIntents.swift */,
+				EA633346B996047F61CED85D /* WidgetPlayHost.swift */,
+				76511289DF20A047E0DB9A95 /* SceneDelegate.swift */,
 			);
 			path = Runner;
 			sourceTree = "<group>";
@@ -512,6 +522,9 @@
 				1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */,
 				0986A78D2D24E858001C1518 /* MukhwakIntent.swift in Sources */,
 				0986A78B2D24E831001C1518 /* KathaIntent.swift in Sources */,
+				770A1A78D4C3EF331A9F5A6B /* WidgetPlayIntents.swift in Sources */,
+				A30306256BA56A9AD991DE13 /* WidgetPlayHost.swift in Sources */,
+				F903574FEAA36E2205DB128E /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -522,6 +535,7 @@
 				868EDDC4B0211AA53C28E347 /* LiveDarbarWidget.swift in Sources */,
 				27DEB4BEF220129D429BDEBE /* LiveDarbarWidgetView.swift in Sources */,
 				EF1F918074BEAF6E721B6E56 /* WidgetStore.swift in Sources */,
+				E260C1575E1D6417D8D8A101 /* WidgetPlayIntents.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -642,6 +656,7 @@
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) LIVE_DARBAR_APP";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -916,6 +931,7 @@
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) LIVE_DARBAR_APP";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -949,6 +965,7 @@
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) LIVE_DARBAR_APP";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

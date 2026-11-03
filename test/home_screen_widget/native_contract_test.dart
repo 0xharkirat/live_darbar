@@ -6,6 +6,7 @@ import 'package:live_darbar/src/home_screen_widget/widget_background.dart';
 import 'package:live_darbar/src/home_screen_widget/widget_data.dart';
 import 'package:live_darbar/src/home_screen_widget/widget_links.dart';
 import 'package:live_darbar/src/home_screen_widget/widget_playback.dart';
+import 'package:live_darbar/src/home_screen_widget/widget_remote.dart';
 import 'package:live_darbar/src/media_session/media_catalog.dart';
 import 'package:live_darbar/src/models/source_index.dart';
 
@@ -627,6 +628,80 @@ void main() {
         expect(store, contains('source == "${source.name}"'));
       }
       expect(delegate, contains(r'\"state\":\"idle\"'));
+    });
+  });
+
+  group('the iPhone widget\'s play buttons', () {
+    final intents = read('ios/Runner/WidgetPlayIntents.swift');
+    final host = read('ios/Runner/WidgetPlayHost.swift');
+    final project = read('ios/Runner.xcodeproj/project.pbxproj');
+
+    test('the intent and Dart share the channel, the group and the store', () {
+      expect(host, contains('channelName = "$kWidgetControlChannel"'));
+      expect(intents, contains('appGroup = "$kIosAppGroupId"'));
+      expect(intents, contains('widgetKind = "$kIosWidgetKind"'));
+      expect(intents, contains('playbackKey = "${WidgetKeys.playback}"'));
+    });
+
+    test('the intent names the sources that Dart names', () {
+      final cases = {
+        for (final m in RegExp(r'case (\w+)\n').allMatches(
+          RegExp(r'enum WidgetPlaySource[^{]*\{([^}]*)\}')
+              .firstMatch(intents)!
+              .group(1)!,
+        ))
+          m.group(1)!,
+      };
+      expect(cases, {WidgetSource.live.name, WidgetSource.hukamnama.name});
+      // The tap writes the same shape that encodeWidgetPlayback writes.
+      expect(intents, contains(r'\"state\":\"loading\"'));
+      expect(intents, contains(r'\"by\":\"widget\"'));
+    });
+
+    test('each button is an audio intent that does not open the app', () {
+      expect(
+        RegExp(r': AudioPlaybackIntent').allMatches(intents).length,
+        2,
+      );
+      expect(
+        RegExp(r'openAppWhenRun: Bool = false').allMatches(intents).length,
+        2,
+      );
+    });
+
+    test('the intents are in the app and in the widget, the host in the app',
+        () {
+      // A file that is a member of a target has a build file for it.
+      int members(String file) =>
+          RegExp('$file in Sources \\*/ = \\{isa = PBXBuildFile')
+              .allMatches(project)
+              .length;
+      expect(members('WidgetPlayIntents.swift'), 2);
+      expect(members('WidgetPlayHost.swift'), 1);
+      expect(members('SceneDelegate.swift'), 1);
+      // Only the app has Flutter, and the flag keeps it out of the widget's copy.
+      expect(
+        RegExp(r'SWIFT_ACTIVE_COMPILATION_CONDITIONS = "\$\(inherited\) LIVE_DARBAR_APP"')
+            .allMatches(project)
+            .length,
+        3,
+        reason: 'Debug, Release and Profile of Runner, and no other target',
+      );
+      expect(intents, contains('#if LIVE_DARBAR_APP'));
+      expect(read('ios/LiveDarbarWidget/LiveDarbarWidgetView.swift'),
+          contains('Button(intent:'));
+    });
+
+    test('one engine: the scene shows the app delegate\'s, not a storyboard\'s',
+        () {
+      final plist = read('ios/Runner/Info.plist');
+      expect(plist, contains('<string>SceneDelegate</string>'));
+      expect(plist, isNot(contains('UISceneStoryboardFile')));
+      expect(plist, isNot(contains('UIMainStoryboardFile')));
+      expect(read('ios/Runner/SceneDelegate.swift'),
+          contains('FlutterViewController('));
+      expect(read('ios/Runner/AppDelegate.swift'),
+          contains('GeneratedPluginRegistrant.register(with: engine)'));
     });
   });
 }

@@ -1,7 +1,8 @@
+import AppIntents
 import SwiftUI
 
-// The iPhone widget's picture. Plain SwiftUI, with no WidgetKit, so a Mac
-// script can render it for review. The rules are in docs/DESIGN.md, "Home
+// The iPhone widget's picture. SwiftUI and AppIntents, with no WidgetKit, so a
+// Mac script can render it for review. The rules are in docs/DESIGN.md, "Home
 // screen widget", and they are the Android widget's rules.
 
 /// The app's palette (lib/src/core/palette.dart). Dark only.
@@ -104,14 +105,14 @@ struct LiveDarbarWidgetView: View {
           name: content.hukamnamaName,
           state: content.hukamnama,
           gold: false,
-          url: links ? WidgetLink.hukamnama : nil,
+          source: links ? .hukamnama : nil,
           height: compact ? 36 : 40
         )
         WidgetButton(
           name: content.liveName,
           state: content.live,
           gold: true,
-          url: links ? WidgetLink.live : nil,
+          source: links ? .live : nil,
           height: compact ? 36 : 40
         )
       }
@@ -138,14 +139,43 @@ struct WidgetButton: View {
   let state: WidgetButtonState
   let gold: Bool
   /// Nil only for the review render.
-  let url: URL?
+  let source: WidgetPlaySource?
   let height: CGFloat
 
-  var body: some View {
-    if let url = url {
-      Link(destination: url) { label }.accessibilityLabel(state.spoken)
+  /// iOS 17 and newer: a button that plays in the app's process with the app
+  /// in the background (WidgetPlayIntents.swift). iOS 16: a link that opens
+  /// the app, which then plays.
+  @ViewBuilder var body: some View {
+    if let source = source {
+      if #available(iOS 17.0, *) {
+        intentButton(source)
+      } else {
+        Link(destination: Self.url(for: source)) { label }
+          .accessibilityLabel(state.spoken)
+      }
     } else {
       label
+    }
+  }
+
+  private static func url(for source: WidgetPlaySource) -> URL {
+    switch source {
+    case .live: return WidgetLink.live
+    case .hukamnama: return WidgetLink.hukamnama
+    }
+  }
+
+  @available(iOS 17.0, *)
+  @ViewBuilder private func intentButton(_ source: WidgetPlaySource) -> some View {
+    switch source {
+    case .live:
+      Button(intent: LiveKirtanWidgetIntent()) { label }
+        .buttonStyle(.plain)
+        .accessibilityLabel(state.spoken)
+    case .hukamnama:
+      Button(intent: HukamnamaWidgetIntent()) { label }
+        .buttonStyle(.plain)
+        .accessibilityLabel(state.spoken)
     }
   }
 
