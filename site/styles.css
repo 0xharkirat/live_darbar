@@ -669,6 +669,18 @@ h2 {
   border-color: var(--gold);
   background: var(--gold);
 }
+/* Shipped extras: the same rows as the roadmap, with a gold tick in place of
+   the dot, so done and planned never look alike. */
+.road.done li::before {
+  content: "\2713";
+  width: 8px;
+  height: auto;
+  transform: none;
+  border: 0;
+  color: var(--gold);
+  font-weight: 600;
+  line-height: 1;
+}
 .road b {
   font-weight: 600;
 }
