@@ -1,11 +1,19 @@
 # Codemagic builds for the iPhone app.
 #
-# The Android builds do not live here. They are Workflow Editor workflows in
-# the Codemagic app live_darbar, because the upload keystore lives there:
-# "Default Workflow" builds the app bundle, and "Android release" builds it
-# and publishes it to the Production track on Google Play. Google Play takes
-# its What's New from release_notes.json, and publishes only the languages
-# that the store listing has.
+# The Android build does not live here. It is the Workflow Editor's
+# "Default Workflow" in the Codemagic app live_darbar, because the upload
+# keystore lives there. Each run builds the app bundle and publishes it to
+# the Production track on Google Play, so each run is a release. Google Play
+# takes its What's New from release_notes.json, and publishes only the
+# languages that the store listing has.
+#
+# Both platforms build with the latest stable Flutter, obfuscate the Dart
+# code, and keep the symbol files as artifacts. The symbols decode an
+# obfuscated crash stack with `flutter symbolize`. They are not in the repo.
+#
+# The cache holds downloaded packages only, never build output. Each package
+# version has its own folder and the lock files pick the version, so an
+# update downloads the new version and nothing stale is used.
 #
 # No workflow has a trigger. A build starts only when Hark asks for it, from
 # Codemagic or from its REST API, so a push never starts a build.
@@ -22,9 +30,13 @@
 
 definitions:
   environment: &environment
-    flutter: 3.47.4
+    flutter: stable
     xcode: latest
     cocoapods: default
+  cache: &cache
+    cache_paths:
+      - $HOME/.pub-cache
+      - $HOME/Library/Caches/CocoaPods
 
 workflows:
   ios-check:
@@ -33,15 +45,19 @@ workflows:
     max_build_duration: 60
     environment:
       <<: *environment
+    cache: *cache
     scripts:
       - name: Get Flutter packages
         script: flutter pub get
       - name: Analyze
         script: flutter analyze
       - name: Build the iPhone app for release, without signing
-        script: flutter build ios --release --no-codesign
+        script: |
+          flutter build ios --release --no-codesign \
+            --obfuscate --split-debug-info=build/symbols
     artifacts:
       - build/ios/iphoneos/Runner.app
+      - build/symbols/*.symbols
       - /tmp/xcodebuild_logs/*.log
 
   ios-release:
@@ -50,6 +66,7 @@ workflows:
     max_build_duration: 120
     integrations:
       app_store_connect: Live Darbar
+    cache: *cache
     environment:
       <<: *environment
       ios_signing:
@@ -74,6 +91,7 @@ workflows:
           echo "Build number: $BUILD_NUMBER"
           flutter build ipa --release \
             --build-number="$BUILD_NUMBER" \
+            --obfuscate --split-debug-info=build/symbols \
             --export-options-plist=/Users/builder/export_options.plist
       - name: Upload, and submit to App Store review
         script: |
@@ -89,5 +107,6 @@ workflows:
             --whats-new "$(cat ios/whats_new.txt)"
     artifacts:
       - build/ios/ipa/*.ipa
+      - build/symbols/*.symbols
       - /tmp/xcodebuild_logs/*.log
       - build/ios/archive/Runner.xcarchive/dSYMs/*.dSYM
