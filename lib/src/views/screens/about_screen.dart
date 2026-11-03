@@ -8,9 +8,11 @@ import 'package:live_darbar/src/core/open_link.dart';
 import 'package:live_darbar/src/core/palette.dart';
 import 'package:live_darbar/src/core/platform.dart';
 import 'package:live_darbar/src/core/store_links.dart';
+import 'package:live_darbar/src/services/reminder_platform.dart';
 import 'package:live_darbar/src/views/widgets/app_nav_bar.dart';
 import 'package:live_darbar/src/views/widgets/language_switch.dart';
 import 'package:live_darbar/src/views/widgets/pressable.dart';
+import 'package:live_darbar/src/views/widgets/reminder_setting.dart';
 
 /// About the app, the person who made it, and whose work it carries.
 ///
@@ -75,6 +77,11 @@ class AboutScreen extends ConsumerWidget {
                                 ],
                               ),
                             ),
+                            // The daily reminder is a setting like the
+                            // language, so it sits beside it. The web cannot
+                            // remind with the page closed, so it has none.
+                            if (ref.watch(reminderPlatformProvider).isSupported)
+                              const ReminderSetting(),
                             _LinkRow(
                               icon: CupertinoIcons.chat_bubble_text,
                               label: l10n.about_section_contact,

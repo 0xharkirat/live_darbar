@@ -640,6 +640,96 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{state, select, loading{Hukamnama, starting. Double tap to cancel.} playing{Hukamnama, playing. Double tap to pause.} paused{Hukamnama, paused. Double tap to resume.} other{Play today’s Hukamnama}}'**
   String widget_hukamnama_control(String state);
+
+  /// Label of the switch on the About screen that turns the daily Hukamnama reminder on or off
+  ///
+  /// In en, this message translates to:
+  /// **'Daily reminder'**
+  String get reminder_setting;
+
+  /// Label of the row that shows the time of the daily reminder, and the title of the sheet where the listener picks that time
+  ///
+  /// In en, this message translates to:
+  /// **'Reminder time'**
+  String get reminder_time;
+
+  /// What a screen reader says for the daily reminder switch when the reminder is on
+  ///
+  /// In en, this message translates to:
+  /// **'On'**
+  String get reminder_on;
+
+  /// What a screen reader says for the daily reminder switch when the reminder is off
+  ///
+  /// In en, this message translates to:
+  /// **'Off'**
+  String get reminder_off;
+
+  /// Button that saves the chosen reminder time, or closes a message, and then closes the sheet
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get reminder_done;
+
+  /// Message shown when the phone does not let the app show notifications, so the daily reminder cannot appear
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications are off for Live Darbar. Turn them on in your phone’s settings.'**
+  String get reminder_blocked_hint;
+
+  /// Message shown when the phone could not set the daily reminder for a reason that is not a missing permission
+  ///
+  /// In en, this message translates to:
+  /// **'The reminder did not start. Try again.'**
+  String get reminder_failed_hint;
+
+  /// Title of the sheet that asks, once, if the listener wants a daily reminder to read the Hukamnama
+  ///
+  /// In en, this message translates to:
+  /// **'Daily Hukamnama reminder'**
+  String get reminder_prompt_title;
+
+  /// Body of the reminder sheet. It names the default time and says where to change it. The time is already written in the listener's style, for example 7:00 AM
+  ///
+  /// In en, this message translates to:
+  /// **'Get a reminder each day at {time} to read the Hukamnama. You can change this later in About.'**
+  String reminder_prompt_body(String time);
+
+  /// Gold button on the reminder sheet that turns the daily reminder on
+  ///
+  /// In en, this message translates to:
+  /// **'Remind me'**
+  String get reminder_prompt_yes;
+
+  /// Quiet button on the reminder sheet that closes it. The app does not ask again
+  ///
+  /// In en, this message translates to:
+  /// **'Not now'**
+  String get reminder_prompt_no;
+
+  /// Title of the daily reminder notification
+  ///
+  /// In en, this message translates to:
+  /// **'Today’s Hukamnama'**
+  String get reminder_notification_title;
+
+  /// Body of the daily reminder notification. A tap on it opens the Hukamnama reader
+  ///
+  /// In en, this message translates to:
+  /// **'Read the Hukamnama from Sri Darbar Sahib.'**
+  String get reminder_notification_body;
+
+  /// Name of the Android notification channel for the daily reminder, shown in the phone's notification settings
+  ///
+  /// In en, this message translates to:
+  /// **'Daily Hukamnama'**
+  String get reminder_channel_name;
+
+  /// Description of the Android notification channel for the daily reminder, shown in the phone's notification settings
+  ///
+  /// In en, this message translates to:
+  /// **'A reminder each day to read the Hukamnama.'**
+  String get reminder_channel_description;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intelligence/intelligence.dart';
 import 'package:live_darbar/src/controllers/audio_controller.dart';
 import 'package:live_darbar/src/controllers/locale_controller.dart';
+import 'package:live_darbar/src/controllers/reminder_controller.dart';
 import 'package:live_darbar/src/home_screen_widget/widget_actions.dart';
 import 'package:live_darbar/src/home_screen_widget/widget_background.dart';
 import 'package:live_darbar/src/home_screen_widget/widget_playback.dart';
@@ -19,9 +20,11 @@ import 'package:live_darbar/src/core/app_type.dart';
 import 'package:live_darbar/src/core/open_link.dart';
 import 'package:live_darbar/src/models/sgpc_day.dart';
 import 'package:live_darbar/src/services/legacy_pdf_cleanup.dart';
+import 'package:live_darbar/src/services/reminder_launch.dart';
 import 'package:live_darbar/src/views/app_router.dart';
 import 'package:live_darbar/src/views/screens/home_screen.dart';
 import 'package:live_darbar/src/views/widgets/offline_banner_widget.dart';
+import 'package:live_darbar/src/views/widgets/reminder_sheet.dart';
 import 'package:quick_actions/quick_actions.dart';
 import 'package:live_darbar/l10n/app_localizations.dart';
 
@@ -115,6 +118,9 @@ class _MyAppState extends ConsumerState<MyApp> {
   // app needs a handle on its navigator.
   final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
 
+  // Null on the web, which has no reminder.
+  AppLifecycleListener? _lifecycle;
+
   @override
   void initState() {
     super.initState();
@@ -158,10 +164,41 @@ class _MyAppState extends ConsumerState<MyApp> {
     // Keep the home screen widget's text in step with the date and the
     // Hukamnama. Android only for now.
     if (HomeWidgetPublisher.isSupported) ref.read(widgetSyncProvider);
+
+    // The daily Hukamnama reminder. The app can stay open for days, so the
+    // check also runs each time it comes back to the front.
+    _lifecycle = AppLifecycleListener(onResume: _onResume);
+    unawaited(_startReminder());
   }
+
+  /// Gets the reminder ready, then asks about it if this is the first time.
+  Future<void> _startReminder() async {
+    await ref.read(reminderProvider.notifier).start(_openReaderFromReminder);
+    await _askForReminder();
+  }
+
+  Future<void> _askForReminder() async {
+    if (!mounted) return;
+    await showReminderPromptIfNeeded(
+      container: ProviderScope.containerOf(context, listen: false),
+      navigatorKey: _navigatorKey,
+    );
+  }
+
+  void _onResume() {
+    unawaited(ref.read(reminderProvider.notifier).resync());
+    unawaited(_askForReminder());
+  }
+
+  /// A tap on the reminder. When it started the app, there is no navigator
+  /// yet, and this waits for one.
+  void _openReaderFromReminder() => unawaited(
+        openReaderFromReminder(() => _navigatorKey.currentState),
+      );
 
   @override
   void dispose() {
+    _lifecycle?.dispose();
     _oacpChannel.setMethodCallHandler(null);
     _channel.setMethodCallHandler(null);
     super.dispose();

@@ -21,9 +21,12 @@ import 'package:live_darbar/src/models/app_update.dart';
 import 'package:live_darbar/src/models/audio_progress_state.dart';
 import 'package:live_darbar/src/models/hukamnama.dart';
 import 'package:live_darbar/src/models/live_playback_state.dart';
+import 'package:live_darbar/src/services/reminder_platform.dart';
 import 'package:live_darbar/src/views/app_router.dart';
 import 'package:live_darbar/src/views/screens/home_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'fake_reminder_platform.dart';
 
 /// The app as `main.dart` builds it, with every network and platform
 /// dependency replaced, so a test can open pages, sheets and the back button.
@@ -130,6 +133,10 @@ Future<void> pumpApp(
     hukamnamaProvider.overrideWith(FixtureHukamnama.new),
     appVersionProvider.overrideWith((ref) async => '2.2.1 (9)'),
     isWebProvider.overrideWithValue(web),
+    // The daily reminder has its own tests. Here the platform cannot remind,
+    // so About shows what it showed before the reminder existed.
+    reminderPlatformProvider
+        .overrideWithValue(FakeReminderPlatform(supported: false)),
   ];
 
   await tester.pumpWidget(

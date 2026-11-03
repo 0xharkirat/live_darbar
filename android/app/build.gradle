@@ -21,6 +21,9 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
+        // flutter_local_notifications uses java.time to set the daily
+        // reminder, and desugaring brings it to the oldest phones we support.
+        coreLibraryDesugaringEnabled = true
     }
 
     defaultConfig {
@@ -32,6 +35,7 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+        multiDexEnabled = true
     }
 
     signingConfigs {
@@ -60,6 +64,9 @@ kotlin {
 }
 
 dependencies {
+    // Pairs with coreLibraryDesugaringEnabled above.
+    coreLibraryDesugaring "com.android.tools:desugar_jdk_libs:2.1.4"
+
     implementation files("libs/oacp-android-release.aar")
     implementation "androidx.annotation:annotation:1.7.1"
     // The widget's background refresh. home_widget already brings this version

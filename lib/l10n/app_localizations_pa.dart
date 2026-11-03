@@ -314,4 +314,51 @@ class AppLocalizationsPa extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get reminder_setting => 'ਰੋਜ਼ਾਨਾ ਰਿਮਾਈਂਡਰ';
+
+  @override
+  String get reminder_time => 'ਰਿਮਾਈਂਡਰ ਦਾ ਸਮਾਂ';
+
+  @override
+  String get reminder_on => 'ਚਾਲੂ';
+
+  @override
+  String get reminder_off => 'ਬੰਦ';
+
+  @override
+  String get reminder_done => 'ਹੋ ਗਿਆ';
+
+  @override
+  String get reminder_blocked_hint => 'ਲਾਈਵ ਦਰਬਾਰ ਲਈ ਸੂਚਨਾਵਾਂ ਬੰਦ ਹਨ। ਇਹਨਾਂ ਨੂੰ ਫ਼ੋਨ ਦੀਆਂ ਸੈਟਿੰਗਾਂ ਵਿੱਚ ਚਾਲੂ ਕਰੋ।';
+
+  @override
+  String get reminder_failed_hint => 'ਰਿਮਾਈਂਡਰ ਚਾਲੂ ਨਹੀਂ ਹੋਇਆ। ਮੁੜ ਕੋਸ਼ਿਸ਼ ਕਰੋ।';
+
+  @override
+  String get reminder_prompt_title => 'ਰੋਜ਼ਾਨਾ ਹੁਕਮਨਾਮਾ ਰਿਮਾਈਂਡਰ';
+
+  @override
+  String reminder_prompt_body(String time) {
+    return 'ਹੁਕਮਨਾਮਾ ਪੜ੍ਹਨ ਲਈ ਹਰ ਰੋਜ਼ ਇੱਕ ਰਿਮਾਈਂਡਰ ਮਿਲੇਗਾ, ਸਮਾਂ $time। ਇਸ ਨੂੰ ਬਾਅਦ ਵਿੱਚ ਜਾਣਕਾਰੀ ਵਿੱਚ ਬਦਲ ਸਕਦੇ ਹੋ।';
+  }
+
+  @override
+  String get reminder_prompt_yes => 'ਮੈਨੂੰ ਯਾਦ ਕਰਾਓ';
+
+  @override
+  String get reminder_prompt_no => 'ਹੁਣ ਨਹੀਂ';
+
+  @override
+  String get reminder_notification_title => 'ਅੱਜ ਦਾ ਹੁਕਮਨਾਮਾ';
+
+  @override
+  String get reminder_notification_body => 'ਸ੍ਰੀ ਦਰਬਾਰ ਸਾਹਿਬ ਤੋਂ ਹੁਕਮਨਾਮਾ ਪੜ੍ਹੋ।';
+
+  @override
+  String get reminder_channel_name => 'ਰੋਜ਼ਾਨਾ ਹੁਕਮਨਾਮਾ';
+
+  @override
+  String get reminder_channel_description => 'ਹੁਕਮਨਾਮਾ ਪੜ੍ਹਨ ਲਈ ਹਰ ਰੋਜ਼ ਇੱਕ ਰਿਮਾਈਂਡਰ।';
 }

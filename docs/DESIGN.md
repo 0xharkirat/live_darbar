@@ -63,6 +63,8 @@ All tokens live in `lib/src/core/`.
 | `Timeline` | `views/widgets/scrubber.dart` | A scrubber for recordings, a live rail for the broadcast. Same height. |
 | `MiniPlayer` | `views/widgets/mini_player_widget.dart` | Appears after the first play, then stays. |
 | `SourceSwitcher` | `views/widgets/source_switcher.dart` | Live, Hukamnama, Katha, inside the player. |
+| `ReminderPrompt` | `views/widgets/reminder_sheet.dart` | The 1 question about the daily reminder, as a sheet. See Daily reminder. |
+| `ReminderSetting` | `views/widgets/reminder_setting.dart` | The switch and the time, in the About group beside the language. |
 
 ## Screens
 
@@ -156,6 +158,50 @@ Older phones show an image, which a test draws with the real fonts:
 taskpolicy -b flutter test test/screens/widget_preview_test.dart --tags screens
 cp build/screens/widget_preview.png android/app/src/main/res/drawable-nodpi/widget_preview.png
 ```
+
+## Daily reminder
+
+Android and iPhone only. The web cannot remind with the page closed, so it has no reminder and no control.
+There is no server and no push: the phone keeps 1 repeating local notification.
+
+| Part | Rule |
+| --- | --- |
+| Time | 7:00 on the phone's clock until the listener picks another. |
+| Words | "Today's Hukamnama", then "Read the Hukamnama from Sri Darbar Sahib." It cannot name the day's text, because 1 repeating notification keeps 1 text. The text follows the app's language and is set again when the language changes. |
+| Tap | Opens the Hukamnama reader with `openHukamnamaReader`, also from a cold start (`openReaderFromReminder` waits for the navigator). It never stacks a second reader. |
+
+### Asking once
+
+1. The first time the app opens with this feature, a sheet asks (`showReminderPrompt`). Listeners who update see it once too.
+2. The app marks the question as asked when the sheet appears. "Remind me", "Not now", a swipe down and a tap on the dimmed area all leave it marked, so it never comes back.
+3. The phone's own permission question comes only after "Remind me". Initialising the notification plugin asks nothing.
+4. If the phone says no, the sheet says why, with 1 button. It does not close as if the reminder were on.
+
+The sheet waits for the right moment (`showReminderPromptIfNeeded`). It does not use up the 1 question when:
+
+- the app has no screen, as when a widget tap or Android Auto starts it. The check runs again when the app comes to the front.
+- a page is open over home, such as the reader. The next launch asks.
+
+Android 13 and newer: `MainActivity` already asks for `POST_NOTIFICATIONS` at launch, for the media notification. That dialog can come before this sheet.
+
+### Changing it
+
+- About, in the same group as the language, because it is a setting like the language.
+- 1 switch row. The whole row is the target, and the switch only shows the state.
+- While it is on, a time row under it opens a sheet with a wheel and a gold "Done". Done saves. A swipe away keeps the old time.
+- The wheel and the label follow the clock format. Punjabi writes 24-hour times ("19:00"), as Material does.
+- A message under the rows says what to do when the phone blocks notifications, or when it would not set the reminder. A switch that turns on and does nothing is worse than none.
+
+### How it fires
+
+- Android: `zonedSchedule`, inexact (`inexactAllowWhileIdle`), repeating on the time of day. It needs no exact-alarm permission and may move by a few minutes. The plugin's boot receiver sets it again after a reboot and an app update.
+- iPhone: a repeating calendar trigger. `AppDelegate.swift` makes the app the notification center's delegate. The plugin needs that to show a reminder while the app is open, and to hear a tap.
+- The app sets the schedule again at launch and on return to the front. That fixes the time after a trip, because the phone keeps the zone the schedule was set in.
+- A time that does not exist on the day the clocks go forward (2:30) starts the day after. Android repeats the wall-clock time of the first moment, so a 3:30 start would make every reminder 3:30 (`nextReminder`).
+- The time zone comes from `flutter_timezone`. If the `timezone` package does not know its name, the zone is one with the phone's offset. UTC would give the wrong hour.
+
+`lib/src/controllers/reminder_controller.dart` holds the rules, and `lib/src/services/reminder_platform.dart` is the only code that knows the plugin.
+`test/services/reminder_platform_test.dart` checks the messages the app sends the plugin.
 
 ## Motion
 

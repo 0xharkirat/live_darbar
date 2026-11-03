@@ -11,6 +11,13 @@
         way to control playback once the app is in the background.
     -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!--
+        The daily Hukamnama reminder is a repeating alarm, and a reboot clears
+        alarms. This lets flutter_local_notifications hear that the phone has
+        started, and set the reminder again. It is not an exact-alarm
+        permission: the reminder is inexact on purpose, so it needs none.
+    -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <application
         android:label="Live Darbar"
         android:name="${applicationName}"
@@ -60,6 +67,27 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+
+        <!--
+            The daily Hukamnama reminder, from flutter_local_notifications.
+            The first receiver shows the notification when its alarm fires.
+            The second sets the alarm again after a reboot and after the app
+            updates, because both clear it. Neither is exported: the system
+            reaches them through the PendingIntent and the boot broadcast.
+        -->
+        <receiver
+            android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationReceiver"
+            android:exported="false" />
+        <receiver
+            android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationBootReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+                <action android:name="com.htc.intent.action.QUICKBOOT_POWERON" />
+            </intent-filter>
+        </receiver>
 
         <!-- OACP background receiver (for future background actions) -->
         <receiver

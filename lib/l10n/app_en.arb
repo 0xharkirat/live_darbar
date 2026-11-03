@@ -402,5 +402,70 @@
                 "type": "String"
             }
         }
+    },
+    "reminder_setting": "Daily reminder",
+    "@reminder_setting": {
+        "description": "Label of the switch on the About screen that turns the daily Hukamnama reminder on or off"
+    },
+    "reminder_time": "Reminder time",
+    "@reminder_time": {
+        "description": "Label of the row that shows the time of the daily reminder, and the title of the sheet where the listener picks that time"
+    },
+    "reminder_on": "On",
+    "@reminder_on": {
+        "description": "What a screen reader says for the daily reminder switch when the reminder is on"
+    },
+    "reminder_off": "Off",
+    "@reminder_off": {
+        "description": "What a screen reader says for the daily reminder switch when the reminder is off"
+    },
+    "reminder_done": "Done",
+    "@reminder_done": {
+        "description": "Button that saves the chosen reminder time, or closes a message, and then closes the sheet"
+    },
+    "reminder_blocked_hint": "Notifications are off for Live Darbar. Turn them on in your phone’s settings.",
+    "@reminder_blocked_hint": {
+        "description": "Message shown when the phone does not let the app show notifications, so the daily reminder cannot appear"
+    },
+    "reminder_failed_hint": "The reminder did not start. Try again.",
+    "@reminder_failed_hint": {
+        "description": "Message shown when the phone could not set the daily reminder for a reason that is not a missing permission"
+    },
+    "reminder_prompt_title": "Daily Hukamnama reminder",
+    "@reminder_prompt_title": {
+        "description": "Title of the sheet that asks, once, if the listener wants a daily reminder to read the Hukamnama"
+    },
+    "reminder_prompt_body": "Get a reminder each day at {time} to read the Hukamnama. You can change this later in About.",
+    "@reminder_prompt_body": {
+        "description": "Body of the reminder sheet. It names the default time and says where to change it. The time is already written in the listener's style, for example 7:00 AM",
+        "placeholders": {
+            "time": {
+                "type": "String"
+            }
+        }
+    },
+    "reminder_prompt_yes": "Remind me",
+    "@reminder_prompt_yes": {
+        "description": "Gold button on the reminder sheet that turns the daily reminder on"
+    },
+    "reminder_prompt_no": "Not now",
+    "@reminder_prompt_no": {
+        "description": "Quiet button on the reminder sheet that closes it. The app does not ask again"
+    },
+    "reminder_notification_title": "Today’s Hukamnama",
+    "@reminder_notification_title": {
+        "description": "Title of the daily reminder notification"
+    },
+    "reminder_notification_body": "Read the Hukamnama from Sri Darbar Sahib.",
+    "@reminder_notification_body": {
+        "description": "Body of the daily reminder notification. A tap on it opens the Hukamnama reader"
+    },
+    "reminder_channel_name": "Daily Hukamnama",
+    "@reminder_channel_name": {
+        "description": "Name of the Android notification channel for the daily reminder, shown in the phone's notification settings"
+    },
+    "reminder_channel_description": "A reminder each day to read the Hukamnama.",
+    "@reminder_channel_description": {
+        "description": "Description of the Android notification channel for the daily reminder, shown in the phone's notification settings"
     }
 }
