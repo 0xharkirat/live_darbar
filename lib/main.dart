@@ -5,11 +5,13 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:home_widget/home_widget.dart';
 import 'package:intelligence/intelligence.dart';
 import 'package:live_darbar/src/controllers/audio_controller.dart';
 import 'package:live_darbar/src/controllers/locale_controller.dart';
 import 'package:live_darbar/src/home_screen_widget/widget_actions.dart';
 import 'package:live_darbar/src/home_screen_widget/widget_background.dart';
+import 'package:live_darbar/src/home_screen_widget/widget_links.dart';
 import 'package:live_darbar/src/home_screen_widget/widget_playback.dart';
 import 'package:live_darbar/src/home_screen_widget/widget_publisher.dart';
 import 'package:live_darbar/src/home_screen_widget/widget_sync.dart';
@@ -33,6 +35,10 @@ import 'package:live_darbar/l10n/app_localizations.dart';
 /// itself is in `widget_background.dart`.
 @pragma('vm:entry-point')
 Future<void> widgetRefreshEntry(List<String> args) => widgetRefreshMain(args);
+
+/// The media session, once it has started. Null on the web, and when it
+/// could not start. The iPhone widget's taps read what it plays.
+LiveDarbarAudioHandler? _mediaSession;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -64,6 +70,10 @@ void main() async {
       debugPrint('Audio session not configured: $e');
     }
 
+    // On iPhone the widget reads the App Group's store. Point home_widget
+    // at it before anything writes there. It is fast, and it never throws.
+    await HomeWidgetPublisher.prepare();
+
     // Connect the media session: the notification, the lock screen, headset
     // buttons, Android Auto and voice assistants.
     //
@@ -75,6 +85,7 @@ void main() async {
     try {
       final handler =
           await LiveDarbarAudioHandler.init(container.read(audioController));
+      _mediaSession = handler;
       // Tell the home screen widget what the session does, from here, so that
       // it follows the app, the notification, a headset, the car and the
       // widget itself. The widget's own taps can wake the app with no screen,
@@ -114,6 +125,7 @@ class _MyAppState extends ConsumerState<MyApp> {
   // The widget's tap opens the reader from outside the widget tree, so the
   // app needs a handle on its navigator.
   final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
+  StreamSubscription<Uri?>? _widgetLinks;
 
   @override
   void initState() {
@@ -156,15 +168,61 @@ class _MyAppState extends ConsumerState<MyApp> {
     ]);
 
     // Keep the home screen widget's text in step with the date and the
-    // Hukamnama. Android only for now.
+    // Hukamnama.
     if (HomeWidgetPublisher.isSupported) ref.read(widgetSyncProvider);
+
+    // The iPhone widget opens the app with a link. See widget_links.dart.
+    // A running app hears it on the stream. A cold start asks once, after
+    // the first frame, so the navigator is there for the reader.
+    if (defaultTargetPlatform == TargetPlatform.iOS) {
+      _widgetLinks = HomeWidget.widgetClicked.listen(_handleWidgetLink);
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        try {
+          _handleWidgetLink(await HomeWidget.initiallyLaunchedFromHomeWidget());
+        } on PlatformException catch (e) {
+          debugPrint('Widget link not read: $e');
+        }
+      });
+    }
   }
 
   @override
   void dispose() {
+    _widgetLinks?.cancel();
     _oacpChannel.setMethodCallHandler(null);
     _channel.setMethodCallHandler(null);
     super.dispose();
+  }
+
+  /// Does what the iPhone widget's button showed, from what the player does
+  /// now. See [widgetTapFor].
+  void _handleWidgetLink(Uri? uri) {
+    final link = widgetLinkFrom(uri);
+    if (link == null || !mounted) return;
+    final session = _mediaSession;
+    final now = session == null
+        ? WidgetPlayback.idle
+        : widgetPlaybackFor(
+            session.playbackState.value,
+            session.mediaItem.value,
+          );
+    final audio = ref.read(audioController);
+    switch (widgetTapFor(link, now)) {
+      case WidgetTap.playLive:
+        audio.play(kLiveIndex);
+      case WidgetTap.stop:
+        audio.stop();
+      case WidgetTap.playHukamnama:
+        audio.play(kMukhwakIndex);
+      case WidgetTap.pause:
+        audio.pause();
+      case WidgetTap.openReader:
+        try {
+          openHukamnamaReader(_navigatorKey.currentState);
+        } on PlatformException catch (e) {
+          debugPrint('Reader not opened: $e');
+        }
+    }
   }
 
   void _handleSelection(String id) {

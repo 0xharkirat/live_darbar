@@ -27,6 +27,17 @@ import 'package:live_darbar/src/models/sgpc_day.dart';
 const kWidgetProviderClass =
     'com.hsi.harki.live_darbar.widget.LiveDarbarWidgetProvider';
 
+/// The `kind` of the iPhone widget in LiveDarbarWidget.swift.
+///
+/// `HomeWidget.updateWidget` reloads the iPhone widget by this name.
+const kIosWidgetKind = 'LiveDarbarWidget';
+
+/// The App Group that the iPhone app and its widget share.
+///
+/// The widget runs in its own process, so it reads the store from here. Both
+/// targets name it in their entitlements, and the App IDs at Apple carry it.
+const kIosAppGroupId = 'group.com.hsiharki.liveDarbar';
+
 /// How many days of dates are written ahead, today included.
 ///
 /// A phone that has not run the app for days must still show the right date,

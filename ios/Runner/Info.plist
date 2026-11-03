@@ -22,6 +22,19 @@
 	<string>$(FLUTTER_BUILD_NAME)</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
+	<!-- The iPhone widget opens the app with livedarbar://widget/... links.
+	     lib/src/home_screen_widget/widget_links.dart reads them. -->
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>com.hsiharki.liveDarbar.widget</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>livedarbar</string>
+			</array>
+		</dict>
+	</array>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<!-- The app uses only the encryption built into iOS (HTTPS), which is
