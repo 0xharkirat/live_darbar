@@ -5,7 +5,7 @@
 </p>
 
 A simple yet powerful & intelligent mobile app for live audio broadcast from _**[Golden Temple](https://en.wikipedia.org/wiki/Golden_Temple)**_, _**[Amritsar](https://en.wikipedia.org/wiki/Amritsar)**_. Both  [_**Android**_](https://play.google.com/store/apps/details?id=com.hsi.harki.live_darbar)  &  [_**iOS**_](https://apps.apple.com/app/id6449766130)  apps are fully published on their respective app stores.
-Also available on MacOS(same link for iOS - just open on Mac) & [Web](https://darbar.live).
+Also available on MacOS(same link for iOS - just open on Mac) & [Web](https://darbar.live/app/). The landing page is at [darbar.live](https://darbar.live), built from `site/` by `tool/build_site.dart`.
 
 
 This app is my humble contribution to the Sikh community all around the world, enabling listening to the divine kirtan anywhere in the world from Darbar Sahib Amritsar, which is the holiest site in Sikhism.
