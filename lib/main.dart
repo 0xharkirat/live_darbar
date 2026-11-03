@@ -9,6 +9,7 @@ import 'package:intelligence/intelligence.dart';
 import 'package:live_darbar/src/controllers/audio_controller.dart';
 import 'package:live_darbar/src/controllers/locale_controller.dart';
 import 'package:live_darbar/src/controllers/reminder_controller.dart';
+import 'package:live_darbar/src/controllers/sikh_history_controller.dart';
 import 'package:live_darbar/src/home_screen_widget/widget_actions.dart';
 import 'package:live_darbar/src/home_screen_widget/widget_background.dart';
 import 'package:live_darbar/src/home_screen_widget/widget_playback.dart';
@@ -172,8 +173,12 @@ class _MyAppState extends ConsumerState<MyApp> {
   }
 
   /// Gets the reminder ready, then asks about it if this is the first time.
+  ///
+  /// "Today in Sikh history" is set again here, after the reminder has got the
+  /// phone ready. It is never asked about: it is a switch in About.
   Future<void> _startReminder() async {
     await ref.read(reminderProvider.notifier).start(_openReaderFromReminder);
+    unawaited(ref.read(sikhHistoryProvider.notifier).resync());
     await _askForReminder();
   }
 
@@ -187,6 +192,7 @@ class _MyAppState extends ConsumerState<MyApp> {
 
   void _onResume() {
     unawaited(ref.read(reminderProvider.notifier).resync());
+    unawaited(ref.read(sikhHistoryProvider.notifier).resync());
     unawaited(_askForReminder());
   }
 

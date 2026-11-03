@@ -18,6 +18,7 @@ import 'package:live_darbar/src/controllers/hukamnama_controller.dart';
 import 'package:live_darbar/src/controllers/locale_controller.dart';
 import 'package:live_darbar/src/controllers/now_playing_controller.dart';
 import 'package:live_darbar/src/controllers/quality_mode_controller.dart';
+import 'package:live_darbar/src/controllers/sgpc_events_controller.dart';
 import 'package:live_darbar/src/controllers/sikh_date_controller.dart';
 import 'package:live_darbar/src/controllers/update_controller.dart';
 import 'package:live_darbar/src/core/app_theme.dart';
@@ -29,6 +30,8 @@ import 'package:live_darbar/src/models/audio_progress_state.dart';
 import 'package:live_darbar/src/models/hukamnama.dart';
 import 'package:live_darbar/src/models/live_playback_state.dart';
 import 'package:live_darbar/src/models/quality_policy.dart';
+import 'package:live_darbar/src/models/sgpc_day.dart';
+import 'package:live_darbar/src/models/sgpc_event.dart';
 import 'package:live_darbar/src/models/sikh_date.dart';
 import 'package:live_darbar/src/models/stream_quality.dart';
 import 'package:live_darbar/src/services/reminder_platform.dart';
@@ -59,6 +62,19 @@ void main() {
     testWidgets('home, idle, $locale', (tester) async {
       await _pump(tester, const HomeScreen(), locale: locale);
       await _shot(tester, 'home_idle_$locale');
+    });
+  }
+
+  // Today in Sikh history: 3 November 2026 has 3 events, the most of any day.
+  for (final locale in ['en', 'pa']) {
+    testWidgets('home, 3 November with 3 events, $locale', (tester) async {
+      await _pump(
+        tester,
+        const HomeScreen(),
+        locale: locale,
+        at: DateTime.utc(2026, 11, 3, 6),
+      );
+      await _shot(tester, 'home_history_$locale');
     });
   }
 
@@ -175,6 +191,21 @@ void main() {
     });
   }
 
+  // "Today in Sikh history" in About, off and on.
+  for (final locale in ['en', 'pa']) {
+    testWidgets('about with the history switch off, $locale', (tester) async {
+      await _pump(tester, const AboutScreen(), locale: locale);
+      await _shot(tester, 'about_history_off_$locale');
+    });
+
+    testWidgets('about with the history switch on, $locale', (tester) async {
+      SharedPreferences.setMockInitialValues({'history_enabled': true});
+      addTearDown(() => SharedPreferences.setMockInitialValues({}));
+      await _pump(tester, const AboutScreen(), locale: locale);
+      await _shot(tester, 'about_history_on_$locale');
+    });
+  }
+
   testWidgets('about with the reminder blocked, en', (tester) async {
     await _pump(
       tester,
@@ -249,8 +280,14 @@ Future<void> _pump(
   NowPlaying now = _idle,
   QualityMode? quality,
   FakeReminderPlatform? reminders,
+  DateTime? at,
   List<Override> overrides = const [],
 }) async {
+  // The renders show 2 November in Amritsar, whatever day they run on, unless
+  // a render asks for another moment.
+  final moment = at ?? DateTime.utc(2026, 11, 2, 6);
+  final sgpcDay = sgpcDayOf(moment);
+  final sikhDay = 17 + sgpcDay.difference(DateTime.utc(2026, 11, 2)).inDays;
   // The app shell does this in the real app; see AppType.tracking.
   AppType.tracking = locale != 'pa';
   final target = _targets[_shotTarget]!;
@@ -284,14 +321,18 @@ Future<void> _pump(
           // The renders show the reminder, which a phone offers.
           reminderPlatformProvider
               .overrideWithValue(reminders ?? FakeReminderPlatform()),
-          // The renders show 2 November in Amritsar, whatever day they run on.
-          clockProvider.overrideWithValue(() => DateTime.utc(2026, 11, 2, 6)),
+          clockProvider.overrideWithValue(() => moment),
           sikhDateProvider.overrideWith(
             (ref) async => SikhDate(
-              day: 17,
+              day: sikhDay,
               monthIndex: 7,
               year: 558,
-              gregorian: DateTime.utc(2026, 11, 2),
+              gregorian: sgpcDay,
+            ),
+          ),
+          sgpcEventsProvider.overrideWith(
+            (ref) async => SgpcEventTable.fromJsonString(
+              File('assets/data/sgpc_events_558.json').readAsStringSync(),
             ),
           ),
           hukamnamaProvider.overrideWith(_Fixture.new),

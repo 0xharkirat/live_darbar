@@ -33,3 +33,25 @@ tz.TZDateTime nextReminder(tz.TZDateTime now, ReminderTime time) {
     dayOffset++;
   }
 }
+
+/// [time] on the calendar day [day], in the zone of [now], or null when that
+/// moment is not ahead of [now].
+///
+/// For a notification that fires once, as "Today in Sikh history" does. The
+/// calendar day is the year, month and day of [day], which is an SGPC day at
+/// UTC midnight.
+///
+/// A time that does not exist on the day the clocks go forward (2:30) reads as
+/// the hour after it. A single notification has no wall-clock time to keep, so
+/// it still fires, unlike the repeating reminder in [nextReminder].
+tz.TZDateTime? timeOnDay(tz.TZDateTime now, DateTime day, ReminderTime time) {
+  final moment = tz.TZDateTime(
+    now.location,
+    day.year,
+    day.month,
+    day.day,
+    time.hour,
+    time.minute,
+  );
+  return moment.isAfter(now) ? moment : null;
+}

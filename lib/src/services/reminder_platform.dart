@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
+import 'package:live_darbar/src/core/history_schedule.dart';
 import 'package:live_darbar/src/core/reminder_schedule.dart';
 import 'package:live_darbar/src/models/reminder_time.dart';
 import 'package:timezone/data/latest_10y.dart' as tz_data;
@@ -29,9 +30,28 @@ class ReminderText {
   final String channelDescription;
 }
 
-/// What the daily reminder needs from the phone.
+/// The words that "Today in Sikh history" shares on every day, in the app's
+/// language at the time it is set. The words of each day are in
+/// [HistoryNotice].
+@immutable
+class HistoryText {
+  const HistoryText({
+    required this.title,
+    required this.channelName,
+    required this.channelDescription,
+  });
+
+  final String title;
+
+  /// The Android channel's name and description, which the phone shows in its
+  /// notification settings.
+  final String channelName;
+  final String channelDescription;
+}
+
+/// What the daily reminder, and "Today in Sikh history", need from the phone.
 ///
-/// An interface, so the controller's rules run in a test with no phone. The one
+/// An interface, so the controllers' rules run in a test with no phone. The one
 /// real implementation is [LocalNotificationsReminderPlatform], and it is the
 /// only code that knows the notification plugin.
 abstract interface class ReminderPlatform {
@@ -57,6 +77,21 @@ abstract interface class ReminderPlatform {
   /// Removes the reminder.
   Future<void> cancel();
 
+  /// Sets 1 quiet notification for each of [notices], to fire once on its day
+  /// at [time] on the phone's own clock, and replaces the ones set before. A
+  /// day whose [time] has passed gets none. The daily reminder is not touched.
+  ///
+  /// The phone keeps at most [kHistoryDays] of them. A longer list is cut
+  /// there.
+  Future<void> scheduleHistory(
+    ReminderTime time,
+    List<HistoryNotice> notices,
+    HistoryText text,
+  );
+
+  /// Removes every "Today in Sikh history" notification.
+  Future<void> cancelHistory();
+
   /// Whether a tap on the reminder started the app, from closed. A tap while
   /// the app runs goes to the callback given to [start] instead.
   Future<bool> openedByReminder();
@@ -80,8 +115,19 @@ class LocalNotificationsReminderPlatform implements ReminderPlatform {
   @visibleForTesting
   static const payload = 'open_hukamnama';
 
+  /// What a "Today in Sikh history" notification carries. A tap on it opens
+  /// the app and nothing more, so it is not [payload].
+  @visibleForTesting
+  static const historyPayload = 'open_history';
+
   static const _id = 1;
   static const _channelId = 'daily_hukamnama';
+
+  /// "Today in Sikh history" uses the ids from [firstHistoryId] up, 1 for each
+  /// day, so the daily reminder's id is never touched.
+  @visibleForTesting
+  static const firstHistoryId = 100;
+  static const _historyChannelId = 'sikh_history';
 
   /// The small icon on Android. `res/raw/keep.xml` stops the release build
   /// from removing it, because only a name in this string points to it.
@@ -230,6 +276,70 @@ class LocalNotificationsReminderPlatform implements ReminderPlatform {
   Future<void> cancel() async {
     await _initialize();
     await _plugin.cancel(id: _id);
+  }
+
+  @override
+  Future<void> scheduleHistory(
+    ReminderTime time,
+    List<HistoryNotice> notices,
+    HistoryText text,
+  ) async {
+    await _initialize();
+    final now = tz.TZDateTime.now(tz.local);
+    var used = 0;
+    for (final notice in notices.take(kHistoryDays)) {
+      final at = timeOnDay(now, notice.day, time);
+      if (at == null) continue;
+      await _plugin.zonedSchedule(
+        // The same id replaces the notification set before it.
+        id: firstHistoryId + used,
+        title: text.title,
+        body: notice.body,
+        scheduledDate: at,
+        notificationDetails: NotificationDetails(
+          android: AndroidNotificationDetails(
+            _historyChannelId,
+            text.channelName,
+            channelDescription: text.channelDescription,
+            // Quiet: a place in the shade, with no sound and no pop-up. It is
+            // something to read, not something to answer.
+            importance: Importance.low,
+            priority: Priority.low,
+            category: AndroidNotificationCategory.recommendation,
+            // Shows every event when the notification is opened out.
+            styleInformation: BigTextStyleInformation(notice.body),
+          ),
+          iOS: const DarwinNotificationDetails(
+            presentAlert: true,
+            presentBanner: true,
+            presentList: true,
+            presentSound: false,
+          ),
+        ),
+        androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+        payload: historyPayload,
+      );
+      used++;
+    }
+    await _cancelHistoryFrom(used);
+  }
+
+  @override
+  Future<void> cancelHistory() async {
+    await _initialize();
+    await _cancelHistoryFrom(0);
+  }
+
+  /// Removes the history notifications from number [used] on: the ones that
+  /// the latest schedule did not replace.
+  Future<void> _cancelHistoryFrom(int used) async {
+    final pending = await _plugin.pendingNotificationRequests();
+    for (final request in pending) {
+      if (request.id >= firstHistoryId + used &&
+          request.id < firstHistoryId + kHistoryDays) {
+        await _plugin.cancel(id: request.id);
+      }
+    }
   }
 
   @override

@@ -10,6 +10,7 @@ import 'package:live_darbar/src/core/platform.dart';
 import 'package:live_darbar/src/core/store_links.dart';
 import 'package:live_darbar/src/services/reminder_platform.dart';
 import 'package:live_darbar/src/views/widgets/app_nav_bar.dart';
+import 'package:live_darbar/src/views/widgets/history_setting.dart';
 import 'package:live_darbar/src/views/widgets/language_switch.dart';
 import 'package:live_darbar/src/views/widgets/pressable.dart';
 import 'package:live_darbar/src/views/widgets/reminder_setting.dart';
@@ -29,6 +30,7 @@ class AboutScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
     final version = ref.watch(appVersionProvider).value;
+    final notifies = ref.watch(reminderPlatformProvider).isSupported;
 
     return Scaffold(
       backgroundColor: Palette.background,
@@ -78,10 +80,14 @@ class AboutScreen extends ConsumerWidget {
                               ),
                             ),
                             // The daily reminder is a setting like the
-                            // language, so it sits beside it. The web cannot
-                            // remind with the page closed, so it has none.
-                            if (ref.watch(reminderPlatformProvider).isSupported)
-                              const ReminderSetting(),
+                            // language, so it sits beside it, and so does
+                            // the history notification that follows its time.
+                            // The web cannot notify with the page closed, so
+                            // it has neither.
+                            if (notifies) ...const [
+                              ReminderSetting(),
+                              HistorySetting(),
+                            ],
                             _LinkRow(
                               icon: CupertinoIcons.chat_bubble_text,
                               label: l10n.about_section_contact,

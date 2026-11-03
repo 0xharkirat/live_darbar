@@ -361,4 +361,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get reminder_channel_description => 'A reminder each day to read the Hukamnama.';
+
+  @override
+  String get history_title => 'Today in Sikh history';
+
+  @override
+  String get history_setting_detail => 'A notice comes at the reminder time on days with an event.';
+
+  @override
+  String get history_failed_hint => 'Today in Sikh history did not start. Try again.';
+
+  @override
+  String get history_channel_description => 'A quiet notice on days with an event in Sikh history.';
 }

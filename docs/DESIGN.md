@@ -65,6 +65,8 @@ All tokens live in `lib/src/core/`.
 | `SourceSwitcher` | `views/widgets/source_switcher.dart` | Live, Hukamnama, Katha, inside the player. |
 | `ReminderPrompt` | `views/widgets/reminder_sheet.dart` | The 1 question about the daily reminder, as a sheet. See Daily reminder. |
 | `ReminderSetting` | `views/widgets/reminder_setting.dart` | The switch and the time, in the About group beside the language. |
+| `HistorySetting` | `views/widgets/history_setting.dart` | The "Today in Sikh history" switch, under the reminder. See Today in Sikh history. |
+| `SettingSwitchRow` | `views/widgets/setting_switch_row.dart` | One switch row of the About group: icon, label, an optional line under it, and the switch. The whole row is the target. |
 
 ## Screens
 
@@ -202,6 +204,39 @@ Android 13 and newer: `MainActivity` already asks for `POST_NOTIFICATIONS` at la
 
 `lib/src/controllers/reminder_controller.dart` holds the rules, and `lib/src/services/reminder_platform.dart` is the only code that knows the plugin.
 `test/services/reminder_platform_test.dart` checks the messages the app sends the plugin.
+
+## Today in Sikh history
+
+The events of the day always show on home. The notification is the listener's choice: a switch in About, off by default, never asked for with a sheet.
+
+| Part | Rule |
+| --- | --- |
+| Data | `assets/data/sgpc_events_<year>.json`, 1 file for each Nanakshahi year, from SGPC's calendar. The file lists its sources. |
+| Next year | Add `sgpc_events_559.json` to `assets/data/`. `loadSgpcEvents` finds the files by name and `pubspec.yaml` bundles the folder, so no code changes. |
+| Day | The SGPC day (Amritsar), the same day as the Sikh date above the events. |
+| Range | An event with `gregorianEnd` falls on each day from `gregorian` to `gregorianEnd`. |
+| Review | An event with `needsReview` is skipped. The app shows it after a Punjabi reader checks it and removes the flag. |
+
+### On home
+
+- Up to 3 titles under the two dates, in the app's language. English falls back to the Punjabi title.
+- Quiet text with a thin gold rule at the left. It is not a card, so the order below it stays: live kirtan, the Hukamnama, then reading it.
+- A day with no event shows nothing. The page is the same as before.
+- Titles wrap and are never cut. Gurmukhi has no letter spacing.
+- A screen reader reads 1 label: "Today in Sikh history: ", then the titles.
+- The block grows in 180 ms when the events arrive. Reduce Motion shortens it.
+
+### The notification
+
+- About, under the daily reminder. Android and iPhone only, like the reminder.
+- Off by default. The phone's permission question comes when the listener turns it on, and only if the reminder has not asked already.
+- 1 notification for each day with an event, for the next 30 days (`planHistory`). The body has 1 title on each line. At most 30 are pending, and the reminder holds 1, far under the 64 of iOS.
+- It fires once at the time of the daily reminder, 7:00 by default, on the phone's clock. If the listener changes the reminder time, the notifications follow.
+- Quiet: Android channel `sikh_history` at low importance, no sound on iPhone.
+- The app sets them again at launch, on return to the front, and when the language or the reminder time changes. Each set replaces the ids 100 to 129 and removes the rest.
+- A tap opens the app. It does not open the Hukamnama reader.
+
+`lib/src/controllers/sikh_history_controller.dart` holds the rules. `ReminderPlatform` is the only code that knows the plugin.
 
 ## Motion
 

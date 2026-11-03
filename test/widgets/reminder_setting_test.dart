@@ -13,6 +13,7 @@ import 'package:live_darbar/src/core/app_version.dart';
 import 'package:live_darbar/src/models/reminder_time.dart';
 import 'package:live_darbar/src/services/reminder_platform.dart';
 import 'package:live_darbar/src/views/screens/about_screen.dart';
+import 'package:live_darbar/src/views/widgets/reminder_setting.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../support/app_harness.dart' show reduceMotion;
@@ -69,6 +70,12 @@ void main() {
 
   setUp(() => phone = FakeReminderPlatform());
 
+  // About holds 2 switches: this one, and "Today in Sikh history" under it.
+  final reminderSwitch = find.descendant(
+    of: find.byType(ReminderSetting),
+    matching: find.byType(CupertinoSwitch),
+  );
+
   Finder row(String label) => find.bySemanticsLabel(label);
 
   testWidgets('is off at first, with no time under it', (tester) async {
@@ -94,12 +101,12 @@ void main() {
     await pump(tester);
 
     // The switch only shows the state; the row takes the tap. Hence no hit.
-    await tester.tap(find.byType(CupertinoSwitch), warnIfMissed: false);
+    await tester.tap(reminderSwitch, warnIfMissed: false);
     await tester.pumpAndSettle();
 
     expect(phone.scheduled, ReminderTime.standard);
     expect(
-      tester.widget<CupertinoSwitch>(find.byType(CupertinoSwitch)).value,
+      tester.widget<CupertinoSwitch>(reminderSwitch).value,
       isTrue,
     );
   });
@@ -116,7 +123,7 @@ void main() {
     expect(phone.scheduled, isNull);
     expect(find.text(en.reminder_time), findsNothing);
     expect(
-      tester.widget<CupertinoSwitch>(find.byType(CupertinoSwitch)).value,
+      tester.widget<CupertinoSwitch>(reminderSwitch).value,
       isFalse,
     );
   });
@@ -134,7 +141,7 @@ void main() {
     expect(find.text(en.reminder_time), findsNothing);
     expect(phone.scheduled, isNull);
     expect(
-      tester.widget<CupertinoSwitch>(find.byType(CupertinoSwitch)).value,
+      tester.widget<CupertinoSwitch>(reminderSwitch).value,
       isFalse,
     );
   });
@@ -165,7 +172,7 @@ void main() {
 
     expect(find.text(en.reminder_failed_hint), findsOneWidget);
     expect(
-      tester.widget<CupertinoSwitch>(find.byType(CupertinoSwitch)).value,
+      tester.widget<CupertinoSwitch>(reminderSwitch).value,
       isFalse,
     );
   });
@@ -183,7 +190,7 @@ void main() {
     expect(find.text(en.reminder_time), findsOneWidget);
     expect(find.text('5:45 AM'), findsOneWidget);
     expect(
-      tester.widget<CupertinoSwitch>(find.byType(CupertinoSwitch)).value,
+      tester.widget<CupertinoSwitch>(reminderSwitch).value,
       isTrue,
     );
   });
@@ -204,7 +211,7 @@ void main() {
     expect(find.text(en.reminder_blocked_hint), findsOneWidget);
     expect(find.text(en.reminder_time), findsOneWidget);
     expect(
-      tester.widget<CupertinoSwitch>(find.byType(CupertinoSwitch)).value,
+      tester.widget<CupertinoSwitch>(reminderSwitch).value,
       isTrue,
     );
   });
@@ -316,7 +323,7 @@ void main() {
     await pump(tester);
 
     expect(find.text(en.reminder_setting), findsNothing);
-    expect(find.byType(CupertinoSwitch), findsNothing);
+    expect(reminderSwitch, findsNothing);
     expect(phone.calls, isEmpty);
   });
 

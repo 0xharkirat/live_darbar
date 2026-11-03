@@ -467,5 +467,21 @@
     "reminder_channel_description": "A reminder each day to read the Hukamnama.",
     "@reminder_channel_description": {
         "description": "Description of the Android notification channel for the daily reminder, shown in the phone's notification settings"
+    },
+    "history_title": "Today in Sikh history",
+    "@history_title": {
+        "description": "Name of the feature that shows the events of the day from SGPC's calendar. It is the label of the About switch for the notification, the title of that notification, the name of its Android notification channel, and what a screen reader says before the events on the home screen"
+    },
+    "history_setting_detail": "A notice comes at the reminder time on days with an event.",
+    "@history_setting_detail": {
+        "description": "Line under the About switch for the Today in Sikh history notification. It says when the notice comes: on days that have an event, at the time of the daily reminder"
+    },
+    "history_failed_hint": "Today in Sikh history did not start. Try again.",
+    "@history_failed_hint": {
+        "description": "Message shown when the phone could not set the Today in Sikh history notification for a reason that is not a missing permission"
+    },
+    "history_channel_description": "A quiet notice on days with an event in Sikh history.",
+    "@history_channel_description": {
+        "description": "Description of the Android notification channel for Today in Sikh history, shown in the phone's notification settings"
     }
 }

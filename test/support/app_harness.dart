@@ -11,16 +11,20 @@ import 'package:live_darbar/src/controllers/connectivity_controller.dart';
 import 'package:live_darbar/src/controllers/hukamnama_controller.dart';
 import 'package:live_darbar/src/controllers/locale_controller.dart';
 import 'package:live_darbar/src/controllers/now_playing_controller.dart';
+import 'package:live_darbar/src/controllers/sgpc_events_controller.dart';
 import 'package:live_darbar/src/controllers/sikh_date_controller.dart';
 import 'package:live_darbar/src/controllers/update_controller.dart';
 import 'package:live_darbar/src/core/app_theme.dart';
 import 'package:live_darbar/src/core/app_type.dart';
 import 'package:live_darbar/src/core/app_version.dart';
+import 'package:live_darbar/src/core/clock.dart';
 import 'package:live_darbar/src/core/platform.dart';
 import 'package:live_darbar/src/models/app_update.dart';
 import 'package:live_darbar/src/models/audio_progress_state.dart';
 import 'package:live_darbar/src/models/hukamnama.dart';
 import 'package:live_darbar/src/models/live_playback_state.dart';
+import 'package:live_darbar/src/models/sgpc_event.dart';
+import 'package:live_darbar/src/models/sikh_date.dart';
 import 'package:live_darbar/src/services/reminder_platform.dart';
 import 'package:live_darbar/src/views/app_router.dart';
 import 'package:live_darbar/src/views/screens/home_screen.dart';
@@ -95,6 +99,9 @@ const desktop = Size(1280, 800);
 /// [web] picks the page transition and the web's layout, the way `kIsWeb`
 /// does in the app.
 /// [initialRoute] is what a browser hands the app after the `#`.
+/// [clock] fixes the moment; the app otherwise reads the real one. [sikh] is
+/// the Sikh date on home, and [events] is the calendar of Sikh history, which
+/// is empty unless a test gives one.
 Future<void> pumpApp(
   WidgetTester tester, {
   String locale = 'en',
@@ -102,6 +109,9 @@ Future<void> pumpApp(
   bool web = false,
   String initialRoute = AppRoutes.home,
   NowPlaying now = idle,
+  DateTime? clock,
+  SikhDate? sikh,
+  SgpcEventTable? events,
 }) async {
   SharedPreferences.setMockInitialValues({});
   AppType.tracking = locale != 'pa';
@@ -110,7 +120,7 @@ Future<void> pumpApp(
   tester.view.devicePixelRatio = size == phone ? 3 : 1;
   addTearDown(tester.view.reset);
 
-  final overrides = <Override>[
+  final allOverrides = <Override>[
     nowPlayingProvider.overrideWithValue(now),
     livePlaybackProvider.overrideWith(
       (ref) => Stream.value(now.live ?? const LivePlaybackState()),
@@ -129,7 +139,9 @@ Future<void> pumpApp(
     updateController.overrideWith(NoUpdate.new),
     localeController.overrideWith(() => _Locale(locale)),
     sangrandTableProvider.overrideWith((ref) async => null),
-    sikhDateProvider.overrideWith((ref) async => null),
+    sgpcEventsProvider.overrideWith((ref) async => events ?? SgpcEventTable.empty),
+    sikhDateProvider.overrideWith((ref) async => sikh),
+    if (clock != null) clockProvider.overrideWithValue(() => clock),
     hukamnamaProvider.overrideWith(FixtureHukamnama.new),
     appVersionProvider.overrideWith((ref) async => '2.2.1 (9)'),
     isWebProvider.overrideWithValue(web),
@@ -142,7 +154,7 @@ Future<void> pumpApp(
   await tester.pumpWidget(
     ProviderScope(
       retry: (_, __) => null,
-      overrides: overrides,
+      overrides: allOverrides,
       child: MaterialApp(
         theme: AppTheme.material,
         locale: Locale(locale),
