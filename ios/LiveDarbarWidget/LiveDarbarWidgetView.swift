@@ -165,27 +165,33 @@ struct WidgetButton: View {
     }
   }
 
+  /// A toggle, not a button. iOS draws an interactive widget again only after
+  /// the tap's intent ends, and the intent waits for sound: many seconds on a
+  /// slow line. But iOS flips a toggle in the widget the moment it is tapped.
+  /// [PendingToggleStyle] sees that flip before the app has written anything,
+  /// and shows "…" on the tapped button only.
   @available(iOS 17.0, *)
   @ViewBuilder private func intentButton(_ source: WidgetPlaySource) -> some View {
     switch source {
     case .live:
-      Button(intent: LiveKirtanWidgetIntent()) { label }
-        .buttonStyle(.plain)
+      Toggle(isOn: isOn, intent: LiveKirtanWidgetIntent()) { EmptyView() }
+        .toggleStyle(PendingToggleStyle(button: self))
         .accessibilityLabel(state.spoken)
     case .hukamnama:
-      Button(intent: HukamnamaWidgetIntent()) { label }
-        .buttonStyle(.plain)
+      Toggle(isOn: isOn, intent: HukamnamaWidgetIntent()) { EmptyView() }
+        .toggleStyle(PendingToggleStyle(button: self))
         .accessibilityLabel(state.spoken)
     }
   }
 
-  private var label: some View {
+  /// On while the source plays or opens, by the state the app last wrote.
+  var isOn: Bool { state.icon != .play }
+
+  private var label: some View { label(icon: state.icon) }
+
+  func label(icon: WidgetButtonState.Icon) -> some View {
     HStack(spacing: 6) {
-      // iOS draws an interactive widget again only after the tap's intent
-      // ends, and the intent waits for sound, many seconds on a slow line.
-      // This marks the icon as the part a tap changes, so iOS shows its
-      // loading effect on it at once, in the widget, before the app runs.
-      pendingIcon
+      iconView(icon).frame(width: 14)
       Text(name)
         .font(.system(size: 14, weight: .semibold))
         .lineLimit(1)
@@ -199,19 +205,11 @@ struct WidgetButton: View {
     )
     // A source that is opening: a still "…", and the button dimmed. A
     // widget cannot spin.
-    .opacity(state.icon == .loading ? 0.6 : 1)
+    .opacity(icon == .loading ? 0.6 : 1)
   }
 
-  @ViewBuilder private var pendingIcon: some View {
-    if #available(iOS 17.0, macOS 14.0, *) {
-      icon.frame(width: 14).invalidatableContent()
-    } else {
-      icon.frame(width: 14)
-    }
-  }
-
-  @ViewBuilder private var icon: some View {
-    switch state.icon {
+  @ViewBuilder private func iconView(_ icon: WidgetButtonState.Icon) -> some View {
+    switch icon {
     case .loading:
       Text("…").font(.system(size: 14, weight: .semibold))
     case .play:
@@ -221,5 +219,19 @@ struct WidgetButton: View {
     case .stop:
       Image(systemName: "stop.fill").font(.system(size: 12, weight: .bold))
     }
+  }
+}
+
+/// Draws a widget button from its toggle. iOS sets `isOn` the moment the
+/// listener taps. When that differs from the state the app last wrote, the
+/// tap is still running, so this button alone shows "…" until the app writes
+/// the new state and iOS draws the widget again.
+@available(iOS 17.0, macOS 14.0, *)
+struct PendingToggleStyle: ToggleStyle {
+  let button: WidgetButton
+
+  func makeBody(configuration: Configuration) -> some View {
+    let pending = configuration.isOn != button.isOn
+    return button.label(icon: pending ? .loading : button.state.icon)
   }
 }

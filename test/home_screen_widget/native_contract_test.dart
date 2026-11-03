@@ -689,7 +689,7 @@ void main() {
       );
       expect(intents, contains('#if LIVE_DARBAR_APP'));
       expect(read('ios/LiveDarbarWidget/LiveDarbarWidgetView.swift'),
-          contains('Button(intent:'));
+          contains('Toggle(isOn: isOn, intent:'));
     });
 
     test('one engine: the scene shows the app delegate\'s, not a storyboard\'s',
