@@ -72,6 +72,16 @@ class NoUpdate extends UpdateController {
   Future<AppUpdate?> build() async => null;
 }
 
+/// Offers [offered] at launch, the way a newer release.json does.
+class OfferUpdate extends UpdateController {
+  OfferUpdate(this.offered);
+
+  final AppUpdate offered;
+
+  @override
+  Future<AppUpdate?> build() async => offered;
+}
+
 class _Locale extends LocaleController {
   _Locale(this.locale);
 
@@ -92,6 +102,7 @@ const desktop = Size(1280, 800);
 /// [web] picks the page transition and the web's layout, the way `kIsWeb`
 /// does in the app.
 /// [initialRoute] is what a browser hands the app after the `#`.
+/// [update] is a newer release, for the update sheet to offer at launch.
 Future<void> pumpApp(
   WidgetTester tester, {
   String locale = 'en',
@@ -99,6 +110,7 @@ Future<void> pumpApp(
   bool web = false,
   String initialRoute = AppRoutes.home,
   NowPlaying now = idle,
+  AppUpdate? update,
 }) async {
   SharedPreferences.setMockInitialValues({});
   AppType.tracking = locale != 'pa';
@@ -123,7 +135,9 @@ Future<void> pumpApp(
       ),
     ),
     connectivityController.overrideWith(_Online.new),
-    updateController.overrideWith(NoUpdate.new),
+    updateController.overrideWith(
+      update == null ? NoUpdate.new : () => OfferUpdate(update),
+    ),
     localeController.overrideWith(() => _Locale(locale)),
     sangrandTableProvider.overrideWith((ref) async => null),
     sikhDateProvider.overrideWith((ref) async => null),
