@@ -181,7 +181,11 @@ struct WidgetButton: View {
 
   private var label: some View {
     HStack(spacing: 6) {
-      icon.frame(width: 14)
+      // iOS draws an interactive widget again only after the tap's intent
+      // ends, and the intent waits for sound, many seconds on a slow line.
+      // This marks the icon as the part a tap changes, so iOS shows its
+      // loading effect on it at once, in the widget, before the app runs.
+      pendingIcon
       Text(name)
         .font(.system(size: 14, weight: .semibold))
         .lineLimit(1)
@@ -196,6 +200,14 @@ struct WidgetButton: View {
     // A source that is opening: a still "…", and the button dimmed. A
     // widget cannot spin.
     .opacity(state.icon == .loading ? 0.6 : 1)
+  }
+
+  @ViewBuilder private var pendingIcon: some View {
+    if #available(iOS 17.0, macOS 14.0, *) {
+      icon.frame(width: 14).invalidatableContent()
+    } else {
+      icon.frame(width: 14)
+    }
   }
 
   @ViewBuilder private var icon: some View {
