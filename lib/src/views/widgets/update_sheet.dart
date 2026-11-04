@@ -14,8 +14,18 @@ import 'package:live_darbar/src/views/widgets/pressable.dart';
 ///
 /// A sheet rather than a dialog: it never blocks the kirtan that may already
 /// be playing, and a downward swipe dismisses it like any other sheet.
-Future<void> showUpdateSheet(BuildContext context, AppUpdate update) {
-  return showAppSheet<void>(context, (_) => _UpdateSheet(update: update));
+///
+/// Every way out saves the answer: both buttons, a swipe down, a tap on the
+/// dim, and the back gesture. The answer is saved here, after the sheet
+/// closes, and not in each button. When only the buttons saved it, a swipe
+/// left the release unanswered, and the sheet came back at every launch.
+Future<void> showUpdateSheet(BuildContext context, AppUpdate update) async {
+  final updates = ProviderScope.containerOf(
+    context,
+    listen: false,
+  ).read(updateController.notifier);
+  await showAppSheet<void>(context, (_) => _UpdateSheet(update: update));
+  await updates.dismiss();
 }
 
 class _UpdateSheet extends ConsumerWidget {
@@ -88,7 +98,6 @@ class _UpdateSheet extends ConsumerWidget {
                   semanticLabel: l10n.update_now,
                   onTap: () async {
                     Navigator.of(context).pop();
-                    await ref.read(updateController.notifier).dismiss();
                     await openLink(update.storeUrl);
                   },
                   child: Container(
@@ -109,10 +118,7 @@ class _UpdateSheet extends ConsumerWidget {
                 const SizedBox(height: 4),
                 CupertinoButton(
                   minimumSize: const Size(44, 48),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                    ref.read(updateController.notifier).dismiss();
-                  },
+                  onPressed: () => Navigator.of(context).pop(),
                   child: Text(
                     l10n.update_later,
                     style: AppType.callout.copyWith(color: Palette.muted),
