@@ -246,6 +246,45 @@ void main() {
       expect(seen.single.url.path, '/data/hukamnama/2027-03-05.json');
     });
 
+    test('reads the lines that the mirror added to the day', () async {
+      final body = File('test/fixtures/mirror_hukamnama_2026_11_02.json')
+          .readAsBytesSync();
+      final service = web([], (_) => http.Response.bytes(body, 200));
+
+      final h = await service.fetch(nov2);
+
+      // SGPC's text is read as before.
+      expect(h.lines, hasLength(10));
+      expect(h.lines.first.english, isNull);
+      // And the shabad comes with it.
+      expect(h.shabad, isNotNull);
+      expect(h.shabad!.lines, hasLength(10));
+      expect(h.shabad!.ids, ['R5B']);
+      expect(h.shabad!.ang, 668);
+      expect(h.shabad!.lines.first.id, '015H');
+      expect(h.shabad!.lines.first.english, startsWith('The Lord, Har, Har'));
+    });
+
+    test('reads a day that the mirror wrote before it had lines', () async {
+      final service = web([], (_) => http.Response.bytes(_recorded, 200));
+      final h = await service.fetch(nov2);
+      expect(h.shabad, isNull);
+      expect(h.lines, hasLength(10));
+    });
+
+    test('shows the day even when the lines in the file are damaged', () async {
+      final json = jsonDecode(utf8.decode(_recorded)) as Map<String, dynamic>;
+      json['shabad'] = {'matched': true, 'ang': 668, 'ids': 'R5B'};
+      json['lines'] = 'not a list';
+      final service = web(
+        [],
+        (_) => http.Response.bytes(utf8.encode(jsonEncode(json)), 200),
+      );
+      final h = await service.fetch(nov2);
+      expect(h.shabad, isNull);
+      expect(h.lines, hasLength(10));
+    });
+
     test('ignores a slash at the end of the mirror address', () async {
       final seen = <http.Request>[];
       final service = web(seen, (_) => http.Response.bytes(_recorded, 200),

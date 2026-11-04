@@ -1,10 +1,17 @@
 name: Hukamnama mirror
 
-# Copies SGPC's Hukamnama text to the `hukamnama-data` branch.
+# Copies SGPC's Hukamnama text to the `hukamnama-data` branch, and adds the
+# shabad line by line from the Shabad OS database.
 #
 # Why: SGPC's feed sends no CORS header, so the web app cannot read it. The web
 # app reads the copy from raw.githubusercontent.com instead, which sends
 # `access-control-allow-origin: *`. The native apps read SGPC directly.
+#
+# The lines: once for each day, tool/hukamnama_mirror.dart downloads the pinned
+# Shabad OS release (152 MB, SHA-256 checked, see tool/shabad_os.dart) and finds
+# the day's shabad in it. A run that finds the day already done does not
+# download anything, so there is no cache step. A day that cannot be matched
+# with high confidence is published with no lines.
 #
 # The branch is an orphan. It holds only `hukamnama/` and a README, and this
 # job creates it on the first run.
@@ -79,6 +86,11 @@ jobs:
             *) exit "$status" ;;
           esac
 
+      # The Shabad OS lines are read with the sqlite3 command line tool. It is
+      # on GitHub's Ubuntu images, so this is a safety net.
+      - name: Check for sqlite3
+        run: command -v sqlite3 >/dev/null || sudo apt-get install --yes sqlite3
+
       # The README lives on the default branch, so it can change without
       # touching the data branch by hand.
       - name: Add the README
@@ -87,10 +99,15 @@ jobs:
       # Writes whatever it accepted, then exits 1 if SGPC sent a bad answer.
       # The next steps still run, so a good day is saved even when the other
       # day fails. The last step turns the failure into a red run.
+      # A Shabad OS problem never fails the run: the day is saved without lines
+      # and the log has a warning.
       - name: Copy SGPC's Hukamnama
         id: mirror
         continue-on-error: true
-        run: dart src/tool/hukamnama_mirror.dart --out data
+        run: >-
+          dart src/tool/hukamnama_mirror.dart
+          --out data
+          --shabados-db "$RUNNER_TEMP/shabados/master.sqlite"
 
       - name: Commit and push changes
         # The data-branch step set git to sign in through gh. gh needs the
