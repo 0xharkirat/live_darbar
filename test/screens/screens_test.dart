@@ -31,12 +31,16 @@ import 'package:live_darbar/src/models/live_playback_state.dart';
 import 'package:live_darbar/src/models/quality_policy.dart';
 import 'package:live_darbar/src/models/sikh_date.dart';
 import 'package:live_darbar/src/models/stream_quality.dart';
+import 'package:live_darbar/src/services/reminder_platform.dart';
 import 'package:live_darbar/src/views/screens/about_screen.dart';
 import 'package:live_darbar/src/views/screens/home_screen.dart';
 import 'package:live_darbar/src/views/screens/hukamnama_screen.dart';
 import 'package:live_darbar/src/views/screens/now_playing_screen.dart';
 import 'package:live_darbar/src/views/widgets/quality_sheet.dart';
+import 'package:live_darbar/src/views/widgets/reminder_sheet.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../support/fake_reminder_platform.dart';
 
 /// Renders every main screen to PNG, at iPhone 17 Pro size, with the real
 /// fonts and paintings.
@@ -152,6 +156,58 @@ void main() {
       await _shot(tester, 'about_$locale');
     });
   }
+
+  // The daily reminder: the question, the setting when it is on, and the
+  // sheet where the time is picked.
+  for (final locale in ['en', 'pa']) {
+    testWidgets('reminder prompt, $locale', (tester) async {
+      await _pump(tester, const HomeScreen(), locale: locale);
+      showReminderPrompt(tester.element(find.byType(HomeScreen)));
+      await tester.pump();
+      await tester.pump(const Duration(seconds: 1));
+      await _precache(tester);
+      await _shot(tester, 'reminder_prompt_$locale');
+    });
+
+    testWidgets('about with the reminder on, $locale', (tester) async {
+      _reminderOn();
+      await _pump(tester, const AboutScreen(), locale: locale);
+      await _shot(tester, 'about_reminder_on_$locale');
+    });
+
+    testWidgets('reminder time, $locale', (tester) async {
+      _reminderOn();
+      await _pump(tester, const AboutScreen(), locale: locale);
+      await tester.tap(
+        find.text(lookupAppLocalizations(Locale(locale)).reminder_time),
+      );
+      await tester.pump();
+      await tester.pump(const Duration(seconds: 1));
+      await _shot(tester, 'reminder_time_$locale');
+    });
+  }
+
+  testWidgets('about with the reminder blocked, en', (tester) async {
+    await _pump(
+      tester,
+      const AboutScreen(),
+      reminders: FakeReminderPlatform(allowed: false),
+    );
+    final l10n = lookupAppLocalizations(const Locale('en'));
+    await tester.tap(find.text(l10n.reminder_setting));
+    await tester.pump(const Duration(seconds: 1));
+    await _shot(tester, 'about_reminder_blocked_en');
+  });
+}
+
+/// The reminder as it is after the listener said yes at 7:00.
+void _reminderOn() {
+  SharedPreferences.setMockInitialValues({
+    'reminder_asked': true,
+    'reminder_enabled': true,
+    'reminder_minutes': 7 * 60,
+  });
+  addTearDown(() => SharedPreferences.setMockInitialValues({}));
 }
 
 final _shotKey = GlobalKey();
@@ -204,6 +260,7 @@ Future<void> _pump(
   String locale = 'en',
   NowPlaying now = _idle,
   QualityMode? quality,
+  FakeReminderPlatform? reminders,
   List<Override> overrides = const [],
 }) async {
   // The app shell does this in the real app; see AppType.tracking.
@@ -236,6 +293,9 @@ Future<void> _pump(
           updateController.overrideWith(_NoUpdate.new),
           localeController.overrideWith(() => _Locale(locale)),
           appVersionProvider.overrideWith((ref) async => '3.0.0 (10)'),
+          // The renders show the reminder, which a phone offers.
+          reminderPlatformProvider
+              .overrideWithValue(reminders ?? FakeReminderPlatform()),
           // The renders show 2 November in Amritsar, whatever day they run on.
           clockProvider.overrideWithValue(() => DateTime.utc(2026, 11, 2, 6)),
           sikhDateProvider.overrideWith(

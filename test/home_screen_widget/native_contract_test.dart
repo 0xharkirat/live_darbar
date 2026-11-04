@@ -317,10 +317,12 @@ void main() {
     });
 
     test('the manifest needs no permission for it', () {
-      // WorkManager brings its own. No alarm or boot permission is added.
+      // WorkManager brings its own. The refresh adds no alarm permission.
+      // RECEIVE_BOOT_COMPLETED is in the manifest for the daily reminder
+      // (flutter_local_notifications sets it again after a reboot), not for
+      // the widget, so only the exact-alarm permission is checked here.
       final manifest = read(_manifest);
       expect(manifest, isNot(contains('SCHEDULE_EXACT_ALARM')));
-      expect(manifest, isNot(contains('RECEIVE_BOOT_COMPLETED')));
     });
 
     test('the Dart arguments are the language and the support directory', () {

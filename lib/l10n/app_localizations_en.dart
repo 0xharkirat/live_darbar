@@ -314,4 +314,51 @@ class AppLocalizationsEn extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get reminder_setting => 'Daily reminder';
+
+  @override
+  String get reminder_time => 'Reminder time';
+
+  @override
+  String get reminder_on => 'On';
+
+  @override
+  String get reminder_off => 'Off';
+
+  @override
+  String get reminder_done => 'Done';
+
+  @override
+  String get reminder_blocked_hint => 'Notifications are off for Live Darbar. Turn them on in your phone’s settings.';
+
+  @override
+  String get reminder_failed_hint => 'The reminder did not start. Try again.';
+
+  @override
+  String get reminder_prompt_title => 'Daily Hukamnama reminder';
+
+  @override
+  String reminder_prompt_body(String time) {
+    return 'Get a reminder each day at $time to read the Hukamnama. You can change this later in About.';
+  }
+
+  @override
+  String get reminder_prompt_yes => 'Remind me';
+
+  @override
+  String get reminder_prompt_no => 'Not now';
+
+  @override
+  String get reminder_notification_title => 'Today’s Hukamnama';
+
+  @override
+  String get reminder_notification_body => 'Read the Hukamnama from Sri Darbar Sahib.';
+
+  @override
+  String get reminder_channel_name => 'Daily Hukamnama';
+
+  @override
+  String get reminder_channel_description => 'A reminder each day to read the Hukamnama.';
 }
