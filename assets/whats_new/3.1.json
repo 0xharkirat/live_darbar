@@ -1,0 +1,45 @@
+{
+  "release": "3.1",
+  "items": [
+    {
+      "title": {
+        "en": "Hukamnama widget on your iPhone home screen",
+        "pa": "ਤੁਹਾਡੀ ਆਈਫੋਨ ਹੋਮ ਸਕ੍ਰੀਨ ਉੱਤੇ ਹੁਕਮਨਾਮਾ ਵਿਜੇਟ"
+      },
+      "body": {
+        "en": "Play the Hukamnama or live kirtan without opening the app.",
+        "pa": "ਐਪ ਖੋਲ੍ਹੇ ਬਿਨਾਂ ਹੁਕਮਨਾਮਾ ਜਾਂ ਲਾਈਵ ਕੀਰਤਨ ਚਲਾਓ।"
+      }
+    },
+    {
+      "title": {
+        "en": "Daily Hukamnama reminder",
+        "pa": "ਰੋਜ਼ਾਨਾ ਹੁਕਮਨਾਮਾ ਰਿਮਾਈਂਡਰ"
+      },
+      "body": {
+        "en": "Get a reminder each day, at the time you choose.",
+        "pa": "ਹਰ ਰੋਜ਼, ਤੁਹਾਡੀ ਚੁਣੀ ਹੋਈ ਵੇਲੇ, ਇੱਕ ਰਿਮਾਈਂਡਰ ਮਿਲੇਗਾ।"
+      }
+    },
+    {
+      "title": {
+        "en": "Today in Sikh history",
+        "pa": "ਸਿੱਖ ਇਤਿਹਾਸ ਵਿੱਚ ਅੱਜ"
+      },
+      "body": {
+        "en": "See what happened on each day of the Nanakshahi year.",
+        "pa": "ਨਾਨਕਸ਼ਾਹੀ ਸਾਲ ਦੇ ਹਰ ਦਿਨ ਦੀਆਂ ਘਟਨਾਵਾਂ ਵੇਖੋ।"
+      }
+    },
+    {
+      "title": {
+        "en": "Films that show how to add the widget",
+        "pa": "ਵਿਜੇਟ ਜੋੜਨ ਦਾ ਤਰੀਕਾ ਦੱਸਣ ਵਾਲੀਆਂ ਫ਼ਿਲਮਾਂ"
+      },
+      "body": {
+        "en": "Watch the steps, then do them on your phone.",
+        "pa": "ਪਹਿਲਾਂ ਕਦਮ ਵੇਖੋ, ਫਿਰ ਆਪਣੇ ਫ਼ੋਨ ਤੇ ਕਰੋ।"
+      }
+    }
+  ]
+}

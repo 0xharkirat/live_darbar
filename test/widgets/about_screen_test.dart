@@ -5,9 +5,12 @@ import 'package:live_darbar/l10n/app_localizations.dart';
 import 'package:live_darbar/src/core/app_theme.dart';
 import 'package:live_darbar/src/core/app_version.dart';
 import 'package:live_darbar/src/core/platform.dart';
+import 'package:live_darbar/src/services/reminder_platform.dart';
 import 'package:live_darbar/src/views/screens/about_screen.dart';
 import 'package:url_launcher_platform_interface/link.dart';
 import 'package:url_launcher_platform_interface/url_launcher_platform_interface.dart';
+
+import '../support/fake_reminder_platform.dart';
 
 /// Stands in for the platform behind `url_launcher` and records each launch.
 class _FakeLauncher extends UrlLauncherPlatform {
@@ -48,6 +51,9 @@ void main() {
         overrides: [
           appVersionProvider.overrideWith((ref) async => '2.2.0 (8)'),
           isWebProvider.overrideWithValue(web),
+          // The daily reminder is tested in reminder_setting_test.dart.
+          reminderPlatformProvider
+              .overrideWithValue(FakeReminderPlatform(supported: false)),
         ],
         child: MaterialApp(
           theme: AppTheme.material,

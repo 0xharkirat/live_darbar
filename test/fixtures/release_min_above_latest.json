@@ -1,0 +1,7 @@
+{
+  "android": { "version": "3.1.0", "build": 11, "minBuild": 12 },
+  "ios": { "version": "3.1.0", "build": 11, "minBuild": 12 },
+  "macos": { "version": "3.1.0", "build": 11, "minBuild": 12 },
+  "stores": {},
+  "notes": { "en": ["A mistake in the file: the minimum is not in the store yet"], "pa": [] }
+}

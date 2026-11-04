@@ -134,6 +134,32 @@ void _checkRelease(File file) {
     for (final key in ['android', 'ios', 'macos', 'stores', 'notes']) {
       if (json[key] == null) _fail('web/release.json has no "$key".');
     }
+    // The optional fields. Missing is fine. Wrong is not: see
+    // docs/release-manifest.md.
+    for (final key in ['android', 'ios', 'macos']) {
+      final entry = json[key];
+      if (entry is! Map || !entry.containsKey('minBuild')) continue;
+      final min = entry['minBuild'];
+      final build = entry['build'];
+      if (min is! int || build is! int || min < 1 || min > build) {
+        _fail(
+          'web/release.json: $key "minBuild" must be a whole number from 1 '
+          'up to its "build". A minimum above the newest build forces an '
+          'update that is not in the store.',
+        );
+      }
+    }
+    if (json.containsKey('maintenance')) {
+      final m = json['maintenance'];
+      bool text(Object? v) => v is String && v.trim().isNotEmpty;
+      final ok = text(m) || (m is Map && (text(m['en']) || text(m['pa'])));
+      if (!ok) {
+        _fail(
+          'web/release.json: "maintenance" must be a message, or an object '
+          'with "en" and "pa". Remove the key when there is nothing to say.',
+        );
+      }
+    }
   } on FormatException catch (e) {
     _fail('web/release.json is not valid JSON: ${e.message}');
   }

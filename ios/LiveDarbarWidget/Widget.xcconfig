@@ -1,0 +1,5 @@
+// The widget's version comes from pubspec.yaml, like the app's, through
+// Flutter's generated settings. App Store Connect rejects an extension whose
+// version differs from its app. Only Generated.xcconfig: the Pods settings in
+// Flutter/Release.xcconfig belong to Runner, and the widget links no pods.
+#include "../Flutter/Generated.xcconfig"

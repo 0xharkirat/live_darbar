@@ -11,10 +11,29 @@
         way to control playback once the app is in the background.
     -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!--
+        The daily Hukamnama reminder is a repeating alarm, and a reboot clears
+        alarms. This lets flutter_local_notifications hear that the phone has
+        started, and set the reminder again. It is not an exact-alarm
+        permission: the reminder is inexact on purpose, so it needs none.
+    -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <!--
+        enableOnBackInvokedCallback: the system asks the app first whether it
+        will handle back, and the app says yes while a sheet or a page is open.
+        Android 16 makes this so for every app that targets it, this one
+        included. Turning it on here gives Android 13 to 15 the same path, and
+        shows the phone's home screen under the app when back leaves it. Some
+        phones (Xiaomi, from a report on flutterpro.design) do not close a
+        sheet on back without it. The app has no WillPopScope, which the flag
+        breaks. test/widgets/android_back_test.dart holds both ways of sending
+        back.
+    -->
     <application
         android:label="Live Darbar"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
+        android:enableOnBackInvokedCallback="true"
         android:networkSecurityConfig="@xml/network_security_config">
         <activity
             android:name=".MainActivity"
@@ -60,6 +79,27 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+
+        <!--
+            The daily Hukamnama reminder, from flutter_local_notifications.
+            The first receiver shows the notification when its alarm fires.
+            The second sets the alarm again after a reboot and after the app
+            updates, because both clear it. Neither is exported: the system
+            reaches them through the PendingIntent and the boot broadcast.
+        -->
+        <receiver
+            android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationReceiver"
+            android:exported="false" />
+        <receiver
+            android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationBootReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+                <action android:name="com.htc.intent.action.QUICKBOOT_POWERON" />
+            </intent-filter>
+        </receiver>
 
         <!-- OACP background receiver (for future background actions) -->
         <receiver

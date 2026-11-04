@@ -1,11 +1,11 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:live_darbar/l10n/app_localizations.dart';
 import 'package:live_darbar/src/controllers/now_playing_controller.dart';
 import 'package:live_darbar/src/core/motion.dart';
 import 'package:live_darbar/src/core/palette.dart';
+import 'package:live_darbar/src/views/widgets/loading_ring.dart';
 import 'package:live_darbar/src/views/widgets/pressable.dart';
 
 /// How loud the button is.
@@ -41,6 +41,21 @@ class PlayButton extends ConsumerWidget {
   final double size;
   final PlayButtonLook look;
 
+  static Widget _fade(Widget child, Animation<double> animation) =>
+      FadeTransition(opacity: animation, child: child);
+
+  static Widget _swap(Widget child, Animation<double> animation) {
+    return FadeTransition(
+      opacity: animation,
+      child: ScaleTransition(
+        scale: Tween<double>(begin: Motion.enterScale, end: 1).animate(
+          animation,
+        ),
+        child: child,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final now = ref.watch(nowPlayingProvider);
@@ -60,17 +75,16 @@ class PlayButton extends ConsumerWidget {
         ),
     };
 
+    // The new glyph comes in from 95% with a fade, over [Motion.quick], and
+    // the old one leaves over [Motion.press]: the person has asked, so the
+    // old state goes at once and the new one settles in. Both ease out, which
+    // starts fast in each direction. Under Reduce Motion nothing moves.
     final glyph = AnimatedSwitcher(
       duration: Motion.quick,
+      reverseDuration: Motion.press,
       switchInCurve: Motion.easeOut,
-      switchOutCurve: Motion.easeOut,
-      transitionBuilder: (child, animation) => FadeTransition(
-        opacity: animation,
-        child: ScaleTransition(
-          scale: Tween(begin: 0.6, end: 1.0).animate(animation),
-          child: child,
-        ),
-      ),
+      switchOutCurve: Motion.easeOut.flipped,
+      transitionBuilder: Motion.reduced(context) ? _fade : _swap,
       child: Padding(
         key: ValueKey(icon),
         // The play triangle's visual centre sits left of its box.
@@ -108,13 +122,13 @@ class PlayButton extends ConsumerWidget {
               ),
             glyph,
             if (action == PlayAction.working)
-              SizedBox.square(
-                dimension: size - 4,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  strokeCap: StrokeCap.round,
-                  color: color,
-                ),
+              // Gold on the dark discs. On the gold disc it would vanish, so
+              // it takes the dark symbol colour there.
+              LoadingRing(
+                size: size - 4,
+                color: look == PlayButtonLook.gold
+                    ? Palette.onGold
+                    : Palette.gold,
               ),
           ],
         ),

@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:math' as math;
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -8,13 +11,17 @@ import 'package:live_darbar/src/controllers/connectivity_controller.dart';
 import 'package:live_darbar/src/controllers/hukamnama_controller.dart';
 import 'package:live_darbar/src/controllers/locale_controller.dart';
 import 'package:live_darbar/src/controllers/now_playing_controller.dart';
+import 'package:live_darbar/src/controllers/sgpc_events_controller.dart';
 import 'package:live_darbar/src/controllers/sikh_date_controller.dart';
 import 'package:live_darbar/src/controllers/update_controller.dart';
+import 'package:live_darbar/src/home_screen_widget/widget_data.dart';
 import 'package:live_darbar/src/core/app_type.dart';
 import 'package:live_darbar/src/core/clock.dart';
 import 'package:live_darbar/src/core/app_version.dart';
 import 'package:live_darbar/src/core/open_link.dart';
 import 'package:live_darbar/src/core/store_links.dart';
+import 'package:live_darbar/src/core/text_scale.dart';
+import 'package:live_darbar/src/core/motion.dart';
 import 'package:live_darbar/src/core/palette.dart';
 import 'package:live_darbar/src/core/reader_numbers.dart';
 import 'package:live_darbar/src/models/app_update.dart';
@@ -29,7 +36,10 @@ import 'package:live_darbar/src/views/widgets/live_badge.dart';
 import 'package:live_darbar/src/views/widgets/mini_player_widget.dart';
 import 'package:live_darbar/src/views/widgets/play_button.dart';
 import 'package:live_darbar/src/views/widgets/pressable.dart';
+import 'package:live_darbar/src/views/widgets/reminder_sheet.dart';
 import 'package:live_darbar/src/views/widgets/update_sheet.dart';
+import 'package:live_darbar/src/views/widgets/whats_new_sheet.dart';
+import 'package:live_darbar/src/views/widgets/widget_card.dart';
 
 /// Today at Darbar Sahib, on one screen.
 ///
@@ -64,12 +74,13 @@ class HomeScreen extends ConsumerWidget {
       body: Stack(
         children: [
           const _DailyRefresh(),
+          const _WhatsNewOnLaunch(),
           SingleChildScrollView(
             padding: EdgeInsets.fromLTRB(
               20,
               padding.top + 12,
               20,
-              padding.bottom + MiniPlayer.height + 40,
+              padding.bottom + MiniPlayer.heightOf(context) + 40,
             ),
             child: Center(
               child: ConstrainedBox(
@@ -78,6 +89,7 @@ class HomeScreen extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     const _DateAndLanguage(),
+                    const _TodayInHistory(),
                     const SizedBox(height: 6),
                     Text(l10n.app_title, style: AppType.largeTitle),
                     const SizedBox(height: 20),
@@ -97,6 +109,9 @@ class HomeScreen extends ConsumerWidget {
                     ),
                     const SizedBox(height: 16),
                     const _ReadCard(),
+                    // Empty until the listener has played the Hukamnama and
+                    // come back. It sits last, so the order above it stays.
+                    const WidgetCard(),
                     const SizedBox(height: 36),
                     const _Footer(),
                   ],
@@ -129,7 +144,7 @@ class HomeScreen extends ConsumerWidget {
             left: 0,
             right: 0,
             bottom: 0,
-            height: padding.bottom + MiniPlayer.height + 36,
+            height: padding.bottom + MiniPlayer.heightOf(context) + 36,
             child: const IgnorePointer(
               child: DecoratedBox(
                 decoration: BoxDecoration(
@@ -178,6 +193,8 @@ class _DailyRefreshState extends ConsumerState<_DailyRefresh> {
   );
 
   void _refresh() {
+    // The maintenance banner leaves when the work ends, without a restart.
+    ref.invalidate(releaseManifestProvider);
     ref.invalidate(sikhDateProvider);
     ref.read(hukamnamaProvider.notifier).refresh();
   }
@@ -198,6 +215,38 @@ class _DailyRefreshState extends ConsumerState<_DailyRefresh> {
   @override
   void dispose() {
     _listener.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => const SizedBox.shrink();
+}
+
+/// Shows what is new, once, after an update. It looks once, when Home first
+/// appears, and the rules for when to open are in [showWhatsNewOnFirstOpen].
+class _WhatsNewOnLaunch extends StatefulWidget {
+  const _WhatsNewOnLaunch();
+
+  @override
+  State<_WhatsNewOnLaunch> createState() => _WhatsNewOnLaunchState();
+}
+
+class _WhatsNewOnLaunchState extends State<_WhatsNewOnLaunch> {
+  final _cancel = CancelAsk();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        unawaited(showWhatsNewOnFirstOpen(context, cancel: _cancel));
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _cancel.cancel();
     super.dispose();
   }
 
@@ -233,31 +282,188 @@ class _DateAndLanguage extends ConsumerWidget {
 
     String caps(String s) => punjabi ? s : s.toUpperCase();
 
-    return Row(
-      children: [
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              if (sikhLine != null)
-                Text(
-                  caps(sikhLine),
-                  style: AppType.eyebrow,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // The switch grows with the listener's text size. Past half the row
+        // it would squeeze the dates to nothing, so it moves under them. The
+        // switch is the same width every day, so the layout does not change
+        // with the date: live kirtan below stays where it is.
+        final stacked =
+            LanguageSwitch.widthOf(context) > (constraints.maxWidth - 12) / 2;
+
+        final dates = Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (sikhLine != null)
               Text(
-                caps(date),
-                style: AppType.eyebrow.copyWith(color: Palette.muted),
+                caps(sikhLine),
+                style: AppType.eyebrow,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
+            Text(
+              caps(date),
+              style: AppType.eyebrow.copyWith(color: Palette.muted),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
+        );
+
+        if (stacked) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              dates,
+              const SizedBox(height: 12),
+              const LanguageSwitch(),
             ],
+          );
+        }
+        return Row(
+          children: [
+            Expanded(child: dates),
+            const SizedBox(width: 12),
+            const LanguageSwitch(),
+          ],
+        );
+      },
+    );
+  }
+}
+
+/// Today in Sikh history: 1 quiet line under the dates, and a way in.
+///
+/// On a day with events (a gurpurab, a shaheedi dihada or another day of Sikh
+/// history) it is led by "Today", then the first event in the app's language
+/// (English falls back to the Punjabi title), and "+N" when the day has N
+/// more. On a day with none it shows the next event to come, led by "Next" and
+/// its date: "Next · 8 Nov · Bandi Chhor Divas". With no event left in any
+/// loaded file it shows nothing.
+///
+/// The whole line opens the Sikh history screen, with the year.
+///
+/// The line is 1 row of a fixed height in both states: room for 2 lines of
+/// text, which is more than all but the longest titles need. The title is cut
+/// after 2 lines, and the screen has it whole. So live kirtan below it does
+/// not move from one day to the next.
+///
+/// It is quiet text with a thin gold rule, not a card, so the hierarchy below
+/// it does not change: live kirtan, the Hukamnama, then reading it. The line
+/// is always here and has no setting. The setting in About is only for the
+/// notification, which is for days with an event.
+class _TodayInHistory extends ConsumerWidget {
+  const _TodayInHistory();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+    final punjabi = ref.watch(localeController) == 'pa';
+    final history = ref.watch(homeHistoryProvider).value;
+
+    return AnimatedSize(
+      // The events arrive a moment after the first frame. Reduce Motion:
+      // Flutter runs this at 5% of its length.
+      duration: Motion.quick,
+      curve: Motion.easeOut,
+      alignment: Alignment.topCenter,
+      child: history == null
+          ? const SizedBox(width: double.infinity)
+          : _historyLine(context, l10n, history, punjabi: punjabi),
+    );
+  }
+
+  Widget _historyLine(
+    BuildContext context,
+    AppLocalizations l10n,
+    HomeHistory history, {
+    required bool punjabi,
+  }) {
+    final title = history.events.first.title(punjabi: punjabi);
+    final more = history.events.length - 1;
+    final language = punjabi ? 'pa' : 'en';
+
+    // "TODAY", or "NEXT · 8 NOV". English capitals, Gurmukhi as it is.
+    final lead = history.isToday
+        ? l10n.history_today
+        : '${l10n.history_next} · '
+            '${widgetDate(history.day, language: language)}';
+    final label = punjabi ? lead : lead.toUpperCase();
+
+    final spoken = [
+      history.isToday
+          ? '${l10n.history_title}: $title'
+          : l10n.history_next_semantics(
+              readerDate(history.day, punjabi: punjabi),
+              title,
+            ),
+      if (more > 0) l10n.history_and_more(more),
+    ].join(', ');
+
+    // 2 lines of the line's own type, so the row is the same height whatever
+    // the day. It grows with the listener's text size.
+    final type = AppType.callout;
+    final twoLines = MediaQuery.textScalerOf(context)
+        .scale(type.fontSize! * type.height!) *
+        2;
+
+    return Padding(
+      padding: const EdgeInsets.only(top: 6, bottom: 4),
+      child: Pressable(
+        scale: 0.99,
+        semanticLabel: spoken,
+        onTap: () => Navigator.of(context).pushNamed(AppRoutes.history),
+        child: ExcludeSemantics(
+          child: Container(
+            // A target of 44 points or more, though the line is small.
+            constraints: BoxConstraints(minHeight: math.max(44, twoLines + 12)),
+            padding: const EdgeInsets.only(left: 10),
+            decoration: BoxDecoration(
+              border: Border(
+                left: BorderSide(
+                  color: Palette.gold.withValues(alpha: 0.5),
+                  width: 2,
+                ),
+              ),
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 6),
+                    child: Text.rich(
+                      TextSpan(
+                        children: [
+                          TextSpan(text: label, style: AppType.eyebrow),
+                          const TextSpan(text: '  '),
+                          TextSpan(text: title),
+                        ],
+                      ),
+                      style: type,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ),
+                if (more > 0) ...[
+                  const SizedBox(width: 10),
+                  Text(
+                    '+${readerNumber(more, punjabi: punjabi)}',
+                    style: type.copyWith(color: Palette.gold),
+                  ),
+                ],
+                const SizedBox(width: 6),
+                const Icon(
+                  CupertinoIcons.chevron_right,
+                  size: 15,
+                  color: Palette.faint,
+                ),
+                const SizedBox(width: 2),
+              ],
+            ),
           ),
         ),
-        const SizedBox(width: 12),
-        const LanguageSwitch(),
-      ],
+      ),
     );
   }
 }
@@ -320,13 +526,13 @@ class _LiveHero extends ConsumerWidget {
                 Positioned(
                   top: 16,
                   left: 16,
-                  child: LiveBadge(playing: playing, onImage: true),
+                  child: _Painted(child: LiveBadge(playing: playing, onImage: true)),
                 ),
                 Positioned(
                   left: 20,
                   right: 16,
                   bottom: 18,
-                  child: Row(
+                  child: _Painted(child: Row(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Expanded(
@@ -350,7 +556,7 @@ class _LiveHero extends ConsumerWidget {
                       const SizedBox(width: 12),
                       const PlayButton(index: kLiveIndex, size: 64),
                     ],
-                  ),
+                  )),
                 ),
               ],
             ),
@@ -359,6 +565,20 @@ class _LiveHero extends ConsumerWidget {
       ),
     );
   }
+}
+
+/// Words drawn on a painting, held at [kPaintingTextScale]. The card keeps its
+/// shape, so at 2x the title would climb over the LIVE badge.
+class _Painted extends StatelessWidget {
+  const _Painted({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) => MediaQuery.withClampedTextScaling(
+        maxScaleFactor: kPaintingTextScale,
+        child: child,
+      );
 }
 
 /// A painting with a caption under it: the Hukamnama and its Katha.

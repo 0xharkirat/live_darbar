@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:live_darbar/src/core/display_text.dart';
 import 'package:live_darbar/src/core/store_links.dart';
 
 // The update button always opens the fixed store page for the platform,
@@ -13,6 +14,7 @@ class AppUpdate {
     required this.storeUrl,
     required this.notesEn,
     required this.notesPa,
+    this.forced = false,
   });
 
   /// Human-readable, like "2.1.0". Shown to the user.
@@ -26,6 +28,18 @@ class AppUpdate {
   final String storeUrl;
   final List<String> notesEn;
   final List<String> notesPa;
+
+  /// The installed build is below the least build the manifest accepts
+  /// (`minBuild`). The sheet cannot be dismissed and offers only the store,
+  /// and a listener who declined this release before is asked again at each
+  /// launch.
+  final bool forced;
+
+  /// Whether to offer this release, given the newest build the listener has
+  /// declined. A forced update is not a courtesy, so a decline does not hide
+  /// it.
+  bool isOffered({required int dismissedBuild}) =>
+      forced || build > dismissedBuild;
 
   List<String> notesFor(String localeCode) =>
       localeCode == 'pa' && notesPa.isNotEmpty ? notesPa : notesEn;
@@ -61,6 +75,16 @@ class AppUpdate {
     if (build is! int || version is! String) return null;
     if (build <= currentBuild) return null;
 
+    // `minBuild` is optional. Missing, or anything but a whole number from 1
+    // to the newest build, means no minimum. A minimum above the newest build
+    // would force an update that is not in the store, and lock every listener
+    // out, so it is ignored.
+    final minBuild = entry['minBuild'];
+    final forced = minBuild is int &&
+        minBuild > 0 &&
+        minBuild <= build &&
+        currentBuild < minBuild;
+
     final notes = json['notes'];
     return AppUpdate(
       version: version,
@@ -68,6 +92,7 @@ class AppUpdate {
       storeUrl: _storeUrlFor(key),
       notesEn: _notes(notes, 'en'),
       notesPa: _notes(notes, 'pa'),
+      forced: forced,
     );
   }
 
@@ -78,7 +103,10 @@ class AppUpdate {
     if (notes is! Map) return const [];
     final list = notes[code];
     if (list is! List) return const [];
-    return list.whereType<String>().toList();
+    return [
+      for (final note in list)
+        if (displayText(note) case final text?) text,
+    ];
   }
 
   /// Null on platforms with no store to send anyone to.

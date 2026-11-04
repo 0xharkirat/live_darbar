@@ -1,5 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:live_darbar/l10n/app_localizations.dart';
 import 'package:live_darbar/src/controllers/audio_controller.dart';
@@ -11,6 +10,7 @@ import 'package:live_darbar/src/core/palette.dart';
 import 'package:live_darbar/src/models/live_playback_state.dart';
 import 'package:live_darbar/src/models/quality_policy.dart';
 import 'package:live_darbar/src/models/stream_quality.dart';
+import 'package:live_darbar/src/views/widgets/loading_ring.dart';
 
 /// One calm line about the connection, or nothing when all is well.
 ///
@@ -20,10 +20,14 @@ import 'package:live_darbar/src/models/stream_quality.dart';
 /// the app chose it. The offline case belongs to the banner at
 /// the top of the screen, so this says nothing while offline.
 class LiveStatusLine extends ConsumerWidget {
-  const LiveStatusLine({super.key, this.compact = false});
+  const LiveStatusLine({super.key, this.compact = false, this.gap = 0});
 
   /// One short line for the mini player, with no action link.
   final bool compact;
+
+  /// Space under the line, only while there is a line. With nothing to say
+  /// the line takes no room, and neither does its gap.
+  final double gap;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -43,10 +47,10 @@ class LiveStatusLine extends ConsumerWidget {
       switchInCurve: Motion.easeOut,
       child: status == null
           ? const SizedBox.shrink(key: ValueKey('none'))
-          : _Line(
+          : Padding(
               key: ValueKey(status.label),
-              status: status,
-              compact: compact,
+              padding: EdgeInsets.only(bottom: gap),
+              child: _Line(status: status, compact: compact),
             ),
     );
   }
@@ -122,7 +126,7 @@ class _Status {
 }
 
 class _Line extends StatelessWidget {
-  const _Line({super.key, required this.status, required this.compact});
+  const _Line({required this.status, required this.compact});
 
   final _Status status;
   final bool compact;
@@ -134,13 +138,8 @@ class _Line extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         if (status.spinner)
-          SizedBox.square(
-            dimension: 12,
-            child: CircularProgressIndicator(
-              strokeWidth: 1.5,
-              color: status.color,
-            ),
-          )
+          // The words beside it say what is happening.
+          LoadingRing(size: 12, color: status.color, announce: false)
         else if (status.icon != null)
           Icon(status.icon, size: 14, color: status.color),
         const SizedBox(width: 6),

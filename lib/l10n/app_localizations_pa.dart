@@ -314,4 +314,193 @@ class AppLocalizationsPa extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get reminder_setting => 'ਰੋਜ਼ਾਨਾ ਹੁਕਮਨਾਮਾ ਰਿਮਾਈਂਡਰ';
+
+  @override
+  String get reminder_time => 'ਰਿਮਾਈਂਡਰ ਦਾ ਸਮਾਂ';
+
+  @override
+  String reminder_time_amritsar(String amritsar, String here) {
+    return 'ਅੰਮ੍ਰਿਤਸਰ ਵਿੱਚ $amritsar, ਇੱਥੇ $here';
+  }
+
+  @override
+  String reminder_time_amritsar_only(String amritsar) {
+    return 'ਅੰਮ੍ਰਿਤਸਰ ਵਿੱਚ $amritsar';
+  }
+
+  @override
+  String reminder_time_note(String when) {
+    return 'ਹੁਣ: $when। ਤੁਹਾਡਾ ਚੁਣਿਆ ਸਮਾਂ ਤੁਹਾਡੀ ਆਪਣੀ ਘੜੀ ਦਾ ਹੋਵੇਗਾ।';
+  }
+
+  @override
+  String get reminder_use_amritsar => 'ਅੰਮ੍ਰਿਤਸਰ ਦਾ ਸਮਾਂ ਵਰਤੋ';
+
+  @override
+  String get reminder_on => 'ਚਾਲੂ';
+
+  @override
+  String get reminder_off => 'ਬੰਦ';
+
+  @override
+  String get reminder_done => 'ਹੋ ਗਿਆ';
+
+  @override
+  String get reminder_blocked_hint => 'ਲਾਈਵ ਦਰਬਾਰ ਲਈ ਸੂਚਨਾਵਾਂ ਬੰਦ ਹਨ। ਇਹਨਾਂ ਨੂੰ ਫ਼ੋਨ ਦੀਆਂ ਸੈਟਿੰਗਾਂ ਵਿੱਚ ਚਾਲੂ ਕਰੋ।';
+
+  @override
+  String get reminder_failed_hint => 'ਰਿਮਾਈਂਡਰ ਚਾਲੂ ਨਹੀਂ ਹੋਇਆ। ਮੁੜ ਕੋਸ਼ਿਸ਼ ਕਰੋ।';
+
+  @override
+  String get reminder_prompt_title => 'ਰੋਜ਼ਾਨਾ ਹੁਕਮਨਾਮਾ ਰਿਮਾਈਂਡਰ';
+
+  @override
+  String reminder_prompt_body(String time) {
+    return 'ਹੁਕਮਨਾਮਾ ਹਰ ਰੋਜ਼ ਪੜ੍ਹਨ ਲਈ ਰਿਮਾਈਂਡਰ ਮਿਲੇਗਾ। ਸਮਾਂ: $time। ਇਸ ਨੂੰ ਕਦੇ ਵੀ ਘੰਟੀ ਨਾਲ ਬਦਲ ਸਕਦੇ ਹੋ।';
+  }
+
+  @override
+  String get reminder_prompt_yes => 'ਮੈਨੂੰ ਯਾਦ ਕਰਾਓ';
+
+  @override
+  String get reminder_prompt_no => 'ਹੁਣ ਨਹੀਂ';
+
+  @override
+  String reminder_on_body(String time) {
+    return 'ਰਿਮਾਈਂਡਰ ਚਾਲੂ ਹੈ। ਇਹ ਹਰ ਰੋਜ਼ ਆਉਂਦਾ ਹੈ। ਸਮਾਂ: $time।';
+  }
+
+  @override
+  String get reminder_change_time => 'ਸਮਾਂ ਬਦਲੋ';
+
+  @override
+  String get reminder_turn_off => 'ਬੰਦ ਕਰੋ';
+
+  @override
+  String get reminder_notification_title => 'ਅੱਜ ਦਾ ਹੁਕਮਨਾਮਾ';
+
+  @override
+  String get reminder_notification_body => 'ਸ੍ਰੀ ਦਰਬਾਰ ਸਾਹਿਬ ਤੋਂ ਹੁਕਮਨਾਮਾ ਪੜ੍ਹੋ।';
+
+  @override
+  String get reminder_channel_name => 'ਰੋਜ਼ਾਨਾ ਹੁਕਮਨਾਮਾ';
+
+  @override
+  String get reminder_channel_description => 'ਹੁਕਮਨਾਮਾ ਪੜ੍ਹਨ ਲਈ ਹਰ ਰੋਜ਼ ਇੱਕ ਰਿਮਾਈਂਡਰ।';
+
+  @override
+  String get history_title => 'ਸਿੱਖ ਇਤਿਹਾਸ ਵਿੱਚ ਅੱਜ';
+
+  @override
+  String get history_screen_title => 'ਸਿੱਖ ਇਤਿਹਾਸ';
+
+  @override
+  String get history_setting => 'ਸਿੱਖ ਇਤਿਹਾਸ ਵਿੱਚ ਅੱਜ ਦੀ ਸੂਚਨਾ';
+
+  @override
+  String get history_setting_detail => 'ਘਟਨਾ ਵਾਲੇ ਦਿਨ, ਰਿਮਾਈਂਡਰ ਦੇ ਸਮੇਂ ਸੂਚਨਾ ਮਿਲੇਗੀ।';
+
+  @override
+  String get history_failed_hint => 'ਸਿੱਖ ਇਤਿਹਾਸ ਵਿੱਚ ਅੱਜ ਚਾਲੂ ਨਹੀਂ ਹੋਇਆ। ਮੁੜ ਕੋਸ਼ਿਸ਼ ਕਰੋ।';
+
+  @override
+  String history_screen_intro(String year) {
+    return 'ਨਾਨਕਸ਼ਾਹੀ $year, SGPC ਦੇ ਕੈਲੰਡਰ ਤੋਂ।';
+  }
+
+  @override
+  String get history_today => 'ਅੱਜ';
+
+  @override
+  String get history_next => 'ਅਗਲਾ';
+
+  @override
+  String history_next_semantics(String date, String title) {
+    return 'ਸਿੱਖ ਇਤਿਹਾਸ ਵਿੱਚ ਅਗਲਾ, $date: $title';
+  }
+
+  @override
+  String get history_empty => 'ਇਸ ਸਾਲ ਲਈ ਸਿੱਖ ਇਤਿਹਾਸ ਦਾ ਕੋਈ ਦਿਨ ਸੂਚੀਬੱਧ ਨਹੀਂ ਹੈ।';
+
+  @override
+  String history_and_more(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'ਅਤੇ $count ਹੋਰ',
+      one: 'ਅਤੇ 1 ਹੋਰ',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get history_channel_description => 'ਸਿੱਖ ਇਤਿਹਾਸ ਦੀ ਕਿਸੇ ਘਟਨਾ ਵਾਲੇ ਦਿਨ ਇੱਕ ਸ਼ਾਂਤ ਸੂਚਨਾ।';
+
+  @override
+  String get widget_card_title => 'ਅੱਜ ਦਾ ਹੁਕਮਨਾਮਾ ਤੁਹਾਡੀ ਹੋਮ ਸਕ੍ਰੀਨ ਉੱਤੇ';
+
+  @override
+  String get widget_card_add => 'ਵਿਜੇਟ ਜੋੜੋ';
+
+  @override
+  String get widget_card_dismiss => 'ਹੁਣ ਨਹੀਂ';
+
+  @override
+  String get widget_setting_title => 'ਹੋਮ ਸਕ੍ਰੀਨ ਵਿਜੇਟ';
+
+  @override
+  String get widget_setting_detail => 'ਐਪ ਖੋਲ੍ਹੇ ਬਿਨਾਂ ਚਲਾਓ।';
+
+  @override
+  String get widget_setting_add => 'ਜੋੜੋ';
+
+  @override
+  String get widget_setting_added => 'ਜੋੜਿਆ ਗਿਆ';
+
+  @override
+  String get widget_steps_title => 'ਵਿਜੇਟ ਜੋੜੋ';
+
+  @override
+  String get widget_steps_press_hold => 'ਹੋਮ ਸਕ੍ਰੀਨ ਦੀ ਖਾਲੀ ਥਾਂ ਨੂੰ ਦਬਾ ਕੇ ਰੱਖੋ।';
+
+  @override
+  String get widget_steps_iphone_add => 'Edit ਉੱਤੇ ਟੈਪ ਕਰੋ, ਫਿਰ Add Widget ਉੱਤੇ।';
+
+  @override
+  String get widget_steps_iphone_find => 'Live Darbar ਲੱਭੋ, ਫਿਰ ਦਰਮਿਆਨਾ ਆਕਾਰ ਜੋੜੋ।';
+
+  @override
+  String get widget_steps_android_widgets => 'ਵਿਜੇਟ ਉੱਤੇ ਟੈਪ ਕਰੋ।';
+
+  @override
+  String get widget_steps_android_find => 'ਲਾਈਵ ਦਰਬਾਰ ਲੱਭੋ, ਫਿਰ ਇਸ ਦੇ ਵਿਜੇਟ ਨੂੰ ਖਿੱਚ ਕੇ ਹੋਮ ਸਕ੍ਰੀਨ ਉੱਤੇ ਰੱਖੋ।';
+
+  @override
+  String get widget_steps_done => 'ਹੋ ਗਿਆ';
+
+  @override
+  String get launch_failed_title => 'ਲਾਈਵ ਦਰਬਾਰ ਚਾਲੂ ਨਹੀਂ ਹੋਇਆ।';
+
+  @override
+  String get launch_failed_body => 'ਮੁੜ ਕੋਸ਼ਿਸ਼ ਕਰੋ ਦਬਾਓ। ਜੇ ਫਿਰ ਵੀ ਨਾ ਚੱਲੇ, ਤਾਂ ਐਪ ਬੰਦ ਕਰਕੇ ਮੁੜ ਖੋਲ੍ਹੋ।';
+
+  @override
+  String get error_view_title => 'ਇਹ ਹਿੱਸਾ ਲੋਡ ਨਹੀਂ ਹੋ ਸਕਿਆ';
+
+  @override
+  String whats_new_title(String version) {
+    return '$version ਵਿੱਚ ਕੀ ਨਵਾਂ ਹੈ';
+  }
+
+  @override
+  String get whats_new_done => 'ਠੀਕ ਹੈ';
+
+  @override
+  String get update_required_title => 'ਕਿਰਪਾ ਕਰਕੇ ਅੱਪਡੇਟ ਕਰੋ';
+
+  @override
+  String get update_required_body => 'ਇਹ ਵਰਜਨ ਬਹੁਤ ਪੁਰਾਣਾ ਹੈ ਅਤੇ ਠੀਕ ਨਹੀਂ ਚੱਲਦਾ। ਅੱਗੇ ਵਧਣ ਲਈ ਇਸਨੂੰ ਸਟੋਰ ਤੋਂ ਅੱਪਡੇਟ ਕਰੋ।';
 }

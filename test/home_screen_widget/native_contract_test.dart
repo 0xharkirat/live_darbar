@@ -4,7 +4,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:live_darbar/src/home_screen_widget/widget_actions.dart';
 import 'package:live_darbar/src/home_screen_widget/widget_background.dart';
 import 'package:live_darbar/src/home_screen_widget/widget_data.dart';
+import 'package:live_darbar/src/home_screen_widget/widget_links.dart';
 import 'package:live_darbar/src/home_screen_widget/widget_playback.dart';
+import 'package:live_darbar/src/home_screen_widget/widget_remote.dart';
 import 'package:live_darbar/src/media_session/media_catalog.dart';
 import 'package:live_darbar/src/models/source_index.dart';
 
@@ -176,7 +178,8 @@ void main() {
           contains('$name("com.hsi.harki.live_darbar.widget.$name")'),
         );
       }
-      expect(playback, contains('values().firstOrNull { it.action == action }'));
+      expect(
+          playback, contains('values().firstOrNull { it.action == action }'));
     });
 
     test('the widget sends them as immutable broadcasts to the receiver', () {
@@ -200,7 +203,8 @@ void main() {
 
     test('it sends the ids that Android Auto plays from', () {
       // playFromMediaId with the media session's own ids, as the car does.
-      expect(receiver, contains('controls.playFromMediaId(Source.LIVE.mediaId'));
+      expect(
+          receiver, contains('controls.playFromMediaId(Source.LIVE.mediaId'));
       expect(
         receiver,
         contains('controls.playFromMediaId(Source.HUKAMNAMA.mediaId'),
@@ -228,10 +232,12 @@ void main() {
 
     test('Kotlin and Dart say the playback in the same words', () {
       for (final state in WidgetPlayState.values) {
-        expect(playback, contains('${state.name.toUpperCase()}("${state.name}")'));
+        expect(
+            playback, contains('${state.name.toUpperCase()}("${state.name}")'));
       }
       for (final source in WidgetSource.values) {
-        expect(playback, contains('${source.name.toUpperCase()}("${source.name}"'));
+        expect(playback,
+            contains('${source.name.toUpperCase()}("${source.name}"'));
       }
       // The keys of the stored JSON.
       final store = read('$_kotlin/widget/WidgetStore.kt');
@@ -311,10 +317,12 @@ void main() {
     });
 
     test('the manifest needs no permission for it', () {
-      // WorkManager brings its own. No alarm or boot permission is added.
+      // WorkManager brings its own. The refresh adds no alarm permission.
+      // RECEIVE_BOOT_COMPLETED is in the manifest for the daily reminder
+      // (flutter_local_notifications sets it again after a reboot), not for
+      // the widget, so only the exact-alarm permission is checked here.
       final manifest = read(_manifest);
       expect(manifest, isNot(contains('SCHEDULE_EXACT_ALARM')));
-      expect(manifest, isNot(contains('RECEIVE_BOOT_COMPLETED')));
     });
 
     test('the Dart arguments are the language and the support directory', () {
@@ -346,8 +354,12 @@ void main() {
 
     test('both buttons are 48 dp targets, with a ripple', () {
       // Each is a 40 dp capsule inside a 48 dp target.
-      for (final name in ['widget_pill', 'widget_pill_ripple',
-          'widget_button_gold', 'widget_button_gold_loading']) {
+      for (final name in [
+        'widget_pill',
+        'widget_pill_ripple',
+        'widget_button_gold',
+        'widget_button_gold_loading'
+      ]) {
         expect(read('$_res/drawable/$name.xml'), contains('insetTop="4dp"'),
             reason: name);
       }
@@ -371,7 +383,8 @@ void main() {
       expect(File('$_res/layout/widget_compact.xml').existsSync(), isFalse);
       expect(medium, contains('@+id/widget_line"'));
       expect(medium, contains('@+id/widget_hukamnama_button"'));
-      expect(openingTag(medium, 'widget_live_button'), contains('layout_weight="1"'));
+      expect(openingTag(medium, 'widget_live_button'),
+          contains('layout_weight="1"'));
       // The old controls are gone: no Listen word, no live mark.
       expect(medium, isNot(contains('widget_listen')));
       expect(medium, isNot(contains('widget_mark')));
@@ -397,14 +410,16 @@ void main() {
 
     test('each button has a content description, filled in by state', () {
       final renderer = read('$_kotlin/widget/WidgetRenderer.kt');
-      expect(renderer, contains('views.setContentDescription(button, description)'));
+      expect(renderer,
+          contains('views.setContentDescription(button, description)'));
       expect(renderer, contains('button = R.id.widget_live_button'));
       expect(renderer, contains('button = R.id.widget_hukamnama_button'));
     });
 
     test('a resize needs no redraw, because there is one layout', () {
       final renderer = read('$_kotlin/widget/WidgetRenderer.kt');
-      expect(renderer, contains('RemoteViews(context.packageName, R.layout.widget_medium)'));
+      expect(renderer,
+          contains('RemoteViews(context.packageName, R.layout.widget_medium)'));
       expect(renderer, isNot(contains('widget_compact')));
       expect(
         read('$_kotlin/widget/LiveDarbarWidgetProvider.kt'),
@@ -425,7 +440,8 @@ void main() {
     };
 
     test('no text is under 11 sp, and Gurbani never shrinks under 12 sp', () {
-      final size = RegExp(r'android:(?:textSize|autoSizeMinTextSize)="(\d+)sp"');
+      final size =
+          RegExp(r'android:(?:textSize|autoSizeMinTextSize)="(\d+)sp"');
       for (final MapEntry(:key, :value) in layouts.entries) {
         for (final m in size.allMatches(value)) {
           expect(int.parse(m.group(1)!), greaterThanOrEqualTo(11), reason: key);
@@ -538,6 +554,156 @@ void main() {
           reason: path,
         );
       }
+    });
+  });
+
+  group('the iPhone widget', () {
+    const swift = 'ios/LiveDarbarWidget';
+    final store = read('$swift/WidgetStore.swift');
+    final view = read('$swift/LiveDarbarWidgetView.swift');
+    final widget = read('$swift/LiveDarbarWidget.swift');
+    final delegate = read('ios/Runner/AppDelegate.swift');
+
+    test('Swift reads exactly the keys that Dart writes', () {
+      final swiftKeys = {
+        for (final m
+            in RegExp(r'static let \w+ = "(ld_\w+)"').allMatches(store))
+          m.group(1)!,
+      };
+      expect(swiftKeys, {
+        WidgetKeys.language,
+        WidgetKeys.title,
+        WidgetKeys.dates,
+        WidgetKeys.line,
+        WidgetKeys.hukamnamaMeta,
+        WidgetKeys.openLabel,
+        WidgetKeys.labels,
+        WidgetKeys.playback,
+      });
+      expect(store, contains('separator = " · "'));
+    });
+
+    test('the app and the widget name the same App Group', () {
+      expect(store, contains('appGroup = "$kIosAppGroupId"'));
+      expect(delegate, contains('suiteName: "$kIosAppGroupId"'));
+      for (final entitlements in [
+        'ios/Runner/Runner.entitlements',
+        '$swift/LiveDarbarWidget.entitlements',
+      ]) {
+        expect(read(entitlements), contains('<string>$kIosAppGroupId</string>'),
+            reason: entitlements);
+      }
+    });
+
+    test('the app reloads the widget by its kind', () {
+      expect(widget, contains('kind = "$kIosWidgetKind"'));
+      expect(delegate, contains('ofKind: "$kIosWidgetKind"'));
+    });
+
+    test('each link the widget opens is one the app reads', () {
+      final parts = [
+        for (final m in RegExp(r'link\("(\w+)"\)').allMatches(view))
+          m.group(1)!,
+      ];
+      expect(parts, ['live', 'hukamnama', 'open']);
+      final template =
+          RegExp(r'URL\(string: "([^"]+)"\)').firstMatch(view)!.group(1)!;
+      expect(
+        [
+          for (final part in parts)
+            widgetLinkFrom(Uri.parse(template.replaceAll(r'\(part)', part))),
+        ],
+        [WidgetLink.live, WidgetLink.hukamnama, WidgetLink.open],
+      );
+      expect(template, contains('homeWidget'));
+      expect(
+        read('ios/Runner/Info.plist'),
+        contains('<string>$kWidgetLinkScheme</string>'),
+      );
+    });
+
+    test('Swift reads the playback states by the names Dart writes', () {
+      for (final state in [WidgetPlayState.loading, WidgetPlayState.playing]) {
+        expect(store, contains('"${state.name}"'));
+      }
+      for (final source in [WidgetSource.live, WidgetSource.hukamnama]) {
+        expect(store, contains('source == "${source.name}"'));
+      }
+      expect(delegate, contains(r'\"state\":\"idle\"'));
+    });
+  });
+
+  group('the iPhone widget\'s play buttons', () {
+    final intents = read('ios/Runner/WidgetPlayIntents.swift');
+    final host = read('ios/Runner/WidgetPlayHost.swift');
+    final project = read('ios/Runner.xcodeproj/project.pbxproj');
+
+    test('the intent and Dart share the channel, the group and the store', () {
+      expect(host, contains('channelName = "$kWidgetControlChannel"'));
+      expect(intents, contains('appGroup = "$kIosAppGroupId"'));
+      expect(intents, contains('widgetKind = "$kIosWidgetKind"'));
+      expect(intents, contains('playbackKey = "${WidgetKeys.playback}"'));
+    });
+
+    test('the intent names the sources that Dart names', () {
+      final cases = {
+        for (final m in RegExp(r'case (\w+)\n').allMatches(
+          RegExp(r'enum WidgetPlaySource[^{]*\{([^}]*)\}')
+              .firstMatch(intents)!
+              .group(1)!,
+        ))
+          m.group(1)!,
+      };
+      expect(cases, {WidgetSource.live.name, WidgetSource.hukamnama.name});
+      // The tap writes the same shape that encodeWidgetPlayback writes.
+      expect(intents, contains(r'\"state\":\"loading\"'));
+      expect(intents, contains(r'\"by\":\"widget\"'));
+    });
+
+    test('each button is an audio intent that does not open the app', () {
+      expect(
+        RegExp(r': AudioPlaybackIntent').allMatches(intents).length,
+        2,
+      );
+      expect(
+        RegExp(r'openAppWhenRun: Bool = false').allMatches(intents).length,
+        2,
+      );
+    });
+
+    test('the intents are in the app and in the widget, the host in the app',
+        () {
+      // A file that is a member of a target has a build file for it.
+      int members(String file) =>
+          RegExp('$file in Sources \\*/ = \\{isa = PBXBuildFile')
+              .allMatches(project)
+              .length;
+      expect(members('WidgetPlayIntents.swift'), 2);
+      expect(members('WidgetPlayHost.swift'), 1);
+      expect(members('SceneDelegate.swift'), 1);
+      // Only the app has Flutter, and the flag keeps it out of the widget's copy.
+      expect(
+        RegExp(r'SWIFT_ACTIVE_COMPILATION_CONDITIONS = "\$\(inherited\) LIVE_DARBAR_APP"')
+            .allMatches(project)
+            .length,
+        3,
+        reason: 'Debug, Release and Profile of Runner, and no other target',
+      );
+      expect(intents, contains('#if LIVE_DARBAR_APP'));
+      expect(read('ios/LiveDarbarWidget/LiveDarbarWidgetView.swift'),
+          contains('Toggle(isOn: isOn, intent:'));
+    });
+
+    test('one engine: the scene shows the app delegate\'s, not a storyboard\'s',
+        () {
+      final plist = read('ios/Runner/Info.plist');
+      expect(plist, contains('<string>SceneDelegate</string>'));
+      expect(plist, isNot(contains('UISceneStoryboardFile')));
+      expect(plist, isNot(contains('UIMainStoryboardFile')));
+      expect(read('ios/Runner/SceneDelegate.swift'),
+          contains('FlutterViewController('));
+      expect(read('ios/Runner/AppDelegate.swift'),
+          contains('GeneratedPluginRegistrant.register(with: engine)'));
     });
   });
 }

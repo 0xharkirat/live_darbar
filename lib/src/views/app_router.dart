@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:live_darbar/src/views/screens/about_screen.dart';
+import 'package:live_darbar/src/views/screens/history_screen.dart';
 import 'package:live_darbar/src/views/screens/hukamnama_screen.dart';
 import 'package:live_darbar/src/views/widgets/fade_page_route.dart';
 
@@ -26,6 +27,7 @@ abstract final class AppRoutes {
   static const home = '/';
   static const hukamnama = '/hukamnama';
   static const about = '/about';
+  static const history = '/history';
 
   /// Builds the route for a pushed page, or null for a name it does not know.
   ///
@@ -37,6 +39,7 @@ abstract final class AppRoutes {
       final WidgetBuilder? builder = switch (settings.name) {
         hukamnama => (_) => const HukamnamaScreen(),
         about => (_) => const AboutScreen(),
+        history => (_) => const HistoryScreen(),
         _ => null,
       };
       if (builder == null) return null;

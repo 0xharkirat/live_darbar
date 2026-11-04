@@ -10,6 +10,7 @@ import 'package:live_darbar/src/core/palette.dart';
 import 'package:live_darbar/src/models/quality_policy.dart';
 import 'package:live_darbar/src/views/widgets/app_sheet.dart';
 import 'package:live_darbar/src/views/widgets/pressable.dart';
+import 'package:live_darbar/src/views/widgets/sheet_parts.dart';
 
 /// The smallest tap target: 48 points, Android's minimum. Apple's is 44, and
 /// the app ships on Android first, so the larger one wins.
@@ -228,11 +229,16 @@ class _QualitySheet extends ConsumerWidget {
       ),
       child: SafeArea(
         top: false,
+        // Not at the bottom: the space for the navigation bar is inside the
+        // scroll view (see [sheetPadding]), so a line slides under the bar.
+        bottom: false,
         // Scrolls when it does not fit: on a 360 x 640 phone, common among
         // low-cost Android phones, this sheet is taller than the screen.
         child: SingleChildScrollView(
+          // Hands a swipe down at the top of the list to the sheet.
+          controller: appSheetScrollController(context),
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(20, 10, 20, 16),
+            padding: sheetPadding(context, horizontal: 20),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,

@@ -640,6 +640,336 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{state, select, loading{Hukamnama, starting. Double tap to cancel.} playing{Hukamnama, playing. Double tap to pause.} paused{Hukamnama, paused. Double tap to resume.} other{Play today’s Hukamnama}}'**
   String widget_hukamnama_control(String state);
+
+  /// Label of the About switch that turns the daily Hukamnama reminder on or off, and what a screen reader says for the bell in the top bar of the Hukamnama screen, which opens the reminder's sheet
+  ///
+  /// In en, this message translates to:
+  /// **'Daily Hukamnama reminder'**
+  String get reminder_setting;
+
+  /// Label of the row that shows the time of the daily reminder, and the title of the sheet where the listener picks that time
+  ///
+  /// In en, this message translates to:
+  /// **'Reminder time'**
+  String get reminder_time;
+
+  /// The time of the reminder when it follows Amritsar: its time at Sri Harmandir Sahib, then the same moment on the listener’s own clock. Both times are already written for the listener, for example 7:00 AM in Amritsar, 12:30 PM here
+  ///
+  /// In en, this message translates to:
+  /// **'{amritsar} in Amritsar, {here} here'**
+  String reminder_time_amritsar(String amritsar, String here);
+
+  /// The time of the reminder when it follows Amritsar and the listener’s own clock shows the same time, for example in India. The time is already written for the listener, for example 7:00 AM
+  ///
+  /// In en, this message translates to:
+  /// **'{amritsar} in Amritsar'**
+  String reminder_time_amritsar_only(String amritsar);
+
+  /// Line under the title of the sheet where the listener picks the reminder time, while the reminder follows Amritsar. It says what the time is now, and that a time the listener picks uses their own clock. The time is already written for the listener, for example 7:00 AM in Amritsar, 12:30 PM here
+  ///
+  /// In en, this message translates to:
+  /// **'Now: {when}. A time you pick is on your own clock.'**
+  String reminder_time_note(String when);
+
+  /// Quiet button on the sheet where the listener picks the reminder time, shown when the time is on the listener’s own clock. It goes back to the default, 7:00 in Amritsar, and closes the sheet
+  ///
+  /// In en, this message translates to:
+  /// **'Use Amritsar time'**
+  String get reminder_use_amritsar;
+
+  /// What a screen reader says for the daily reminder switch when the reminder is on
+  ///
+  /// In en, this message translates to:
+  /// **'On'**
+  String get reminder_on;
+
+  /// What a screen reader says for the daily reminder switch when the reminder is off
+  ///
+  /// In en, this message translates to:
+  /// **'Off'**
+  String get reminder_off;
+
+  /// Button that saves the chosen reminder time, or closes a message, and then closes the sheet
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get reminder_done;
+
+  /// Message shown when the phone does not let the app show notifications, so the daily reminder cannot appear
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications are off for Live Darbar. Turn them on in your phone’s settings.'**
+  String get reminder_blocked_hint;
+
+  /// Message shown when the phone could not set the daily reminder for a reason that is not a missing permission
+  ///
+  /// In en, this message translates to:
+  /// **'The reminder did not start. Try again.'**
+  String get reminder_failed_hint;
+
+  /// Title of the sheet that asks, once, if the listener wants a daily reminder to read the Hukamnama
+  ///
+  /// In en, this message translates to:
+  /// **'Daily Hukamnama reminder'**
+  String get reminder_prompt_title;
+
+  /// Body of the reminder sheet, the first time the listener opens the Hukamnama screen. It says when the reminder comes and where to change it. The time is already written for the listener, for example 7:00 AM in Amritsar, 12:30 PM here
+  ///
+  /// In en, this message translates to:
+  /// **'Read the Hukamnama each day. We remind you at {time}. Change it any time with the bell.'**
+  String reminder_prompt_body(String time);
+
+  /// Gold button on the reminder sheet that turns the daily reminder on
+  ///
+  /// In en, this message translates to:
+  /// **'Remind me'**
+  String get reminder_prompt_yes;
+
+  /// Quiet button on the reminder sheet that closes it. The app does not ask again
+  ///
+  /// In en, this message translates to:
+  /// **'Not now'**
+  String get reminder_prompt_no;
+
+  /// Body of the reminder sheet when the listener opens it with the bell and the reminder is already on. The time is already written for the listener, for example 7:00 AM in Amritsar, 12:30 PM here
+  ///
+  /// In en, this message translates to:
+  /// **'The reminder is on. It comes each day at {time}.'**
+  String reminder_on_body(String time);
+
+  /// Gold button on the reminder sheet, when the reminder is on. It closes the sheet and opens the sheet where the listener picks the time
+  ///
+  /// In en, this message translates to:
+  /// **'Change time'**
+  String get reminder_change_time;
+
+  /// Quiet button on the reminder sheet, when the reminder is on. It turns the daily reminder off and closes the sheet
+  ///
+  /// In en, this message translates to:
+  /// **'Turn off'**
+  String get reminder_turn_off;
+
+  /// Title of the daily reminder notification
+  ///
+  /// In en, this message translates to:
+  /// **'Today’s Hukamnama'**
+  String get reminder_notification_title;
+
+  /// Body of the daily reminder notification. A tap on it opens the Hukamnama reader
+  ///
+  /// In en, this message translates to:
+  /// **'Read the Hukamnama from Sri Darbar Sahib.'**
+  String get reminder_notification_body;
+
+  /// Name of the Android notification channel for the daily reminder, shown in the phone's notification settings
+  ///
+  /// In en, this message translates to:
+  /// **'Daily Hukamnama'**
+  String get reminder_channel_name;
+
+  /// Description of the Android notification channel for the daily reminder, shown in the phone's notification settings
+  ///
+  /// In en, this message translates to:
+  /// **'A reminder each day to read the Hukamnama.'**
+  String get reminder_channel_description;
+
+  /// Name of the feature that shows the days of Sikh history from SGPC's calendar. It is the title of the Sikh history screen, the title of the notification, the name of its Android notification channel, and what a screen reader says before the event on the home screen
+  ///
+  /// In en, this message translates to:
+  /// **'Today in Sikh history'**
+  String get history_title;
+
+  /// Title of the Sikh history screen, which lists the days of Sikh history in the Nanakshahi year. It is shorter than history_title, so the large title fits on one line
+  ///
+  /// In en, this message translates to:
+  /// **'Sikh history'**
+  String get history_screen_title;
+
+  /// Label of the switch for the Today in Sikh history notification, on the About screen and on the Sikh history screen. It names the notification. history_title names the feature
+  ///
+  /// In en, this message translates to:
+  /// **'Today in Sikh history notification'**
+  String get history_setting;
+
+  /// Line under the About switch for the Today in Sikh history notification. It says when the notice comes: on days that have an event, at the time of the daily reminder
+  ///
+  /// In en, this message translates to:
+  /// **'A notice comes at the reminder time on days with an event.'**
+  String get history_setting_detail;
+
+  /// Message shown when the phone could not set the Today in Sikh history notification for a reason that is not a missing permission
+  ///
+  /// In en, this message translates to:
+  /// **'Today in Sikh history did not start. Try again.'**
+  String get history_failed_hint;
+
+  /// Line under the title of the Sikh history screen. It names the Nanakshahi year that the screen lists, and says where the days come from. The year is a number, written in Gurmukhi digits in Punjabi
+  ///
+  /// In en, this message translates to:
+  /// **'Nanakshahi {year}, from the SGPC calendar.'**
+  String history_screen_intro(String year);
+
+  /// Small label on the row of today's event, on the Sikh history screen. It also marks the day for a screen reader
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get history_today;
+
+  /// Small label on the Home line for Sikh history, on a day with no event. It leads the next event that SGPC's calendar lists, with its date: Next · 8 Nov. English writes it in capitals
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get history_next;
+
+  /// What a screen reader says for the Home line for Sikh history on a day with no event. It names the date of the next event, then its title. The date is already written out, for example 8 November
+  ///
+  /// In en, this message translates to:
+  /// **'Next in Sikh history, {date}: {title}'**
+  String history_next_semantics(String date, String title);
+
+  /// Message on the Sikh history screen when no calendar file covers the year
+  ///
+  /// In en, this message translates to:
+  /// **'No days of Sikh history are listed for this year.'**
+  String get history_empty;
+
+  /// What a screen reader says on the home screen line for Sikh history, after the first event, when the day has more events. The line opens the Sikh history screen
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{and 1 more} other{and {count} more}}'**
+  String history_and_more(int count);
+
+  /// Description of the Android notification channel for Today in Sikh history, shown in the phone's notification settings
+  ///
+  /// In en, this message translates to:
+  /// **'A quiet notice on days with an event in Sikh history.'**
+  String get history_channel_description;
+
+  /// Words on the small card on the home screen that offers the home screen widget, once. It says what the widget gives: today's Hukamnama on the phone's home screen
+  ///
+  /// In en, this message translates to:
+  /// **'Today’s Hukamnama on your home screen'**
+  String get widget_card_title;
+
+  /// Gold button on the home screen card. On Android it asks the phone to put the widget on the home screen. On iPhone it opens the steps
+  ///
+  /// In en, this message translates to:
+  /// **'Add widget'**
+  String get widget_card_add;
+
+  /// Quiet button on the home screen card that hides the card for good. The app does not offer the widget on the home screen again, but About keeps a row for it
+  ///
+  /// In en, this message translates to:
+  /// **'Not now'**
+  String get widget_card_dismiss;
+
+  /// Label of the About row that adds the home screen widget
+  ///
+  /// In en, this message translates to:
+  /// **'Home screen widget'**
+  String get widget_setting_title;
+
+  /// Line under the label of the About row for the home screen widget. It says what the widget does: its buttons play the Hukamnama and Live Kirtan with the app closed
+  ///
+  /// In en, this message translates to:
+  /// **'Play without opening the app.'**
+  String get widget_setting_detail;
+
+  /// Short word at the end of the About row for the home screen widget, while the widget is not on the home screen. A tap on the row adds it
+  ///
+  /// In en, this message translates to:
+  /// **'Add'**
+  String get widget_setting_add;
+
+  /// Word at the end of the About row for the home screen widget when the widget is on the home screen. A screen reader also says it as the value of the row
+  ///
+  /// In en, this message translates to:
+  /// **'Added'**
+  String get widget_setting_added;
+
+  /// Title of the sheet with the steps to add the home screen widget by hand. iPhone has no call that adds a widget, and some Android launchers cannot pin one
+  ///
+  /// In en, this message translates to:
+  /// **'Add the widget'**
+  String get widget_steps_title;
+
+  /// Step 1 of adding the widget, on iPhone and Android: press and hold the home screen until the phone starts to edit it
+  ///
+  /// In en, this message translates to:
+  /// **'Press and hold an empty part of the home screen.'**
+  String get widget_steps_press_hold;
+
+  /// Step 2 of adding the widget on iPhone. Edit and Add Widget are the names that iOS shows in English, so they stay in English
+  ///
+  /// In en, this message translates to:
+  /// **'Tap Edit, then Add Widget.'**
+  String get widget_steps_iphone_add;
+
+  /// Step 3 of adding the widget on iPhone. Live Darbar is the app's name on the home screen, in English. The widget has 1 size, medium
+  ///
+  /// In en, this message translates to:
+  /// **'Search for Live Darbar, then add the medium size.'**
+  String get widget_steps_iphone_find;
+
+  /// Step 2 of adding the widget on Android, for a launcher that cannot pin it from the app. Widgets is the name of the launcher's menu
+  ///
+  /// In en, this message translates to:
+  /// **'Tap Widgets.'**
+  String get widget_steps_android_widgets;
+
+  /// Step 3 of adding the widget on Android, for a launcher that cannot pin it from the app
+  ///
+  /// In en, this message translates to:
+  /// **'Find Live Darbar, then drag its widget to the home screen.'**
+  String get widget_steps_android_find;
+
+  /// Button that closes the sheet with the steps to add the home screen widget
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get widget_steps_done;
+
+  /// Title of the screen that replaces the app when start-up fails. It shows in English and Punjabi together
+  ///
+  /// In en, this message translates to:
+  /// **'Live Darbar did not start.'**
+  String get launch_failed_title;
+
+  /// Line under the title of the start-up failure screen. Retry is the name of the button on that screen
+  ///
+  /// In en, this message translates to:
+  /// **'Tap Retry. If it fails again, close the app and open it again.'**
+  String get launch_failed_body;
+
+  /// Small box that replaces a part of a screen that failed to build. It shows in English and Punjabi together, because the part that failed may be the language setting
+  ///
+  /// In en, this message translates to:
+  /// **'This part did not load'**
+  String get error_view_title;
+
+  /// Title of the sheet that shows once, the first time the app opens after an update. {version} is the release, for example 3.1
+  ///
+  /// In en, this message translates to:
+  /// **'What’s new in {version}'**
+  String whats_new_title(String version);
+
+  /// Button that closes the sheet of what is new
+  ///
+  /// In en, this message translates to:
+  /// **'Got it'**
+  String get whats_new_done;
+
+  /// Title of the update sheet when the installed version is below the least version that still works. The sheet cannot be dismissed
+  ///
+  /// In en, this message translates to:
+  /// **'Please update'**
+  String get update_required_title;
+
+  /// Line under the title of the update sheet that cannot be dismissed
+  ///
+  /// In en, this message translates to:
+  /// **'This version is too old to work well. Update it from the store to go on.'**
+  String get update_required_body;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

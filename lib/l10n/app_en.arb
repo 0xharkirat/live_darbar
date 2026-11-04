@@ -402,5 +402,276 @@
                 "type": "String"
             }
         }
+    },
+    "reminder_setting": "Daily Hukamnama reminder",
+    "@reminder_setting": {
+        "description": "Label of the About switch that turns the daily Hukamnama reminder on or off, and what a screen reader says for the bell in the top bar of the Hukamnama screen, which opens the reminder's sheet"
+    },
+    "reminder_time": "Reminder time",
+    "@reminder_time": {
+        "description": "Label of the row that shows the time of the daily reminder, and the title of the sheet where the listener picks that time"
+    },
+    "reminder_time_amritsar": "{amritsar} in Amritsar, {here} here",
+    "@reminder_time_amritsar": {
+        "description": "The time of the reminder when it follows Amritsar: its time at Sri Harmandir Sahib, then the same moment on the listener’s own clock. Both times are already written for the listener, for example 7:00 AM in Amritsar, 12:30 PM here",
+        "placeholders": {
+            "amritsar": {
+                "type": "String"
+            },
+            "here": {
+                "type": "String"
+            }
+        }
+    },
+    "reminder_time_amritsar_only": "{amritsar} in Amritsar",
+    "@reminder_time_amritsar_only": {
+        "description": "The time of the reminder when it follows Amritsar and the listener’s own clock shows the same time, for example in India. The time is already written for the listener, for example 7:00 AM",
+        "placeholders": {
+            "amritsar": {
+                "type": "String"
+            }
+        }
+    },
+    "reminder_time_note": "Now: {when}. A time you pick is on your own clock.",
+    "@reminder_time_note": {
+        "description": "Line under the title of the sheet where the listener picks the reminder time, while the reminder follows Amritsar. It says what the time is now, and that a time the listener picks uses their own clock. The time is already written for the listener, for example 7:00 AM in Amritsar, 12:30 PM here",
+        "placeholders": {
+            "when": {
+                "type": "String"
+            }
+        }
+    },
+    "reminder_use_amritsar": "Use Amritsar time",
+    "@reminder_use_amritsar": {
+        "description": "Quiet button on the sheet where the listener picks the reminder time, shown when the time is on the listener’s own clock. It goes back to the default, 7:00 in Amritsar, and closes the sheet"
+    },
+    "reminder_on": "On",
+    "@reminder_on": {
+        "description": "What a screen reader says for the daily reminder switch when the reminder is on"
+    },
+    "reminder_off": "Off",
+    "@reminder_off": {
+        "description": "What a screen reader says for the daily reminder switch when the reminder is off"
+    },
+    "reminder_done": "Done",
+    "@reminder_done": {
+        "description": "Button that saves the chosen reminder time, or closes a message, and then closes the sheet"
+    },
+    "reminder_blocked_hint": "Notifications are off for Live Darbar. Turn them on in your phone’s settings.",
+    "@reminder_blocked_hint": {
+        "description": "Message shown when the phone does not let the app show notifications, so the daily reminder cannot appear"
+    },
+    "reminder_failed_hint": "The reminder did not start. Try again.",
+    "@reminder_failed_hint": {
+        "description": "Message shown when the phone could not set the daily reminder for a reason that is not a missing permission"
+    },
+    "reminder_prompt_title": "Daily Hukamnama reminder",
+    "@reminder_prompt_title": {
+        "description": "Title of the sheet that asks, once, if the listener wants a daily reminder to read the Hukamnama"
+    },
+    "reminder_prompt_body": "Read the Hukamnama each day. We remind you at {time}. Change it any time with the bell.",
+    "@reminder_prompt_body": {
+        "description": "Body of the reminder sheet, the first time the listener opens the Hukamnama screen. It says when the reminder comes and where to change it. The time is already written for the listener, for example 7:00 AM in Amritsar, 12:30 PM here",
+        "placeholders": {
+            "time": {
+                "type": "String"
+            }
+        }
+    },
+    "reminder_prompt_yes": "Remind me",
+    "@reminder_prompt_yes": {
+        "description": "Gold button on the reminder sheet that turns the daily reminder on"
+    },
+    "reminder_prompt_no": "Not now",
+    "@reminder_prompt_no": {
+        "description": "Quiet button on the reminder sheet that closes it. The app does not ask again"
+    },
+    "reminder_on_body": "The reminder is on. It comes each day at {time}.",
+    "@reminder_on_body": {
+        "description": "Body of the reminder sheet when the listener opens it with the bell and the reminder is already on. The time is already written for the listener, for example 7:00 AM in Amritsar, 12:30 PM here",
+        "placeholders": {
+            "time": {
+                "type": "String"
+            }
+        }
+    },
+    "reminder_change_time": "Change time",
+    "@reminder_change_time": {
+        "description": "Gold button on the reminder sheet, when the reminder is on. It closes the sheet and opens the sheet where the listener picks the time"
+    },
+    "reminder_turn_off": "Turn off",
+    "@reminder_turn_off": {
+        "description": "Quiet button on the reminder sheet, when the reminder is on. It turns the daily reminder off and closes the sheet"
+    },
+    "reminder_notification_title": "Today’s Hukamnama",
+    "@reminder_notification_title": {
+        "description": "Title of the daily reminder notification"
+    },
+    "reminder_notification_body": "Read the Hukamnama from Sri Darbar Sahib.",
+    "@reminder_notification_body": {
+        "description": "Body of the daily reminder notification. A tap on it opens the Hukamnama reader"
+    },
+    "reminder_channel_name": "Daily Hukamnama",
+    "@reminder_channel_name": {
+        "description": "Name of the Android notification channel for the daily reminder, shown in the phone's notification settings"
+    },
+    "reminder_channel_description": "A reminder each day to read the Hukamnama.",
+    "@reminder_channel_description": {
+        "description": "Description of the Android notification channel for the daily reminder, shown in the phone's notification settings"
+    },
+    "history_title": "Today in Sikh history",
+    "@history_title": {
+        "description": "Name of the feature that shows the days of Sikh history from SGPC's calendar. It is the title of the Sikh history screen, the title of the notification, the name of its Android notification channel, and what a screen reader says before the event on the home screen"
+    },
+    "history_screen_title": "Sikh history",
+    "@history_screen_title": {
+        "description": "Title of the Sikh history screen, which lists the days of Sikh history in the Nanakshahi year. It is shorter than history_title, so the large title fits on one line"
+    },
+    "history_setting": "Today in Sikh history notification",
+    "@history_setting": {
+        "description": "Label of the switch for the Today in Sikh history notification, on the About screen and on the Sikh history screen. It names the notification. history_title names the feature"
+    },
+    "history_setting_detail": "A notice comes at the reminder time on days with an event.",
+    "@history_setting_detail": {
+        "description": "Line under the About switch for the Today in Sikh history notification. It says when the notice comes: on days that have an event, at the time of the daily reminder"
+    },
+    "history_failed_hint": "Today in Sikh history did not start. Try again.",
+    "@history_failed_hint": {
+        "description": "Message shown when the phone could not set the Today in Sikh history notification for a reason that is not a missing permission"
+    },
+    "history_screen_intro": "Nanakshahi {year}, from the SGPC calendar.",
+    "@history_screen_intro": {
+        "description": "Line under the title of the Sikh history screen. It names the Nanakshahi year that the screen lists, and says where the days come from. The year is a number, written in Gurmukhi digits in Punjabi",
+        "placeholders": {
+            "year": {
+                "type": "String"
+            }
+        }
+    },
+    "history_today": "Today",
+    "@history_today": {
+        "description": "Small label on the row of today's event, on the Sikh history screen. It also marks the day for a screen reader"
+    },
+    "history_next": "Next",
+    "@history_next": {
+        "description": "Small label on the Home line for Sikh history, on a day with no event. It leads the next event that SGPC's calendar lists, with its date: Next · 8 Nov. English writes it in capitals"
+    },
+    "history_next_semantics": "Next in Sikh history, {date}: {title}",
+    "@history_next_semantics": {
+        "description": "What a screen reader says for the Home line for Sikh history on a day with no event. It names the date of the next event, then its title. The date is already written out, for example 8 November",
+        "placeholders": {
+            "date": {
+                "type": "String"
+            },
+            "title": {
+                "type": "String"
+            }
+        }
+    },
+    "history_empty": "No days of Sikh history are listed for this year.",
+    "@history_empty": {
+        "description": "Message on the Sikh history screen when no calendar file covers the year"
+    },
+    "history_and_more": "{count, plural, =1{and 1 more} other{and {count} more}}",
+    "@history_and_more": {
+        "description": "What a screen reader says on the home screen line for Sikh history, after the first event, when the day has more events. The line opens the Sikh history screen",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "history_channel_description": "A quiet notice on days with an event in Sikh history.",
+    "@history_channel_description": {
+        "description": "Description of the Android notification channel for Today in Sikh history, shown in the phone's notification settings"
+    },
+    "widget_card_title": "Today’s Hukamnama on your home screen",
+    "@widget_card_title": {
+        "description": "Words on the small card on the home screen that offers the home screen widget, once. It says what the widget gives: today's Hukamnama on the phone's home screen"
+    },
+    "widget_card_add": "Add widget",
+    "@widget_card_add": {
+        "description": "Gold button on the home screen card. On Android it asks the phone to put the widget on the home screen. On iPhone it opens the steps"
+    },
+    "widget_card_dismiss": "Not now",
+    "@widget_card_dismiss": {
+        "description": "Quiet button on the home screen card that hides the card for good. The app does not offer the widget on the home screen again, but About keeps a row for it"
+    },
+    "widget_setting_title": "Home screen widget",
+    "@widget_setting_title": {
+        "description": "Label of the About row that adds the home screen widget"
+    },
+    "widget_setting_detail": "Play without opening the app.",
+    "@widget_setting_detail": {
+        "description": "Line under the label of the About row for the home screen widget. It says what the widget does: its buttons play the Hukamnama and Live Kirtan with the app closed"
+    },
+    "widget_setting_add": "Add",
+    "@widget_setting_add": {
+        "description": "Short word at the end of the About row for the home screen widget, while the widget is not on the home screen. A tap on the row adds it"
+    },
+    "widget_setting_added": "Added",
+    "@widget_setting_added": {
+        "description": "Word at the end of the About row for the home screen widget when the widget is on the home screen. A screen reader also says it as the value of the row"
+    },
+    "widget_steps_title": "Add the widget",
+    "@widget_steps_title": {
+        "description": "Title of the sheet with the steps to add the home screen widget by hand. iPhone has no call that adds a widget, and some Android launchers cannot pin one"
+    },
+    "widget_steps_press_hold": "Press and hold an empty part of the home screen.",
+    "@widget_steps_press_hold": {
+        "description": "Step 1 of adding the widget, on iPhone and Android: press and hold the home screen until the phone starts to edit it"
+    },
+    "widget_steps_iphone_add": "Tap Edit, then Add Widget.",
+    "@widget_steps_iphone_add": {
+        "description": "Step 2 of adding the widget on iPhone. Edit and Add Widget are the names that iOS shows in English, so they stay in English"
+    },
+    "widget_steps_iphone_find": "Search for Live Darbar, then add the medium size.",
+    "@widget_steps_iphone_find": {
+        "description": "Step 3 of adding the widget on iPhone. Live Darbar is the app's name on the home screen, in English. The widget has 1 size, medium"
+    },
+    "widget_steps_android_widgets": "Tap Widgets.",
+    "@widget_steps_android_widgets": {
+        "description": "Step 2 of adding the widget on Android, for a launcher that cannot pin it from the app. Widgets is the name of the launcher's menu"
+    },
+    "widget_steps_android_find": "Find Live Darbar, then drag its widget to the home screen.",
+    "@widget_steps_android_find": {
+        "description": "Step 3 of adding the widget on Android, for a launcher that cannot pin it from the app"
+    },
+    "widget_steps_done": "Done",
+    "@widget_steps_done": {
+        "description": "Button that closes the sheet with the steps to add the home screen widget"
+    },
+    "launch_failed_title": "Live Darbar did not start.",
+    "@launch_failed_title": {
+        "description": "Title of the screen that replaces the app when start-up fails. It shows in English and Punjabi together"
+    },
+    "launch_failed_body": "Tap Retry. If it fails again, close the app and open it again.",
+    "@launch_failed_body": {
+        "description": "Line under the title of the start-up failure screen. Retry is the name of the button on that screen"
+    },
+    "error_view_title": "This part did not load",
+    "@error_view_title": {
+        "description": "Small box that replaces a part of a screen that failed to build. It shows in English and Punjabi together, because the part that failed may be the language setting"
+    },
+    "whats_new_title": "What’s new in {version}",
+    "@whats_new_title": {
+        "description": "Title of the sheet that shows once, the first time the app opens after an update. {version} is the release, for example 3.1",
+        "placeholders": {
+            "version": {
+                "type": "String"
+            }
+        }
+    },
+    "whats_new_done": "Got it",
+    "@whats_new_done": {
+        "description": "Button that closes the sheet of what is new"
+    },
+    "update_required_title": "Please update",
+    "@update_required_title": {
+        "description": "Title of the update sheet when the installed version is below the least version that still works. The sheet cannot be dismissed"
+    },
+    "update_required_body": "This version is too old to work well. Update it from the store to go on.",
+    "@update_required_body": {
+        "description": "Line under the title of the update sheet that cannot be dismissed"
     }
 }
