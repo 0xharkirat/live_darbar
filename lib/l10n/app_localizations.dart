@@ -730,6 +730,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'A reminder each day to read the Hukamnama.'**
   String get reminder_channel_description;
+
+  /// Name of the feature that shows the events of the day from SGPC's calendar. It is the label of the About switch for the notification, the title of that notification, the name of its Android notification channel, and what a screen reader says before the events on the home screen
+  ///
+  /// In en, this message translates to:
+  /// **'Today in Sikh history'**
+  String get history_title;
+
+  /// Line under the About switch for the Today in Sikh history notification. It says when the notice comes: on days that have an event, at the time of the daily reminder
+  ///
+  /// In en, this message translates to:
+  /// **'A notice comes at the reminder time on days with an event.'**
+  String get history_setting_detail;
+
+  /// Message shown when the phone could not set the Today in Sikh history notification for a reason that is not a missing permission
+  ///
+  /// In en, this message translates to:
+  /// **'Today in Sikh history did not start. Try again.'**
+  String get history_failed_hint;
+
+  /// Description of the Android notification channel for Today in Sikh history, shown in the phone's notification settings
+  ///
+  /// In en, this message translates to:
+  /// **'A quiet notice on days with an event in Sikh history.'**
+  String get history_channel_description;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

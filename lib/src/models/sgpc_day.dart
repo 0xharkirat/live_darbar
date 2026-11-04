@@ -81,6 +81,25 @@ String sgpcDayIso(DateTime day) {
   return '${d.year}-${_two(d.month)}-${_two(d.day)}';
 }
 
+/// The day written as `yyyy-MM-dd`, as UTC midnight. It reads what
+/// [sgpcDayIso] writes.
+///
+/// Throws a [FormatException] for any other shape, and for a day that does not
+/// exist: `DateTime.utc` alone would turn 2026-02-30 into 2 March without a
+/// word.
+DateTime parseSgpcDay(String text) {
+  final match = RegExp(r'^(\d{4})-(\d{2})-(\d{2})$').firstMatch(text);
+  if (match == null) throw FormatException('Not a yyyy-MM-dd day: "$text".');
+  final year = int.parse(match.group(1)!);
+  final month = int.parse(match.group(2)!);
+  final day = int.parse(match.group(3)!);
+  final parsed = DateTime.utc(year, month, day);
+  if (parsed.month != month || parsed.day != day) {
+    throw FormatException('No such day: "$text".');
+  }
+  return parsed;
+}
+
 /// `yyyy_MM_dd`, safe to put in a filename.
 String sgpcDayFileStamp(DateTime day) {
   final d = day.toUtc();

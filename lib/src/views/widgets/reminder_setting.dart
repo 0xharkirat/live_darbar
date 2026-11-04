@@ -10,6 +10,7 @@ import 'package:live_darbar/src/models/reminder_settings.dart';
 import 'package:live_darbar/src/models/reminder_time.dart';
 import 'package:live_darbar/src/views/widgets/pressable.dart';
 import 'package:live_darbar/src/views/widgets/reminder_sheet.dart';
+import 'package:live_darbar/src/views/widgets/setting_switch_row.dart';
 
 /// The daily reminder, on the About screen: a switch, and under it, only while
 /// it is on, the time.
@@ -41,46 +42,13 @@ class ReminderSetting extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Pressable(
-          scale: 1,
-          semanticLabel: l10n.reminder_setting,
-          semanticValue: enabled ? l10n.reminder_on : l10n.reminder_off,
+        SettingSwitchRow(
+          icon: CupertinoIcons.bell,
+          label: l10n.reminder_setting,
+          value: enabled,
+          valueLabel: enabled ? l10n.reminder_on : l10n.reminder_off,
           // Until the saved choice has loaded, there is nothing to change.
           onTap: settings == null ? null : () => _toggle(ref, !enabled),
-          child: PressFill(
-            pressedColor: Palette.surfaceHigh,
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(minHeight: 52),
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-                child: ExcludeSemantics(
-                  child: Row(
-                    children: [
-                      const Icon(
-                        CupertinoIcons.bell,
-                        size: 20,
-                        color: Palette.gold,
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: Text(l10n.reminder_setting, style: AppType.body),
-                      ),
-                      // The row takes the tap, so the switch only shows it.
-                      IgnorePointer(
-                        child: CupertinoSwitch(
-                          value: enabled,
-                          onChanged: (_) {},
-                          activeTrackColor: Palette.gold,
-                          inactiveTrackColor: Palette.border,
-                          thumbColor: Palette.foreground,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
         ),
         AnimatedSize(
           // Reduce Motion: Flutter runs this at 5% of its length.
@@ -92,17 +60,7 @@ class ReminderSetting extends ConsumerWidget {
               : const SizedBox(width: double.infinity),
         ),
         if (hint != null)
-          Padding(
-            padding: const EdgeInsets.fromLTRB(52, 2, 16, 14),
-            child: Text(
-              hint,
-              style: AppType.footnote.copyWith(
-                color: problem == ReminderProblem.failed
-                    ? Palette.danger
-                    : Palette.muted,
-              ),
-            ),
-          ),
+          SettingHint(text: hint, isError: problem == ReminderProblem.failed),
       ],
     );
   }

@@ -8,6 +8,7 @@ import 'package:live_darbar/src/controllers/connectivity_controller.dart';
 import 'package:live_darbar/src/controllers/hukamnama_controller.dart';
 import 'package:live_darbar/src/controllers/locale_controller.dart';
 import 'package:live_darbar/src/controllers/now_playing_controller.dart';
+import 'package:live_darbar/src/controllers/sgpc_events_controller.dart';
 import 'package:live_darbar/src/controllers/sikh_date_controller.dart';
 import 'package:live_darbar/src/controllers/update_controller.dart';
 import 'package:live_darbar/src/core/app_type.dart';
@@ -15,6 +16,7 @@ import 'package:live_darbar/src/core/clock.dart';
 import 'package:live_darbar/src/core/app_version.dart';
 import 'package:live_darbar/src/core/open_link.dart';
 import 'package:live_darbar/src/core/store_links.dart';
+import 'package:live_darbar/src/core/motion.dart';
 import 'package:live_darbar/src/core/palette.dart';
 import 'package:live_darbar/src/core/reader_numbers.dart';
 import 'package:live_darbar/src/models/app_update.dart';
@@ -78,6 +80,7 @@ class HomeScreen extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     const _DateAndLanguage(),
+                    const _TodayInHistory(),
                     const SizedBox(height: 6),
                     Text(l10n.app_title, style: AppType.largeTitle),
                     const SizedBox(height: 20),
@@ -258,6 +261,67 @@ class _DateAndLanguage extends ConsumerWidget {
         const SizedBox(width: 12),
         const LanguageSwitch(),
       ],
+    );
+  }
+}
+
+/// Today in Sikh history: what SGPC's calendar lists for today, under the dates.
+///
+/// A gurpurab, a shaheedi dihada or another day of Sikh history, up to 3 titles
+/// in the app's language (English falls back to the Punjabi title). It is
+/// quiet text with a thin gold rule, not a card, so the hierarchy below it
+/// does not change: live kirtan, the Hukamnama, then reading it.
+///
+/// On a day with no event nothing shows, and the page is as it was before this
+/// existed. It is always here and has no setting. The setting in About is only
+/// for the notification.
+class _TodayInHistory extends ConsumerWidget {
+  const _TodayInHistory();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+    final punjabi = ref.watch(localeController) == 'pa';
+    final events = ref.watch(todaysEventsProvider).value ?? const [];
+    final titles = [for (final e in events) e.title(punjabi: punjabi)];
+
+    return AnimatedSize(
+      // The events arrive a moment after the first frame. Reduce Motion:
+      // Flutter runs this at 5% of its length.
+      duration: Motion.quick,
+      curve: Motion.easeOut,
+      alignment: Alignment.topCenter,
+      child: titles.isEmpty
+          ? const SizedBox(width: double.infinity)
+          : Padding(
+              padding: const EdgeInsets.only(top: 10, bottom: 8),
+              child: Semantics(
+                container: true,
+                label: '${l10n.history_title}: ${titles.join('. ')}',
+                child: ExcludeSemantics(
+                  child: Container(
+                    padding: const EdgeInsets.only(left: 10),
+                    decoration: BoxDecoration(
+                      border: Border(
+                        left: BorderSide(
+                          color: Palette.gold.withValues(alpha: 0.5),
+                          width: 2,
+                        ),
+                      ),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        for (final (i, title) in titles.indexed) ...[
+                          if (i > 0) const SizedBox(height: 4),
+                          Text(title, style: AppType.callout),
+                        ],
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
     );
   }
 }

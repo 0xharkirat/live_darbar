@@ -361,4 +361,16 @@ class AppLocalizationsPa extends AppLocalizations {
 
   @override
   String get reminder_channel_description => 'ਹੁਕਮਨਾਮਾ ਪੜ੍ਹਨ ਲਈ ਹਰ ਰੋਜ਼ ਇੱਕ ਰਿਮਾਈਂਡਰ।';
+
+  @override
+  String get history_title => 'ਸਿੱਖ ਇਤਿਹਾਸ ਵਿੱਚ ਅੱਜ';
+
+  @override
+  String get history_setting_detail => 'ਘਟਨਾ ਵਾਲੇ ਦਿਨ, ਰਿਮਾਈਂਡਰ ਦੇ ਸਮੇਂ ਸੂਚਨਾ ਮਿਲੇਗੀ।';
+
+  @override
+  String get history_failed_hint => 'ਸਿੱਖ ਇਤਿਹਾਸ ਵਿੱਚ ਅੱਜ ਚਾਲੂ ਨਹੀਂ ਹੋਇਆ। ਮੁੜ ਕੋਸ਼ਿਸ਼ ਕਰੋ।';
+
+  @override
+  String get history_channel_description => 'ਸਿੱਖ ਇਤਿਹਾਸ ਦੀ ਕਿਸੇ ਘਟਨਾ ਵਾਲੇ ਦਿਨ ਇੱਕ ਸ਼ਾਂਤ ਸੂਚਨਾ।';
 }

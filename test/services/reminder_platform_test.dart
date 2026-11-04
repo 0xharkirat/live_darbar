@@ -2,7 +2,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:live_darbar/src/core/history_schedule.dart';
 import 'package:live_darbar/src/models/reminder_time.dart';
+import 'package:live_darbar/src/models/sgpc_day.dart';
 import 'package:live_darbar/src/services/reminder_platform.dart';
 import 'package:timezone/timezone.dart' as tz;
 
@@ -30,6 +32,31 @@ void main() {
     channelDescription: 'A reminder each day to read the Hukamnama.',
   );
 
+  const historyText = HistoryText(
+    title: 'Today in Sikh history',
+    channelName: 'Today in Sikh history',
+    channelDescription: 'A quiet notice on days with an event in Sikh history.',
+  );
+
+  /// The notice for the SGPC day [ahead] days from today. A negative number
+  /// is a day that has gone.
+  HistoryNotice noticeIn(int ahead) {
+    final now = DateTime.now().toUtc();
+    return HistoryNotice(
+      day: DateTime.utc(now.year, now.month, now.day + ahead),
+      body: 'First event\nSecond event $ahead',
+    );
+  }
+
+  Iterable<Map<dynamic, dynamic>> sent(String method) => calls
+      .where((c) => c.method == method)
+      .map((c) => c.arguments as Map<dynamic, dynamic>);
+
+  /// What the phone says it holds: the daily reminder, and these ids.
+  void holding(List<int> ids) => answers['pendingNotificationRequests'] = [
+        for (final id in ids) {'id': id, 'title': 't', 'body': 'b'},
+      ];
+
   Map<String, dynamic> argumentsOf(String method) => Map<String, dynamic>.from(
         calls.lastWhere((c) => c.method == method).arguments as Map,
       );
@@ -51,6 +78,7 @@ void main() {
       'initialize': true,
       'zonedSchedule': null,
       'cancel': null,
+      'pendingNotificationRequests': <Object?>[],
       'requestNotificationsPermission': true,
       'areNotificationsEnabled': true,
       'requestPermissions': true,
@@ -363,6 +391,186 @@ void main() {
       expect(details['presentBanner'], isTrue);
       expect(details['presentSound'], isTrue);
       expect((sent['scheduledDateTime'] as String).split('T').last, '07:00:00');
+    });
+  });
+  group('Today in Sikh history', () {
+    test('fires once on its day at the time, and does not repeat', () async {
+      final platform = platformOn(TargetPlatform.android);
+      final notice = noticeIn(2);
+
+      await platform.scheduleHistory(
+        ReminderTime.standard,
+        [notice],
+        historyText,
+      );
+
+      final one = argumentsOf('zonedSchedule');
+      expect(one['id'], LocalNotificationsReminderPlatform.firstHistoryId);
+      expect(one['title'], historyText.title);
+      expect(one['body'], notice.body);
+      expect(one['payload'], LocalNotificationsReminderPlatform.historyPayload);
+      expect(
+        one['payload'],
+        isNot(LocalNotificationsReminderPlatform.payload),
+        reason: 'a tap opens the app, not the Hukamnama reader',
+      );
+      expect(one['matchDateTimeComponents'], isNull, reason: 'once');
+      expect(
+        one['scheduledDateTime'],
+        '${sgpcDayIso(notice.day)}T07:00:00',
+        reason: 'the date of the notice, on the phone\'s clock',
+      );
+      expect(one['timeZoneName'], 'Asia/Kolkata');
+    });
+
+    test('is quiet on Android, and shows every event when opened out',
+        () async {
+      final platform = platformOn(TargetPlatform.android);
+
+      await platform.scheduleHistory(
+        ReminderTime.standard,
+        [noticeIn(2)],
+        historyText,
+      );
+
+      final android = Map<String, dynamic>.from(
+        argumentsOf('zonedSchedule')['platformSpecifics'] as Map,
+      );
+      expect(android['channelId'], 'sikh_history');
+      expect(android['channelName'], historyText.channelName);
+      expect(android['channelDescription'], historyText.channelDescription);
+      expect(android['importance'], Importance.low.value);
+      expect(android['scheduleMode'], 'inexactAllowWhileIdle');
+      expect(android['styleInformation'], isNotNull);
+      expect(
+        (android['styleInformation'] as Map)['bigText'],
+        noticeIn(2).body,
+      );
+    });
+
+    test('is quiet on iPhone, and does not repeat', () async {
+      final platform = platformOn(TargetPlatform.iOS);
+
+      await platform.scheduleHistory(
+        ReminderTime.standard,
+        [noticeIn(2)],
+        historyText,
+      );
+
+      final one = argumentsOf('zonedSchedule');
+      expect(one['matchDateTimeComponents'], isNull);
+      final details =
+          Map<String, dynamic>.from(one['platformSpecifics'] as Map);
+      expect(details['presentAlert'], isTrue);
+      expect(details['presentSound'], isFalse);
+    });
+
+    test('gives each day its own id, from 100 up', () async {
+      final platform = platformOn(TargetPlatform.android);
+
+      await platform.scheduleHistory(
+        ReminderTime.standard,
+        [noticeIn(1), noticeIn(3), noticeIn(9)],
+        historyText,
+      );
+
+      expect(sent('zonedSchedule').map((a) => a['id']), [100, 101, 102]);
+    });
+
+    test('sets no notification for a day whose time has gone', () async {
+      final platform = platformOn(TargetPlatform.android);
+
+      await platform.scheduleHistory(
+        ReminderTime.standard,
+        [noticeIn(-3), noticeIn(-1), noticeIn(2)],
+        historyText,
+      );
+
+      final ids = sent('zonedSchedule').map((a) => a['id']);
+      expect(ids, [100], reason: 'the next id goes to the next live day');
+    });
+
+    test('keeps at most 30, far under the 64 that iOS holds', () async {
+      final platform = platformOn(TargetPlatform.iOS);
+
+      await platform.scheduleHistory(
+        ReminderTime.standard,
+        [for (var i = 1; i <= 45; i++) noticeIn(i)],
+        historyText,
+      );
+
+      expect(sent('zonedSchedule'), hasLength(30));
+      expect(sent('zonedSchedule').map((a) => a['id']).last, 129);
+    });
+
+    test('removes the old ones that the new schedule does not replace',
+        () async {
+      holding([1, 100, 101, 102, 103]);
+      final platform = platformOn(TargetPlatform.android);
+
+      await platform.scheduleHistory(
+        ReminderTime.standard,
+        [noticeIn(2), noticeIn(4)],
+        historyText,
+      );
+
+      expect(
+        sent('cancel').map((a) => a['id']),
+        [102, 103],
+        reason: 'the daily reminder (1) and the 2 replaced ids stay',
+      );
+    });
+
+    test('cancels none when there is nothing left over', () async {
+      holding([1, 100, 101]);
+      final platform = platformOn(TargetPlatform.android);
+
+      await platform.scheduleHistory(
+        ReminderTime.standard,
+        [noticeIn(2), noticeIn(4)],
+        historyText,
+      );
+
+      expect(sent('cancel'), isEmpty);
+    });
+
+    test('cancelHistory removes all of them and leaves the reminder', () async {
+      holding([1, 100, 101, 129, 130, 5]);
+      final platform = platformOn(TargetPlatform.android);
+
+      await platform.cancelHistory();
+
+      expect(
+        sent('cancel').map((a) => a['id']),
+        [100, 101, 129],
+        reason: 'not the reminder (1), and not an id outside the range',
+      );
+    });
+
+    test('an empty list removes the old ones and sets none', () async {
+      holding([100, 101]);
+      final platform = platformOn(TargetPlatform.android);
+
+      await platform.scheduleHistory(ReminderTime.standard, [], historyText);
+
+      expect(sent('zonedSchedule'), isEmpty);
+      expect(sent('cancel').map((a) => a['id']), [100, 101]);
+    });
+
+    test('never asks the phone for permission', () async {
+      final platform = platformOn(TargetPlatform.android);
+
+      await platform.scheduleHistory(
+        ReminderTime.standard,
+        [noticeIn(2)],
+        historyText,
+      );
+      await platform.cancelHistory();
+
+      expect(
+        calls.map((c) => c.method),
+        isNot(contains('requestNotificationsPermission')),
+      );
     });
   });
 }

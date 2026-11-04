@@ -1,9 +1,10 @@
 import 'package:flutter/foundation.dart';
+import 'package:live_darbar/src/core/history_schedule.dart';
 import 'package:live_darbar/src/models/reminder_time.dart';
 import 'package:live_darbar/src/services/reminder_platform.dart';
 
-/// Stands in for the phone behind the daily reminder, and records what the app
-/// asks of it.
+/// Stands in for the phone behind the daily reminder and "Today in Sikh
+/// history", and records what the app asks of it.
 class FakeReminderPlatform implements ReminderPlatform {
   FakeReminderPlatform({
     this.supported = true,
@@ -22,9 +23,17 @@ class FakeReminderPlatform implements ReminderPlatform {
   /// Set to make [schedule] fail, as a phone can.
   Object? scheduleError;
 
+  /// Set to make [scheduleHistory] fail, as a phone can.
+  Object? historyError;
+
   /// Each call, in order: `start`, `request`, `has`, `schedule 07:00`,
-  /// `cancel`, `launch`.
+  /// `cancel`, `launch`, `history 07:00 x3` and `cancelHistory`.
   final calls = <String>[];
+
+  /// "Today in Sikh history" as it stands: null when none is set.
+  List<HistoryNotice>? history;
+  ReminderTime? historyTime;
+  HistoryText? historyText;
 
   /// The reminder as it stands: null when none is set.
   ReminderTime? scheduled;
@@ -67,6 +76,26 @@ class FakeReminderPlatform implements ReminderPlatform {
   Future<void> cancel() async {
     calls.add('cancel');
     scheduled = null;
+  }
+
+  @override
+  Future<void> scheduleHistory(
+    ReminderTime time,
+    List<HistoryNotice> notices,
+    HistoryText text,
+  ) async {
+    calls.add('history $time x${notices.length}');
+    final error = historyError;
+    if (error != null) throw error;
+    history = notices;
+    historyTime = time;
+    historyText = text;
+  }
+
+  @override
+  Future<void> cancelHistory() async {
+    calls.add('cancelHistory');
+    history = null;
   }
 
   @override
