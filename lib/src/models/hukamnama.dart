@@ -16,38 +16,93 @@ const kHukamnamaSourceName = 'SGPC';
 /// web app links here when its copy of the text cannot be loaded.
 const kHukamnamaSourceUrl = 'https://www.sgpc.net';
 
+/// How long a pause (vishraam) is. Shabad OS writes them in the Gurmukhi text
+/// as `;` (heavy), `,` (medium) and `.` (light).
+enum HukamnamaPause { heavy, medium, light }
+
+/// One pause in a line: it comes after the word at [after].
+class HukamnamaVishraam {
+  const HukamnamaVishraam(this.after, this.weight);
+
+  /// The index of the word that the pause follows, counting from 0 over the
+  /// white space separated parts of [HukamnamaLine.gurmukhi].
+  final int after;
+
+  final HukamnamaPause weight;
+
+  Map<String, dynamic> toJson() => {'after': after, 'weight': weight.name};
+
+  /// Null when [json] is not a pause that this version knows.
+  static HukamnamaVishraam? tryParse(Object? json) {
+    if (json is! Map<String, dynamic>) return null;
+    final after = json['after'];
+    final weight = HukamnamaPause.values
+        .where((w) => w.name == json['weight'])
+        .firstOrNull;
+    if (after is! int || after < 0 || weight == null) return null;
+    return HukamnamaVishraam(after, weight);
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      other is HukamnamaVishraam &&
+      other.after == after &&
+      other.weight == weight;
+
+  @override
+  int get hashCode => Object.hash(after, weight);
+}
+
 /// One line of the shabad.
 ///
-/// SGPC gives the meanings as whole blocks and not line by line, so for now
-/// only [gurmukhi] is set and the three translations stay null. They stay on
-/// the class so a screen can already show a line with or without them.
+/// SGPC gives the meanings as whole blocks and not line by line, so the lines
+/// that come from SGPC's text set only [gurmukhi]. The lines of a
+/// [HukamnamaShabad] (from Shabad OS) carry the rest.
 class HukamnamaLine {
   const HukamnamaLine({
     required this.gurmukhi,
     this.punjabi,
     this.english,
     this.transliteration,
+    this.id,
+    this.ang,
+    this.vishraam = const [],
   });
 
   /// The line in Unicode Gurmukhi, with its `॥` and verse number.
   final String gurmukhi;
 
-  /// The Punjabi meaning of this line. Null: SGPC does not split it by line.
-  /// See [Hukamnama.punjabiMeaning].
+  /// The Punjabi meaning of this line. Null: SGPC does not split it by line,
+  /// and Shabad OS has none for this line. See [Hukamnama.punjabiMeaning].
   final String? punjabi;
 
-  /// The English meaning of this line. Null: SGPC does not split it by line.
-  /// See [Hukamnama.englishMeaning].
+  /// The English meaning of this line. Null: SGPC does not split it by line,
+  /// and Shabad OS has none for this line. See [Hukamnama.englishMeaning].
   final String? english;
 
-  /// The line in Roman letters. Null: SGPC does not give one.
+  /// The line in Roman letters. Null: neither SGPC nor the Shabad OS release
+  /// that the mirror uses gives one.
   final String? transliteration;
+
+  /// The Shabad OS id of the line. Null for a line from SGPC's text.
+  final String? id;
+
+  /// The Ang (page) that the line is on. Null for a line from SGPC's text.
+  final int? ang;
+
+  /// The pauses of the line, in order. Empty for a line from SGPC's text, and
+  /// for a line with no pause.
+  final List<HukamnamaVishraam> vishraam;
 
   Map<String, dynamic> toJson() => {
         'gurmukhi': gurmukhi,
         if (punjabi != null) 'punjabi': punjabi,
         if (english != null) 'english': english,
         if (transliteration != null) 'transliteration': transliteration,
+        if (id != null) 'id': id,
+        if (ang != null) 'ang': ang,
+        if (vishraam.isNotEmpty)
+          'vishraam': [for (final v in vishraam) v.toJson()],
       };
 
   factory HukamnamaLine.fromJson(Map<String, dynamic> json) {
@@ -55,11 +110,22 @@ class HukamnamaLine {
     if (gurmukhi == null) {
       throw const FormatException('A Hukamnama line has no Gurmukhi.');
     }
+    final ang = json['ang'];
+    final pauses = json['vishraam'];
     return HukamnamaLine(
       gurmukhi: gurmukhi,
       punjabi: _text(json['punjabi']),
       english: _text(json['english']),
       transliteration: _text(json['transliteration']),
+      id: _text(json['id']),
+      ang: ang is int ? _validAng(ang) : null,
+      // A pause that this version cannot read is left out. It is only a mark.
+      vishraam: pauses is List
+          ? List.unmodifiable([
+              for (final pause in pauses)
+                if (HukamnamaVishraam.tryParse(pause) case final v?) v,
+            ])
+          : const [],
     );
   }
 
@@ -69,10 +135,182 @@ class HukamnamaLine {
       other.gurmukhi == gurmukhi &&
       other.punjabi == punjabi &&
       other.english == english &&
-      other.transliteration == transliteration;
+      other.transliteration == transliteration &&
+      other.id == id &&
+      other.ang == ang &&
+      _sameList(other.vishraam, vishraam);
 
   @override
-  int get hashCode => Object.hash(gurmukhi, punjabi, english, transliteration);
+  int get hashCode => Object.hash(
+        gurmukhi,
+        punjabi,
+        english,
+        transliteration,
+        id,
+        ang,
+        Object.hashAll(vishraam),
+      );
+}
+
+/// A name from Shabad OS, such as a writer or a section. It has the Roman
+/// spelling, the Gurmukhi spelling, or both.
+class HukamnamaName {
+  const HukamnamaName({this.roman, this.gurmukhi});
+
+  /// For example `Guru Ramdas` or `Raag Dhanaasree`.
+  final String? roman;
+
+  /// For example `ਗੁਰੂ ਰਾਮਦਾਸ`.
+  final String? gurmukhi;
+
+  Map<String, dynamic> toJson() => {
+        if (roman != null) 'roman': roman,
+        if (gurmukhi != null) 'gurmukhi': gurmukhi,
+      };
+
+  static HukamnamaName? tryParse(Object? json) {
+    if (json is! Map<String, dynamic>) return null;
+    final name = HukamnamaName(
+      roman: _text(json['roman']),
+      gurmukhi: _text(json['gurmukhi']),
+    );
+    return name.roman == null && name.gurmukhi == null ? null : name;
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      other is HukamnamaName &&
+      other.roman == roman &&
+      other.gurmukhi == gurmukhi;
+
+  @override
+  int get hashCode => Object.hash(roman, gurmukhi);
+}
+
+/// The Hukamnama shabad line by line, with facts about it, from the Shabad OS
+/// database (shabados.com).
+///
+/// The mirror job adds it to a day's file as the optional `shabad` and `lines`
+/// keys (tool/hukamnama_data_README.md has the shape). It is there only when
+/// the job matched SGPC's text to the database with high confidence. So
+/// [Hukamnama.shabad] is null for a day with no match, for a day that was
+/// mirrored before this existed, for every answer read from SGPC itself, and
+/// when the keys cannot be read. Nothing here is needed to show the Hukamnama.
+///
+/// The Gurmukhi of these [lines] is the database's. It can differ from SGPC's
+/// text by a letter or two, where the two sources print a word differently.
+class HukamnamaShabad {
+  const HukamnamaShabad({
+    required this.lines,
+    required this.ids,
+    required this.ang,
+    required this.angEnd,
+    this.sections = const [],
+    this.writers = const [],
+    this.credits = const {},
+    this.source,
+    this.version,
+    this.similarity,
+  });
+
+  /// The lines, in reading order. Never empty.
+  final List<HukamnamaLine> lines;
+
+  /// The Shabad OS ids of the shabad (a Hukamnama can cover more than one).
+  final List<String> ids;
+
+  /// The Ang (page) where the shabad starts.
+  final int ang;
+
+  /// The Ang where it ends. The same as [ang] for a shabad on one page.
+  final int angEnd;
+
+  /// The raag or other section of Sri Guru Granth Sahib Ji, for example
+  /// `Raag Dhanaasree`.
+  final List<HukamnamaName> sections;
+
+  /// The writers (Gurus and Bhagats) of the shabad.
+  final List<HukamnamaName> writers;
+
+  /// Who made each kind of data, for the credit on a screen. The keys are
+  /// `gurmukhi`, `vishraam`, `english` and `punjabi`.
+  final Map<String, String> credits;
+
+  /// `Shabad OS`.
+  final String? source;
+
+  /// The database release, for example `5.0.0-next.0`.
+  final String? version;
+
+  /// How much of SGPC's letters the lines match, from 0.985 to 1.
+  final double? similarity;
+
+  Map<String, dynamic> toJson() => {
+        if (source != null) 'source': source,
+        if (version != null) 'version': version,
+        'matched': true,
+        if (similarity != null) 'similarity': similarity,
+        'ids': ids,
+        'ang': ang,
+        'angEnd': angEnd,
+        'sections': [for (final s in sections) s.toJson()],
+        'writers': [for (final w in writers) w.toJson()],
+        'credits': credits,
+        'lines': [for (final l in lines) l.toJson()],
+      };
+
+  /// Reads the `shabad` object and the `lines` array of a mirror file.
+  /// Returns null, and never throws, when the day has no matched shabad or
+  /// when anything in it cannot be read: lines that are half right are worse
+  /// than none.
+  static HukamnamaShabad? tryParse(Object? shabad, Object? lines) {
+    try {
+      if (shabad is! Map<String, dynamic> || shabad['matched'] != true) {
+        return null;
+      }
+      if (lines is! List || lines.isEmpty) return null;
+      final ang = shabad['ang'];
+      final angEnd = shabad['angEnd'];
+      final ids = shabad['ids'];
+      final credits = shabad['credits'];
+      if (ang is! int || _validAng(ang) == null) return null;
+      final end = angEnd is int ? _validAng(angEnd) : null;
+      final similarity = shabad['similarity'];
+      return HukamnamaShabad(
+        lines: List.unmodifiable([
+          for (final line in lines)
+            line is Map<String, dynamic>
+                ? HukamnamaLine.fromJson(line)
+                : throw const FormatException('A line is not an object.'),
+        ]),
+        ids:
+            ids is List ? List.unmodifiable(ids.whereType<String>()) : const [],
+        ang: ang,
+        angEnd: end != null && end >= ang ? end : ang,
+        sections: _names(shabad['sections']),
+        writers: _names(shabad['writers']),
+        credits: credits is Map
+            ? Map.unmodifiable({
+                for (final entry in credits.entries)
+                  if (entry.key is String && _text(entry.value) != null)
+                    entry.key as String: _text(entry.value)!,
+              })
+            : const {},
+        source: _text(shabad['source']),
+        version: _text(shabad['version']),
+        similarity: similarity is num ? similarity.toDouble() : null,
+      );
+    } on FormatException {
+      return null;
+    }
+  }
+
+  static List<HukamnamaName> _names(Object? json) => json is List
+      ? List.unmodifiable([
+          for (final item in json)
+            if (HukamnamaName.tryParse(item) case final name?) name,
+        ])
+      : const [];
 }
 
 /// The Hukamnama for one day, as SGPC publishes it.
@@ -87,6 +325,7 @@ class Hukamnama {
     this.englishMeaning,
     this.footerGurmukhi,
     this.footerEnglish,
+    this.shabad,
   });
 
   /// The SGPC day this text belongs to, as UTC midnight (the shape
@@ -131,6 +370,12 @@ class Hukamnama {
   /// `Monday, 17th Katak (Samvat 558 Nanakshahi)`. Null when SGPC gives none.
   final String? footerEnglish;
 
+  /// The shabad line by line from Shabad OS: the Gurmukhi, the pauses, an
+  /// English and a Punjabi meaning, and facts about the shabad. Null when the
+  /// mirror has none for the day. It is not used by any screen yet, and [lines]
+  /// is unchanged by it.
+  final HukamnamaShabad? shabad;
+
   /// Whether this is the text for [sgpcDay] (as returned by `sgpcDayOf`).
   bool isFor(DateTime sgpcDay) =>
       date == DateTime.utc(sgpcDay.year, sgpcDay.month, sgpcDay.day);
@@ -152,6 +397,10 @@ class Hukamnama {
   ///   [englishMeaning].
   /// - `gfooter1` and `efooter1`: [footerGurmukhi] and [footerEnglish]. The
   ///   `footer2` fields only repeat the Ang, so they are not used.
+  ///
+  /// The mirror's files hold two keys next to SGPC's own: `shabad` and
+  /// `lines`. They fill [shabad] when they can be read in full, and are ignored
+  /// when they cannot. See [HukamnamaShabad.tryParse].
   factory Hukamnama.fromSgpc(Map<String, dynamic> json) {
     if (json['supported'] != true) {
       throw const FormatException('SGPC has no Hukamnama for that day.');
@@ -188,6 +437,7 @@ class Hukamnama {
       englishMeaning: _text(body['ehukamnamadesc']),
       footerGurmukhi: _text(body['gfooter1']),
       footerEnglish: _text(body['efooter1']),
+      shabad: HukamnamaShabad.tryParse(json['shabad'], json['lines']),
     );
   }
 
@@ -203,6 +453,7 @@ class Hukamnama {
         if (englishMeaning != null) 'englishMeaning': englishMeaning,
         if (footerGurmukhi != null) 'footerGurmukhi': footerGurmukhi,
         if (footerEnglish != null) 'footerEnglish': footerEnglish,
+        if (shabad != null) 'shabad': shabad!.toJson(),
       };
 
   /// Throws [FormatException] for anything [toJson] did not write, so a file
@@ -238,6 +489,11 @@ class Hukamnama {
       englishMeaning: _text(json['englishMeaning']),
       footerGurmukhi: _text(json['footerGurmukhi']),
       footerEnglish: _text(json['footerEnglish']),
+      shabad: switch (json['shabad']) {
+        final Map<String, dynamic> shabad =>
+          HukamnamaShabad.tryParse(shabad, shabad['lines']),
+        _ => null,
+      },
     );
   }
 
@@ -300,6 +556,14 @@ HukamnamaLine? hukamnamaPreviewLine(Hukamnama hukamnama) {
     if (line.gurmukhi.length > 20) return line;
   }
   return hukamnama.lines.isEmpty ? null : hukamnama.lines.first;
+}
+
+bool _sameList<T>(List<T> a, List<T> b) {
+  if (a.length != b.length) return false;
+  for (var i = 0; i < a.length; i++) {
+    if (a[i] != b[i]) return false;
+  }
+  return true;
 }
 
 /// [ang] when it is a page of Sri Guru Granth Sahib Ji (1 to 1430), else null.

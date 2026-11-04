@@ -18,6 +18,13 @@ Map<String, dynamic> fixture() => _load('sgpc_hukamnama_2026_11_02.json');
 Map<String, dynamic> rahauDoojaFixture() =>
     _load('sgpc_hukamnama_2026_10_16.json');
 
+/// The mirror's file for 2 November 2026: SGPC's answer above, plus the
+/// `shabad` and `lines` keys that tool/hukamnama_mirror.dart adds from the
+/// Shabad OS database. Written by the tool, so test/tool/hukamnama_mirror_test
+/// keeps it true.
+Map<String, dynamic> mirrorFixture() =>
+    _load('mirror_hukamnama_2026_11_02.json');
+
 /// A minimal answer that is a whole Hukamnama, with [body] merged over it.
 Map<String, dynamic> response({
   Object? supported = true,
@@ -347,6 +354,182 @@ void main() {
                 ],
               }),
           throwsFormatException);
+    });
+  });
+
+  group('Hukamnama.shabad', () {
+    test('is null for SGPC\'s own answer', () {
+      expect(Hukamnama.fromSgpc(fixture()).shabad, isNull);
+    });
+
+    test('is read from the keys that the mirror adds', () {
+      final h = Hukamnama.fromSgpc(mirrorFixture());
+      final shabad = h.shabad!;
+
+      expect(shabad.lines, hasLength(10));
+      expect(shabad.ids, ['R5B']);
+      expect(shabad.ang, 668);
+      expect(shabad.angEnd, 668);
+      expect(shabad.sections.single.roman, 'Raag Dhanaasree');
+      expect(shabad.writers.single.roman, 'Guru Ramdas');
+      expect(shabad.writers.single.gurmukhi, 'ਗੁਰੂ ਰਾਮਦਾਸ');
+      expect(shabad.source, 'Shabad OS');
+      expect(shabad.version, '5.0.0-next.0');
+      expect(shabad.similarity, 1);
+      expect(shabad.credits['english'], 'Dr. Sant Singh Khalsa');
+      expect(shabad.credits['punjabi'], contains('Sahib Singh'));
+    });
+
+    test('reads each line: Gurmukhi, pauses, and both meanings', () {
+      final line = Hukamnama.fromSgpc(mirrorFixture()).shabad!.lines.first;
+
+      expect(line.id, '015H');
+      expect(line.ang, 668);
+      expect(
+        line.gurmukhi,
+        'ਹਰਿ ਹਰਿ ਬੂੰਦ ਭਏ ਹਰਿ ਸੁਆਮੀ ਹਮ ਚਾਤ੍ਰਿਕ ਬਿਲਲ ਬਿਲਲਾਤੀ ॥',
+      );
+      expect(line.vishraam, const [
+        HukamnamaVishraam(5, HukamnamaPause.heavy),
+      ]);
+      expect(line.english, startsWith('The Lord, Har, Har'));
+      expect(line.punjabi, startsWith('ਹੇ ਹਰੀ!'));
+      // The Shabad OS release that the mirror uses has no transliteration.
+      expect(line.transliteration, isNull);
+    });
+
+    test('leaves the lines of SGPC\'s text as they were', () {
+      final plain = Hukamnama.fromSgpc(fixture());
+      final mirrored = Hukamnama.fromSgpc(mirrorFixture());
+
+      expect(mirrored.lines, plain.lines);
+      expect(mirrored.englishMeaning, plain.englishMeaning);
+      expect(mirrored.headingGurmukhi, plain.headingGurmukhi);
+      expect(mirrored.ang, plain.ang);
+      // SGPC's lines carry no pauses and no meanings of their own.
+      for (final line in mirrored.lines) {
+        expect(line.vishraam, isEmpty);
+        expect(line.english, isNull);
+        expect(line.id, isNull);
+      }
+    });
+
+    test('counts the words that a pause follows in the line it belongs to', () {
+      for (final line in Hukamnama.fromSgpc(mirrorFixture()).shabad!.lines) {
+        final words = line.gurmukhi.split(' ');
+        for (final pause in line.vishraam) {
+          expect(pause.after, lessThan(words.length - 1), reason: '${line.id}');
+        }
+        // A pause never follows another on the same word.
+        expect(
+            {for (final p in line.vishraam) p.after},
+            hasLength(
+              line.vishraam.length,
+            ));
+      }
+    });
+
+    group('is null, and the day still reads, when', () {
+      void isNullFor(String name, void Function(Map<String, dynamic>) change) {
+        test(name, () {
+          final json = mirrorFixture();
+          change(json);
+          final h = Hukamnama.fromSgpc(json);
+          expect(h.shabad, isNull);
+          expect(h.lines, hasLength(10));
+          expect(h.ang, 668);
+        });
+      }
+
+      isNullFor('the day did not match', (j) {
+        j['shabad'] = {'matched': false, 'reason': 'Two runs match.'};
+        j.remove('lines');
+      });
+      isNullFor('"matched" is missing', (j) {
+        (j['shabad'] as Map).remove('matched');
+      });
+      isNullFor('there are no lines', (j) => j.remove('lines'));
+      isNullFor('the lines are empty', (j) => j['lines'] = <Object>[]);
+      isNullFor('the lines are not a list', (j) => j['lines'] = 'lines');
+      isNullFor('one line is not an object', (j) {
+        (j['lines'] as List)[3] = 'not a line';
+      });
+      isNullFor('one line has no Gurmukhi', (j) {
+        ((j['lines'] as List)[3] as Map).remove('gurmukhi');
+      });
+      isNullFor('one line has blank Gurmukhi', (j) {
+        ((j['lines'] as List)[3] as Map)['gurmukhi'] = '  ';
+      });
+      isNullFor('shabad is not an object', (j) => j['shabad'] = 'shabad');
+      isNullFor('the Ang is missing', (j) {
+        (j['shabad'] as Map).remove('ang');
+      });
+      isNullFor('the Ang is not a page of the Granth', (j) {
+        (j['shabad'] as Map)['ang'] = 1431;
+      });
+    });
+
+    test('keeps a line whose pause it cannot read, without the pause', () {
+      final json = mirrorFixture();
+      ((json['lines'] as List)[0] as Map)['vishraam'] = [
+        {'after': 5, 'weight': 'heavy'},
+        {'after': 2, 'weight': 'enormous'},
+        {'after': -1, 'weight': 'light'},
+        {'weight': 'light'},
+        'not a pause',
+      ];
+      final line = Hukamnama.fromSgpc(json).shabad!.lines.first;
+      expect(line.vishraam, const [
+        HukamnamaVishraam(5, HukamnamaPause.heavy),
+      ]);
+    });
+
+    test('lets a line have no meaning, no pause and no id', () {
+      final json = mirrorFixture();
+      json['lines'] = [
+        {'gurmukhi': 'ਸਲੋਕੁ ॥'},
+      ];
+      final line = Hukamnama.fromSgpc(json).shabad!.lines.single;
+      expect(line.gurmukhi, 'ਸਲੋਕੁ ॥');
+      expect(line.english, isNull);
+      expect(line.punjabi, isNull);
+      expect(line.id, isNull);
+      expect(line.vishraam, isEmpty);
+    });
+
+    test('ends on the starting Ang when the end Ang is wrong', () {
+      final json = mirrorFixture();
+      (json['shabad'] as Map)['angEnd'] = 600;
+      expect(Hukamnama.fromSgpc(json).shabad!.angEnd, 668);
+    });
+
+    test('survives the on-disk cache', () {
+      final h = Hukamnama.fromSgpc(mirrorFixture());
+      final back = Hukamnama.fromJson(
+        jsonDecode(jsonEncode(h.toJson())) as Map<String, dynamic>,
+      );
+
+      expect(back.shabad, isNotNull);
+      expect(back.shabad!.lines, h.shabad!.lines);
+      expect(back.shabad!.ids, h.shabad!.ids);
+      expect(back.shabad!.ang, h.shabad!.ang);
+      expect(back.shabad!.credits, h.shabad!.credits);
+      expect(back.shabad!.writers, h.shabad!.writers);
+      expect(back.lines, h.lines);
+    });
+
+    test('is not in the cache of a day that has none', () {
+      final json = Hukamnama.fromSgpc(fixture()).toJson();
+      expect(json.containsKey('shabad'), isFalse);
+      expect(Hukamnama.fromJson(json).shabad, isNull);
+    });
+
+    test('reads a cache that has a damaged shabad as a day with none', () {
+      final json = Hukamnama.fromSgpc(mirrorFixture()).toJson();
+      (json['shabad'] as Map<String, dynamic>)['lines'] = <Object>[];
+      final h = Hukamnama.fromJson(json);
+      expect(h.shabad, isNull);
+      expect(h.lines, hasLength(10));
     });
   });
 

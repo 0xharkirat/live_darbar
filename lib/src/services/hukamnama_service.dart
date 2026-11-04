@@ -86,8 +86,11 @@ const kHukamnamaMirrorUrl = String.fromEnvironment(
 /// The server sends no CORS header, so a browser cannot read its answer. On web
 /// [fetch] never calls SGPC. It reads a copy of SGPC's answer from the mirror
 /// ([kHukamnamaMirrorUrl]), one file for each day, and parses it with the same
-/// code as the native answer. The mirror only holds answers that passed the
-/// checks of its script, so:
+/// code as the native answer. A file can also carry the optional `shabad` and
+/// `lines` keys that the mirror adds from the Shabad OS database. They end up
+/// in [Hukamnama.shabad], which is null when they are missing or cannot be
+/// read, so they never make a day fail. The mirror only holds answers that
+/// passed the checks of its script, so:
 /// - a day with no file (HTTP 404) is a day not posted yet, as SGPC's own
 ///   `supported: false` is: [HukamnamaNotPublishedException];
 /// - any other status is a fault: [HukamnamaException], so the controller's

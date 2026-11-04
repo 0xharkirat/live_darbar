@@ -1,5 +1,5 @@
 // Copies SGPC's Hukamnama answer for today and yesterday into a folder, so the
-// web app can read it.
+// web app can read it, and adds the shabad line by line from Shabad OS.
 //
 // Why this exists: SGPC's feed sends no CORS header, so a browser cannot read
 // it. The native apps read SGPC directly and do not use this. A GitHub Actions
@@ -12,14 +12,26 @@
 //   dart tool/hukamnama_mirror.dart --out /path/to/folder
 //
 // It writes into `<out>/hukamnama/`:
-// - `YYYY-MM-DD.json`: SGPC's answer for that day, byte for byte. The app
-//   parses it with its own parser (`Hukamnama.fromSgpc`).
+// - `YYYY-MM-DD.json`: SGPC's answer for that day. The app parses it with its
+//   own parser (`Hukamnama.fromSgpc`). Without `--shabados-db` the file is
+//   SGPC's answer byte for byte. With it, the file is SGPC's answer plus two
+//   optional keys, `shabad` and `lines`, that tool/shabad_os.dart fills. See
+//   tool/hukamnama_data_README.md for their shape.
 // - `latest.json`: a copy of the newest day on disk.
 // The last 31 days stay and older files are deleted.
 //
+// Options:
+// - `--out DIR`: the folder to write into. The default is the current one.
+// - `--shabados-db FILE`: the Shabad OS database file. The tool downloads and
+//   checks the pinned release when the file does not exist, and only when a
+//   day needs it. Without this option no lines are added.
+// - `--days N`: how many days to copy, today included. The default is 2,
+//   today and yesterday. At most 31.
+//
 // Exit codes:
 // - 0: every day is mirrored, or SGPC has not published it yet. Today is
-//   unpublished from midnight until about 05:30 IST, and that is normal.
+//   unpublished from midnight until about 05:30 IST, and that is normal. A day
+//   whose lines could not be added is still mirrored, with a warning.
 // - 1: SGPC gave an answer that cannot be used. Nothing bad is written.
 // - 64: wrong command line.
 //
@@ -32,6 +44,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
+
+import 'shabad_os.dart';
 
 /// The undocumented endpoint behind SGPC's archive calendar. Same URL as
 /// `kHukamnamaArchiveUrl` in the app.
@@ -181,10 +195,15 @@ enum DayOutcome { written, unchanged, notPublished, failed }
 
 /// What [mirror] did in one run.
 class MirrorReport {
-  MirrorReport(this.outcomes, this.warnings, this.errors);
+  MirrorReport(this.outcomes, this.warnings, this.errors,
+      [this.lineNotes = const {}]);
 
   /// Keyed by day, `YYYY-MM-DD`.
   final Map<String, DayOutcome> outcomes;
+
+  /// What happened to the lines of each day that was checked for them, keyed
+  /// by day. A day with no entry was not checked.
+  final Map<String, String> lineNotes;
 
   /// Odd, but not a reason to fail the run.
   final List<String> warnings;
@@ -203,22 +222,37 @@ class MirrorReport {
 /// all, with [pause] between tries. If it never improves, the day is
 /// [DayOutcome.failed] and its file is left as it was: a good file is never
 /// replaced by a bad answer.
+///
+/// [days] is how many days are copied, [now]'s SGPC day included (2 is today
+/// and yesterday).
+///
+/// With a [lines] provider, each accepted day gets the `shabad` and `lines`
+/// keys. See [_bodyWithLines]. A provider that fails never fails the day: the
+/// day is written as SGPC sent it, and the run gets a warning.
 Future<MirrorReport> mirror({
   required Directory root,
   required DateTime now,
   required Future<SgpcReply> Function(String day) fetch,
   int attempts = 3,
   Duration pause = const Duration(seconds: 5),
+  int days = 2,
+  LinesProvider? lines,
 }) async {
   final today = sgpcDayOf(now);
   final dir = Directory('${root.path}/hukamnama')..createSync(recursive: true);
   final outcomes = <String, DayOutcome>{};
   final warnings = <String>[];
   final errors = <String>[];
+  final lineNotes = <String, String>{};
 
-  // Yesterday is asked for first, so that if today fails the folder is no
-  // worse. Both are always asked for: one failure does not skip the other.
-  for (final day in [previousDay(today), today]) {
+  // The oldest day is asked for first and today last, so that if today fails
+  // the folder is no worse. All are always asked for: one failure does not
+  // skip the others.
+  final wanted = [
+    for (var back = days.clamp(1, kKeepDays) - 1; back >= 0; back--)
+      DateTime.utc(today.year, today.month, today.day - back),
+  ];
+  for (final day in wanted) {
     final iso = dayIso(day);
     SgpcVerdict verdict = const Rejected('Not asked.');
     SgpcReply? reply;
@@ -236,15 +270,27 @@ Future<MirrorReport> mirror({
 
     switch (verdict) {
       case Accepted():
-        final changed = _writeIfChanged(File('${dir.path}/$iso.json'), reply!);
+        final file = File('${dir.path}/$iso.json');
+        var accepted = reply!;
+        if (lines != null) {
+          final body = await _bodyWithLines(
+            reply: accepted,
+            file: file,
+            provider: lines,
+            warnings: warnings,
+            note: (text) => lineNotes[iso] = text,
+          );
+          accepted = SgpcReply(200, body);
+        }
+        final changed = _writeIfChanged(file, accepted);
         outcomes[iso] = changed ? DayOutcome.written : DayOutcome.unchanged;
       case NotPublished():
         outcomes[iso] = DayOutcome.notPublished;
-        // Today is normally unpublished until about 05:30 IST. Yesterday
+        // Today is normally unpublished until about 05:30 IST. An earlier day
         // should exist, so say so, but a day SGPC skipped must not keep the
         // job red.
         if (day != today) {
-          warnings.add('SGPC has no Hukamnama for $iso, the day before.');
+          warnings.add('SGPC has no Hukamnama for $iso, an earlier day.');
         }
       case Rejected(:final reason):
         outcomes[iso] = DayOutcome.failed;
@@ -256,7 +302,94 @@ Future<MirrorReport> mirror({
   for (final name in namesToPrune(_names(dir), today)) {
     File('${dir.path}/$name').deleteSync();
   }
-  return MirrorReport(outcomes, warnings, errors);
+  return MirrorReport(outcomes, warnings, errors, lineNotes);
+}
+
+/// The two keys that [_bodyWithLines] adds to SGPC's answer.
+const _addedKeys = ['shabad', 'lines'];
+
+/// The bytes to write for [reply], SGPC's accepted answer, with the `shabad`
+/// and `lines` keys of [provider] added.
+///
+/// The day is looked up once. A file that already holds the same SGPC answer
+/// and the provider's stamp (see [LinesProvider.stamp]) is kept as it is, so a
+/// run every 10 minutes does not read the database again. That holds for a day
+/// that did not match, too: it is looked at again only when SGPC changes the
+/// text, or when the database or the matching rules change.
+///
+/// When the provider throws, the file that is there is kept if it holds the
+/// same SGPC answer, and else SGPC's answer is written as it came.
+Future<List<int>> _bodyWithLines({
+  required SgpcReply reply,
+  required File file,
+  required LinesProvider provider,
+  required List<String> warnings,
+  required void Function(String note) note,
+}) async {
+  // checkSgpcReply accepted the reply, so this is a JSON object.
+  final sgpc = jsonDecode(utf8.decode(reply.body)) as Map<String, dynamic>;
+  final existing = _readObject(file);
+  final sameText = existing != null && _sameAnswer(existing, sgpc);
+
+  if (sameText && _hasStamp(existing, provider.stamp)) {
+    note('kept (${_describe(existing)})');
+    return file.readAsBytesSync();
+  }
+
+  final iso = (sgpc['hukamnama'] as Map)['date'];
+  try {
+    final result = await provider.linesFor(
+      Map<String, dynamic>.from(sgpc['hukamnama'] as Map),
+    );
+    final out = <String, Object?>{
+      for (final entry in sgpc.entries)
+        if (!_addedKeys.contains(entry.key)) entry.key: entry.value,
+      'shabad': result.shabad,
+      if (result.lines.isNotEmpty) 'lines': result.lines,
+    };
+    note(_describe(out));
+    return utf8.encode(jsonEncode(out));
+  } on Object catch (e) {
+    warnings.add('$iso: the lines were left out ($e)');
+    note('left out');
+    return sameText ? file.readAsBytesSync() : reply.body;
+  }
+}
+
+/// `matched, 10 lines` or `not matched: <reason>`, for the log.
+String _describe(Map<String, dynamic> day) {
+  final shabad = day['shabad'];
+  if (shabad is! Map) return 'no lines';
+  if (shabad['matched'] != true) return 'not matched: ${shabad['reason']}';
+  final count = day['lines'] is List ? (day['lines'] as List).length : 0;
+  return 'matched, $count lines, Ang ${shabad['ang']}';
+}
+
+Map<String, dynamic>? _readObject(File file) {
+  if (!file.existsSync()) return null;
+  try {
+    final json = jsonDecode(utf8.decode(file.readAsBytesSync()));
+    return json is Map<String, dynamic> ? json : null;
+  } on FormatException {
+    return null;
+  }
+}
+
+/// Whether [a] and [b] hold the same SGPC answer, ignoring the keys that this
+/// tool adds.
+bool _sameAnswer(Map<String, dynamic> a, Map<String, dynamic> b) {
+  String plain(Map<String, dynamic> m) => jsonEncode({
+        for (final entry in m.entries)
+          if (!_addedKeys.contains(entry.key)) entry.key: entry.value,
+      });
+  return plain(a) == plain(b);
+}
+
+/// Whether the `shabad` object of [day] carries every entry of [stamp].
+bool _hasStamp(Map<String, dynamic> day, Map<String, Object?> stamp) {
+  final shabad = day['shabad'];
+  return shabad is Map &&
+      stamp.entries.every((entry) => shabad[entry.key] == entry.value);
 }
 
 List<String> _names(Directory dir) => [
@@ -334,12 +467,26 @@ Future<SgpcReply> fetchFromSgpc(String day) async {
 }
 
 Future<void> main(List<String> args) async {
+  const usage = 'Usage: dart tool/hukamnama_mirror.dart [--out DIR] '
+      '[--shabados-db FILE] [--days N]';
   var out = '.';
+  String? database;
+  var days = 2;
   for (var i = 0; i < args.length; i++) {
-    if (args[i] == '--out' && i + 1 < args.length) {
+    final hasValue = i + 1 < args.length;
+    if (args[i] == '--out' && hasValue) {
       out = args[++i];
+    } else if (args[i] == '--shabados-db' && hasValue) {
+      database = args[++i];
+    } else if (args[i] == '--days' && hasValue) {
+      final n = int.tryParse(args[++i]);
+      if (n == null || n < 1 || n > kKeepDays) {
+        stderr.writeln('--days takes a number from 1 to $kKeepDays.');
+        exit(64);
+      }
+      days = n;
     } else {
-      stderr.writeln('Usage: dart tool/hukamnama_mirror.dart [--out DIR]');
+      stderr.writeln(usage);
       exit(64);
     }
   }
@@ -348,12 +495,19 @@ Future<void> main(List<String> args) async {
     root: Directory(out),
     now: DateTime.now(),
     fetch: fetchFromSgpc,
+    days: days,
+    lines: database == null
+        ? null
+        : ShabadOsLines(ShabadOsDatabase(File(database))),
   );
 
   // GitHub Actions turns `::warning::` and `::error::` lines into annotations.
   final inCi = Platform.environment['GITHUB_ACTIONS'] == 'true';
   for (final entry in report.outcomes.entries) {
-    stdout.writeln('${entry.key}: ${entry.value.name}');
+    final note = report.lineNotes[entry.key];
+    stdout.writeln(
+      '${entry.key}: ${entry.value.name}${note == null ? '' : ' (lines: $note)'}',
+    );
   }
   for (final (level, message) in [
     for (final m in report.warnings) ('warning', m),

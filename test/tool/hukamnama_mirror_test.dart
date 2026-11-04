@@ -6,6 +6,8 @@ import 'package:live_darbar/src/models/hukamnama.dart';
 import 'package:live_darbar/src/models/sgpc_day.dart' as app;
 
 import '../../tool/hukamnama_mirror.dart';
+import '../../tool/shabad_os.dart';
+import '../support/shabad_os_fixture.dart';
 
 /// SGPC's real answer for 2 November 2026, as received and not edited.
 final _recorded =
@@ -395,6 +397,248 @@ void main() {
       expect(asked, unorderedEquals(['2026-11-02', '2026-11-03']));
     });
   });
+
+  group('mirror with lines', () {
+    final now = DateTime.utc(2026, 11, 2, 12);
+
+    late Directory root;
+    setUp(() {
+      root = Directory.systemTemp.createTempSync('hukamnama_lines_test');
+      addTearDown(() => root.deleteSync(recursive: true));
+    });
+
+    File file(String name) => File('${root.path}/hukamnama/$name');
+
+    Map<String, dynamic> read(String name) =>
+        jsonDecode(file(name).readAsStringSync()) as Map<String, dynamic>;
+
+    Future<MirrorReport> run(
+      Future<SgpcReply> Function(String day) answer,
+      LinesProvider? lines, {
+      int days = 2,
+    }) =>
+        mirror(
+          root: root,
+          now: now,
+          fetch: answer,
+          pause: Duration.zero,
+          days: days,
+          lines: lines,
+        );
+
+    Future<SgpcReply> recorded(String day) async =>
+        ok(day == '2026-11-02' ? _recorded : goodFor(day));
+
+    test('adds shabad and lines beside what SGPC sent', () async {
+      final provider = _FakeLines();
+      final report = await run(recorded, provider);
+
+      expect(report.exitCode, 0);
+      expect(report.outcomes.values, everyElement(DayOutcome.written));
+      final day = read('2026-11-02.json');
+      final sgpc = jsonDecode(utf8.decode(_recorded)) as Map<String, dynamic>;
+      // SGPC's keys come first, unchanged, and the new keys follow.
+      expect(day.keys.toList(), [...sgpc.keys, 'shabad', 'lines']);
+      for (final key in sgpc.keys) {
+        expect(day[key], sgpc[key], reason: key);
+      }
+      expect(day['shabad'], containsPair('matched', true));
+      expect(day['lines'], hasLength(2));
+      expect(report.lineNotes['2026-11-02'], contains('matched, 2 lines'));
+    });
+
+    test('hands the provider the hukamnama object of the day', () async {
+      final provider = _FakeLines();
+      await run(recorded, provider);
+
+      final asked = provider.asked.firstWhere((h) => h['date'] == '2026-11-02');
+      expect(asked['ang'], '668');
+      expect(asked['ghukamnama'], startsWith('ਹਰਿ ਹਰਿ ਬੂੰਦ'));
+    });
+
+    test('an old app and the new app both read the file', () async {
+      await run(recorded, _FakeLines());
+      final day = read('2026-11-02.json');
+
+      // The parser of the app ignores keys it does not know.
+      final parsed = Hukamnama.fromSgpc(day);
+      expect(parsed.date, DateTime.utc(2026, 11, 2));
+      expect(parsed.ang, 668);
+      expect(parsed.lines, hasLength(10));
+      expect(parsed.shabad, isNotNull);
+      expect(parsed.shabad!.lines.first.english, 'First line.');
+      expect(parsed.shabad!.ids, ['TEST']);
+    });
+
+    test('a second run does not ask the provider again', () async {
+      final provider = _FakeLines();
+      await run(recorded, provider);
+      provider.asked.clear();
+      final report = await run(recorded, provider);
+
+      expect(provider.asked, isEmpty);
+      expect(report.outcomes.values, everyElement(DayOutcome.unchanged));
+      expect(report.lineNotes['2026-11-02'], startsWith('kept'));
+    });
+
+    test('a day that did not match is not asked again either', () async {
+      final provider = _FakeLines(matched: false);
+      await run(recorded, provider);
+      final day = read('2026-11-02.json');
+
+      expect(day['shabad'], containsPair('matched', false));
+      expect(day['shabad'], containsPair('reason', 'No run matches.'));
+      expect(day.containsKey('lines'), isFalse);
+      expect(Hukamnama.fromSgpc(day).shabad, isNull);
+
+      provider.asked.clear();
+      await run(recorded, provider);
+      expect(provider.asked, isEmpty);
+    });
+
+    test('looks again when SGPC changes the text of a day', () async {
+      final provider = _FakeLines();
+      await run(recorded, provider);
+      provider.asked.clear();
+
+      final changed = recordedWith((json) {
+        hukamnamaOf(json)['ehukamnamadesc'] = 'A corrected meaning.';
+      });
+      final report = await run(
+        (day) async => ok(day == '2026-11-02' ? changed : goodFor(day)),
+        provider,
+      );
+
+      expect(provider.asked.map((h) => h['date']), ['2026-11-02']);
+      expect(report.outcomes['2026-11-02'], DayOutcome.written);
+      expect(report.outcomes['2026-11-01'], DayOutcome.unchanged);
+    });
+
+    test('looks again when the database or the matching rules change',
+        () async {
+      await run(recorded, _FakeLines());
+      final newer = _FakeLines(stamp: {
+        ..._FakeLines.defaultStamp,
+        'matcher': 2,
+      });
+      final report = await run(recorded, newer);
+
+      expect(newer.asked, hasLength(2));
+      expect(report.outcomes.values, everyElement(DayOutcome.written));
+      expect(read('2026-11-02.json')['shabad'], containsPair('matcher', 2));
+    });
+
+    test('adds lines to a day that an earlier run wrote without them',
+        () async {
+      await run(recorded, null);
+      expect(file('2026-11-02.json').readAsBytesSync(), _recorded);
+
+      final report = await run(recorded, _FakeLines());
+      expect(report.outcomes['2026-11-02'], DayOutcome.written);
+      expect(read('2026-11-02.json'), contains('lines'));
+    });
+
+    test('writes SGPC as it came, and warns, when the provider throws',
+        () async {
+      final report = await run(recorded, _FakeLines(failWith: 'no database'));
+
+      expect(report.exitCode, 0);
+      expect(report.errors, isEmpty);
+      expect(report.warnings, hasLength(2));
+      expect(report.warnings.first, contains('no database'));
+      expect(report.outcomes.values, everyElement(DayOutcome.written));
+      expect(file('2026-11-02.json').readAsBytesSync(), _recorded);
+      expect(report.lineNotes['2026-11-02'], 'left out');
+    });
+
+    test('keeps the lines of the day when the provider then throws', () async {
+      await run(recorded, _FakeLines());
+      final before = file('2026-11-02.json').readAsBytesSync();
+
+      final report = await run(
+        recorded,
+        _FakeLines(
+          failWith: 'no database',
+          stamp: {..._FakeLines.defaultStamp, 'matcher': 2},
+        ),
+      );
+
+      expect(report.exitCode, 0);
+      expect(file('2026-11-02.json').readAsBytesSync(), before);
+      expect(report.outcomes['2026-11-02'], DayOutcome.unchanged);
+    });
+
+    test('puts the same bytes in latest.json as in the newest day', () async {
+      await run(recorded, _FakeLines());
+      expect(
+        file('latest.json').readAsBytesSync(),
+        file('2026-11-02.json').readAsBytesSync(),
+      );
+    });
+
+    test('gives a bad answer no lines and keeps the good file', () async {
+      final provider = _FakeLines();
+      await run(recorded, provider);
+      final before = file('2026-11-02.json').readAsBytesSync();
+      provider.asked.clear();
+
+      final report = await run(
+        (day) async => day == '2026-11-02'
+            ? ok(utf8.encode('<html>Maintenance'))
+            : recorded(day),
+        provider,
+      );
+
+      expect(report.exitCode, 1);
+      expect(provider.asked, isEmpty);
+      expect(file('2026-11-02.json').readAsBytesSync(), before);
+    });
+
+    test('mirrors the days asked for, the oldest first', () async {
+      final asked = <String>[];
+      await run((day) async {
+        asked.add(day);
+        return ok(goodFor(day));
+      }, null, days: 4);
+
+      expect(asked, ['2026-10-30', '2026-10-31', '2026-11-01', '2026-11-02']);
+    });
+
+    test('mirrors at most 31 days and at least 1', () async {
+      final asked = <String>[];
+      Future<SgpcReply> answer(String day) async {
+        asked.add(day);
+        return ok(goodFor(day));
+      }
+
+      await run(answer, null, days: 99);
+      expect(asked, hasLength(kKeepDays));
+      asked.clear();
+      await run(answer, null, days: 0);
+      expect(asked, ['2026-11-02']);
+    });
+
+    test(
+        'writes what the real provider finds, and that is the file that the '
+        'app tests read', () async {
+      final dir = Directory('${root.path}/db')..createSync();
+      final database = buildShabadOsDatabase(dir);
+      final provider = ShabadOsLines(
+        ShabadOsDatabase(
+          database,
+          expectedBytes: database.lengthSync(),
+          download: (_) async => fail('It must not download.'),
+        ),
+      );
+      await run(recorded, provider);
+
+      final golden = jsonDecode(
+        File('test/fixtures/mirror_hukamnama_2026_11_02.json')
+            .readAsStringSync(),
+      ) as Map<String, dynamic>;
+      expect(read('2026-11-02.json'), golden);
+    }, skip: hasSqlite ? false : 'sqlite3 is not installed');
+  });
 }
 
 Map<String, dynamic>? _tryDecode(List<int> body) {
@@ -403,5 +647,55 @@ Map<String, dynamic>? _tryDecode(List<int> body) {
     return json is Map<String, dynamic> ? json : null;
   } on FormatException {
     return null;
+  }
+}
+
+/// A [LinesProvider] that gives 2 fixed lines, and remembers what it was asked.
+class _FakeLines implements LinesProvider {
+  _FakeLines({
+    this.matched = true,
+    this.failWith,
+    Map<String, Object?>? stamp,
+  }) : stamp = stamp ?? defaultStamp;
+
+  static const defaultStamp = <String, Object?>{
+    'source': 'Test',
+    'version': '1',
+    'matcher': 1,
+  };
+
+  final bool matched;
+  final String? failWith;
+  final asked = <Map<String, dynamic>>[];
+
+  @override
+  final Map<String, Object?> stamp;
+
+  @override
+  Future<LinesResult> linesFor(Map<String, dynamic> hukamnama) async {
+    asked.add(hukamnama);
+    if (failWith != null) throw StateError(failWith!);
+    if (!matched) {
+      return LinesResult(
+          {...stamp, 'matched': false, 'reason': 'No run matches.'});
+    }
+    return LinesResult(
+      {
+        ...stamp,
+        'matched': true,
+        'ids': ['TEST'],
+        'ang': 668,
+        'angEnd': 668,
+      },
+      [
+        {
+          'id': 'AAAA',
+          'ang': 668,
+          'gurmukhi': 'ਇੱਕ ॥',
+          'english': 'First line.'
+        },
+        {'id': 'BBBB', 'ang': 668, 'gurmukhi': 'ਦੋ ॥'},
+      ],
+    );
   }
 }
