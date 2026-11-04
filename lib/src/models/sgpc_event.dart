@@ -25,6 +25,7 @@ library;
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
+import 'package:live_darbar/src/core/display_text.dart';
 import 'package:live_darbar/src/models/sgpc_day.dart';
 
 /// The longest an event may run. The longest in the 558 calendar is 3 days. A
@@ -46,10 +47,10 @@ class SgpcEvent {
 
   factory SgpcEvent.fromJson(Map<String, dynamic> json) {
     final id = json['id'];
-    final titlePa = json['titlePa'];
-    final titleEn = json['titleEn'];
+    final titlePa = displayText(json['titlePa']);
+    final titleEn = displayText(json['titleEn']);
     final end = json['gregorianEnd'];
-    if (id is! String || titlePa is! String || titlePa.trim().isEmpty) {
+    if (id is! String || titlePa == null) {
       throw FormatException('An event needs an id and a Punjabi title: $json');
     }
     final gregorian = json['gregorian'];
@@ -66,10 +67,8 @@ class SgpcEvent {
       id: id,
       first: first,
       last: last,
-      titlePa: titlePa.trim(),
-      titleEn: titleEn is String && titleEn.trim().isNotEmpty
-          ? titleEn.trim()
-          : null,
+      titlePa: titlePa,
+      titleEn: titleEn,
       needsReview: json['needsReview'] == true,
     );
   }
@@ -166,6 +165,25 @@ class SgpcEventTable {
   List<SgpcEvent> on(DateTime day) {
     final d = day.toUtc();
     return _byDay[DateTime.utc(d.year, d.month, d.day)] ?? const [];
+  }
+
+  /// The events of the first day after [day] that has any, an SGPC day, in the
+  /// order of the calendar. Empty when no day after it has an event.
+  ///
+  /// The table holds every loaded file, so this looks into the next year's
+  /// file when there is one. An event that runs for days counts from its first
+  /// day.
+  List<SgpcEvent> after(DateTime day) {
+    final d = day.toUtc();
+    final from = DateTime.utc(d.year, d.month, d.day);
+    DateTime? soonest;
+    for (final candidate in _byDay.keys) {
+      if (candidate.isAfter(from) &&
+          (soonest == null || candidate.isBefore(soonest))) {
+        soonest = candidate;
+      }
+    }
+    return soonest == null ? const [] : _byDay[soonest]!;
   }
 
   static Map<DateTime, List<SgpcEvent>> _index(Iterable<SgpcEvent> events) {

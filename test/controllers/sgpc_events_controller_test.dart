@@ -161,4 +161,98 @@ void main() {
       expect(await container.read(todaysEventsProvider.future), hasLength(3));
     });
   });
+
+  group('homeHistoryProvider', () {
+    ProviderContainer containerAt(
+      DateTime instant, {
+      SgpcEventTable? table,
+      SikhDate? sikh,
+    }) {
+      final container = ProviderContainer(
+        retry: (_, __) => null,
+        overrides: [
+          clockProvider.overrideWithValue(() => instant),
+          sgpcEventsProvider.overrideWith((ref) async => table ?? _shipped()),
+          sikhDateProvider.overrideWith((ref) async => sikh),
+        ],
+      );
+      addTearDown(container.dispose);
+      return container;
+    }
+
+    test('is today’s events on an event day', () async {
+      final container = containerAt(DateTime.utc(2026, 11, 3, 6));
+
+      final history = (await container.read(homeHistoryProvider.future))!;
+
+      expect(history.isToday, isTrue);
+      expect(history.day, DateTime.utc(2026, 11, 3));
+      expect(history.events, hasLength(3));
+      expect(history.events.first.id, 'ns558-082');
+    });
+
+    test('is the next event on a quiet day', () async {
+      final container = containerAt(DateTime.utc(2026, 11, 4, 6));
+
+      final history = (await container.read(homeHistoryProvider.future))!;
+
+      expect(history.isToday, isFalse);
+      expect(history.day, DateTime.utc(2026, 11, 8));
+      expect(history.events.map((e) => e.titleEn), ['Bandi Chhor Divas (Diwali)']);
+    });
+
+    test('is null when no event is left in any file', () async {
+      final container = containerAt(DateTime.utc(2027, 2, 22, 6));
+
+      expect(await container.read(homeHistoryProvider.future), isNull);
+    });
+
+    test('reads the next year’s file when it is loaded', () async {
+      final next = SgpcEventTable.fromJsonString(_file('ns559-001', '2027-03-20'));
+      final container = containerAt(
+        DateTime.utc(2027, 2, 22, 6),
+        table: SgpcEventTable.merge([_shipped(), next]),
+      );
+
+      final history = (await container.read(homeHistoryProvider.future))!;
+
+      expect(history.isToday, isFalse);
+      expect(history.events.single.id, 'ns559-001');
+    });
+
+    test('is the day in Amritsar, not the phone’s', () async {
+      // 19:00 UTC on 3 November is already 4 November at Amritsar.
+      final container = containerAt(DateTime.utc(2026, 11, 3, 19));
+
+      final history = (await container.read(homeHistoryProvider.future))!;
+
+      expect(history.isToday, isFalse);
+      expect(history.day, DateTime.utc(2026, 11, 8));
+    });
+
+    test('names the same day as the Sikh date it sits under', () async {
+      final container = containerAt(
+        DateTime.utc(2026, 11, 4, 6),
+        sikh: SikhDate(
+          day: 18,
+          monthIndex: 7,
+          year: 558,
+          gregorian: DateTime.utc(2026, 11, 3),
+        ),
+      );
+
+      expect((await container.read(homeHistoryProvider.future))!.isToday, isTrue,
+          reason: 'the Sikh date says 3 November, so the line does too');
+    });
+
+    test('two readings of the same day are equal', () async {
+      final a = (await containerAt(DateTime.utc(2026, 11, 4, 6))
+          .read(homeHistoryProvider.future))!;
+      final b = (await containerAt(DateTime.utc(2026, 11, 4, 9))
+          .read(homeHistoryProvider.future))!;
+
+      expect(a, b);
+      expect(a.hashCode, b.hashCode);
+    });
+  });
 }

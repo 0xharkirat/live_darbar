@@ -6,6 +6,7 @@
 /// SGPC feed.
 library;
 
+import 'package:live_darbar/src/core/display_text.dart';
 import 'package:live_darbar/src/models/sgpc_day.dart';
 
 /// Name of the body that publishes the text. A screen that shows it should say
@@ -51,15 +52,15 @@ class HukamnamaLine {
       };
 
   factory HukamnamaLine.fromJson(Map<String, dynamic> json) {
-    final gurmukhi = _text(json['gurmukhi']);
+    final gurmukhi = displayText(json['gurmukhi']);
     if (gurmukhi == null) {
       throw const FormatException('A Hukamnama line has no Gurmukhi.');
     }
     return HukamnamaLine(
       gurmukhi: gurmukhi,
-      punjabi: _text(json['punjabi']),
-      english: _text(json['english']),
-      transliteration: _text(json['transliteration']),
+      punjabi: displayText(json['punjabi']),
+      english: displayText(json['english']),
+      transliteration: displayText(json['transliteration']),
     );
   }
 
@@ -166,7 +167,7 @@ class Hukamnama {
       throw const FormatException('The Hukamnama response has no valid date.');
     }
 
-    final gurmukhi = _text(body['ghukamnama']);
+    final gurmukhi = displayText(body['ghukamnama']);
     if (gurmukhi == null) {
       throw const FormatException('The Hukamnama response has no Gurmukhi.');
     }
@@ -178,16 +179,16 @@ class Hukamnama {
     final ang = body['ang'];
     return Hukamnama(
       date: date,
-      ang: _validAng(ang is int ? ang : int.tryParse(_text(ang) ?? '')),
+      ang: _validAng(ang is int ? ang : int.tryParse(displayText(ang) ?? '')),
       headingGurmukhi: _joinLines([body['gheading1'], body['gheading2']]),
       headingEnglish: _joinLines([body['eheading1'], body['eheading2']]),
       lines: List.unmodifiable([
         for (final line in lines) HukamnamaLine(gurmukhi: line),
       ]),
-      punjabiMeaning: _text(body['ghukamnamadesc']),
-      englishMeaning: _text(body['ehukamnamadesc']),
-      footerGurmukhi: _text(body['gfooter1']),
-      footerEnglish: _text(body['efooter1']),
+      punjabiMeaning: displayText(body['ghukamnamadesc']),
+      englishMeaning: displayText(body['ehukamnamadesc']),
+      footerGurmukhi: displayText(body['gfooter1']),
+      footerEnglish: displayText(body['efooter1']),
     );
   }
 
@@ -225,8 +226,8 @@ class Hukamnama {
     return Hukamnama(
       date: date,
       ang: ang is int ? _validAng(ang) : null,
-      headingGurmukhi: _text(json['headingGurmukhi']),
-      headingEnglish: _text(json['headingEnglish']),
+      headingGurmukhi: displayText(json['headingGurmukhi']),
+      headingEnglish: displayText(json['headingEnglish']),
       lines: List.unmodifiable([
         for (final row in rows)
           if (row is Map<String, dynamic>)
@@ -234,10 +235,10 @@ class Hukamnama {
           else
             throw const FormatException('A cached line is not an object.'),
       ]),
-      punjabiMeaning: _text(json['punjabiMeaning']),
-      englishMeaning: _text(json['englishMeaning']),
-      footerGurmukhi: _text(json['footerGurmukhi']),
-      footerEnglish: _text(json['footerEnglish']),
+      punjabiMeaning: displayText(json['punjabiMeaning']),
+      englishMeaning: displayText(json['englishMeaning']),
+      footerGurmukhi: displayText(json['footerGurmukhi']),
+      footerEnglish: displayText(json['footerEnglish']),
     );
   }
 
@@ -326,19 +327,12 @@ DateTime? _parseDay(Object? value) {
 Map<String, dynamic>? _map(Object? value) =>
     value is Map<String, dynamic> ? value : null;
 
-/// [value] trimmed, or null when it is not a string or is blank.
-String? _text(Object? value) {
-  if (value is! String) return null;
-  final trimmed = value.trim();
-  return trimmed.isEmpty ? null : trimmed;
-}
-
-/// The non-blank [values], each with its white space collapsed, joined by a
-/// newline. Null when none is left.
+/// The [values] that are fit to show (see [displayText]), each with its white
+/// space collapsed, joined by a newline. Null when none is left.
 String? _joinLines(List<Object?> values) {
   final parts = <String>[
     for (final value in values)
-      if (_text(value) case final text?) text.replaceAll(RegExp(r'\s+'), ' '),
+      if (displayText(value) case final text?) text.replaceAll(RegExp(r'\s+'), ' '),
   ];
   return parts.isEmpty ? null : parts.join('\n');
 }

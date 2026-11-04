@@ -19,16 +19,20 @@ import 'package:live_darbar/src/home_screen_widget/widget_publisher.dart';
 import 'package:live_darbar/src/home_screen_widget/widget_remote.dart';
 import 'package:live_darbar/src/home_screen_widget/widget_sync.dart';
 import 'package:live_darbar/src/media_session/live_darbar_audio_handler.dart';
+import 'package:live_darbar/src/bootstrap.dart';
 import 'package:live_darbar/src/core/app_theme.dart';
 import 'package:live_darbar/src/core/app_type.dart';
 import 'package:live_darbar/src/core/open_link.dart';
 import 'package:live_darbar/src/models/sgpc_day.dart';
 import 'package:live_darbar/src/services/legacy_pdf_cleanup.dart';
 import 'package:live_darbar/src/services/reminder_launch.dart';
+import 'package:live_darbar/src/views/app_builder.dart';
+import 'package:live_darbar/src/views/app_scroll_behavior.dart';
+import 'package:live_darbar/src/views/browser_title.dart';
 import 'package:live_darbar/src/views/app_router.dart';
 import 'package:live_darbar/src/views/screens/home_screen.dart';
-import 'package:live_darbar/src/views/widgets/offline_banner_widget.dart';
-import 'package:live_darbar/src/views/widgets/reminder_sheet.dart';
+import 'package:live_darbar/src/views/widgets/artwork.dart';
+import 'package:live_darbar/src/views/widgets/error_view.dart';
 import 'package:quick_actions/quick_actions.dart';
 import 'package:live_darbar/l10n/app_localizations.dart';
 
@@ -45,7 +49,21 @@ Future<void> widgetRefreshEntry(List<String> args) => widgetRefreshMain(args);
 /// could not start. The iPhone widget's taps read what it plays.
 LiveDarbarAudioHandler? _mediaSession;
 
-void main() async {
+/// Starts the app. If start-up fails, the listener sees a calm screen with a
+/// Retry, not a blank one. See [bootstrap]. A widget that breaks later shows
+/// a small, calm box in its place in a release build. See [installErrorView].
+Future<void> main() {
+  // Before [bootstrap], which watches this builder during the first frame.
+  installErrorView();
+  return bootstrap<ProviderContainer>(
+    prepare: _prepare,
+    build: (container) =>
+        UncontrolledProviderScope(container: container, child: const MyApp()),
+  );
+}
+
+/// Everything that runs before the first frame, in the order it always has.
+Future<ProviderContainer> _prepare() async {
   WidgetsFlutterBinding.ensureInitialized();
   // Lock the UI to portrait up orientation.
   //
@@ -58,6 +76,23 @@ void main() async {
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]),
   );
   final container = ProviderContainer();
+  try {
+    await _startServices(container);
+  } catch (_) {
+    // A retry makes a new container, so this one goes now.
+    container.dispose();
+    rethrow;
+  }
+  // Last, so the order above is as it was. The native splash is still up, and
+  // Home's 3 paintings are decoded before its first frame.
+  await preloadArtwork();
+  return container;
+}
+
+/// The audio session, the widget store and the media session. A failure in the
+/// audio session or the media session is not fatal: the app plays without
+/// them. Anything else that throws fails the start-up.
+Future<void> _startServices(ProviderContainer container) async {
   if (!kIsWeb && !kIsWasm) {
     // Say what kind of audio this is, before any player exists.
     //
@@ -120,8 +155,6 @@ void main() async {
       debugPrint('Media session not started: $e');
     }
   }
-
-  runApp(UncontrolledProviderScope(container: container, child: const MyApp()));
 }
 
 class MyApp extends ConsumerStatefulWidget {
@@ -207,33 +240,28 @@ class _MyAppState extends ConsumerState<MyApp> {
     }
 
     // The daily Hukamnama reminder. The app can stay open for days, so the
-    // check also runs each time it comes back to the front.
+    // schedule is also set again each time it comes back to the front.
     _lifecycle = AppLifecycleListener(onResume: _onResume);
     unawaited(_startReminder());
   }
 
-  /// Gets the reminder ready, then asks about it if this is the first time.
+  /// Gets the reminder ready, and sets it again from the saved choice.
+  ///
+  /// It asks nothing. The one question about the reminder belongs to the
+  /// Hukamnama reader, the first time the listener opens it
+  /// (`askAboutReminderOnFirstOpen`). Asking here, on Home at launch, put it
+  /// under the update offer, and it never appeared.
   ///
   /// "Today in Sikh history" is set again here, after the reminder has got the
   /// phone ready. It is never asked about: it is a switch in About.
   Future<void> _startReminder() async {
     await ref.read(reminderProvider.notifier).start(_openReaderFromReminder);
     unawaited(ref.read(sikhHistoryProvider.notifier).resync());
-    await _askForReminder();
-  }
-
-  Future<void> _askForReminder() async {
-    if (!mounted) return;
-    await showReminderPromptIfNeeded(
-      container: ProviderScope.containerOf(context, listen: false),
-      navigatorKey: _navigatorKey,
-    );
   }
 
   void _onResume() {
     unawaited(ref.read(reminderProvider.notifier).resync());
     unawaited(ref.read(sikhHistoryProvider.notifier).resync());
-    unawaited(_askForReminder());
   }
 
   /// A tap on the reminder. When it started the app, there is no navigator
@@ -327,16 +355,12 @@ class _MyAppState extends ConsumerState<MyApp> {
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       locale: Locale(locale),
-      // The offline banner lives above every route rather than inside
-      // HomeScreen, so it is still there when the player dialog or the PDF
-      // viewer is open. Losing your connection while reading the Mukhwak is
-      // exactly when you want to be told.
-      builder: (context, child) => Column(
-        children: [
-          const OfflineBannerWidget(),
-          Expanded(child: child ?? const SizedBox.shrink()),
-        ],
-      ),
+      // The text size limit and the banners, above every route, and the
+      // browser tab's title.
+      builder: appBuilder,
+      navigatorObservers: [ref.watch(pageNamesProvider)],
+      // A scrollbar on every vertical list on the web.
+      scrollBehavior: const AppScrollBehavior(),
       // Pages are pushed by name, so the web shows them in the address bar.
       // See AppRoutes.
       home: const HomeScreen(),

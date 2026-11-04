@@ -1,0 +1,14 @@
+{
+  "android": { "version": "3.1.0", "build": 11, "minBuild": 10 },
+  "ios": { "version": "3.1.0", "build": 11, "minBuild": 10 },
+  "macos": { "version": "3.1.0", "build": 11 },
+  "stores": {
+    "android": "https://play.google.com/store/apps/details?id=com.hsi.harki.live_darbar",
+    "ios": "https://apps.apple.com/us/app/live-darbar/id6449766130",
+    "macos": "https://apps.apple.com/us/app/live-darbar/id6449766130"
+  },
+  "notes": {
+    "en": ["A fix for a problem that stops playback"],
+    "pa": ["ਇੱਕ ਸਮੱਸਿਆ ਦਾ ਹੱਲ ਜੋ ਚਲਾਉਣਾ ਰੋਕਦੀ ਹੈ"]
+  }
+}

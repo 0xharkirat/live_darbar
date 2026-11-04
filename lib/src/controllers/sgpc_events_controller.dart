@@ -61,3 +61,56 @@ final todaysEventsProvider = FutureProvider<List<SgpcEvent>>((ref) async {
   final table = await ref.watch(sgpcEventsProvider.future);
   return table.on(everydayDateFor(sikh, now));
 });
+
+/// What the line for Sikh history on the home screen shows: the events of a
+/// day, and whether that day is today.
+@immutable
+class HomeHistory {
+  const HomeHistory({
+    required this.day,
+    required this.events,
+    required this.isToday,
+  });
+
+  /// The SGPC day of [events], as UTC midnight.
+  final DateTime day;
+
+  /// The events of [day], in the order of the calendar. Never empty.
+  final List<SgpcEvent> events;
+
+  /// Today's events, or the next day's.
+  final bool isToday;
+
+  @override
+  bool operator ==(Object other) =>
+      other is HomeHistory &&
+      other.day == day &&
+      other.isToday == isToday &&
+      listEquals(other.events, events);
+
+  @override
+  int get hashCode => Object.hash(day, isToday, Object.hashAll(events));
+}
+
+/// The line for Sikh history on the home screen: today's events when the day
+/// has any, and otherwise the next event to come.
+///
+/// "Today" is the same SGPC day as the Sikh date above the line (see
+/// [everydayDateFor]). The next event is searched in every loaded file, so the
+/// last event of one year is followed by the first of the next year's file
+/// when the app has it. Null when no event is left: the home screen then shows
+/// no line.
+final homeHistoryProvider = FutureProvider<HomeHistory?>((ref) async {
+  final now = ref.read(clockProvider)();
+  final sikh = await ref.watch(sikhDateProvider.future);
+  final table = await ref.watch(sgpcEventsProvider.future);
+  final today = everydayDateFor(sikh, now);
+
+  final todays = table.on(today);
+  if (todays.isNotEmpty) {
+    return HomeHistory(day: today, events: todays, isToday: true);
+  }
+  final next = table.after(today);
+  if (next.isEmpty) return null;
+  return HomeHistory(day: next.first.first, events: next, isToday: false);
+});

@@ -15,14 +15,21 @@ import 'package:shared_preferences/shared_preferences.dart';
 /// There is no server and no push. The phone keeps one repeating local
 /// notification, and this controller sets it, changes it and removes it.
 ///
-/// The app asks once. [ReminderSettings.asked] is set when the question
-/// appears (see `showReminderPromptIfNeeded`). "Not now", a swipe away and a
-/// "Remind me" that the phone refused all leave it set, so the question never
-/// comes back. After that the listener decides on the About screen.
+/// The app asks once, the first time the listener opens the Hukamnama reader
+/// (see `askAboutReminderOnFirstOpen`). [ReminderSettings.asked] is set when
+/// the question appears. "Not now", a swipe away and a "Remind me" that the
+/// phone refused all leave it set, so the question never comes back. After
+/// that the listener decides with the bell on the reader, or in About.
+///
+/// The time starts at 7:00 in Amritsar ([ReminderTime.standard]). A time the
+/// listener picks is on their own clock.
 class ReminderController extends AsyncNotifier<ReminderSettings> {
   static const askedKey = 'reminder_asked';
   static const enabledKey = 'reminder_enabled';
   static const minutesKey = 'reminder_minutes';
+
+  /// `amritsar` or `local`. Missing means Amritsar, the default.
+  static const zoneKey = 'reminder_zone';
 
   ReminderPlatform get _platform => ref.read(reminderPlatformProvider);
 
@@ -36,10 +43,16 @@ class ReminderController extends AsyncNotifier<ReminderSettings> {
     });
 
     final prefs = await SharedPreferences.getInstance();
+    final zone = prefs.getString(zoneKey) == ReminderZone.local.name
+        ? ReminderZone.local
+        : ReminderZone.amritsar;
     return ReminderSettings(
       asked: prefs.getBool(askedKey) ?? false,
       enabled: prefs.getBool(enabledKey) ?? false,
-      time: ReminderTime.tryFromMinutes(prefs.getInt(minutesKey)) ??
+      time: ReminderTime.tryFromMinutes(
+            prefs.getInt(minutesKey),
+            zone: zone,
+          ) ??
           ReminderTime.standard,
     );
   }
@@ -184,6 +197,7 @@ class ReminderController extends AsyncNotifier<ReminderSettings> {
     await prefs.setBool(askedKey, next.asked);
     await prefs.setBool(enabledKey, next.enabled);
     await prefs.setInt(minutesKey, next.time.minutes);
+    await prefs.setString(zoneKey, next.time.zone.name);
   }
 }
 

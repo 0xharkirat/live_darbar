@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:live_darbar/src/models/app_update.dart';
+import 'package:live_darbar/src/core/store_links.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -33,6 +34,32 @@ const kReleaseManifestUrl = String.fromEnvironment(
   'RELEASE_MANIFEST_URL',
   defaultValue: 'https://darbar.live/release.json',
 );
+
+/// The release manifest, read once per launch and shared by everything that
+/// needs it: the update offer, the forced update and the maintenance banner.
+///
+/// Null when it cannot be read: offline, a slow server, a bad file. Each reader
+/// then does nothing, and says nothing. A message about the backend must never
+/// be the thing that fails loudly.
+final releaseManifestProvider = FutureProvider<Map<String, dynamic>?>((
+  ref,
+) async {
+  try {
+    final response = await http
+        .get(Uri.parse(kReleaseManifestUrl))
+        .timeout(UpdateController._timeout);
+    if (response.statusCode != 200) return null;
+    final decoded = jsonDecode(response.body);
+    return decoded is Map<String, dynamic> ? decoded : null;
+  } catch (e) {
+    if (!kReleaseMode) debugPrint('[release] manifest not read: $e');
+    return null;
+  }
+});
+
+/// Offers a made-up newer build, so a demo can show the update sheet with no
+/// release: `--dart-define=DEMO_OFFER_UPDATE=true`. Release builds ignore it.
+const kDemoOfferUpdate = bool.fromEnvironment('DEMO_OFFER_UPDATE');
 
 /// Checks whether a newer release exists, once per launch.
 ///
@@ -72,26 +99,41 @@ class UpdateController extends AsyncNotifier<AppUpdate?> {
     // rather than guess by parsing version strings.
     if (currentBuild == null) return null;
 
-    final response = await http
-        .get(Uri.parse(kReleaseManifestUrl))
-        .timeout(_timeout);
-    if (response.statusCode != 200) return null;
-
-    final decoded = jsonDecode(response.body);
-    if (decoded is! Map<String, dynamic>) return null;
-
-    final update = AppUpdate.fromManifest(decoded, currentBuild: currentBuild);
+    final update = !kReleaseMode && kDemoOfferUpdate
+        ? _demoUpdate(currentBuild)
+        : await _fromManifest(currentBuild);
     if (update == null) return null;
 
     // Asking once per release is a reminder. Asking every launch is nagging,
     // and this audience is the least likely to enjoy being nagged. A newer
     // build than the dismissed one is a new question and gets asked again.
+    //
+    // A forced update is not a courtesy: a build below the manifest's minimum
+    // is asked again at each launch, whatever was declined before.
     final prefs = await SharedPreferences.getInstance();
     final dismissed = prefs.getInt(_dismissedBuildKey) ?? 0;
-    if (update.build <= dismissed) return null;
+    if (!update.isOffered(dismissedBuild: dismissed)) return null;
 
     return update;
   }
+
+  Future<AppUpdate?> _fromManifest(int currentBuild) async {
+    final manifest = await ref.read(releaseManifestProvider.future);
+    if (manifest == null) return null;
+    return AppUpdate.fromManifest(manifest, currentBuild: currentBuild);
+  }
+
+  /// A made-up next build, for [kDemoOfferUpdate]. It goes through the same
+  /// "declined already" check as a real one, so a demo shows that check too.
+  AppUpdate _demoUpdate(int currentBuild) => AppUpdate(
+        version: 'demo',
+        build: currentBuild + 1,
+        storeUrl: defaultTargetPlatform == TargetPlatform.iOS
+            ? kAppStoreUrl
+            : kPlayStoreUrl,
+        notesEn: const ['Demo: a newer build is on offer.'],
+        notesPa: const ['ਡੈਮੋ: ਨਵਾਂ ਵਰਜਨ ਉਪਲਬਧ ਹੈ।'],
+      );
 
   /// Remember that this release was declined, and stop offering it.
   Future<void> dismiss() async {

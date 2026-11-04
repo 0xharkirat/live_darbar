@@ -1,0 +1,11 @@
+{
+  "android": { "version": "3.0.0", "build": 10 },
+  "ios": { "version": "3.0.0", "build": 10 },
+  "macos": { "version": "3.0.0", "build": 10 },
+  "stores": {},
+  "notes": { "en": [], "pa": [] },
+  "maintenance": {
+    "en": "Live kirtan may stop for a few minutes while we fix the stream.",
+    "pa": "ਅਸੀਂ ਸਟ੍ਰੀਮ ਠੀਕ ਕਰ ਰਹੇ ਹਾਂ। ਲਾਈਵ ਕੀਰਤਨ ਕੁਝ ਮਿੰਟਾਂ ਲਈ ਰੁਕ ਸਕਦਾ ਹੈ।"
+  }
+}

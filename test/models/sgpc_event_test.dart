@@ -227,4 +227,65 @@ void main() {
       }
     });
   });
+
+  group('the next day with an event', () {
+    test('is the first day after the one given', () {
+      final next = shipped.after(day(2026, 11, 4));
+
+      expect(next.map((e) => e.titleEn), ['Bandi Chhor Divas (Diwali)']);
+      expect(next.single.first, day(2026, 11, 8));
+    });
+
+    test('never includes the day given, even when it has events', () {
+      expect(shipped.after(day(2026, 11, 3)).single.first, day(2026, 11, 8));
+    });
+
+    test('lists every event of that day, in the order of the calendar', () {
+      final table = SgpcEventTable.fromJsonString(file([
+        ('late', '2026-11-20', null),
+        ('a', '2026-11-08', null),
+        ('b', '2026-11-08', null),
+      ]));
+
+      expect(table.after(day(2026, 11, 4)).map((e) => e.id), ['a', 'b']);
+    });
+
+    test('is empty after the last event of the last file', () {
+      final last = day(2027, 2, 21);
+      expect(shipped.after(last.subtract(const Duration(days: 1))), isNotEmpty);
+      expect(shipped.after(last), isEmpty);
+      expect(shipped.after(day(2030, 1, 1)), isEmpty);
+      expect(SgpcEventTable.empty.after(day(2026, 11, 4)), isEmpty);
+    });
+
+    test('looks into the next year’s file when there is one', () {
+      final next = SgpcEventTable.fromJsonString(file([
+        ('ns559-001', '2027-03-20', null),
+      ]));
+      final both = SgpcEventTable.merge([shipped, next]);
+
+      expect(both.after(day(2027, 2, 21)).single.id, 'ns559-001');
+      expect(shipped.after(day(2027, 2, 21)), isEmpty,
+          reason: 'with that file alone, nothing is next');
+    });
+
+    test('counts an event of several days from its first day', () {
+      final table = SgpcEventTable.fromJsonString(file([
+        ('mela', '2026-10-07', '2026-10-09'),
+      ]));
+
+      expect(table.after(day(2026, 10, 6)).single.id, 'mela');
+      expect(table.after(day(2026, 10, 7)), isNotEmpty,
+          reason: 'the 8th is a day of the mela, but it is not a new event '
+              'for a listener already inside it; the line shows today then');
+      expect(table.after(day(2026, 10, 9)), isEmpty);
+    });
+
+    test('reads the SGPC day, so a time of day does not move it', () {
+      expect(
+        shipped.after(DateTime.utc(2026, 11, 4, 23, 59)).single.first,
+        day(2026, 11, 8),
+      );
+    });
+  });
 }

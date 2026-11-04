@@ -1,13 +1,14 @@
 @Tags(['screens'])
 library;
 
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:ui' as ui;
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
@@ -21,6 +22,10 @@ import 'package:live_darbar/src/controllers/quality_mode_controller.dart';
 import 'package:live_darbar/src/controllers/sgpc_events_controller.dart';
 import 'package:live_darbar/src/controllers/sikh_date_controller.dart';
 import 'package:live_darbar/src/controllers/update_controller.dart';
+import 'package:live_darbar/src/controllers/widget_card_controller.dart';
+import 'package:live_darbar/src/core/amritsar_time.dart';
+import 'package:live_darbar/src/core/widget_card_rules.dart';
+import 'package:live_darbar/src/home_screen_widget/widget_install.dart';
 import 'package:live_darbar/src/core/app_theme.dart';
 import 'package:live_darbar/src/core/app_type.dart';
 import 'package:live_darbar/src/core/clock.dart';
@@ -35,15 +40,23 @@ import 'package:live_darbar/src/models/sgpc_event.dart';
 import 'package:live_darbar/src/models/sikh_date.dart';
 import 'package:live_darbar/src/models/stream_quality.dart';
 import 'package:live_darbar/src/services/reminder_platform.dart';
+import 'package:live_darbar/src/services/screen_awake.dart';
+import 'package:live_darbar/src/views/launch_failure_app.dart';
 import 'package:live_darbar/src/views/screens/about_screen.dart';
+import 'package:live_darbar/src/views/screens/history_screen.dart';
 import 'package:live_darbar/src/views/screens/home_screen.dart';
 import 'package:live_darbar/src/views/screens/hukamnama_screen.dart';
 import 'package:live_darbar/src/views/screens/now_playing_screen.dart';
 import 'package:live_darbar/src/views/widgets/quality_sheet.dart';
 import 'package:live_darbar/src/views/widgets/reminder_sheet.dart';
+import 'package:live_darbar/src/views/widgets/demo_film.dart';
+import 'package:live_darbar/src/views/widgets/widget_steps_sheet.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../support/fake_reminder_platform.dart';
+import '../support/fake_film_player.dart';
+import '../support/fake_widget_install.dart';
+import '../support/load_fonts.dart';
 
 /// Renders every main screen to PNG, at iPhone 17 Pro size, with the real
 /// fonts and paintings.
@@ -55,7 +68,7 @@ import '../support/fake_reminder_platform.dart';
 void main() {
   setUpAll(() async {
     SharedPreferences.setMockInitialValues({});
-    await _loadFonts();
+    await loadAppFonts();
   });
 
   for (final locale in ['en', 'pa']) {
@@ -78,9 +91,107 @@ void main() {
     });
   }
 
+  // The whole Nanakshahi year of Sikh history, opened on today. The first
+  // render is 3 November, a day with 3 events. The second is a day with none,
+  // so it opens on the next day to come.
+  for (final locale in ['en', 'pa']) {
+    testWidgets('history, 3 November, $locale', (tester) async {
+      await _pump(
+        tester,
+        const HistoryScreen(),
+        locale: locale,
+        at: DateTime.utc(2026, 11, 3, 6),
+      );
+      await tester.pump(const Duration(seconds: 1));
+      await _shot(tester, 'history_$locale');
+    });
+  }
+
+  testWidgets('history, with the notification on, en', (tester) async {
+    SharedPreferences.setMockInitialValues({'history_enabled': true});
+    addTearDown(() => SharedPreferences.setMockInitialValues({}));
+    await _pump(
+      tester,
+      const HistoryScreen(),
+      at: DateTime.utc(2026, 11, 3, 6),
+    );
+    await tester.pump(const Duration(seconds: 1));
+    await _shot(tester, 'history_notification_on_en');
+  });
+
+  // Today in Sikh history on a quiet day: 4 November has no event, so the line
+  // shows the next one, 8 November. It is the same row as on 3 November.
+  for (final locale in ['en', 'pa']) {
+    testWidgets('home, 4 November, next event, $locale', (tester) async {
+      await _pump(
+        tester,
+        const HomeScreen(),
+        locale: locale,
+        at: DateTime.utc(2026, 11, 4, 6),
+      );
+      await _shot(tester, 'home_history_next_$locale');
+    });
+  }
+
+  // With the real fonts, the line is 1 row of the same height on every kind of
+  // day, so live kirtan below it never moves. This includes the longest titles,
+  // which the line cuts after 2 lines.
+  testWidgets('home, the history line is the same height on every day', (
+    tester,
+  ) async {
+    final table = SgpcEventTable.fromJsonString(
+      File('assets/data/sgpc_events_558.json').readAsStringSync(),
+    );
+    final longest = [...table.events]
+      ..sort((a, b) => b.titleEn!.length.compareTo(a.titleEn!.length));
+    final days = <DateTime>{
+      for (final e in longest.take(6)) e.first,
+      DateTime.utc(2026, 11, 3),
+      DateTime.utc(2026, 11, 4),
+      DateTime.utc(2027, 2, 21),
+    };
+    for (final locale in ['en', 'pa']) {
+      final tops = <String, double>{};
+      for (final day in days) {
+        await _pump(
+          tester,
+          const HomeScreen(),
+          locale: locale,
+          at: DateTime.utc(day.year, day.month, day.day, 6),
+        );
+        tops[day.toIso8601String()] =
+            tester.getTopLeft(find.text(locale == 'pa' ? 'ਲਾਈਵ ਦਰਬਾਰ' : 'Live Darbar')).dy;
+      }
+      expect(tops.values.toSet(), hasLength(1), reason: '$locale: $tops');
+    }
+  });
+
   testWidgets('home, live playing', (tester) async {
     await _pump(tester, const HomeScreen(), now: _livePlaying);
     await _shot(tester, 'home_live_playing_en');
+  });
+
+  // The loading ring, after its delay: on the live hero, the 2 tiles' buttons
+  // and the mini player (live is the source that is opening).
+  testWidgets('home, live kirtan is opening', (tester) async {
+    await _pump(tester, const HomeScreen(), now: _liveOpening);
+    await tester.pump(const Duration(seconds: 1));
+    await _shot(tester, 'home_live_opening_en');
+  });
+
+  // The largest text size the app lays out for (2x), with the player up.
+  testWidgets('home, text at 2x', (tester) async {
+    tester.platformDispatcher.textScaleFactorTestValue = 2;
+    addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+    await _pump(tester, const HomeScreen(), now: _livePlaying);
+    await _shot(tester, 'home_text_2x_en');
+  });
+
+  testWidgets('about, text at 2x', (tester) async {
+    tester.platformDispatcher.textScaleFactorTestValue = 2;
+    addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+    await _pump(tester, const AboutScreen());
+    await _shot(tester, 'about_text_2x_en');
   });
 
   testWidgets('home, scrolled to the end', (tester) async {
@@ -141,6 +252,32 @@ void main() {
     testWidgets('hukamnama reader, $locale', (tester) async {
       await _pump(tester, const HukamnamaScreen(), locale: locale);
       await _shot(tester, 'hukamnama_$locale');
+    });
+  }
+
+  // The reader asks about the reminder the first time it opens, and the bell
+  // opens the same sheet after that.
+  for (final locale in ['en', 'pa']) {
+    testWidgets('hukamnama first-open question, $locale', (tester) async {
+      await _pump(
+        tester,
+        const HukamnamaScreen(),
+        locale: locale,
+        reminderSettle: Duration.zero,
+      );
+      await tester.pump(const Duration(seconds: 1));
+      await tester.pump(const Duration(seconds: 1));
+      await _precache(tester);
+      await _shot(tester, 'hukamnama_question_$locale');
+    });
+
+    testWidgets('hukamnama, reminder on, bell sheet, $locale', (tester) async {
+      _reminderOn();
+      await _pump(tester, const HukamnamaScreen(), locale: locale);
+      await tester.tap(find.byIcon(CupertinoIcons.bell_fill));
+      await tester.pump();
+      await tester.pump(const Duration(seconds: 1));
+      await _shot(tester, 'hukamnama_bell_sheet_$locale');
     });
   }
 
@@ -218,6 +355,87 @@ void main() {
     });
   }
 
+  // The "add the widget" card, for a listener who played the Hukamnama on an
+  // earlier visit, and the steps for an iPhone, where no call can add it.
+  for (final locale in ['en', 'pa']) {
+    testWidgets('home with the widget card, $locale', (tester) async {
+      _widgetCardDue();
+      await _pump(tester, const HomeScreen(), locale: locale);
+      await tester.pump(const Duration(milliseconds: 300));
+      await tester.drag(
+        find.byType(SingleChildScrollView),
+        const Offset(0, -900),
+      );
+      await tester.pump(const Duration(seconds: 1));
+      // The card's picture arrives after the first frames.
+      await _precache(tester);
+      await _shot(tester, 'home_widget_card_$locale');
+    });
+
+    testWidgets('widget steps, iPhone, $locale', (tester) async {
+      await _pump(
+        tester,
+        const HomeScreen(),
+        locale: locale,
+        widgetInstall: FakeWidgetInstall(iphone: true),
+      );
+      showWidgetStepsSheet(tester.element(find.byType(HomeScreen)));
+      await tester.pump();
+      await tester.pump(const Duration(seconds: 1));
+      await _precache(tester);
+      await _shot(tester, 'widget_steps_iphone_$locale');
+    });
+
+    // The film at the moment of a tap, to look at the dot and its ring over
+    // the poster. The film itself is not drawn in a test.
+    testWidgets('widget steps, iPhone, a tap on the film, $locale', (
+      tester,
+    ) async {
+      final films = FakeFilmPlayers();
+      await _pump(
+        tester,
+        const HomeScreen(),
+        locale: locale,
+        widgetInstall: FakeWidgetInstall(iphone: true),
+        films: films,
+      );
+      showWidgetStepsSheet(tester.element(find.byType(HomeScreen)));
+      await tester.pump();
+      await tester.pump(const Duration(seconds: 1));
+      films.last!.playAt(DemoFilm.iphone.marks[3].t + 0.12);
+      await tester.pump(const Duration(milliseconds: 100));
+      await _precache(tester);
+      await _shot(tester, 'widget_steps_iphone_tap_$locale');
+    });
+
+    testWidgets('widget steps, Android, $locale', (tester) async {
+      await _pump(tester, const HomeScreen(), locale: locale);
+      showWidgetStepsSheet(tester.element(find.byType(HomeScreen)));
+      await tester.pump();
+      await tester.pump(const Duration(seconds: 1));
+      await _precache(tester);
+      await _shot(tester, 'widget_steps_android_$locale');
+    });
+
+    // The permanent row in About, before and after the widget is added.
+    testWidgets('about with the widget row, $locale', (tester) async {
+      await _pump(tester, const AboutScreen(), locale: locale);
+      await tester.pump(const Duration(milliseconds: 300));
+      await _shot(tester, 'about_widget_row_$locale');
+    });
+
+    testWidgets('about with the widget added, $locale', (tester) async {
+      await _pump(
+        tester,
+        const AboutScreen(),
+        locale: locale,
+        widgetInstall: FakeWidgetInstall(placementNow: WidgetPlacement.added),
+      );
+      await tester.pump(const Duration(milliseconds: 300));
+      await _shot(tester, 'about_widget_added_$locale');
+    });
+  }
+
   testWidgets('about with the reminder blocked, en', (tester) async {
     await _pump(
       tester,
@@ -229,14 +447,29 @@ void main() {
     await tester.pump(const Duration(seconds: 1));
     await _shot(tester, 'about_reminder_blocked_en');
   });
+
+  // The screen that replaces the app when start-up fails.
+  testWidgets('launch failure', (tester) async {
+    await _pump(tester, const LaunchFailureApp(onRetry: _noop));
+    await _shot(tester, 'launch_failure');
+  });
 }
 
-/// The reminder as it is after the listener said yes at 7:00.
+void _noop() {}
+
+/// A listener who played the Hukamnama recording on an earlier visit, so the
+/// card is due.
+void _widgetCardDue() {
+  SharedPreferences.setMockInitialValues({WidgetCardController.playedKey: true});
+  addTearDown(() => SharedPreferences.setMockInitialValues({}));
+}
+
+/// The reminder as it is after the listener said yes, at the default: 7:00 in
+/// Amritsar.
 void _reminderOn() {
   SharedPreferences.setMockInitialValues({
     'reminder_asked': true,
     'reminder_enabled': true,
-    'reminder_minutes': 7 * 60,
   });
   addTearDown(() => SharedPreferences.setMockInitialValues({}));
 }
@@ -278,6 +511,13 @@ const _livePlaying = NowPlaying(
   live: LivePlaybackState(status: LiveStatus.playing),
 );
 
+const _liveOpening = NowPlaying(
+  index: kLiveIndex,
+  action: PlayAction.working,
+  started: true,
+  live: LivePlaybackState(status: LiveStatus.connecting),
+);
+
 const _hukamnamaPlaying = NowPlaying(
   index: kMukhwakIndex,
   action: PlayAction.pause,
@@ -292,7 +532,10 @@ Future<void> _pump(
   NowPlaying now = _idle,
   QualityMode? quality,
   FakeReminderPlatform? reminders,
+  FakeWidgetInstall? widgetInstall,
   DateTime? at,
+  FakeFilmPlayers? films,
+  Duration reminderSettle = const Duration(hours: 1),
   List<Override> overrides = const [],
 }) async {
   // The renders show 2 November in Amritsar, whatever day they run on, unless
@@ -333,6 +576,22 @@ Future<void> _pump(
           // The renders show the reminder, which a phone offers.
           reminderPlatformProvider
               .overrideWithValue(reminders ?? FakeReminderPlatform()),
+          // The renders show the widget card and its row, which a phone offers.
+          widgetInstallProvider
+              .overrideWithValue(widgetInstall ?? FakeWidgetInstall()),
+          widgetCardSettleProvider.overrideWithValue(Duration.zero),
+          // A render holds no screen timeout.
+          screenAwakeProvider.overrideWithValue(ScreenAwake((_) async {})),
+          // The film in the steps sheet shows its poster: no film plays.
+          filmPlayerFactoryProvider
+              .overrideWithValue((films ?? FakeFilmPlayers()).call),
+          // A render of the reader is not the first open, unless it says so.
+          reminderSettleProvider.overrideWithValue(reminderSettle),
+          // The renders show a listener in Sydney in summer: 12:30 for 7:00 in
+          // Amritsar.
+          localOffsetProvider.overrideWithValue(
+            (_) => const Duration(hours: 11),
+          ),
           clockProvider.overrideWithValue(() => moment),
           sikhDateProvider.overrideWith(
             (ref) async => SikhDate(
@@ -374,14 +633,30 @@ Future<void> _pump(
 
 /// Decodes every image on screen for real. Widget tests run in fake time, so
 /// image decoding has to be let out into real async to finish.
+///
+/// An animated image (the add-widget clip) finishes its first frame only when
+/// the app draws a frame, and no frame comes inside this wait, so waiting for
+/// it here would never end. It gets a real moment to decode instead, and the
+/// frames that follow show its first picture.
 Future<void> _precache(WidgetTester tester) async {
+  var animated = false;
   await tester.runAsync(() async {
     for (final element in find.byType(Image).evaluate()) {
-      final image = element.widget as Image;
-      await precacheImage(image.image, element);
+      final provider = (element.widget as Image).image;
+      if (provider is AssetImage && provider.assetName.endsWith('.webp')) {
+        // Starts the decode and does not wait for it.
+        unawaited(precacheImage(provider, element));
+        animated = true;
+        continue;
+      }
+      await precacheImage(provider, element);
+    }
+    if (animated) {
+      await Future<void>.delayed(const Duration(milliseconds: 800));
     }
   });
   await tester.pump(const Duration(milliseconds: 600));
+  if (animated) await tester.pump(const Duration(milliseconds: 600));
 }
 
 Future<void> _shot(WidgetTester tester, String name) async {
@@ -397,32 +672,6 @@ Future<void> _shot(WidgetTester tester, String name) async {
   });
 }
 
-Future<void> _loadFonts() async {
-  Future<void> family(String name, List<String> assets) async {
-    final loader = FontLoader(name);
-    for (final asset in assets) {
-      loader.addFont(rootBundle.load(asset));
-    }
-    await loader.load();
-  }
-
-  await family('Geist', [
-    'assets/fonts/Geist-400.ttf',
-    'assets/fonts/Geist-500.ttf',
-    'assets/fonts/Geist-700.ttf',
-  ]);
-  await family('NotoSansGurmukhi', [
-    'assets/fonts/NotoSansGurmukhi-400.ttf',
-    'assets/fonts/NotoSansGurmukhi-500.ttf',
-    'assets/fonts/NotoSansGurmukhi-700.ttf',
-  ]);
-  await family('GeistSerif', ['assets/fonts/GeistSerif-400.ttf']);
-  await family('TiroGurmukhi', ['assets/fonts/TiroGurmukhi-400.ttf']);
-  await family('packages/cupertino_icons/CupertinoIcons', [
-    'packages/cupertino_icons/assets/CupertinoIcons.ttf',
-  ]);
-}
-
 /// The real Hukamnama for 2 November 2026, as SGPC's feed served it.
 class _Fixture extends HukamnamaController {
   @override
@@ -431,6 +680,10 @@ class _Fixture extends HukamnamaController {
         File('test/fixtures/sgpc_hukamnama_2026_11_02.json').readAsStringSync();
     return Hukamnama.fromSgpc(jsonDecode(json) as Map<String, dynamic>);
   }
+
+  /// Nothing goes to SGPC when the app comes back to the front.
+  @override
+  Future<void> refresh() async {}
 }
 
 class _Quality extends QualityModeController {

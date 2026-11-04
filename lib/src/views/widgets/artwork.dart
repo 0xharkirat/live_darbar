@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:live_darbar/src/controllers/audio_controller.dart';
 
@@ -11,6 +13,51 @@ String artworkFor(int index) => switch (index) {
       kKathaIndex => 'assets/images/2.jpg',
       _ => 'assets/images/0.jpg',
     };
+
+/// Decodes the paintings that Home draws, so they are ready for its first
+/// frame.
+///
+/// Flutter loads an image when a widget first asks for it, and decoding takes
+/// a few frames. Home would then show its 3 paintings one by one, over the
+/// splash it just replaced. Called before `runApp`, while the native splash is
+/// still up, this puts each painting in the image cache, and the `Image`
+/// widgets find it there.
+///
+/// It does what `precacheImage` does, without a [BuildContext], because none
+/// exists before the first frame. A painting that cannot load is skipped: the
+/// widget that wants it reports the error where it can be seen. It gives up
+/// after [timeout], so a slow web connection never holds the app back.
+Future<void> preloadArtwork({
+  Duration timeout = const Duration(seconds: 3),
+  List<ImageProvider> extra = const [],
+}) {
+  final providers = [
+    for (final index in const [kLiveIndex, kMukhwakIndex, kKathaIndex])
+      AssetImage(artworkFor(index)),
+    ...extra,
+  ];
+  return Future.wait(providers.map(_decode)).then((_) {}).timeout(
+        timeout,
+        onTimeout: () {},
+      );
+}
+
+Future<void> _decode(ImageProvider provider) {
+  final done = Completer<void>();
+  final stream = provider.resolve(ImageConfiguration.empty);
+  late final ImageStreamListener listener;
+  void finish() {
+    stream.removeListener(listener);
+    if (!done.isCompleted) done.complete();
+  }
+
+  listener = ImageStreamListener(
+    (image, synchronousCall) => finish(),
+    onError: (error, stack) => finish(),
+  );
+  stream.addListener(listener);
+  return done.future;
+}
 
 /// A painting clipped to the app's continuous corner shape.
 class Artwork extends StatelessWidget {

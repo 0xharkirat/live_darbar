@@ -14,12 +14,15 @@ import 'package:live_darbar/src/core/app_theme.dart';
 import 'package:live_darbar/src/core/motion.dart';
 import 'package:live_darbar/src/models/hukamnama.dart';
 import 'package:live_darbar/src/models/live_playback_state.dart';
+import 'package:live_darbar/src/services/reminder_platform.dart';
 import 'package:live_darbar/src/views/screens/hukamnama_screen.dart';
 import 'package:live_darbar/src/views/widgets/busy_icon.dart';
 import 'package:live_darbar/src/views/widgets/pressable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher_platform_interface/link.dart';
 import 'package:url_launcher_platform_interface/url_launcher_platform_interface.dart';
+
+import '../support/fake_reminder_platform.dart';
 
 /// The real Hukamnama for 2 November 2026, as SGPC's feed served it.
 class _Fixture extends HukamnamaController {
@@ -85,6 +88,11 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
+          // The first-open question about the reminder is not what this test
+          // is about, and it would cover the buttons.
+          reminderPlatformProvider.overrideWithValue(
+            FakeReminderPlatform(supported: false),
+          ),
           hukamnamaProvider.overrideWith(feed),
           sangrandTableProvider.overrideWith((ref) async => null),
           nowPlayingProvider.overrideWithValue(

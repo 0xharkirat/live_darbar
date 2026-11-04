@@ -203,13 +203,31 @@ void main() {
       expect(calls.where((c) => c.method == 'initialize'), hasLength(1));
     });
 
-    test('uses the zone the phone names', () async {
+    test('uses the zone the phone names, for a time on the listener’s clock',
+        () async {
+      zone = 'Australia/Sydney';
+      final platform = platformOn(TargetPlatform.android);
+
+      await platform.schedule(const ReminderTime(7, 0), text);
+
+      final sent = argumentsOf('zonedSchedule');
+      expect(sent['timeZoneName'], 'Australia/Sydney');
+      expect((sent['scheduledDateTime'] as String).split('T').last, '07:00:00');
+    });
+
+    test('keeps Amritsar time in Amritsar’s zone, whatever the phone does', () async {
+      // A listener in Sydney, whose clocks change in October and April.
       zone = 'Australia/Sydney';
       final platform = platformOn(TargetPlatform.android);
 
       await platform.schedule(ReminderTime.standard, text);
 
-      expect(argumentsOf('zonedSchedule')['timeZoneName'], 'Australia/Sydney');
+      final sent = argumentsOf('zonedSchedule');
+      expect(sent['timeZoneName'], 'Asia/Kolkata',
+          reason: 'the daily repeat is read in that zone, so Sydney daylight '
+              'saving never moves it');
+      expect((sent['scheduledDateTime'] as String).split('T').last, '07:00:00');
+      expect(sent['matchDateTimeComponents'], DateTimeComponents.time.index);
     });
 
     test(
@@ -421,6 +439,46 @@ void main() {
         reason: 'the date of the notice, on the phone\'s clock',
       );
       expect(one['timeZoneName'], 'Asia/Kolkata');
+    });
+
+    test('fires on the event’s day in Amritsar, for a listener in Sydney',
+        () async {
+      zone = 'Australia/Sydney';
+      final platform = platformOn(TargetPlatform.android);
+      final notice = noticeIn(3);
+
+      await platform.scheduleHistory(
+        ReminderTime.standard,
+        [notice],
+        historyText,
+      );
+
+      final one = argumentsOf('zonedSchedule');
+      expect(one['timeZoneName'], 'Asia/Kolkata');
+      expect(
+        one['scheduledDateTime'],
+        '${sgpcDayIso(notice.day)}T07:00:00',
+        reason: '7:00 on the SGPC day, so it is that morning in Amritsar',
+      );
+    });
+
+    test('keeps a time the listener picked on the phone’s own clock', () async {
+      zone = 'Australia/Sydney';
+      final platform = platformOn(TargetPlatform.android);
+      final notice = noticeIn(3);
+
+      await platform.scheduleHistory(
+        const ReminderTime(8, 15),
+        [notice],
+        historyText,
+      );
+
+      final one = argumentsOf('zonedSchedule');
+      expect(one['timeZoneName'], 'Australia/Sydney');
+      expect(
+        one['scheduledDateTime'],
+        '${sgpcDayIso(notice.day)}T08:15:00',
+      );
     });
 
     test('is quiet on Android, and shows every event when opened out',

@@ -316,10 +316,28 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get reminder_setting => 'Daily reminder';
+  String get reminder_setting => 'Daily Hukamnama reminder';
 
   @override
   String get reminder_time => 'Reminder time';
+
+  @override
+  String reminder_time_amritsar(String amritsar, String here) {
+    return '$amritsar in Amritsar, $here here';
+  }
+
+  @override
+  String reminder_time_amritsar_only(String amritsar) {
+    return '$amritsar in Amritsar';
+  }
+
+  @override
+  String reminder_time_note(String when) {
+    return 'Now: $when. A time you pick is on your own clock.';
+  }
+
+  @override
+  String get reminder_use_amritsar => 'Use Amritsar time';
 
   @override
   String get reminder_on => 'On';
@@ -341,7 +359,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String reminder_prompt_body(String time) {
-    return 'Get a reminder each day at $time to read the Hukamnama. You can change this later in About.';
+    return 'Read the Hukamnama each day. We remind you at $time. Change it any time with the bell.';
   }
 
   @override
@@ -349,6 +367,17 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get reminder_prompt_no => 'Not now';
+
+  @override
+  String reminder_on_body(String time) {
+    return 'The reminder is on. It comes each day at $time.';
+  }
+
+  @override
+  String get reminder_change_time => 'Change time';
+
+  @override
+  String get reminder_turn_off => 'Turn off';
 
   @override
   String get reminder_notification_title => 'Today’s Hukamnama';
@@ -366,11 +395,112 @@ class AppLocalizationsEn extends AppLocalizations {
   String get history_title => 'Today in Sikh history';
 
   @override
+  String get history_screen_title => 'Sikh history';
+
+  @override
+  String get history_setting => 'Today in Sikh history notification';
+
+  @override
   String get history_setting_detail => 'A notice comes at the reminder time on days with an event.';
 
   @override
   String get history_failed_hint => 'Today in Sikh history did not start. Try again.';
 
   @override
+  String history_screen_intro(String year) {
+    return 'Nanakshahi $year, from the SGPC calendar.';
+  }
+
+  @override
+  String get history_today => 'Today';
+
+  @override
+  String get history_next => 'Next';
+
+  @override
+  String history_next_semantics(String date, String title) {
+    return 'Next in Sikh history, $date: $title';
+  }
+
+  @override
+  String get history_empty => 'No days of Sikh history are listed for this year.';
+
+  @override
+  String history_and_more(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'and $count more',
+      one: 'and 1 more',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get history_channel_description => 'A quiet notice on days with an event in Sikh history.';
+
+  @override
+  String get widget_card_title => 'Today’s Hukamnama on your home screen';
+
+  @override
+  String get widget_card_add => 'Add widget';
+
+  @override
+  String get widget_card_dismiss => 'Not now';
+
+  @override
+  String get widget_setting_title => 'Home screen widget';
+
+  @override
+  String get widget_setting_detail => 'Play without opening the app.';
+
+  @override
+  String get widget_setting_add => 'Add';
+
+  @override
+  String get widget_setting_added => 'Added';
+
+  @override
+  String get widget_steps_title => 'Add the widget';
+
+  @override
+  String get widget_steps_press_hold => 'Press and hold an empty part of the home screen.';
+
+  @override
+  String get widget_steps_iphone_add => 'Tap Edit, then Add Widget.';
+
+  @override
+  String get widget_steps_iphone_find => 'Search for Live Darbar, then add the medium size.';
+
+  @override
+  String get widget_steps_android_widgets => 'Tap Widgets.';
+
+  @override
+  String get widget_steps_android_find => 'Find Live Darbar, then drag its widget to the home screen.';
+
+  @override
+  String get widget_steps_done => 'Done';
+
+  @override
+  String get launch_failed_title => 'Live Darbar did not start.';
+
+  @override
+  String get launch_failed_body => 'Tap Retry. If it fails again, close the app and open it again.';
+
+  @override
+  String get error_view_title => 'This part did not load';
+
+  @override
+  String whats_new_title(String version) {
+    return 'What’s new in $version';
+  }
+
+  @override
+  String get whats_new_done => 'Got it';
+
+  @override
+  String get update_required_title => 'Please update';
+
+  @override
+  String get update_required_body => 'This version is too old to work well. Update it from the store to go on.';
 }

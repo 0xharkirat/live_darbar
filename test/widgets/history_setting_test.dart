@@ -93,7 +93,7 @@ void main() {
   ) async {
     await pump(tester);
 
-    expect(find.text(en.history_title), findsOneWidget);
+    expect(find.text(en.history_setting), findsOneWidget);
     expect(find.text(en.history_setting_detail), findsOneWidget);
     expect(isOn(tester), isFalse);
     expect(phone.calls, isEmpty);
@@ -106,7 +106,7 @@ void main() {
 
     expect(find.byType(CupertinoSwitch), findsNWidgets(2));
     final reminder = tester.getTopLeft(find.text(en.reminder_setting)).dy;
-    final history = tester.getTopLeft(find.text(en.history_title)).dy;
+    final history = tester.getTopLeft(find.text(en.history_setting)).dy;
     expect(history, greaterThan(reminder));
   });
 
@@ -117,7 +117,7 @@ void main() {
     await pump(tester);
 
     final node = tester.getSemantics(
-      find.bySemanticsLabel('${en.history_title}. ${en.history_setting_detail}'),
+      find.bySemanticsLabel('${en.history_setting}. ${en.history_setting_detail}'),
     );
     expect(node.value, en.reminder_off);
     handle.dispose();
@@ -129,10 +129,10 @@ void main() {
     await pump(tester);
     expect(phone.calls, isEmpty);
 
-    await tester.tap(find.text(en.history_title));
+    await tester.tap(find.text(en.history_setting));
     await tester.pumpAndSettle();
 
-    expect(phone.calls, ['request', 'history 07:00 x10']);
+    expect(phone.calls, ['request', 'history 07:00 IST x10']);
     expect(isOn(tester), isTrue);
     expect(phone.historyText!.title, en.history_title);
   });
@@ -140,7 +140,7 @@ void main() {
   testWidgets('leaves the daily reminder alone', (tester) async {
     await pump(tester);
 
-    await tester.tap(find.text(en.history_title));
+    await tester.tap(find.text(en.history_setting));
     await tester.pumpAndSettle();
 
     expect(phone.scheduled, isNull);
@@ -167,10 +167,10 @@ void main() {
     tester,
   ) async {
     await pump(tester);
-    await tester.tap(find.text(en.history_title));
+    await tester.tap(find.text(en.history_setting));
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text(en.history_title));
+    await tester.tap(find.text(en.history_setting));
     await tester.pumpAndSettle();
 
     expect(phone.calls.last, 'cancelHistory');
@@ -184,7 +184,7 @@ void main() {
     phone.allowed = false;
     await pump(tester);
 
-    await tester.tap(find.text(en.history_title));
+    await tester.tap(find.text(en.history_setting));
     await tester.pumpAndSettle();
 
     expect(find.text(en.reminder_blocked_hint), findsOneWidget);
@@ -198,7 +198,7 @@ void main() {
     phone.historyError = StateError('no');
     await pump(tester);
 
-    await tester.tap(find.text(en.history_title));
+    await tester.tap(find.text(en.history_setting));
     await tester.pumpAndSettle();
 
     expect(find.text(en.history_failed_hint), findsOneWidget);
@@ -215,9 +215,9 @@ void main() {
   testWidgets('reads in Punjabi', (tester) async {
     await pump(tester, locale: 'pa');
 
-    expect(find.text(pa.history_title), findsOneWidget);
+    expect(find.text(pa.history_setting), findsOneWidget);
     expect(find.text(pa.history_setting_detail), findsOneWidget);
-    expect(find.text(en.history_title), findsNothing);
+    expect(find.text(en.history_setting), findsNothing);
   });
 
   testWidgets('is not on the web, which cannot notify with the page closed', (
@@ -226,7 +226,7 @@ void main() {
     phone.supported = false;
     await pump(tester);
 
-    expect(find.text(en.history_title), findsNothing);
+    expect(find.text(en.history_setting), findsNothing);
     expect(find.byType(CupertinoSwitch), findsNothing);
   });
 }

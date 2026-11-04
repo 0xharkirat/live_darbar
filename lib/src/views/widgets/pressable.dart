@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/physics.dart';
 import 'package:live_darbar/src/core/motion.dart';
 
 /// Anything tappable that is bigger than an icon.
 ///
 /// It sinks to 97% on touch-down, not on release, so the screen answers the
-/// finger in the same frame. Release springs back slightly slower than the
-/// press, because the press is the person acting and the release is the
-/// interface settling. Drag off the target and it lifts again without firing,
-/// the way a real button does.
+/// finger in the same frame. The scale is a spring, not a fixed curve. A spring
+/// starts from wherever the target is and from the speed it has, so a quick tap
+/// that lifts mid-sink turns smoothly, and a second press during the spring
+/// back follows from where the target is. Release springs back slower than the
+/// press, with a hair of bounce, because the press is the person acting and the
+/// release is the interface settling. Drag off the target and it lifts again
+/// without firing, the way a real button does.
 ///
 /// A small target barely moves at 97%: a 32 point circle shrinks by 1 point.
 /// Put a [PressFill] inside it and the surface also eases to a lighter colour,
@@ -52,11 +56,49 @@ class Pressable extends StatefulWidget {
   State<Pressable> createState() => _PressableState();
 }
 
-class _PressableState extends State<Pressable> {
+class _PressableState extends State<Pressable>
+    with SingleTickerProviderStateMixin {
   bool _down = false;
 
+  /// The scale itself. The controller's value is the scale, and a spring
+  /// drives it, so [_retarget] can start a new spring from the current value
+  /// and speed at any moment.
+  late final AnimationController _scale = AnimationController(
+    vsync: this,
+    value: 1,
+    lowerBound: 0.5,
+    upperBound: 1.5,
+  );
+
   void _set(bool down) {
-    if (_down != down) setState(() => _down = down);
+    if (_down == down) return;
+    setState(() => _down = down);
+    _retarget();
+  }
+
+  bool get _pressed => _down && widget.onTap != null;
+
+  /// Springs from here, at this speed, to the scale the target should have.
+  void _retarget() {
+    // Reduce Motion shows a dim, not a scale, so there is nothing to spring.
+    if (Motion.reduced(context)) {
+      _scale.value = 1;
+      return;
+    }
+    final target = _pressed ? widget.scale : 1.0;
+    if (_scale.value == target && !_scale.isAnimating) return;
+    _scale.animateWith(
+      SpringSimulation(
+        _pressed ? Motion.pressSpring : Motion.releaseSpring,
+        _scale.value,
+        target,
+        _scale.velocity,
+        // At rest the scale is exactly 1, not 0.9995, which would soften the
+        // edges of everything inside.
+        snapToEnd: true,
+        tolerance: const Tolerance(distance: 0.0005, velocity: 0.005),
+      ),
+    );
   }
 
   @override
@@ -64,13 +106,21 @@ class _PressableState extends State<Pressable> {
     super.didUpdateWidget(oldWidget);
     // A target turned off mid-press never gets its release.
     if (widget.onTap == null) _down = false;
+    final switched = (oldWidget.onTap == null) != (widget.onTap == null);
+    if (switched || oldWidget.scale != widget.scale) _retarget();
+  }
+
+  @override
+  void dispose() {
+    _scale.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final enabled = widget.onTap != null;
     final reduced = Motion.reduced(context);
-    final pressed = _down && enabled;
+    final pressed = _pressed;
 
     Widget child = widget.child;
     child = _PressScope(pressed: pressed, child: child);
@@ -83,12 +133,7 @@ class _PressableState extends State<Pressable> {
                 child: child,
               )
             : child)
-        : AnimatedScale(
-            scale: pressed ? widget.scale : 1,
-            duration: pressed ? Motion.press : Motion.quick,
-            curve: Motion.easeOut,
-            child: child,
-          );
+        : ScaleTransition(scale: _scale, child: child);
 
     return Semantics(
       button: true,

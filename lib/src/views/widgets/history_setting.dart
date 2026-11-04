@@ -37,7 +37,7 @@ class HistorySetting extends ConsumerWidget {
       children: [
         SettingSwitchRow(
           icon: CupertinoIcons.calendar,
-          label: l10n.history_title,
+          label: l10n.history_setting,
           detail: l10n.history_setting_detail,
           value: enabled,
           valueLabel: enabled ? l10n.reminder_on : l10n.reminder_off,

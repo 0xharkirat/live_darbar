@@ -5,6 +5,11 @@
 #   tool/ios_widget_driver/run.sh tap "live kirtan"  tap a widget button
 #   tool/ios_widget_driver/run.sh tap hukamnama
 #   tool/ios_widget_driver/run.sh quick-action       long press the icon, then Live Kirtan
+#   tool/ios_widget_driver/run.sh prepare            app in English, then closed
+#   tool/ios_widget_driver/run.sh remove             take the widget off the home screen
+#   tool/ios_widget_driver/run.sh sheet              open the app's steps sheet, and stay 12 s
+#   tool/ios_widget_driver/run.sh film               add the widget and play Live Kirtan from
+#                                                    it, for a recording; see testFilm
 #
 # Build and install the app first, signed ad hoc so the App Group works:
 #   flutter build ios --simulator --debug
@@ -28,7 +33,12 @@ case $1 in
   add) only=testAddWidget ;;
   tap) only=testTapTarget; echo "${2:-live kirtan}" > /tmp/live_darbar_widget_driver/target.txt ;;
   quick-action) only=testQuickAction ;;
-  *) echo "usage: run.sh add | tap <words> | quick-action"; exit 1 ;;
+  prepare) only=testPrepare ;;
+  remove) only=testRemoveWidget ;;
+  film) only=testFilm ;;
+  film-live) only=testFilmLive ;;
+  sheet) only=testOpenWidgetSheet ;;
+  *) echo "usage: run.sh add | tap <words> | quick-action | prepare | remove | film | film-live | sheet"; exit 1 ;;
 esac
 
 cd $here

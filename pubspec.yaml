@@ -61,6 +61,11 @@ dependencies:
   flutter_local_notifications: ^22.3.3
   timezone: ^0.11.2
   flutter_timezone: ^5.1.1
+  # The films in the "add the widget" sheet: muted, looped, no controls.
+  # On Android it brings Media3 1.9.2 and just_audio brings 1.4.1: the app has
+  # 1 copy of the library, and android/build.gradle names which.
+  video_player: ^2.14.1
+  wakelock_plus: ^1.5.2
 
 dev_dependencies:
   flutter_test:
@@ -83,6 +88,11 @@ dev_dependencies:
   # link opens and in which launch mode.
   url_launcher_platform_interface: ^2.3.2
 
+  # Lets a test stand in for the platform behind video_player, to check that
+  # the films are muted and looped, and when the audio session is touched.
+  video_player_platform_interface: ^6.9.0
+  plugin_platform_interface: ^2.1.8
+
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
@@ -98,10 +108,16 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/images/
+    # The films in the steps sheet: an MP4 and a poster for each phone.
+    - assets/videos/
     # The whole folder, not file by file: sgpc_sangrands.json, and one
     # sgpc_events_<year>.json for each Nanakshahi year. The app finds the
     # event files by name, so next March's file needs no change here.
     - assets/data/
+    # One file for each release: whats_new/<major>.<minor>.json. The app finds
+    # the file of the installed release by name, so the next release adds a
+    # file and no code. See docs/DESIGN.md, "What's new".
+    - assets/whats_new/
 
   # Bundled rather than fetched at runtime by google_fonts. That cost a
   # network round trip on first launch, a visible swap from the fallback

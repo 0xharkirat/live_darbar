@@ -70,15 +70,17 @@ abstract interface class ReminderPlatform {
   /// Whether the phone lets the app show notifications now. Asks nothing.
   Future<bool> hasPermission();
 
-  /// Sets the reminder to repeat each day at [time], on the phone's own clock,
-  /// and replaces the one set before.
+  /// Sets the reminder to repeat each day at [time], and replaces the one set
+  /// before. The time is read on the clock of its zone: Amritsar's, whatever
+  /// the phone does with daylight saving, or the phone's own.
   Future<void> schedule(ReminderTime time, ReminderText text);
 
   /// Removes the reminder.
   Future<void> cancel();
 
   /// Sets 1 quiet notification for each of [notices], to fire once on its day
-  /// at [time] on the phone's own clock, and replaces the ones set before. A
+  /// at [time], and replaces the ones set before. The day and the time are read
+  /// on the clock of the time's zone. A
   /// day whose [time] has passed gets none. The daily reminder is not touched.
   ///
   /// The phone keeps at most [kHistoryDays] of them. A longer list is cut
@@ -119,6 +121,9 @@ class LocalNotificationsReminderPlatform implements ReminderPlatform {
   /// the app and nothing more, so it is not [payload].
   @visibleForTesting
   static const historyPayload = 'open_history';
+
+  /// The zone of Amritsar in the `timezone` package.
+  static const _amritsarZone = 'Asia/Kolkata';
 
   static const _id = 1;
   static const _channelId = 'daily_hukamnama';
@@ -170,6 +175,12 @@ class LocalNotificationsReminderPlatform implements ReminderPlatform {
       },
     );
   }
+
+  /// The clock that [time] is read on. Amritsar's is `Asia/Kolkata` and never
+  /// moves. The phone's own is where the phone is now.
+  tz.Location _clockOf(ReminderTime time) => time.zone == ReminderZone.amritsar
+      ? tz.getLocation(_amritsarZone)
+      : tz.local;
 
   /// The phone's time zone, as the `timezone` package knows it.
   ///
@@ -244,7 +255,7 @@ class LocalNotificationsReminderPlatform implements ReminderPlatform {
       id: _id,
       title: text.title,
       body: text.body,
-      scheduledDate: nextReminder(tz.TZDateTime.now(tz.local), time),
+      scheduledDate: nextReminder(tz.TZDateTime.now(_clockOf(time)), time),
       notificationDetails: NotificationDetails(
         android: AndroidNotificationDetails(
           _channelId,
@@ -285,7 +296,7 @@ class LocalNotificationsReminderPlatform implements ReminderPlatform {
     HistoryText text,
   ) async {
     await _initialize();
-    final now = tz.TZDateTime.now(tz.local);
+    final now = tz.TZDateTime.now(_clockOf(time));
     var used = 0;
     for (final notice in notices.take(kHistoryDays)) {
       final at = timeOnDay(now, notice.day, time);

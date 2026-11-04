@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:live_darbar/l10n/app_localizations.dart';
@@ -25,7 +27,23 @@ import 'package:live_darbar/src/views/widgets/pressable.dart';
 class MiniPlayer extends ConsumerWidget {
   const MiniPlayer({super.key});
 
+  /// The height at the default text size. The bar grows from here with the
+  /// listener's text size, so the title and the line under it are never cut.
   static const height = 68.0;
+
+  static const _titleSize = 16.0;
+  static const _padding = 10.0;
+
+  /// The bar's height at the listener's text size. A page that scrolls under
+  /// the bar pads its end by this, so the last row clears it.
+  static double heightOf(BuildContext context) {
+    final scaler = MediaQuery.textScalerOf(context);
+    final title = scaler.scale(_titleSize * AppType.headline.height!);
+    final line = scaler.scale(
+      AppType.footnote.fontSize! * AppType.footnote.height!,
+    );
+    return math.max(height, 2 * _padding + title + 2 + line);
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -42,12 +60,9 @@ class MiniPlayer extends ConsumerWidget {
       semanticLabel: title,
       scale: 0.98,
       onTap: () => showNowPlaying(context),
-      child: GestureDetector(
-        onVerticalDragEnd: (d) {
-          if ((d.primaryVelocity ?? 0) < -200) showNowPlaying(context);
-        },
+      child: _SwipeUpToOpen(
         child: Container(
-          height: height,
+          constraints: const BoxConstraints(minHeight: height),
           decoration: ShapeDecoration(
             color: Palette.surfaceHigh,
             shape: RoundedSuperellipseBorder(
@@ -93,7 +108,7 @@ class MiniPlayer extends ConsumerWidget {
                                   child: Text(
                                     title,
                                     style: AppType.headline.copyWith(
-                                      fontSize: 16,
+                                      fontSize: _titleSize,
                                     ),
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
@@ -195,6 +210,49 @@ class _ProgressEdge extends ConsumerWidget {
         widthFactor: f,
         child: Container(height: 2, color: Palette.gold),
       ),
+    );
+  }
+}
+
+/// How fast an upward swipe on the bar must be to count as a flick, in points
+/// per second.
+const kMiniFlickSpeed = 200.0;
+
+/// How far an upward pull must go, past the touch slop, to open the player at
+/// any speed. A slow, deliberate pull is as clear an answer as a flick.
+const kMiniPullDistance = 24.0;
+
+/// Opens the player when the bar is swiped up, at the speed of the finger.
+///
+/// It tracks the distance as well as the speed, so a slow pull that lets go
+/// at rest still opens it, and a flick that is too short to count as a pull
+/// opens it too.
+class _SwipeUpToOpen extends StatefulWidget {
+  const _SwipeUpToOpen({required this.child});
+
+  final Widget child;
+
+  @override
+  State<_SwipeUpToOpen> createState() => _SwipeUpToOpenState();
+}
+
+class _SwipeUpToOpenState extends State<_SwipeUpToOpen> {
+  double _pulled = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onVerticalDragUpdate: (d) => _pulled -= d.primaryDelta ?? 0,
+      onVerticalDragCancel: () => _pulled = 0,
+      onVerticalDragEnd: (d) {
+        final up = -(d.primaryVelocity ?? 0);
+        final pulled = _pulled;
+        _pulled = 0;
+        if (up > kMiniFlickSpeed || pulled > kMiniPullDistance) {
+          showNowPlaying(context, flickVelocity: up);
+        }
+      },
+      child: widget.child,
     );
   }
 }

@@ -18,10 +18,22 @@
         permission: the reminder is inexact on purpose, so it needs none.
     -->
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <!--
+        enableOnBackInvokedCallback: the system asks the app first whether it
+        will handle back, and the app says yes while a sheet or a page is open.
+        Android 16 makes this so for every app that targets it, this one
+        included. Turning it on here gives Android 13 to 15 the same path, and
+        shows the phone's home screen under the app when back leaves it. Some
+        phones (Xiaomi, from a report on flutterpro.design) do not close a
+        sheet on back without it. The app has no WillPopScope, which the flag
+        breaks. test/widgets/android_back_test.dart holds both ways of sending
+        back.
+    -->
     <application
         android:label="Live Darbar"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
+        android:enableOnBackInvokedCallback="true"
         android:networkSecurityConfig="@xml/network_security_config">
         <activity
             android:name=".MainActivity"

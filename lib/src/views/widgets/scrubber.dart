@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:live_darbar/l10n/app_localizations.dart';
@@ -14,13 +16,34 @@ import 'package:live_darbar/src/models/audio_progress_state.dart';
 class Timeline extends ConsumerWidget {
   const Timeline({super.key});
 
+  /// The height at the default text size. The timeline grows from here with
+  /// the listener's text size, so the times under the bar are never cut.
+  static const _height = 44.0;
+
+  /// What sits above the times: the gaps and the bar, in either state.
+  static const _aboveTimes = 24.0;
+
+  /// The space above the bar inside the timeline's box. It is room for the
+  /// bar to thicken under a finger and for the finger itself. The live rail
+  /// keeps the same space, so the bar is at the same place in both. A layout
+  /// that wants a gap above the bar as the eye sees it takes this off.
+  static const barInset = 10.0;
+
+  static double _heightOf(BuildContext context) {
+    final style = AppType.timecode;
+    final line = MediaQuery.textScalerOf(
+      context,
+    ).scale(style.fontSize! * style.height!);
+    return math.max(_height, _aboveTimes + line);
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final progress = ref.watch(audioProgressProvider).value;
     final isLive = progress?.isLive ?? true;
 
     return SizedBox(
-      height: 44,
+      height: _heightOf(context),
       child: AnimatedSwitcher(
         duration: Motion.quick,
         child: isLive || progress == null
@@ -46,7 +69,7 @@ class _LiveRail extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const SizedBox(height: 10),
+        const SizedBox(height: Timeline.barInset),
         Container(
           height: 4,
           decoration: BoxDecoration(

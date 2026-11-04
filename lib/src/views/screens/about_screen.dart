@@ -8,12 +8,15 @@ import 'package:live_darbar/src/core/open_link.dart';
 import 'package:live_darbar/src/core/palette.dart';
 import 'package:live_darbar/src/core/platform.dart';
 import 'package:live_darbar/src/core/store_links.dart';
+import 'package:live_darbar/src/home_screen_widget/widget_install.dart';
 import 'package:live_darbar/src/services/reminder_platform.dart';
 import 'package:live_darbar/src/views/widgets/app_nav_bar.dart';
 import 'package:live_darbar/src/views/widgets/history_setting.dart';
 import 'package:live_darbar/src/views/widgets/language_switch.dart';
 import 'package:live_darbar/src/views/widgets/pressable.dart';
 import 'package:live_darbar/src/views/widgets/reminder_setting.dart';
+import 'package:live_darbar/src/views/widgets/settings_group.dart';
+import 'package:live_darbar/src/views/widgets/widget_setting.dart';
 
 /// About the app, the person who made it, and whose work it carries.
 ///
@@ -31,6 +34,7 @@ class AboutScreen extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
     final version = ref.watch(appVersionProvider).value;
     final notifies = ref.watch(reminderPlatformProvider).isSupported;
+    final widgets = ref.watch(widgetInstallProvider).isSupported;
 
     return Scaffold(
       backgroundColor: Palette.background,
@@ -50,7 +54,7 @@ class AboutScreen extends ConsumerWidget {
                       children: [
                         _Prose([l10n.about_section_p1, l10n.about_section_p2]),
                         const SizedBox(height: 16),
-                        _Group(
+                        SettingsGroup(
                           children: [
                             // The language lives here as well as on home,
                             // so nobody has to go back to change it.
@@ -61,19 +65,29 @@ class AboutScreen extends ConsumerWidget {
                                 8,
                                 8,
                               ),
-                              child: Row(
+                              // At a large text size the switch no longer
+                              // fits beside the label, and drops under it.
+                              child: Wrap(
+                                alignment: WrapAlignment.spaceBetween,
+                                crossAxisAlignment: WrapCrossAlignment.center,
+                                runSpacing: 8,
                                 children: [
-                                  const Icon(
-                                    CupertinoIcons.globe,
-                                    size: 20,
-                                    color: Palette.gold,
-                                  ),
-                                  const SizedBox(width: 16),
-                                  Expanded(
-                                    child: Text(
-                                      l10n.language_tooltip,
-                                      style: AppType.body,
-                                    ),
+                                  Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      const Icon(
+                                        CupertinoIcons.globe,
+                                        size: 20,
+                                        color: Palette.gold,
+                                      ),
+                                      const SizedBox(width: 16),
+                                      Flexible(
+                                        child: Text(
+                                          l10n.language_tooltip,
+                                          style: AppType.body,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                   const LanguageSwitch(),
                                 ],
@@ -88,6 +102,10 @@ class AboutScreen extends ConsumerWidget {
                               ReminderSetting(),
                               HistorySetting(),
                             ],
+                            // The widget is a setting too, and it stays here
+                            // after the card on home has gone. The web has no
+                            // home screen to put it on.
+                            if (widgets) const WidgetSetting(),
                             _LinkRow(
                               icon: CupertinoIcons.chat_bubble_text,
                               label: l10n.about_section_contact,
@@ -113,7 +131,7 @@ class AboutScreen extends ConsumerWidget {
                         _Heading(l10n.about_me_heading),
                         _Prose([l10n.about_me_p1, l10n.about_me_p2]),
                         const SizedBox(height: 16),
-                        _Group(
+                        SettingsGroup(
                           children: [
                             _LinkRow(
                               icon: CupertinoIcons.globe,
@@ -127,7 +145,8 @@ class AboutScreen extends ConsumerWidget {
                                   'https://www.youtube.com/watch?v=0lhJ_0ve5q8&list=PLLx2TfaNTPhyQPAIfEnib4MfXppYtYVyB',
                             ),
                             _LinkRow(
-                              icon: CupertinoIcons.chevron_left_slash_chevron_right,
+                              icon: CupertinoIcons
+                                  .chevron_left_slash_chevron_right,
                               label: l10n.about_me_github,
                               url: 'https://github.com/0xHARKIRAT',
                             ),
@@ -155,7 +174,7 @@ class AboutScreen extends ConsumerWidget {
                         ),
                         const SizedBox(height: 36),
                         _Heading(l10n.licensing_heading),
-                        _Group(
+                        SettingsGroup(
                           children: [
                             _Credit(
                               source: l10n.licensing_audio_source,
@@ -237,42 +256,6 @@ class _Prose extends StatelessWidget {
           SelectableText(p, style: AppType.body),
         ],
       ],
-    );
-  }
-}
-
-/// An inset group, iOS Settings style: rows on one surface, hairlines between
-/// them indented to the text so they read as one list.
-class _Group extends StatelessWidget {
-  const _Group({required this.children});
-
-  final List<Widget> children;
-
-  @override
-  Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: ShapeDecoration(
-        color: Palette.surface,
-        shape: RoundedSuperellipseBorder(
-          borderRadius: BorderRadius.circular(18),
-          side: const BorderSide(color: Palette.border),
-        ),
-      ),
-      child: ClipRSuperellipse(
-        borderRadius: BorderRadius.circular(18),
-        child: Column(
-          children: [
-            for (final (i, child) in children.indexed) ...[
-              if (i > 0)
-                const Padding(
-                  padding: EdgeInsets.only(left: 52),
-                  child: Divider(height: 1, thickness: 1, color: Palette.border),
-                ),
-              child,
-            ],
-          ],
-        ),
-      ),
     );
   }
 }

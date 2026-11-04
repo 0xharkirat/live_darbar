@@ -7,6 +7,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:live_darbar/l10n/app_localizations.dart';
 import 'package:live_darbar/src/controllers/locale_controller.dart';
 import 'package:live_darbar/src/controllers/reminder_controller.dart';
+import 'package:live_darbar/src/core/amritsar_time.dart';
 import 'package:live_darbar/src/core/app_theme.dart';
 import 'package:live_darbar/src/core/app_type.dart';
 import 'package:live_darbar/src/core/app_version.dart';
@@ -27,6 +28,9 @@ class _Locale extends LocaleController {
   @override
   String build() => locale;
 }
+
+/// The default, read by a listener in Sydney in summer.
+const _amritsarSeven = '7:00 AM in Amritsar, 12:30 PM here';
 
 /// The daily reminder on the About screen: a switch, and the time under it
 /// while it is on.
@@ -51,6 +55,10 @@ void main() {
         retry: (_, __) => null,
         overrides: [
           reminderPlatformProvider.overrideWithValue(phone),
+          // A listener in Sydney in summer: 7:00 in Amritsar is 12:30 here.
+          localOffsetProvider.overrideWithValue(
+            (_) => const Duration(hours: 11),
+          ),
           appVersionProvider.overrideWith((ref) async => '3.0.0 (10)'),
           // The app shell sets both to the same language.
           localeController.overrideWith(() => _Locale(locale)),
@@ -86,15 +94,17 @@ void main() {
     expect(phone.calls, isEmpty, reason: 'looking asks nothing of the phone');
   });
 
-  testWidgets('a tap turns it on at 7:00 and shows the time', (tester) async {
+  testWidgets('a tap turns it on at 7:00 in Amritsar and shows the time', (
+    tester,
+  ) async {
     await pump(tester);
 
     await tester.tap(find.text(en.reminder_setting));
     await tester.pumpAndSettle();
 
-    expect(phone.calls, ['request', 'schedule 07:00']);
+    expect(phone.calls, ['request', 'schedule 07:00 IST']);
     expect(find.text(en.reminder_time), findsOneWidget);
-    expect(find.text('7:00 AM'), findsOneWidget);
+    expect(find.text(_amritsarSeven), findsOneWidget);
   });
 
   testWidgets('a tap on the switch itself does the same', (tester) async {
@@ -184,11 +194,13 @@ void main() {
         'reminder_asked': true,
         'reminder_enabled': true,
         'reminder_minutes': 5 * 60 + 45,
+        'reminder_zone': 'local',
       },
     );
 
     expect(find.text(en.reminder_time), findsOneWidget);
-    expect(find.text('5:45 AM'), findsOneWidget);
+    expect(find.text('5:45 AM'), findsOneWidget,
+        reason: 'a time the listener picked is on their own clock');
     expect(
       tester.widget<CupertinoSwitch>(reminderSwitch).value,
       isTrue,
@@ -229,6 +241,7 @@ void main() {
           'reminder_asked': true,
           'reminder_enabled': true,
           'reminder_minutes': 6 * 60 + 30,
+          'reminder_zone': 'local',
         },
       );
 
@@ -241,6 +254,85 @@ void main() {
       expect(picker.initialDateTime.hour, 6);
       expect(picker.initialDateTime.minute, 30);
       expect(find.text(en.reminder_done), findsOneWidget);
+    });
+
+    testWidgets(
+        'starts on the listener’s own clock for the Amritsar default, and '
+        'says what it is now', (tester) async {
+      await pump(
+        tester,
+        saved: {'reminder_asked': true, 'reminder_enabled': true},
+      );
+
+      await openSheet(tester);
+
+      final picker = tester.widget<CupertinoDatePicker>(
+        find.byType(CupertinoDatePicker),
+      );
+      expect(picker.initialDateTime.hour, 12);
+      expect(picker.initialDateTime.minute, 30);
+      expect(find.text(en.reminder_time_note(_amritsarSeven)), findsOneWidget);
+      expect(find.text(en.reminder_use_amritsar), findsNothing);
+    });
+
+    testWidgets('a pick is the listener’s own clock, and stays there', (
+      tester,
+    ) async {
+      await pump(
+        tester,
+        saved: {'reminder_asked': true, 'reminder_enabled': true},
+      );
+      await openSheet(tester);
+
+      tester
+          .widget<CupertinoDatePicker>(find.byType(CupertinoDatePicker))
+          .onDateTimeChanged(DateTime(2026, 1, 1, 6, 15));
+      await tester.tap(find.text(en.reminder_done));
+      await tester.pumpAndSettle();
+
+      expect(phone.scheduled, const ReminderTime(6, 15));
+      expect(phone.scheduled!.zone, ReminderZone.local);
+      expect(find.text('6:15 AM'), findsOneWidget);
+      final prefs = await SharedPreferences.getInstance();
+      expect(prefs.getString('reminder_zone'), 'local');
+    });
+
+    testWidgets('Done with no turn of the wheel keeps Amritsar time', (
+      tester,
+    ) async {
+      await pump(
+        tester,
+        saved: {'reminder_asked': true, 'reminder_enabled': true},
+      );
+      await openSheet(tester);
+
+      await tester.tap(find.text(en.reminder_done));
+      await tester.pumpAndSettle();
+
+      expect(phone.scheduled, isNull, reason: 'nothing changed');
+      expect(find.text(_amritsarSeven), findsOneWidget);
+    });
+
+    testWidgets('a time on the listener’s clock can go back to Amritsar', (
+      tester,
+    ) async {
+      await pump(
+        tester,
+        saved: {
+          'reminder_asked': true,
+          'reminder_enabled': true,
+          'reminder_minutes': 6 * 60 + 30,
+          'reminder_zone': 'local',
+        },
+      );
+      await openSheet(tester);
+      expect(find.text(en.reminder_time_note(_amritsarSeven)), findsNothing);
+
+      await tester.tap(find.text(en.reminder_use_amritsar));
+      await tester.pumpAndSettle();
+
+      expect(phone.scheduled, ReminderTime.standard);
+      expect(find.text(_amritsarSeven), findsOneWidget);
     });
 
     testWidgets('Done saves the time the wheel shows, and moves the reminder', (
@@ -279,8 +371,9 @@ void main() {
       await tester.tap(find.text(en.reminder_done));
       await tester.pumpAndSettle();
 
-      expect(phone.scheduled, const ReminderTime(9, 0));
-      expect(find.text('9:00 AM'), findsOneWidget);
+      // The wheel starts at 12:30, the default on a Sydney clock.
+      expect(phone.scheduled, const ReminderTime(14, 30));
+      expect(find.text('2:30 PM'), findsOneWidget);
     });
 
     testWidgets('Done with no change asks nothing of the phone',
@@ -296,7 +389,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(phone.calls, isEmpty);
-      expect(find.text('7:00 AM'), findsOneWidget);
+      expect(find.text(_amritsarSeven), findsOneWidget);
     });
 
     testWidgets('a swipe away keeps the old time', (tester) async {
@@ -313,7 +406,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byType(CupertinoDatePicker), findsNothing);
-      expect(find.text('7:00 AM'), findsOneWidget);
+      expect(find.text(_amritsarSeven), findsOneWidget);
       expect(phone.calls, isEmpty);
     });
   });
@@ -344,7 +437,7 @@ void main() {
     node = tester.getSemantics(row(en.reminder_setting));
     expect(node.value, en.reminder_on);
     final time = tester.getSemantics(row(en.reminder_time));
-    expect(time.value, '7:00 AM');
+    expect(time.value, _amritsarSeven);
     expect(time.getSemanticsData().hasAction(SemanticsAction.tap), isTrue);
     semantics.dispose();
   });

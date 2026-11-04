@@ -99,7 +99,7 @@ void main() {
       final problem = await controllerOf(container).turnOn();
 
       expect(problem, ReminderProblem.none);
-      expect(phone.calls, ['request', 'history 07:00 x10']);
+      expect(phone.calls, ['request', 'history 07:00 IST x10']);
       expect((await settingsOf(container)).enabled, isTrue);
       expect(phone.history!.first.day, DateTime.utc(2026, 11, 3));
       expect(phone.history!.first.body.split('\n'), hasLength(3));
@@ -205,7 +205,7 @@ void main() {
 
       await controllerOf(container).resync();
 
-      expect(phone.calls, ['has', 'history 07:00 x10']);
+      expect(phone.calls, ['has', 'history 07:00 IST x10']);
     });
 
     test('moves the window on with the day', () async {

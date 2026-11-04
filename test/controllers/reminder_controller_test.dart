@@ -40,8 +40,8 @@ void main() {
   });
 
   group('asking once', () {
-    test('a new listener has not been asked, and the reminder is off at 7:00',
-        () async {
+    test('a new listener has not been asked, and the reminder is off at 7:00 in '
+        'Amritsar', () async {
       final settings = await settingsOf(containerFor(phone));
 
       expect(settings.asked, isFalse);
@@ -101,13 +101,13 @@ void main() {
   });
 
   group('turning it on', () {
-    test('asks the phone first, then sets 7:00, in English', () async {
+    test('asks the phone first, then sets 7:00 in Amritsar, in English', () async {
       final container = containerFor(phone);
 
       final problem = await controllerOf(container).turnOn();
 
       expect(problem, ReminderProblem.none);
-      expect(phone.calls, ['request', 'schedule 07:00']);
+      expect(phone.calls, ['request', 'schedule 07:00 IST']);
       expect(phone.text!.title, 'Today’s Hukamnama');
       expect(phone.text!.body, 'Read the Hukamnama from Sri Darbar Sahib.');
       final settings = await settingsOf(container);
@@ -231,6 +231,42 @@ void main() {
       expect(next.scheduled, const ReminderTime(18, 45));
     });
 
+    test('starts as 7:00 in Amritsar, which the phone keeps in Amritsar', () async {
+      final container = containerFor(phone);
+
+      final time = (await settingsOf(container)).time;
+      expect(time, ReminderTime.standard);
+      expect(time.zone, ReminderZone.amritsar);
+
+      await controllerOf(container).turnOn();
+      expect(phone.scheduled!.zone, ReminderZone.amritsar);
+    });
+
+    test('a time the listener picks is on their own clock, and is saved so',
+        () async {
+      final container = containerFor(phone);
+
+      await controllerOf(container).setTime(const ReminderTime(8, 15));
+
+      final prefs = await SharedPreferences.getInstance();
+      expect(prefs.getInt('reminder_minutes'), 8 * 60 + 15);
+      expect(prefs.getString('reminder_zone'), 'local');
+      final next = containerFor(FakeReminderPlatform());
+      expect((await settingsOf(next)).time.zone, ReminderZone.local);
+    });
+
+    test('going back to Amritsar time is saved too', () async {
+      final container = containerFor(phone);
+      await controllerOf(container).setTime(const ReminderTime(8, 15));
+
+      await controllerOf(container).setTime(ReminderTime.standard);
+
+      final prefs = await SharedPreferences.getInstance();
+      expect(prefs.getString('reminder_zone'), 'amritsar');
+      expect((await settingsOf(containerFor(phone))).time,
+          ReminderTime.standard);
+    });
+
     test('is 7:00 again when the saved value is damaged', () async {
       SharedPreferences.setMockInitialValues({'reminder_minutes': 99999});
 
@@ -265,6 +301,7 @@ void main() {
         'reminder_asked': true,
         'reminder_enabled': true,
         'reminder_minutes': 6 * 60 + 15,
+        'reminder_zone': 'local',
       });
       final container = containerFor(phone);
 
@@ -387,9 +424,9 @@ void main() {
           reason: 'the sync must not remove the reminder just set');
       expect(slow.calls, [
         'request',
-        'schedule 07:00',
+        'schedule 07:00 IST',
         'has',
-        'schedule 07:00',
+        'schedule 07:00 IST',
       ]);
       expect((await settingsOf(container)).enabled, isTrue);
     });

@@ -71,15 +71,16 @@ class ReminderSetting extends ConsumerWidget {
   }
 }
 
-class _TimeRow extends StatelessWidget {
+class _TimeRow extends ConsumerWidget {
   const _TimeRow({required this.time});
 
   final ReminderTime time;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
-    final label = reminderTimeLabel(context, time);
+    // "7:00 AM in Amritsar, 12:30 PM here", or the time the listener picked.
+    final label = reminderWhenLabel(context, ref, time);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -110,11 +111,13 @@ class _TimeRow extends StatelessWidget {
                       ),
                       const SizedBox(width: 16),
                       Expanded(
-                        child: Text(l10n.reminder_time, style: AppType.body),
-                      ),
-                      Text(
-                        label,
-                        style: AppType.body.copyWith(color: Palette.muted),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(l10n.reminder_time, style: AppType.body),
+                            Text(label, style: AppType.footnote),
+                          ],
+                        ),
                       ),
                       const SizedBox(width: 8),
                       const Icon(

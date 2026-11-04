@@ -178,9 +178,14 @@ void main() {
   });
 
   group('ReminderTime', () {
-    test('starts at 7:00', () {
-      expect(ReminderTime.standard, const ReminderTime(7, 0));
+    test('starts at 7:00 in Amritsar', () {
+      expect(
+        ReminderTime.standard,
+        const ReminderTime(7, 0, zone: ReminderZone.amritsar),
+      );
       expect(ReminderTime.standard.minutes, 420);
+      expect(ReminderTime.standard, isNot(const ReminderTime(7, 0)),
+          reason: '7:00 on the listener’s own clock is another time');
     });
 
     test('round-trips through minutes', () {

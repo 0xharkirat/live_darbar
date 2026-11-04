@@ -1,7 +1,9 @@
+import 'dart:math' as math;
 import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/physics.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:live_darbar/l10n/app_localizations.dart';
 import 'package:live_darbar/src/controllers/audio_controller.dart';
@@ -19,6 +21,7 @@ import 'package:live_darbar/src/views/widgets/pressable.dart';
 import 'package:live_darbar/src/views/widgets/quality_sheet.dart';
 import 'package:live_darbar/src/views/widgets/scrubber.dart';
 import 'package:live_darbar/src/views/widgets/source_switcher.dart';
+import 'package:live_darbar/src/views/widgets/spring_scale.dart';
 
 /// Opens the full player as an iOS sheet.
 ///
@@ -29,10 +32,19 @@ import 'package:live_darbar/src/views/widgets/source_switcher.dart';
 /// A tap on the dimmed home above it closes it too. Flutter's Cupertino sheet
 /// leaves that out, as an iOS sheet does, but a mouse cannot swipe, and a
 /// finger often goes for the dim first.
-Future<void> showNowPlaying(BuildContext context) {
+///
+/// [flickVelocity] is how fast a finger was moving up when it let go, in
+/// points per second, as `DragEndDetails.primaryVelocity` reports it with the
+/// sign dropped: up is positive. The sheet opens on a spring that starts at
+/// that speed, so a flick throws it open and there is no seam between the
+/// finger and the motion. A tap, with 0, opens it on the same spring from rest.
+Future<void> showNowPlaying(BuildContext context, {double flickVelocity = 0}) {
+  final height = MediaQuery.sizeOf(context).height;
   return Navigator.of(context, rootNavigator: true).push(
     _PlayerSheetRoute(
       barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
+      openVelocity: height > 0 ? math.max(0, flickVelocity) / height : 0,
+      reduced: Motion.reduced(context),
     ),
   );
 }
@@ -43,17 +55,47 @@ Future<void> showNowPlaying(BuildContext context) {
 /// top route's name. Without a name, closing the reader that the player opened
 /// would leave `#/hukamnama` showing over a player.
 class _PlayerSheetRoute extends CupertinoSheetRoute<void> {
-  _PlayerSheetRoute({required String barrierLabel})
-      : _barrierLabel = barrierLabel,
+  _PlayerSheetRoute({
+    required String barrierLabel,
+    this.openVelocity = 0,
+    this.reduced = false,
+  })  : _barrierLabel = barrierLabel,
         super(
           settings: const RouteSettings(name: AppRoutes.home),
           showDragHandle: true,
-          topGap: 0.06,
           scrollableBuilder: (context, controller) =>
               NowPlayingScreen(scrollController: controller),
         );
 
   final String _barrierLabel;
+
+  /// How fast the sheet was thrown open, in sheet heights per second.
+  final double openVelocity;
+
+  /// Reduce Motion is on. A simulation is not slowed to 5% the way a timed
+  /// animation is, so under Reduce Motion the sheet keeps its own timing.
+  final bool reduced;
+
+  /// Opens on a spring that starts at [openVelocity]. The Cupertino sheet
+  /// draws its controller through a curve, so the spring is played back
+  /// through the inverse of that curve and the sheet on screen is the spring.
+  /// Closing keeps the sheet's own motion: a drag hands its release speed to
+  /// the route itself.
+  @override
+  Simulation? createSimulation({required bool forward}) {
+    if (!forward || reduced) return null;
+    final thrown = openVelocity >= Motion.flickSpeed;
+    return SpringThroughCurve(
+      SpringSimulation(
+        thrown ? Motion.sheetFlick : Motion.sheet,
+        0,
+        1,
+        openVelocity,
+        snapToEnd: true,
+      ),
+      Curves.fastEaseInToSlowEaseOut,
+    );
+  }
 
   @override
   bool get barrierDismissible => true;
@@ -89,13 +131,28 @@ class NowPlayingScreen extends ConsumerWidget {
           _Backdrop(index: now.index),
           SafeArea(
             top: false,
+            // Not at the bottom: the space for the navigation bar is inside
+            // the scroll view, so the player slides under the bar and its last
+            // line stops above it, as the update sheet does.
+            bottom: false,
             child: LayoutBuilder(
               builder: (context, constraints) => SingleChildScrollView(
                 controller: scrollController,
-                padding: const EdgeInsets.fromLTRB(24, _topInset, 24, 16),
+                // The view padding, not the padding: the Cupertino sheet replaces
+                // the padding its content sees, and with it the bottom, so a
+                // `SafeArea` here never found the navigation bar.
+                padding: EdgeInsets.fromLTRB(
+                  24,
+                  _topInset,
+                  24,
+                  16 + MediaQuery.viewPaddingOf(context).bottom,
+                ),
                 child: ConstrainedBox(
                   constraints: BoxConstraints(
-                    minHeight: constraints.maxHeight - _topInset - 32,
+                    minHeight: constraints.maxHeight -
+                        _topInset -
+                        32 -
+                        MediaQuery.viewPaddingOf(context).bottom,
                   ),
                   child: Center(
                     child: ConstrainedBox(
@@ -103,66 +160,94 @@ class NowPlayingScreen extends ConsumerWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          _BreathingArtwork(
-                            index: now.index,
-                            playing: now.isPlaying,
-                          ),
-                          const SizedBox(height: 32),
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.end,
+                          // Three groups. Parts of a group sit [_within] apart and
+                          // the groups sit [_between] apart, so the eye reads three
+                          // things and the rhythm is the same all the way down.
+                          Column(
+                            key: const Key('player_group_title'),
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    // The badge row is as tall as the Data saver
-                                    // pill whether the pill shows or not, and
-                                    // a recording holds the same space empty.
-                                    // So neither the pill appearing nor a
-                                    // change of source moves the artwork or the
-                                    // title.
-                                    SizedBox(
-                                      height: DataSaverPill.height,
-                                      child: now.isLive
-                                          ? Row(
-                                              children: [
-                                                LiveBadge(
-                                                  playing: now.isPlaying,
-                                                ),
-                                                if (hasQuality) ...[
-                                                  const SizedBox(width: 10),
-                                                  const DataSaverPill(),
-                                                ],
-                                              ],
-                                            )
-                                          : null,
-                                    ),
-                                    const SizedBox(height: 8),
-                                    AnimatedSwitcher(
-                                      duration: Motion.quick,
-                                      child: Text(
-                                        title,
-                                        key: ValueKey(title),
-                                        style: AppType.title,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 4),
-                                    Text(subtitle, style: AppType.callout),
-                                  ],
-                                ),
+                              _BreathingArtwork(
+                                index: now.index,
+                                playing: now.isPlaying,
                               ),
-                              if (!now.isLive)
-                                _ReadButton(label: l10n.read),
+                              const SizedBox(height: _within),
+                              Row(
+                                key: const Key('player_title_row'),
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        // The badge row is as tall as the Data saver
+                                        // pill whether the pill shows or not, and
+                                        // a recording holds the same space empty.
+                                        // So neither the pill appearing nor a
+                                        // change of source moves the artwork or the
+                                        // title.
+                                        SizedBox(
+                                          height: DataSaverPill.height,
+                                          child: now.isLive
+                                              ? Row(
+                                                  children: [
+                                                    LiveBadge(
+                                                      playing: now.isPlaying,
+                                                    ),
+                                                    if (hasQuality) ...[
+                                                      const SizedBox(width: 10),
+                                                      const DataSaverPill(),
+                                                    ],
+                                                  ],
+                                                )
+                                              : null,
+                                        ),
+                                        const SizedBox(height: 8),
+                                        AnimatedSwitcher(
+                                          duration: Motion.quick,
+                                          child: Text(
+                                            title,
+                                            key: ValueKey(title),
+                                            style: AppType.title,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Text(subtitle, style: AppType.callout),
+                                      ],
+                                    ),
+                                  ),
+                                  if (!now.isLive)
+                                    _ReadButton(label: l10n.read),
+                                ],
+                              ),
                             ],
                           ),
-                          const SizedBox(height: 20),
-                          const Timeline(),
-                          const SizedBox(height: 16),
-                          _Transport(isLive: now.isLive, index: now.index),
-                          const SizedBox(height: 8),
-                          const Center(child: LiveStatusLine()),
-                          const SizedBox(height: 24),
-                          const SourceSwitcher(),
+                          // To the bar as the eye sees it, which starts inside
+                          // the timeline's box.
+                          const SizedBox(height: _between - Timeline.barInset),
+                          Column(
+                            key: const Key('player_group_controls'),
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              const Timeline(),
+                              const SizedBox(height: _within),
+                              _Transport(isLive: now.isLive, index: now.index),
+                            ],
+                          ),
+                          const SizedBox(height: _between),
+                          // The line about the stream sits with the switch that
+                          // chooses the stream. It is empty most of the time, and
+                          // then it takes no room.
+                          Column(
+                            key: const Key('player_group_source'),
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              const Center(
+                                child: LiveStatusLine(gap: _within / 2),
+                              ),
+                              const SourceSwitcher(),
+                            ],
+                          ),
                         ],
                       ),
                     ),
@@ -200,6 +285,11 @@ class NowPlayingScreen extends ConsumerWidget {
     );
   }
 }
+
+/// The gap between the parts of a group, and between the groups. Both are on
+/// the app's 8 point grid, and the second is twice the first.
+const _within = 16.0;
+const _between = 32.0;
 
 /// Space above the content for the quality button, which sits beside the
 /// sheet's drag handle. The same for every source, and the badge row below the
@@ -252,7 +342,9 @@ class _Backdrop extends StatelessWidget {
 }
 
 /// The artwork sits full size while sound plays and settles back when it
-/// stops, so the state of the player is visible from across the room.
+/// stops, so the state of the player is visible from across the room. It
+/// moves on a spring that keeps its speed, so a pause that follows a play a
+/// moment later turns smoothly instead of with a seam.
 class _BreathingArtwork extends StatelessWidget {
   const _BreathingArtwork({required this.index, required this.playing});
 
@@ -265,10 +357,9 @@ class _BreathingArtwork extends StatelessWidget {
     return AspectRatio(
       // Close to the paintings' own 3:2, so all five ragis stay in frame.
       aspectRatio: 1.4,
-      child: AnimatedScale(
+      child: SpringScale(
         scale: playing || reduced ? 1 : 0.86,
-        duration: const Duration(milliseconds: 450),
-        curve: SpringCurve(Motion.artwork),
+        spring: Motion.artwork,
         child: DecoratedBox(
           decoration: ShapeDecoration(
             shape: RoundedSuperellipseBorder(

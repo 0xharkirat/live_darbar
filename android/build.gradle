@@ -3,6 +3,21 @@ allprojects {
         google()
         mavenCentral()
     }
+
+    // 1 copy of Media3, for the whole app. just_audio (the kirtan) asks for
+    // 1.4.1 and video_player (the films in the "add the widget" sheet) asks for
+    // 1.9.2, and an app holds only 1 of them. Gradle would pick the higher by
+    // itself; this says so, so a plugin update cannot change it without
+    // someone seeing. 1.9.2 is the 1 that video_player_android is built for.
+    // just_audio also compiles against it here. Move this number with
+    // video_player_android, and play the live kirtan on a phone after.
+    configurations.configureEach {
+        resolutionStrategy.eachDependency { details ->
+            if (details.requested.group == 'androidx.media3') {
+                details.useVersion '1.9.2'
+            }
+        }
+    }
 }
 
 rootProject.buildDir = "../build"

@@ -340,15 +340,19 @@ void main() {
       await tester.pump(Motion.press);
 
       expect(fill(), Palette.surfaceHigh);
+      await tester.pump(const Duration(milliseconds: 300));
       expect(
         tester
-            .widget<AnimatedScale>(
-              find.descendant(
-                of: find.byType(QualityButton),
-                matching: find.byType(AnimatedScale),
-              ),
+            .widget<ScaleTransition>(
+              find
+                  .descendant(
+                    of: find.byType(QualityButton),
+                    matching: find.byType(ScaleTransition),
+                  )
+                  .first,
             )
-            .scale,
+            .scale
+            .value,
         0.95,
       );
       await gesture.up();

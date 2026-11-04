@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:live_darbar/l10n/app_localizations.dart';
 import 'package:live_darbar/src/controllers/audio_controller.dart';
@@ -21,7 +24,10 @@ import 'package:live_darbar/src/models/sgpc_day.dart';
 import 'package:live_darbar/src/views/widgets/app_nav_bar.dart';
 import 'package:live_darbar/src/views/widgets/busy_icon.dart';
 import 'package:live_darbar/src/views/widgets/in_app_link.dart';
+import 'package:live_darbar/src/views/widgets/keep_screen_awake.dart';
 import 'package:live_darbar/src/views/widgets/pressable.dart';
+import 'package:live_darbar/src/views/widgets/reminder_bell.dart';
+import 'package:live_darbar/src/views/widgets/reminder_sheet.dart';
 
 /// Today's Hukamnama as words, line by line, with the meaning under each line.
 ///
@@ -30,7 +36,11 @@ import 'package:live_darbar/src/views/widgets/pressable.dart';
 /// the transliteration too, for the many who listen to Gurbani every day but
 /// do not read Gurmukhi. Text size has its own control here, because this is
 /// the one screen that is read slowly and closely.
-class HukamnamaScreen extends ConsumerWidget {
+///
+/// The first time the listener opens it, it asks once about the daily
+/// reminder (`askAboutReminderOnFirstOpen`). After that the bell in the top
+/// bar opens the same sheet, to set the reminder up or change it.
+class HukamnamaScreen extends ConsumerStatefulWidget {
   const HukamnamaScreen({super.key});
 
   /// The route's name. Whoever opens the reader from outside a screen (the
@@ -44,7 +54,38 @@ class HukamnamaScreen extends ConsumerWidget {
       );
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<HukamnamaScreen> createState() => _HukamnamaScreenState();
+}
+
+class _HukamnamaScreenState extends ConsumerState<HukamnamaScreen> {
+  final _question = CancelAsk();
+
+  @override
+  void initState() {
+    super.initState();
+    // After the first frame, so the route is there to read. The check waits
+    // for the page to settle, and for any sheet over it to close.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        unawaited(askAboutReminderOnFirstOpen(context, cancel: _question));
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _question.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // The reader is read slowly with no touch, so the screen stays on while
+    // it is open, and the phone locks as usual once it closes.
+    return KeepScreenAwake(child: _page(context));
+  }
+
+  Widget _page(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final state = ref.watch(hukamnamaProvider);
 
@@ -55,12 +96,15 @@ class HukamnamaScreen extends ConsumerWidget {
           AppNavBar(
             title: l10n.mukhwak,
             contentWidth: _Column.maxWidth,
-            trailing: const _TextSizeControl(),
+            trailing: const Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [ReminderBell(), _TextSizeControl()],
+            ),
           ),
           // Stored text shows even while a refresh runs or after it fails;
           // the failure screen is only for having nothing at all.
           if (state.hasValue)
-            ..._content(context, ref, state.requireValue)
+            ..._content(context, state.requireValue)
           else if (state.hasError)
             _Failure(l10n: l10n)
           else
@@ -73,7 +117,7 @@ class HukamnamaScreen extends ConsumerWidget {
     );
   }
 
-  List<Widget> _content(BuildContext context, WidgetRef ref, Hukamnama h) {
+  List<Widget> _content(BuildContext context, Hukamnama h) {
     final l10n = AppLocalizations.of(context)!;
     final punjabi = ref.watch(localeController) == 'pa';
     final scale = ref.watch(readerScaleProvider);
@@ -283,7 +327,10 @@ class _MeaningState extends ConsumerState<_Meaning> {
         child: GestureDetector(
           behavior: HitTestBehavior.opaque,
           onTap: available && !active
-              ? () => setState(() => _punjabi = forPunjabi)
+              ? () {
+                  HapticFeedback.selectionClick();
+                  setState(() => _punjabi = forPunjabi);
+                }
               : null,
           child: AnimatedContainer(
             duration: Motion.quick,
@@ -462,7 +509,12 @@ class _TextSizeControl extends ConsumerWidget {
         child: CupertinoButton(
           padding: EdgeInsets.zero,
           minimumSize: const Size(44, 44),
-          onPressed: enabled ? f : null,
+          onPressed: enabled
+              ? () {
+                  HapticFeedback.selectionClick();
+                  f();
+                }
+              : null,
           child: AnimatedOpacity(
             duration: Motion.quick,
             opacity: enabled ? 1 : 0.35,
