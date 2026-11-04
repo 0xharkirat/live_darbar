@@ -13,14 +13,27 @@ abstract class WidgetPublisher {
 
 /// Writes through `home_widget`, which owns the shared store on each platform.
 ///
-/// Android only for now. The iOS widget needs an App Group, which comes with
-/// the Apple developer membership, and on any other platform there is no
-/// launcher to ask.
+/// Android and iPhone. On iPhone the store is the App Group's, because the
+/// widget runs in its own process. On any other platform there is no launcher
+/// to ask.
 class HomeWidgetPublisher implements WidgetPublisher {
   const HomeWidgetPublisher();
 
   static bool get isSupported =>
-      !kIsWeb && defaultTargetPlatform == TargetPlatform.android;
+      !kIsWeb &&
+      (defaultTargetPlatform == TargetPlatform.android ||
+          defaultTargetPlatform == TargetPlatform.iOS);
+
+  /// Points `home_widget` at the App Group on iPhone. Call it once, before
+  /// the first [publish]. Without it, every write on iPhone fails.
+  static Future<void> prepare() async {
+    if (kIsWeb || defaultTargetPlatform != TargetPlatform.iOS) return;
+    try {
+      await HomeWidget.setAppGroupId(kIosAppGroupId);
+    } catch (e) {
+      if (!kReleaseMode) debugPrint('[widget] no App Group: $e');
+    }
+  }
 
   @override
   Future<void> publish(Map<String, String> data) async {
@@ -29,7 +42,10 @@ class HomeWidgetPublisher implements WidgetPublisher {
       for (final entry in data.entries) {
         await HomeWidget.saveWidgetData<String>(entry.key, entry.value);
       }
-      await HomeWidget.updateWidget(qualifiedAndroidName: kWidgetProviderClass);
+      await HomeWidget.updateWidget(
+        qualifiedAndroidName: kWidgetProviderClass,
+        iOSName: kIosWidgetKind,
+      );
     } catch (e) {
       // The widget is a courtesy. A failed write must not reach the player.
       if (!kReleaseMode) debugPrint('[widget] could not publish: $e');

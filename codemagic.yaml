@@ -69,9 +69,16 @@ workflows:
     cache: *cache
     environment:
       <<: *environment
+      # The app and its widget each need an App Store profile with the App
+      # Group. These are the reference names of the signing files saved in
+      # Codemagic (Settings > Code signing identities), not secrets. Named
+      # here, so an older profile for the same bundle ID is never picked.
       ios_signing:
-        distribution_type: app_store
-        bundle_identifier: com.hsiharki.liveDarbar
+        provisioning_profiles:
+          - live_darbar_app_store_v2
+          - live_darbar_widget_app_store
+        certificates:
+          - live_darbar_distribution
       vars:
         # The app's Apple ID, from its App Store link (id6449766130).
         APP_STORE_APPLE_ID: 6449766130

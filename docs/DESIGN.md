@@ -119,6 +119,20 @@ A tap on the button for another source switches to it.
 
 This works with the app process dead. If the app does not answer in 7 seconds, the receiver stops the service and the widget goes back to idle. The system ends an app that starts a foreground service and does not use it within 10 seconds.
 
+### iPhone: how a tap reaches the player
+
+On iOS 17 and newer, the 2 buttons play with no screen, like Android's.
+On iOS 16, and for a tap away from the buttons, a link opens the app.
+The Android rules above hold. Only the path differs.
+
+1. Each button is a `Button(intent:)` of an `AudioPlaybackIntent` (`ios/Runner/WidgetPlayIntents.swift`). The system runs it in the app's process, not the widget's.
+2. The file is a member of both the Runner target and the widget target. With the type in the widget alone, the system runs the intent in the widget, which may not play audio. Runner builds it with `LIVE_DARBAR_APP`, so the widget's copy compiles with no Flutter and does nothing.
+3. `AppDelegate` owns the one Flutter engine and starts it in `didFinishLaunching`. A background launch for an intent has no screen, and the engine still runs. `SceneDelegate` shows the same engine when the listener opens the app, so the screen and the widget share one audio handler.
+4. `perform()` writes "loading" for the source and redraws, then sends `tap` to Dart on the `widget_control` channel. Native retries while Dart is not listening yet.
+5. `WidgetRemote` (`widget_remote.dart`) reads the real player, uses `widgetTapFor`, and answers once sound has started. A button on a stale picture is never trusted.
+
+`tool/ios_widget_driver` drives the real tap on the simulator.
+
 ### How the state stays true
 
 - The widget listens to the audio handler's playback state, so it follows the app, the notification, a headset, the car and the widget. A change reaches the widget in about 1 second.
