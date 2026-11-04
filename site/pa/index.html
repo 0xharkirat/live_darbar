@@ -45,6 +45,7 @@
 document.documentElement.classList.add('js');
 </script>
 <script src="/demo.js" defer></script>
+<script src="/features.js" defer></script>
 </head>
 <body>
 <a class="skip" href="#main">ਮੁੱਖ ਸਮੱਗਰੀ ’ਤੇ ਜਾਓ</a>
@@ -110,13 +111,96 @@ document.documentElement.classList.add('js');
     <figure><img src="/img/shot-quality-pa.webp" width="360" height="783" loading="lazy" alt="ਆਵਾਜ਼ ਦੀ ਕੁਆਲਿਟੀ ਦੀ ਚੋਣ: ਆਪਣੇ ਆਪ, ਉੱਚੀ ਅਤੇ ਡਾਟਾ ਬਚਤ"><figcaption>ਆਵਾਜ਼ ਦੀ ਕੁਆਲਿਟੀ</figcaption></figure>
   </section>
 
-  <section class="sect" id="extras" aria-labelledby="extras-h">
+  <section class="feats" id="extras" aria-labelledby="extras-h">
     <h2 id="extras-h">ਐਪ ਵਿੱਚ ਹੋਰ</h2>
-    <ul class="road done">
-      <li><span><b><span lang="en">Android</span> ’ਤੇ ਹੋਮ ਸਕਰੀਨ ਵਿਜੇਟ:</b> ਅੱਜ ਦਾ ਹੁਕਮਨਾਮਾ, ਅਤੇ ਐਪ ਖੋਲ੍ਹੇ ਬਿਨਾਂ ਹੁਕਮਨਾਮਾ ਅਤੇ ਲਾਈਵ ਕੀਰਤਨ ਚਲਾਉਣ ਦੇ ਬਟਨ।</span></li>
-      <li><span><b>ਕਾਰ ਵਿੱਚ:</b> <span lang="en">Android Auto</span> ’ਤੇ ਲਾਈਵ ਕੀਰਤਨ, ਹੁਕਮਨਾਮਾ ਅਤੇ ਕਥਾ।</span></li>
-      <li><span><b><span lang="en">iPhone</span> ’ਤੇ <span lang="en">Siri</span>:</b> <span lang="en">&ldquo;Hey Siri, Live Darbar Kirtan shuru karo.&rdquo;</span></span></li>
-      <li><span><b>ਸ਼ਾਰਟਕੱਟ:</b> ਕੀਰਤਨ, ਹੁਕਮਨਾਮਾ ਜਾਂ ਕਥਾ ਸ਼ੁਰੂ ਕਰਨ ਲਈ ਐਪ ਦੇ ਆਈਕਨ ਨੂੰ ਦਬਾ ਕੇ ਰੱਖੋ।</span></li>
+    <svg class="fc-sprite" width="0" height="0" aria-hidden="true" focusable="false">
+      <symbol id="fc-i-play" viewBox="0 0 16 16"><path d="M4 2.2v11.6a.6.6 0 0 0 .9.5l9-5.8a.6.6 0 0 0 0-1L4.9 1.7a.6.6 0 0 0-.9.5z"/></symbol>
+      <symbol id="fc-i-pause" viewBox="0 0 16 16"><rect x="3" y="2" width="3.4" height="12" rx="1"/><rect x="9.6" y="2" width="3.4" height="12" rx="1"/></symbol>
+      <symbol id="fc-i-replay" viewBox="0 0 24 24"><path d="M3.5 12a8.5 8.5 0 1 0 2.6-6.1" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M3.5 4v4.5H8" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    </svg>
+    <ul class="fc-list" data-l-play="ਚਲਾਓ" data-l-pause="ਰੋਕੋ" data-l-replay="ਦੁਬਾਰਾ ਚਲਾਓ">
+      <li class="fc">
+        <div class="fc-head">
+          <div class="fc-switch" role="group" aria-label="ਫ਼ੋਨ ਚੁਣੋ" data-pos="0">
+            <button type="button" lang="en" aria-pressed="true" aria-controls="film-widget-android">Android</button>
+            <button type="button" lang="en" aria-pressed="false" aria-controls="film-widget-iphone">iPhone</button>
+          </div>
+        </div>
+        <div class="fc-phone">
+          <div class="fc-film" id="film-widget-android" data-name="ਹੋਮ ਸਕਰੀਨ ਵਿਜੇਟ, Android" data-state="idle">
+            <video preload="none" muted playsinline disableremoteplayback width="540" height="1116" aria-label="Android ’ਤੇ ਬਿਨਾਂ ਆਵਾਜ਼ ਦੀ ਰਿਕਾਰਡਿੰਗ। ਐਪ ਹੋਮ ਸਕਰੀਨ ਵਿਜੇਟ ਦੀ ਪੇਸ਼ਕਸ਼ ਕਰਦੀ ਹੈ। ਵਿਜੇਟ ਹੋਮ ਸਕਰੀਨ ’ਤੇ ਲੱਗ ਜਾਂਦਾ ਹੈ। ਉਸ ਦੇ ਹੁਕਮਨਾਮਾ ਤੇ ਲਾਈਵ ਕੀਰਤਨ ਬਟਨ ਆਵਾਜ਼ ਚਲਾਉਂਦੇ ਤੇ ਰੋਕਦੇ ਹਨ।"><source src="/img/feature-widget-android.mp4" type="video/mp4"></video>
+            <img class="fc-poster" src="/img/feature-widget-android.webp" width="540" height="1116" loading="lazy" decoding="async" alt="">
+            <button class="fc-btn" type="button" aria-label="ਚਲਾਓ: ਹੋਮ ਸਕਰੀਨ ਵਿਜੇਟ, Android"><svg class="fc-ico fc-ico-play" aria-hidden="true"><use href="#fc-i-play"/></svg><svg class="fc-ico fc-ico-pause" aria-hidden="true"><use href="#fc-i-pause"/></svg><svg class="fc-ico fc-ico-replay" aria-hidden="true"><use href="#fc-i-replay"/></svg></button>
+          </div>
+          <div class="fc-film" id="film-widget-iphone" data-name="ਹੋਮ ਸਕਰੀਨ ਵਿਜੇਟ, iPhone" data-state="idle" hidden>
+            <video preload="none" muted playsinline disableremoteplayback width="540" height="1174" aria-label="iPhone ’ਤੇ ਬਿਨਾਂ ਆਵਾਜ਼ ਦੀ ਰਿਕਾਰਡਿੰਗ। ਵਿਜੇਟ ਹੋਮ ਸਕਰੀਨ ’ਤੇ ਲੱਗ ਜਾਂਦਾ ਹੈ। ਉਸ ਦੇ ਬਟਨ ਕੀਰਤਨ ਤੇ ਹੁਕਮਨਾਮਾ ਚਲਾਉਂਦੇ ਤੇ ਰੋਕਦੇ ਹਨ।"><source src="/img/feature-widget-iphone.mp4" type="video/mp4"></video>
+            <img class="fc-poster" src="/img/feature-placeholder.webp" width="540" height="1174" loading="lazy" decoding="async" alt="">
+            <button class="fc-btn" type="button" aria-label="ਚਲਾਓ: ਹੋਮ ਸਕਰੀਨ ਵਿਜੇਟ, iPhone"><svg class="fc-ico fc-ico-play" aria-hidden="true"><use href="#fc-i-play"/></svg><svg class="fc-ico fc-ico-pause" aria-hidden="true"><use href="#fc-i-pause"/></svg><svg class="fc-ico fc-ico-replay" aria-hidden="true"><use href="#fc-i-replay"/></svg></button>
+          </div>
+        </div>
+        <h3>ਹੋਮ ਸਕਰੀਨ ਵਿਜੇਟ</h3>
+        <p>ਹੋਮ ਸਕਰੀਨ ਤੋਂ ਹੀ ਕੀਰਤਨ ਜਾਂ ਹੁਕਮਨਾਮਾ ਚਲਾਓ ਤੇ ਰੋਕੋ।</p>
+      </li>
+      <li class="fc">
+        <div class="fc-head"><span class="fc-tag" lang="en">Android Auto</span></div>
+        <div class="fc-phone">
+          <div class="fc-film" data-name="ਕਾਰ ਵਿੱਚ" data-state="idle">
+            <video preload="none" muted playsinline disableremoteplayback width="540" height="1174" aria-label="ਕਾਰ ਦੀ ਸਕਰੀਨ ’ਤੇ Android Auto ਦੀ ਬਿਨਾਂ ਆਵਾਜ਼ ਦੀ ਰਿਕਾਰਡਿੰਗ। ਇਸ ਵਿੱਚ ਲਾਈਵ ਕੀਰਤਨ, ਹੁਕਮਨਾਮਾ ਤੇ ਕਥਾ ਚੱਲਦੇ ਹਨ।"><source src="/img/feature-car.mp4" type="video/mp4"></video>
+            <img class="fc-poster" src="/img/shot-player-pa.webp" width="360" height="783" loading="lazy" decoding="async" alt="">
+            <button class="fc-btn" type="button" aria-label="ਚਲਾਓ: ਕਾਰ ਵਿੱਚ"><svg class="fc-ico fc-ico-play" aria-hidden="true"><use href="#fc-i-play"/></svg><svg class="fc-ico fc-ico-pause" aria-hidden="true"><use href="#fc-i-pause"/></svg><svg class="fc-ico fc-ico-replay" aria-hidden="true"><use href="#fc-i-replay"/></svg></button>
+          </div>
+        </div>
+        <h3>ਕਾਰ ਵਿੱਚ</h3>
+        <p>ਕਾਰ ਦੀ ਸਕਰੀਨ ’ਤੇ ਲਾਈਵ ਕੀਰਤਨ, ਹੁਕਮਨਾਮਾ ਅਤੇ ਕਥਾ ਚਲਾਓ।</p>
+      </li>
+      <li class="fc">
+        <div class="fc-head"><span class="fc-tag" lang="en">iPhone</span></div>
+        <div class="fc-phone">
+          <div class="fc-film" data-name="Siri" data-state="idle">
+            <video preload="none" muted playsinline disableremoteplayback width="540" height="1174" aria-label="iPhone ’ਤੇ ਬਿਨਾਂ ਆਵਾਜ਼ ਦੀ ਰਿਕਾਰਡਿੰਗ। ਕੋਈ ਕਹਿੰਦਾ ਹੈ, “Hey Siri, Live Darbar Kirtan shuru karo”, ਤੇ ਲਾਈਵ ਕੀਰਤਨ ਸ਼ੁਰੂ ਹੋ ਜਾਂਦਾ ਹੈ।"><source src="/img/feature-siri.mp4" type="video/mp4"></video>
+            <img class="fc-poster" src="/img/feature-placeholder.webp" width="540" height="1174" loading="lazy" decoding="async" alt="">
+            <button class="fc-btn" type="button" aria-label="ਚਲਾਓ: Siri"><svg class="fc-ico fc-ico-play" aria-hidden="true"><use href="#fc-i-play"/></svg><svg class="fc-ico fc-ico-pause" aria-hidden="true"><use href="#fc-i-pause"/></svg><svg class="fc-ico fc-ico-replay" aria-hidden="true"><use href="#fc-i-replay"/></svg></button>
+          </div>
+        </div>
+        <h3><span lang="en">Siri</span></h3>
+        <p>ਕਹੋ: <span lang="en">&ldquo;Hey Siri, Live Darbar Kirtan shuru karo.&rdquo;</span></p>
+      </li>
+      <li class="fc">
+        <div class="fc-head"></div>
+        <div class="fc-phone">
+          <div class="fc-film" data-name="ਸ਼ਾਰਟਕੱਟ" data-state="idle">
+            <video preload="none" muted playsinline disableremoteplayback width="540" height="1174" aria-label="ਹੋਮ ਸਕਰੀਨ ਦੀ ਬਿਨਾਂ ਆਵਾਜ਼ ਦੀ ਰਿਕਾਰਡਿੰਗ। ਐਪ ਦੇ ਆਈਕਨ ਨੂੰ ਦਬਾ ਕੇ ਰੱਖਣ ਨਾਲ ਕੀਰਤਨ, ਹੁਕਮਨਾਮਾ ਤੇ ਕਥਾ ਦੇ ਸ਼ਾਰਟਕੱਟ ਦਿਖਦੇ ਹਨ।"><source src="/img/feature-shortcuts.mp4" type="video/mp4"></video>
+            <img class="fc-poster" src="/img/feature-placeholder.webp" width="540" height="1174" loading="lazy" decoding="async" alt="">
+            <button class="fc-btn" type="button" aria-label="ਚਲਾਓ: ਸ਼ਾਰਟਕੱਟ"><svg class="fc-ico fc-ico-play" aria-hidden="true"><use href="#fc-i-play"/></svg><svg class="fc-ico fc-ico-pause" aria-hidden="true"><use href="#fc-i-pause"/></svg><svg class="fc-ico fc-ico-replay" aria-hidden="true"><use href="#fc-i-replay"/></svg></button>
+          </div>
+        </div>
+        <h3>ਸ਼ਾਰਟਕੱਟ</h3>
+        <p>ਕੀਰਤਨ, ਹੁਕਮਨਾਮਾ ਜਾਂ ਕਥਾ ਸ਼ੁਰੂ ਕਰਨ ਲਈ ਐਪ ਦੇ ਆਈਕਨ ਨੂੰ ਦਬਾ ਕੇ ਰੱਖੋ।</p>
+      </li>
+      <li class="fc">
+        <div class="fc-head"><span class="fc-tag">3.1 ਵਿੱਚ ਨਵਾਂ</span></div>
+        <div class="fc-phone">
+          <div class="fc-film" data-name="ਰੋਜ਼ਾਨਾ ਹੁਕਮਨਾਮਾ ਰਿਮਾਈਂਡਰ" data-state="idle">
+            <video preload="none" muted playsinline disableremoteplayback width="540" height="1174" aria-label="ਐਪ ਦੀ ਬਿਨਾਂ ਆਵਾਜ਼ ਦੀ ਰਿਕਾਰਡਿੰਗ। ਐਪ ਰੋਜ਼ਾਨਾ ਰਿਮਾਈਂਡਰ ਬਾਰੇ ਇੱਕ ਵਾਰ ਪੁੱਛਦੀ ਹੈ। ਹੁਕਮਨਾਮਾ ਸਕਰੀਨ ’ਤੇ ਘੰਟੀ ਸਮਾਂ ਬਦਲਦੀ ਹੈ।"><source src="/img/feature-reminder-pa.mp4" type="video/mp4"></video>
+            <img class="fc-poster" src="/img/shot-hukamnama-pa.webp" width="360" height="783" loading="lazy" decoding="async" alt="">
+            <button class="fc-btn" type="button" aria-label="ਚਲਾਓ: ਰੋਜ਼ਾਨਾ ਹੁਕਮਨਾਮਾ ਰਿਮਾਈਂਡਰ"><svg class="fc-ico fc-ico-play" aria-hidden="true"><use href="#fc-i-play"/></svg><svg class="fc-ico fc-ico-pause" aria-hidden="true"><use href="#fc-i-pause"/></svg><svg class="fc-ico fc-ico-replay" aria-hidden="true"><use href="#fc-i-replay"/></svg></button>
+          </div>
+        </div>
+        <h3>ਰੋਜ਼ਾਨਾ ਹੁਕਮਨਾਮਾ ਰਿਮਾਈਂਡਰ</h3>
+        <p>ਐਪ ਇੱਕ ਵਾਰ ਪੁੱਛਦੀ ਹੈ। ਪਹਿਲਾਂ ਤੋਂ ਤੈਅ ਸਮਾਂ 7:00 ਵਜੇ ਹੈ, ਅੰਮ੍ਰਿਤਸਰ ਦੇ ਸਮੇਂ ਅਨੁਸਾਰ। ਬਦਲਣ ਲਈ ਹੁਕਮਨਾਮਾ ਸਕਰੀਨ ’ਤੇ ਘੰਟੀ ਦਬਾਓ।</p>
+      </li>
+      <li class="fc">
+        <div class="fc-head"><span class="fc-tag">3.1 ਵਿੱਚ ਨਵਾਂ</span></div>
+        <div class="fc-phone">
+          <div class="fc-film" data-name="ਅੱਜ ਦੇ ਦਿਨ ਦਾ ਸਿੱਖ ਇਤਿਹਾਸ" data-state="idle">
+            <video preload="none" muted playsinline disableremoteplayback width="540" height="1174" aria-label="ਐਪ ਦੀ ਬਿਨਾਂ ਆਵਾਜ਼ ਦੀ ਰਿਕਾਰਡਿੰਗ। ਹੋਮ ’ਤੇ ਅੱਜ ਦੇ ਦਿਨ ਦੀ ਸਿੱਖ ਇਤਿਹਾਸ ਦੀ ਘਟਨਾ ਦਿਖਦੀ ਹੈ। ਕੈਲੰਡਰ ਸਕਰੀਨ ’ਤੇ ਪੂਰਾ ਸਾਲ ਦਿਖਦਾ ਹੈ।"><source src="/img/feature-history-pa.mp4" type="video/mp4"></video>
+            <img class="fc-poster" src="/img/shot-home-pa.webp" width="360" height="783" loading="lazy" decoding="async" alt="">
+            <button class="fc-btn" type="button" aria-label="ਚਲਾਓ: ਅੱਜ ਦੇ ਦਿਨ ਦਾ ਸਿੱਖ ਇਤਿਹਾਸ"><svg class="fc-ico fc-ico-play" aria-hidden="true"><use href="#fc-i-play"/></svg><svg class="fc-ico fc-ico-pause" aria-hidden="true"><use href="#fc-i-pause"/></svg><svg class="fc-ico fc-ico-replay" aria-hidden="true"><use href="#fc-i-replay"/></svg></button>
+          </div>
+        </div>
+        <h3>ਅੱਜ ਦੇ ਦਿਨ ਦਾ ਸਿੱਖ ਇਤਿਹਾਸ</h3>
+        <p>ਹੋਮ ’ਤੇ ਅੱਜ ਦੀ ਘਟਨਾ, ਜਾਂ ਅਗਲੀ ਘਟਨਾ, ਦਿਖਦੀ ਹੈ। ਕੈਲੰਡਰ ਵਿੱਚ ਪੂਰਾ ਸਾਲ ਦਿਖਦਾ ਹੈ। ਨੋਟੀਫ਼ਿਕੇਸ਼ਨ ਆਪਣੀ ਮਰਜ਼ੀ ਨਾਲ ਚਾਲੂ ਕਰੋ।</p>
+      </li>
     </ul>
   </section>
 
@@ -125,8 +209,6 @@ document.documentElement.classList.add('js');
     <ul class="road">
       <li><span>ਹੁਕਮਨਾਮੇ ਦੀ ਹਰ ਪੰਗਤੀ ਹੇਠ ਅਰਥ।</span></li>
       <li><span>ਗੁਰਬਾਣੀ ਖੋਜ ਜੋ ਆਫ਼ਲਾਈਨ ਵੀ ਚੱਲੇ।</span></li>
-      <li><span>ਅੱਜ ਦਾ ਹੁਕਮਨਾਮਾ ਆਉਣ ’ਤੇ ਨੋਟੀਫ਼ਿਕੇਸ਼ਨ।</span></li>
-      <li><span>ਅੱਜ ਦੇ ਦਿਨ ਦਾ ਸਿੱਖ ਇਤਿਹਾਸ।</span></li>
     </ul>
   </section>
 

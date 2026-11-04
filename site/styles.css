@@ -669,21 +669,6 @@ h2 {
   border-color: var(--gold);
   background: var(--gold);
 }
-/* Shipped extras: the same rows as the roadmap, with a gold tick in place of
-   the dot, so done and planned never look alike. */
-.road.done li::before {
-  content: "\2713";
-  width: 8px;
-  height: auto;
-  transform: none;
-  border: 0;
-  color: var(--gold);
-  font-weight: 600;
-  line-height: 1;
-}
-.road b {
-  font-weight: 600;
-}
 
 /* Credits. 656 px of text is about 86 characters a line, so the lines stop
    at 62 characters. */
@@ -701,6 +686,309 @@ h2 {
 }
 .credits span {
   color: var(--muted);
+}
+
+/* ---------- Feature cards ---------- */
+/* Each card is a phone with a short silent film of 1 feature (features.js).
+   Nothing moves until a person taps. The poster is a lazy image, and the
+   video has preload="none", so a visitor who never scrolls here downloads
+   neither. Every phone has the same box, so nothing shifts when a poster
+   becomes a film, or when the widget card switches from Android to iPhone.
+
+   Narrow screens: the cards scroll sideways and snap, and the next card peeks.
+   640 px and up: a grid. The sprite for the 3 icons is inline and has no size. */
+.feats {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 56px var(--gutter) 0;
+}
+.fc-sprite {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+.fc-list {
+  display: flex;
+  gap: 12px;
+  /* Run edge to edge, so a card can slide under the screen's edge. The padding
+     puts the first card back on the page's own gutter. */
+  margin: 0 calc(var(--gutter) * -1);
+  padding: 0 var(--gutter) 8px;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: var(--gutter);
+  scrollbar-width: thin;
+  scrollbar-color: var(--line-strong) transparent;
+}
+.fc {
+  display: flex;
+  flex: 0 0 min(80vw, 300px);
+  flex-direction: column;
+  padding: 4px 16px 24px;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: rgba(245, 241, 235, 0.03);
+  scroll-snap-align: start;
+}
+
+/* The top row is as tall in every card, so the phones line up along a row of
+   the grid. It holds the Android | iPhone switch, or a small tag. */
+.fc-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  /* The switch is 44 px of button inside a 1 px ring. */
+  min-height: 46px;
+}
+.fc-tag {
+  color: var(--gold);
+  font: 600 0.75rem/1.2 var(--sans);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+:root:lang(pa) .fc-tag {
+  font-size: 0.8125rem;
+  font-weight: 700;
+}
+
+/* A segmented control. Each half is at least 44 px tall. The lit pill slides
+   under the label that was pressed. */
+.fc-switch {
+  position: relative;
+  display: grid;
+  grid-auto-columns: 1fr;
+  grid-auto-flow: column;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+}
+.fc-switch::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 50%;
+  border-radius: 999px;
+  background: rgba(245, 241, 235, 0.12);
+  transition: transform 220ms var(--ease);
+}
+.fc-switch[data-pos="1"]::before {
+  transform: translateX(100%);
+}
+.fc-switch button {
+  position: relative;
+  min-height: 44px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 999px;
+  background: none;
+  color: var(--muted);
+  font: 600 0.875rem/1 var(--sans);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: color 150ms var(--ease);
+}
+.fc-switch button[aria-pressed="true"] {
+  color: var(--fg);
+}
+@media (hover: hover) and (pointer: fine) {
+  .fc-switch button:hover {
+    color: var(--fg);
+  }
+}
+
+/* The phone: the same bezel as the demo's, at 208 px, in the same ratios. */
+.fc-phone {
+  --pw: 208px;
+  position: relative;
+  width: var(--pw);
+  margin: 8px auto 20px;
+  padding: calc(var(--pw) * 0.03);
+  border-radius: calc(var(--pw) * 0.16);
+  background: linear-gradient(150deg, #2a2420, #0f0d0c 55%, #1a1612);
+  box-shadow: 0 0 0 1px rgba(245, 241, 235, 0.14), 0 0 0 calc(var(--pw) * 0.008) #050404,
+    0 24px 48px -24px rgba(0, 0, 0, 0.9);
+  user-select: none;
+  -webkit-user-select: none;
+}
+.fc-film {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 1206 / 2622;
+  border-radius: calc(var(--pw) * 0.135);
+  background: #000;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+/* "contain", not "cover": the Android film is 540 x 1116, a little wider than
+   the screen, and "cover" would cut the edges off its buttons. It sits with a
+   thin black band above and below, like the system bars. The other films and
+   posters are the screen's own shape. */
+.fc-film video,
+.fc-poster {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.fc-poster {
+  transition: opacity 200ms var(--ease);
+}
+/* The film's first frame is on screen, so the poster steps aside. */
+.fc-film.is-started .fc-poster {
+  opacity: 0;
+}
+.fc-film[data-state="failed"] {
+  cursor: default;
+}
+
+/* The one button: play, pause, replay. The whole screen answers a tap too. */
+.fc-btn {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 56px;
+  height: 56px;
+  margin: -28px 0 0 -28px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--gold);
+  color: var(--on-gold);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 150ms var(--ease), opacity 200ms var(--ease),
+    background-color 150ms var(--ease);
+}
+.fc-btn:active {
+  transform: scale(0.97);
+}
+@media (hover: hover) and (pointer: fine) {
+  .fc-btn:hover {
+    background: #f0bd62;
+  }
+}
+.fc-ico {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 22px;
+  height: 22px;
+  margin: -11px 0 0 -11px;
+  fill: currentColor;
+  transition: opacity 220ms var(--ease-swap), transform 220ms var(--ease-swap),
+    filter 220ms var(--ease-swap);
+}
+/* A triangle looks left-heavy in a circle, so it sits 1 px to the right. */
+.fc-ico-play {
+  margin-left: -10px;
+}
+/* The icons not in use wait shrunk, faded and blurred, as in the demo's button. */
+.fc-ico-pause,
+.fc-ico-replay,
+.fc-film[data-state="playing"] .fc-ico-play,
+.fc-film[data-state="ended"] .fc-ico-play {
+  opacity: 0;
+  transform: scale(0.3);
+  filter: blur(3px);
+}
+.fc-film[data-state="playing"] .fc-ico-pause,
+.fc-film[data-state="ended"] .fc-ico-replay {
+  opacity: 1;
+  transform: none;
+  filter: none;
+}
+/* Once the film shows its first frame, the button steps out of the picture.
+   Until then it shows Pause over the poster, so a slow network still answers
+   the tap. It stays in the page for a keyboard, and a pointer over the phone
+   brings it back. */
+.fc-film[data-state="playing"].is-started .fc-btn {
+  opacity: 0;
+}
+.fc-film[data-state="playing"].is-started .fc-btn:focus-visible {
+  opacity: 1;
+}
+@media (hover: hover) and (pointer: fine) {
+  .fc-film[data-state="playing"].is-started:hover .fc-btn {
+    opacity: 0.92;
+  }
+}
+/* A film that will not load leaves its poster and the words. */
+.fc-film[data-state="failed"] .fc-btn {
+  display: none;
+}
+
+.fc h3 {
+  margin: 0;
+  font-family: var(--serif);
+  font-size: 1.375rem;
+  font-weight: 400;
+  font-synthesis: none;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+.fc p {
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 0.9375rem;
+  line-height: 1.5;
+}
+:root:lang(pa) .fc h3 {
+  line-height: 1.3;
+}
+:root:lang(pa) .fc p {
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+/* No script: the control and the film have nothing to drive. The card is a
+   still and its words. */
+html:not(.js) .fc-switch,
+html:not(.js) .fc-btn,
+html:not(.js) .fc-film video {
+  display: none;
+}
+html:not(.js) .fc-film[hidden] {
+  display: none;
+}
+
+@media (min-width: 640px) {
+  .fc-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    margin: 0;
+    padding: 0;
+    overflow: visible;
+    scroll-snap-type: none;
+  }
+  .fc {
+    flex: none;
+  }
+}
+@media (min-width: 900px) {
+  .fc-list {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fc-switch::before,
+  .fc-switch button,
+  .fc-poster,
+  .fc-btn,
+  .fc-ico {
+    transition: none;
+  }
+  .fc-btn:active {
+    transform: none;
+  }
 }
 
 /* ---------- Footer ---------- */
@@ -883,7 +1171,6 @@ h2 {
 }
 :root:lang(pa) .play,
 :root:lang(pa) .btn,
-:root:lang(pa) .credits a,
-:root:lang(pa) .road b {
+:root:lang(pa) .credits a {
   font-weight: 700;
 }

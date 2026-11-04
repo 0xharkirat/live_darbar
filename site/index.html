@@ -46,6 +46,7 @@ document.documentElement.classList.add('js');
 if (matchMedia('(display-mode: standalone)').matches || navigator.standalone) location.replace('/app/');
 </script>
 <script src="/demo.js" defer></script>
+<script src="/features.js" defer></script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -111,13 +112,96 @@ if (matchMedia('(display-mode: standalone)').matches || navigator.standalone) lo
     <figure><img src="/img/shot-quality.webp" width="360" height="783" loading="lazy" alt="The sound quality choice: Automatic, High and Data saver"><figcaption>Sound quality</figcaption></figure>
   </section>
 
-  <section class="sect" id="extras" aria-labelledby="extras-h">
+  <section class="feats" id="extras" aria-labelledby="extras-h">
     <h2 id="extras-h">Also in the app</h2>
-    <ul class="road done">
-      <li><span><b>Home screen widget on Android:</b> today&rsquo;s Hukamnama, with buttons that play it and live kirtan without opening the app.</span></li>
-      <li><span><b>In the car:</b> Android Auto plays live kirtan, the Hukamnama and Katha.</span></li>
-      <li><span><b>Siri on iPhone:</b> &ldquo;Hey Siri, start Kirtan in Live Darbar.&rdquo;</span></li>
-      <li><span><b>Shortcuts:</b> press and hold the app icon to start kirtan, the Hukamnama or Katha.</span></li>
+    <svg class="fc-sprite" width="0" height="0" aria-hidden="true" focusable="false">
+      <symbol id="fc-i-play" viewBox="0 0 16 16"><path d="M4 2.2v11.6a.6.6 0 0 0 .9.5l9-5.8a.6.6 0 0 0 0-1L4.9 1.7a.6.6 0 0 0-.9.5z"/></symbol>
+      <symbol id="fc-i-pause" viewBox="0 0 16 16"><rect x="3" y="2" width="3.4" height="12" rx="1"/><rect x="9.6" y="2" width="3.4" height="12" rx="1"/></symbol>
+      <symbol id="fc-i-replay" viewBox="0 0 24 24"><path d="M3.5 12a8.5 8.5 0 1 0 2.6-6.1" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M3.5 4v4.5H8" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    </svg>
+    <ul class="fc-list" data-l-play="Play" data-l-pause="Pause" data-l-replay="Replay">
+      <li class="fc">
+        <div class="fc-head">
+          <div class="fc-switch" role="group" aria-label="Show the film for" data-pos="0">
+            <button type="button" aria-pressed="true" aria-controls="film-widget-android">Android</button>
+            <button type="button" aria-pressed="false" aria-controls="film-widget-iphone">iPhone</button>
+          </div>
+        </div>
+        <div class="fc-phone">
+          <div class="fc-film" id="film-widget-android" data-name="Home screen widget on Android" data-state="idle">
+            <video preload="none" muted playsinline disableremoteplayback width="540" height="1116" aria-label="A silent recording on Android. The app offers a home screen widget. The widget goes on the home screen. Its Hukamnama and Live Kirtan buttons play and stop the audio."><source src="/img/feature-widget-android.mp4" type="video/mp4"></video>
+            <img class="fc-poster" src="/img/feature-widget-android.webp" width="540" height="1116" loading="lazy" decoding="async" alt="">
+            <button class="fc-btn" type="button" aria-label="Play: Home screen widget on Android"><svg class="fc-ico fc-ico-play" aria-hidden="true"><use href="#fc-i-play"/></svg><svg class="fc-ico fc-ico-pause" aria-hidden="true"><use href="#fc-i-pause"/></svg><svg class="fc-ico fc-ico-replay" aria-hidden="true"><use href="#fc-i-replay"/></svg></button>
+          </div>
+          <div class="fc-film" id="film-widget-iphone" data-name="Home screen widget on iPhone" data-state="idle" hidden>
+            <video preload="none" muted playsinline disableremoteplayback width="540" height="1174" aria-label="A silent recording on iPhone. The widget goes on the home screen. Its buttons play and stop kirtan and the Hukamnama."><source src="/img/feature-widget-iphone.mp4" type="video/mp4"></video>
+            <img class="fc-poster" src="/img/feature-placeholder.webp" width="540" height="1174" loading="lazy" decoding="async" alt="">
+            <button class="fc-btn" type="button" aria-label="Play: Home screen widget on iPhone"><svg class="fc-ico fc-ico-play" aria-hidden="true"><use href="#fc-i-play"/></svg><svg class="fc-ico fc-ico-pause" aria-hidden="true"><use href="#fc-i-pause"/></svg><svg class="fc-ico fc-ico-replay" aria-hidden="true"><use href="#fc-i-replay"/></svg></button>
+          </div>
+        </div>
+        <h3>Home screen widget</h3>
+        <p>Start and stop kirtan or the Hukamnama from your home screen.</p>
+      </li>
+      <li class="fc">
+        <div class="fc-head"><span class="fc-tag">Android Auto</span></div>
+        <div class="fc-phone">
+          <div class="fc-film" data-name="In the car" data-state="idle">
+            <video preload="none" muted playsinline disableremoteplayback width="540" height="1174" aria-label="A silent recording of the car screen with Android Auto. It plays live kirtan, the Hukamnama and the Katha."><source src="/img/feature-car.mp4" type="video/mp4"></video>
+            <img class="fc-poster" src="/img/shot-player.webp" width="360" height="783" loading="lazy" decoding="async" alt="">
+            <button class="fc-btn" type="button" aria-label="Play: In the car"><svg class="fc-ico fc-ico-play" aria-hidden="true"><use href="#fc-i-play"/></svg><svg class="fc-ico fc-ico-pause" aria-hidden="true"><use href="#fc-i-pause"/></svg><svg class="fc-ico fc-ico-replay" aria-hidden="true"><use href="#fc-i-replay"/></svg></button>
+          </div>
+        </div>
+        <h3>In the car</h3>
+        <p>Play live kirtan, the Hukamnama and the Katha on the car screen.</p>
+      </li>
+      <li class="fc">
+        <div class="fc-head"><span class="fc-tag">iPhone</span></div>
+        <div class="fc-phone">
+          <div class="fc-film" data-name="Siri" data-state="idle">
+            <video preload="none" muted playsinline disableremoteplayback width="540" height="1174" aria-label="A silent recording on iPhone. A person says, Hey Siri, start Kirtan in Live Darbar, and live kirtan starts."><source src="/img/feature-siri.mp4" type="video/mp4"></video>
+            <img class="fc-poster" src="/img/feature-placeholder.webp" width="540" height="1174" loading="lazy" decoding="async" alt="">
+            <button class="fc-btn" type="button" aria-label="Play: Siri"><svg class="fc-ico fc-ico-play" aria-hidden="true"><use href="#fc-i-play"/></svg><svg class="fc-ico fc-ico-pause" aria-hidden="true"><use href="#fc-i-pause"/></svg><svg class="fc-ico fc-ico-replay" aria-hidden="true"><use href="#fc-i-replay"/></svg></button>
+          </div>
+        </div>
+        <h3>Siri</h3>
+        <p>Say &ldquo;Hey Siri, start Kirtan in Live Darbar.&rdquo;</p>
+      </li>
+      <li class="fc">
+        <div class="fc-head"></div>
+        <div class="fc-phone">
+          <div class="fc-film" data-name="Shortcuts" data-state="idle">
+            <video preload="none" muted playsinline disableremoteplayback width="540" height="1174" aria-label="A silent recording of the home screen. Pressing and holding the app icon shows shortcuts for kirtan, the Hukamnama and the Katha."><source src="/img/feature-shortcuts.mp4" type="video/mp4"></video>
+            <img class="fc-poster" src="/img/feature-placeholder.webp" width="540" height="1174" loading="lazy" decoding="async" alt="">
+            <button class="fc-btn" type="button" aria-label="Play: Shortcuts"><svg class="fc-ico fc-ico-play" aria-hidden="true"><use href="#fc-i-play"/></svg><svg class="fc-ico fc-ico-pause" aria-hidden="true"><use href="#fc-i-pause"/></svg><svg class="fc-ico fc-ico-replay" aria-hidden="true"><use href="#fc-i-replay"/></svg></button>
+          </div>
+        </div>
+        <h3>Shortcuts</h3>
+        <p>Press and hold the app icon to start kirtan, the Hukamnama or the Katha.</p>
+      </li>
+      <li class="fc">
+        <div class="fc-head"><span class="fc-tag">New in 3.1</span></div>
+        <div class="fc-phone">
+          <div class="fc-film" data-name="Daily Hukamnama reminder" data-state="idle">
+            <video preload="none" muted playsinline disableremoteplayback width="540" height="1174" aria-label="A silent recording of the app. It asks once about a daily reminder. The bell on the Hukamnama screen changes the time."><source src="/img/feature-reminder.mp4" type="video/mp4"></video>
+            <img class="fc-poster" src="/img/shot-hukamnama.webp" width="360" height="783" loading="lazy" decoding="async" alt="">
+            <button class="fc-btn" type="button" aria-label="Play: Daily Hukamnama reminder"><svg class="fc-ico fc-ico-play" aria-hidden="true"><use href="#fc-i-play"/></svg><svg class="fc-ico fc-ico-pause" aria-hidden="true"><use href="#fc-i-pause"/></svg><svg class="fc-ico fc-ico-replay" aria-hidden="true"><use href="#fc-i-replay"/></svg></button>
+          </div>
+        </div>
+        <h3>Daily Hukamnama reminder</h3>
+        <p>The app asks once. The default is 7:00, Amritsar time. Tap the bell on the Hukamnama screen to change it.</p>
+      </li>
+      <li class="fc">
+        <div class="fc-head"><span class="fc-tag">New in 3.1</span></div>
+        <div class="fc-phone">
+          <div class="fc-film" data-name="Today in Sikh history" data-state="idle">
+            <video preload="none" muted playsinline disableremoteplayback width="540" height="1174" aria-label="A silent recording of the app. Home shows an event from Sikh history for today. A calendar screen shows the whole year."><source src="/img/feature-history.mp4" type="video/mp4"></video>
+            <img class="fc-poster" src="/img/shot-home.webp" width="360" height="783" loading="lazy" decoding="async" alt="">
+            <button class="fc-btn" type="button" aria-label="Play: Today in Sikh history"><svg class="fc-ico fc-ico-play" aria-hidden="true"><use href="#fc-i-play"/></svg><svg class="fc-ico fc-ico-pause" aria-hidden="true"><use href="#fc-i-pause"/></svg><svg class="fc-ico fc-ico-replay" aria-hidden="true"><use href="#fc-i-replay"/></svg></button>
+          </div>
+        </div>
+        <h3>Today in Sikh history</h3>
+        <p>Home shows today&rsquo;s event, or the next one. A calendar shows the whole year. A notification is optional.</p>
+      </li>
     </ul>
   </section>
 
@@ -126,8 +210,6 @@ if (matchMedia('(display-mode: standalone)').matches || navigator.standalone) lo
     <ul class="road">
       <li><span>The meaning under each line of the Hukamnama.</span></li>
       <li><span>Gurbani search that works offline.</span></li>
-      <li><span>A notification when today’s Hukamnama is out.</span></li>
-      <li><span>Today in Sikh history.</span></li>
     </ul>
   </section>
 
