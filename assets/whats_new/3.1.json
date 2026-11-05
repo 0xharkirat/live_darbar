@@ -2,6 +2,7 @@
   "release": "3.1",
   "items": [
     {
+      "only": ["ios"],
       "title": {
         "en": "Hukamnama widget on your iPhone home screen",
         "pa": "ਤੁਹਾਡੀ ਆਈਫੋਨ ਹੋਮ ਸਕ੍ਰੀਨ ਉੱਤੇ ਹੁਕਮਨਾਮਾ ਵਿਜੇਟ"
@@ -12,6 +13,18 @@
       }
     },
     {
+      "only": ["android"],
+      "title": {
+        "en": "Add the Hukamnama widget in 1 tap",
+        "pa": "ਇੱਕ ਟੈਪ ਨਾਲ ਹੁਕਮਨਾਮਾ ਵਿਜੇਟ ਜੋੜੋ"
+      },
+      "body": {
+        "en": "Tap “Add widget” on Home, and your phone puts it on the home screen.",
+        "pa": "ਹੋਮ ਉੱਤੇ “ਵਿਜੇਟ ਜੋੜੋ” ਦਬਾਓ, ਅਤੇ ਫ਼ੋਨ ਇਸਨੂੰ ਹੋਮ ਸਕ੍ਰੀਨ ਉੱਤੇ ਰੱਖ ਦੇਵੇਗਾ।"
+      }
+    },
+    {
+      "only": ["android", "ios"],
       "title": {
         "en": "Daily Hukamnama reminder",
         "pa": "ਰੋਜ਼ਾਨਾ ਹੁਕਮਨਾਮਾ ਰਿਮਾਈਂਡਰ"
@@ -32,6 +45,7 @@
       }
     },
     {
+      "only": ["ios"],
       "title": {
         "en": "Films that show how to add the widget",
         "pa": "ਵਿਜੇਟ ਜੋੜਨ ਦਾ ਤਰੀਕਾ ਦੱਸਣ ਵਾਲੀਆਂ ਫ਼ਿਲਮਾਂ"

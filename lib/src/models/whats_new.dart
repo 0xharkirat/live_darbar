@@ -39,6 +39,10 @@ class WhatsNewItem {
 /// An item needs a title in both languages. The body is optional. The sheet is
 /// calm, so it shows the first [maxItems] items. The next release adds a
 /// file and no code.
+///
+/// An item that is new on some platforms only names them in `"only"`, for
+/// example `"only": ["ios"]` for the iPhone widget. The names are those of
+/// [whatsNewPlatform]. An item with no `"only"` shows everywhere.
 @immutable
 class WhatsNew {
   const WhatsNew({required this.release, required this.items});
@@ -50,7 +54,10 @@ class WhatsNew {
   final List<WhatsNewItem> items;
 
   /// Null when the file names no release or has no usable item.
-  static WhatsNew? fromJson(Object? json) {
+  ///
+  /// [platform] leaves out each item whose `"only"` does not name it. With no
+  /// [platform], every item stays.
+  static WhatsNew? fromJson(Object? json, {String? platform}) {
     if (json is! Map) return null;
     final release = displayText(json['release']);
     final raw = json['items'];
@@ -59,9 +66,17 @@ class WhatsNew {
     String? text(Object? map, String language) =>
         map is Map ? displayText(map[language]) : null;
 
+    bool isFor(Object? only) => switch (only) {
+          null => true,
+          _ when platform == null => true,
+          final String name => name == platform,
+          final List names => names.contains(platform),
+          _ => false,
+        };
+
     final items = <WhatsNewItem>[];
     for (final item in raw) {
-      if (item is! Map) continue;
+      if (item is! Map || !isFor(item['only'])) continue;
       final titleEn = text(item['title'], 'en');
       final titlePa = text(item['title'], 'pa');
       if (titleEn == null || titlePa == null) continue;
@@ -79,3 +94,8 @@ class WhatsNew {
     return WhatsNew(release: release, items: items);
   }
 }
+
+/// The name that `"only"` uses for the platform the app runs on: `web`,
+/// `android`, `ios`, `macos`, and so on.
+String whatsNewPlatform({bool web = kIsWeb, TargetPlatform? target}) =>
+    web ? 'web' : (target ?? defaultTargetPlatform).name.toLowerCase();

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart' show TargetPlatform;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:live_darbar/src/models/whats_new.dart';
 
@@ -89,6 +90,76 @@ void main() {
         isNull,
       );
     });
+
+    test('an item with "only" shows on those platforms and nowhere else', () {
+      final json = {
+        'release': '3.1',
+        'items': [
+          item('all'),
+          {...item('ios'), 'only': ['ios']},
+          {...item('phones'), 'only': ['android', 'ios']},
+          {...item('one name'), 'only': 'android'},
+        ],
+      };
+      List<String> titles(String platform) => WhatsNew.fromJson(
+            json,
+            platform: platform,
+          )!
+              .items
+              .map((i) => i.titleEn)
+              .toList();
+
+      expect(titles('ios'), ['Title all', 'Title ios', 'Title phones']);
+      expect(
+        titles('android'),
+        ['Title all', 'Title phones', 'Title one name'],
+      );
+      expect(titles('web'), ['Title all']);
+    });
+
+    test('is null when no item is for this platform', () {
+      expect(
+        WhatsNew.fromJson(
+          {
+            'release': '3.1',
+            'items': [
+              {...item('1'), 'only': ['ios']},
+            ],
+          },
+          platform: 'web',
+        ),
+        isNull,
+      );
+    });
+
+    test('counts the 5 after it leaves out the other platforms', () {
+      final notes = WhatsNew.fromJson(
+        {
+          'release': '3.1',
+          'items': [
+            for (var n = 0; n < 3; n++) {...item('ios $n'), 'only': ['ios']},
+            for (var n = 0; n < 5; n++) item('$n'),
+          ],
+        },
+        platform: 'android',
+      )!;
+      expect(notes.items.map((i) => i.titleEn), [
+        for (var n = 0; n < 5; n++) 'Title $n',
+      ]);
+    });
+
+    test('names the platform the way "only" spells it', () {
+      expect(whatsNewPlatform(web: true, target: TargetPlatform.iOS), 'web');
+      expect(whatsNewPlatform(web: false, target: TargetPlatform.iOS), 'ios');
+      expect(
+        whatsNewPlatform(web: false, target: TargetPlatform.android),
+        'android',
+      );
+      expect(
+        whatsNewPlatform(web: false, target: TargetPlatform.macOS),
+        'macos',
+      );
+    });
   });
 
   group('the files that ship', () {
@@ -115,8 +186,30 @@ void main() {
           expect(notes!.release, release);
         });
 
-        test('has 3 to 5 new things, as the sheet is calm', () {
-          expect(notes!.items.length, inInclusiveRange(3, 5));
+        // Each phone gets 3 to 5. The web has no widget and no reminder, so it
+        // may get fewer, but never none.
+        for (final (platform, least) in [('android', 3), ('ios', 3), ('web', 1)]) {
+          test('has $least to 5 new things on $platform, as the sheet is calm',
+              () {
+            final mine = WhatsNew.fromJson(
+              jsonDecode(file.readAsStringSync()),
+              platform: platform,
+            );
+            expect(mine, isNotNull);
+            expect(mine!.items.length, inInclusiveRange(least, 5));
+          });
+        }
+
+        test('names only platforms that the app knows in "only"', () {
+          final json = jsonDecode(file.readAsStringSync()) as Map;
+          for (final item in json['items'] as List) {
+            final only = (item as Map)['only'];
+            if (only == null) continue;
+            expect(
+              only is List ? only : [only],
+              everyElement(isIn(['android', 'ios', 'web', 'macos'])),
+            );
+          }
         });
 
         test('keeps every thing short, and says each in both languages', () {

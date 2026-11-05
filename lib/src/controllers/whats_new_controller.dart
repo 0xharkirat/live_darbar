@@ -13,14 +13,22 @@ import 'package:shared_preferences/shared_preferences.dart';
 String whatsNewAsset(String release) => 'assets/whats_new/$release.json';
 
 /// The notes of [release] in [bundle], or null when the release has no file or
-/// the file is not usable. It asks the asset manifest first, so a release with
-/// no notes makes no failed request on the web.
-Future<WhatsNew?> loadWhatsNew(AssetBundle bundle, String release) async {
+/// the file is not usable. [platform] leaves out the items for other
+/// platforms (see [WhatsNew.fromJson]). It asks the asset manifest first, so
+/// a release with no notes makes no failed request on the web.
+Future<WhatsNew?> loadWhatsNew(
+  AssetBundle bundle,
+  String release, {
+  String? platform,
+}) async {
   final path = whatsNewAsset(release);
   try {
     final manifest = await AssetManifest.loadFromAssetBundle(bundle);
     if (!manifest.listAssets().contains(path)) return null;
-    final notes = WhatsNew.fromJson(jsonDecode(await bundle.loadString(path)));
+    final notes = WhatsNew.fromJson(
+      jsonDecode(await bundle.loadString(path)),
+      platform: platform,
+    );
     return notes?.release == release ? notes : null;
   } catch (_) {
     // A courtesy, like the update offer: it stays quiet when it cannot read.
@@ -31,7 +39,8 @@ Future<WhatsNew?> loadWhatsNew(AssetBundle bundle, String release) async {
 /// Reads the notes of a release. A test gives its own.
 final whatsNewLoaderProvider =
     Provider<Future<WhatsNew?> Function(String release)>(
-  (ref) => (release) => loadWhatsNew(rootBundle, release),
+  (ref) => (release) =>
+      loadWhatsNew(rootBundle, release, platform: whatsNewPlatform()),
 );
 
 /// The installed release, such as `3.1`. Null when the platform gives no
