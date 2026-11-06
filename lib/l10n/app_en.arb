@@ -616,6 +616,32 @@
     "@history_empty": {
         "description": "Message on the Sikh history screen when no calendar file covers the year"
     },
+    "history_search_hint": "Search Sikh history",
+    "@history_search_hint": {
+        "description": "Hint in the search field at the top of the Sikh history screen, shown while the field is empty. The search finds a day by the name of its event, in English or in Punjabi, and by the first letters of the Punjabi words"
+    },
+    "history_search_clear": "Clear search",
+    "@history_search_clear": {
+        "description": "What a screen reader says for the button inside the search field of the Sikh history screen that empties the field and brings back the whole year"
+    },
+    "history_search_empty": "Nothing found for “{query}”. Try fewer letters.",
+    "@history_search_empty": {
+        "description": "Message on the Sikh history screen when no event fits what was typed in the search field. The query is the text that was typed, and it stays in the language it was typed in",
+        "placeholders": {
+            "query": {
+                "type": "String"
+            }
+        }
+    },
+    "history_search_count": "{count, plural, =1{1 result} other{{count} results}}",
+    "@history_search_count": {
+        "description": "What a screen reader says when the list on the Sikh history screen changes as the listener types in the search field: how many events fit. It is not shown on the screen",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
     "history_and_more": "{count, plural, =1{and 1 more} other{and {count} more}}",
     "@history_and_more": {
         "description": "What a screen reader says on the home screen line for Sikh history, after the first event, when the day has more events. The line opens the Sikh history screen",

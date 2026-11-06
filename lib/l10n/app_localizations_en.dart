@@ -447,6 +447,28 @@ class AppLocalizationsEn extends AppLocalizations {
   String get history_empty => 'No days of Sikh history are listed for this year.';
 
   @override
+  String get history_search_hint => 'Search Sikh history';
+
+  @override
+  String get history_search_clear => 'Clear search';
+
+  @override
+  String history_search_empty(String query) {
+    return 'Nothing found for “$query”. Try fewer letters.';
+  }
+
+  @override
+  String history_search_count(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count results',
+      one: '1 result',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String history_and_more(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,

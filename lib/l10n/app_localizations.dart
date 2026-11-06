@@ -863,6 +863,30 @@ abstract class AppLocalizations {
   /// **'No days of Sikh history are listed for this year.'**
   String get history_empty;
 
+  /// Hint in the search field at the top of the Sikh history screen, shown while the field is empty. The search finds a day by the name of its event, in English or in Punjabi, and by the first letters of the Punjabi words
+  ///
+  /// In en, this message translates to:
+  /// **'Search Sikh history'**
+  String get history_search_hint;
+
+  /// What a screen reader says for the button inside the search field of the Sikh history screen that empties the field and brings back the whole year
+  ///
+  /// In en, this message translates to:
+  /// **'Clear search'**
+  String get history_search_clear;
+
+  /// Message on the Sikh history screen when no event fits what was typed in the search field. The query is the text that was typed, and it stays in the language it was typed in
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing found for “{query}”. Try fewer letters.'**
+  String history_search_empty(String query);
+
+  /// What a screen reader says when the list on the Sikh history screen changes as the listener types in the search field: how many events fit. It is not shown on the screen
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 result} other{{count} results}}'**
+  String history_search_count(int count);
+
   /// What a screen reader says on the home screen line for Sikh history, after the first event, when the day has more events. The line opens the Sikh history screen
   ///
   /// In en, this message translates to:
