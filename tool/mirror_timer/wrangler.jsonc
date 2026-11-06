@@ -1,0 +1,29 @@
+// The Hukamnama mirror timer. See README.md and src/index.js.
+{
+  "name": "live-darbar-mirror-timer",
+  "main": "src/index.js",
+  "compatibility_date": "2026-10-01",
+
+  // No web address. The Worker runs only on its timer, so nobody can start
+  // the job from outside.
+  "workers_dev": false,
+  "preview_urls": false,
+
+  "triggers": {
+    // Every 5 minutes from 23:00 to 02:55 UTC, which is 04:30 to 08:25 IST.
+    // SGPC posts between about 05:00 and 08:00 IST. 48 runs a day, 1 cron
+    // trigger of the 5 that the free plan gives each account.
+    "crons": ["*/5 23,0-2 * * *"]
+  },
+
+  "vars": {
+    "REPO": "0xharkirat/live_darbar",
+    "WORKFLOW": "hukamnama-mirror.yml",
+    // The branch whose workflow file the job runs.
+    "REF": "main"
+  },
+
+  // Keeps each run's log line for 3 days, in the Cloudflare dashboard
+  // (Workers & Pages > live-darbar-mirror-timer > Logs).
+  "observability": { "enabled": true }
+}

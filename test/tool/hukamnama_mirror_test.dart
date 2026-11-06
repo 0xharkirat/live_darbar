@@ -192,6 +192,16 @@ void main() {
     test('asks the same endpoint as the app', () {
       expect(kSgpcArchiveUrl, app.kHukamnamaArchiveUrl);
     });
+
+    // The Cloudflare timer that starts the mirror job asks SGPC too. It is
+    // JavaScript, so this reads its source.
+    test('asks the same endpoint as the mirror timer', () {
+      final timer = File('tool/mirror_timer/src/timer.js').readAsStringSync();
+      expect(
+        timer,
+        contains("export const SGPC_URL = '${app.kHukamnamaArchiveUrl}';"),
+      );
+    });
   });
 
   group('namesToPrune', () {
