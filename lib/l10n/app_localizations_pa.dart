@@ -426,6 +426,28 @@ class AppLocalizationsPa extends AppLocalizations {
   String get history_empty => 'ਇਸ ਸਾਲ ਲਈ ਸਿੱਖ ਇਤਿਹਾਸ ਦਾ ਕੋਈ ਦਿਨ ਸੂਚੀਬੱਧ ਨਹੀਂ ਹੈ।';
 
   @override
+  String get history_search_hint => 'ਸਿੱਖ ਇਤਿਹਾਸ ਵਿੱਚ ਖੋਜੋ';
+
+  @override
+  String get history_search_clear => 'ਖੋਜ ਸਾਫ਼ ਕਰੋ';
+
+  @override
+  String history_search_empty(String query) {
+    return '“$query” ਲਈ ਕੁਝ ਨਹੀਂ ਮਿਲਿਆ। ਘੱਟ ਅੱਖਰ ਲਿਖ ਕੇ ਵੇਖੋ।';
+  }
+
+  @override
+  String history_search_count(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count ਨਤੀਜੇ',
+      one: '1 ਨਤੀਜਾ',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String history_and_more(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,

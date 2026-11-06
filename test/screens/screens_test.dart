@@ -107,6 +107,30 @@ void main() {
     });
   }
 
+  // The search field of the history screen with a query typed: a typo in
+  // English, the first letters in Gurmukhi, and a query that finds nothing.
+  for (final (locale, name, query) in [
+    ('en', 'typo', 'banda singh bahdur'),
+    ('en', 'vaisakhi', 'baisakhi'),
+    ('pa', 'first_letters', 'ਬਛਦ'),
+    ('pa', 'english_in_pa', 'tegh bahadur'),
+    ('en', 'none', 'xyzzy'),
+  ]) {
+    testWidgets('history, search $name, $locale', (tester) async {
+      await _pump(
+        tester,
+        const HistoryScreen(),
+        locale: locale,
+        at: DateTime.utc(2026, 11, 3, 6),
+      );
+      await tester.pump(const Duration(seconds: 1));
+      await tester.enterText(find.byType(CupertinoTextField), query);
+      await tester.pump();
+      await tester.pump(const Duration(seconds: 1));
+      await _shot(tester, 'history_search_${name}_$locale');
+    });
+  }
+
   testWidgets('history, with the notification on, en', (tester) async {
     SharedPreferences.setMockInitialValues({'history_enabled': true});
     addTearDown(() => SharedPreferences.setMockInitialValues({}));

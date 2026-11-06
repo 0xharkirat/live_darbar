@@ -100,7 +100,7 @@ All tokens live in `lib/src/core/`.
 | Home | `views/screens/home_screen.dart` | 1 hero, 2 tiles, 1 text card. Not a stack of equal rows. The "add the widget" card sits last, shows once, and never changes the order above it. |
 | Now Playing | `views/screens/now_playing_screen.dart` | An iOS sheet over home, and the page behind it scales back. Drag down from anywhere on its top part, or tap the dimmed home above it, to close. 3 groups: the artwork and the title, the timeline and the controls, the source switch with the line about the stream. See Player spacing. |
 | Hukamnama | `views/screens/hukamnama_screen.dart` | Gurmukhi first, meaning under each line. The top bar holds the reminder bell and the text size control. |
-| Sikh history | `views/screens/history_screen.dart` | The whole Nanakshahi year of events, by month, like a calendar. Home's history line opens it. See Today in Sikh history. |
+| Sikh history | `views/screens/history_screen.dart` | The whole Nanakshahi year of events, by month, like a calendar, with a search field. Home's history line opens it. See Today in Sikh history. |
 | About | `views/screens/about_screen.dart` | 1 scrolling page with grouped link rows. |
 
 ## List ends
@@ -445,6 +445,7 @@ The line on home has no setting. The notification is the listener's choice: a sw
 | Part | Rule |
 | --- | --- |
 | Top | The title "Sikh history" (short, so the large title fits), a line that names the year and the source, and the "Today in Sikh history notification" switch in a `SettingsGroup`. The switch is where the platform can notify, as in About. |
+| Search | A quiet field under the title that stays in place while the page scrolls, because the page opens in the middle of the year. See Search. |
 | Months | A gold heading for each month ("NOVEMBER 2026"), then 1 row for each day that has an event. Months run from March. |
 | Row | The day on the left in the serif, with its weekday under it, and the titles on the right. An event of several days is on its first day, with the range ("12-14"). Titles wrap and are never cut. |
 | Past | Muted text. |
@@ -455,6 +456,29 @@ The line on home has no setting. The notification is the listener's choice: a sw
 The notification switch sits above the first month, so the page opens below it. Scroll up to reach it.
 
 `lib/src/core/history_calendar.dart` builds the year (`buildHistoryYear`), and `lib/src/controllers/history_year_controller.dart` gives it to the screen.
+
+### Search
+
+The field finds an event by its name. It searches the English and the Punjabi title of every event, whatever language the app is in. It searches the year that the page lists: every checked event of the Nanakshahi year that the bundled calendar covers. Nothing goes to the network.
+
+- While the field holds text, the rows that fit replace the months, best first. The intro and the notification switch go with the months. Each row keeps the look of a day row. Its line under the date names the month too ("Sun, Nov"), because no heading stands above it.
+- Clearing the field brings the months back, opened on today. A new query starts at the top of the results.
+- Nothing animates as the words change. A swipe on the results puts the keyboard away. The clear button is a 44 point target. A screen reader hears how many events fit.
+- Autocorrect is off: it would "correct" a Punjabi word in Latin letters into an English one. The field sets its own letter spacing to 0, because Cupertino gives a field -0.41 and Gurmukhi takes none.
+- The hint and the message for no result are in `lib/l10n/*.arb`.
+
+How a query fits (`lib/src/core/fuzzy_search.dart`, `lib/src/core/search_fold.dart`, both pure Dart):
+
+| Rule | Example |
+| --- | --- |
+| Case, diacritics and doubled letters do not matter. | "Bandī Chhoṛ" is "bandi chor". |
+| An h after a consonant goes. v, w and b are 1 letter, so are z and j, f and p, e and i, o and u, and aa, ee, oo and their short forms. | "bandhi chor", "Diwali", "Divali", "Zorawar" and "Jorawar". |
+| A word of 4 or more letters may have 1 typo, and a word of 8 or more may have 2. The last word may also be the typo-ridden beginning of a longer one. | "bahdur" finds "Bahadur". |
+| The words may run together or come apart. | "bandichhor". |
+| In Gurmukhi, nukta, tippi, bindi, addak and the subscript sign do not matter. Vowel signs that sound alike are 1 sign (ਿ ੀ, ੁ ੂ, ੇ ੈ, ੋ ੌ). ੜ is read as ਡ. | "ਬਦੀ ਛੋਡ" finds "ਬੰਦੀ ਛੋੜ". |
+| Gurmukhi consonants only, 2 or more, also fit the first letters of the words, as in Chet's first letter search. | "ਬਛਦ" finds "ਬੰਦੀ ਛੋੜ ਦਿਵਸ". |
+
+The order, best first: the title begins with the query, then whole words, then letters inside a title, then typos. Inside a step, fewer letters off, then words side by side, then a match nearer the start. A tie keeps the order of the calendar.
 
 ### The notification
 
