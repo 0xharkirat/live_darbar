@@ -25,15 +25,30 @@ Future<void> shareText(
       : null;
   final messenger = ScaffoldMessenger.maybeOf(context);
   try {
-    final result = await SharePlus.instance.share(
-      ShareParams(text: text, subject: subject, sharePositionOrigin: origin),
+    await SharePlus.instance.share(
+      ShareParams(
+        text: text,
+        subject: subject,
+        sharePositionOrigin: origin,
+        // Our fallback is the clipboard, not an email draft.
+        mailToFallbackEnabled: false,
+      ),
     );
-    if (result.status != ShareResultStatus.unavailable) return;
+    // Any result (shared, dismissed, or unknown) means the sheet was tried.
+    // `unavailable` only says the platform cannot report the outcome, so it
+    // is not a failure and must not overwrite the clipboard.
+    return;
   } catch (e) {
     if (!kReleaseMode) debugPrint('[share] no share sheet: $e');
   }
-  await Clipboard.setData(ClipboardData(text: text));
-  messenger?.showSnackBar(SnackBar(content: Text(copied)));
+  try {
+    await Clipboard.setData(ClipboardData(text: text));
+  } catch (e) {
+    if (!kReleaseMode) debugPrint('[share] clipboard refused: $e');
+    return;
+  }
+  if (messenger == null || !messenger.mounted) return;
+  messenger.showSnackBar(SnackBar(content: Text(copied)));
 }
 
 /// Opens the share sheet with a link to the app: the site and both stores.

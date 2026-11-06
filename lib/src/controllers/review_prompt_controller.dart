@@ -72,6 +72,18 @@ class ReviewPromptController extends Notifier<void> {
   /// before either has saved it.
   Future<void> _queue = Future.value();
 
+  /// Bumped by every player event, so a job can tell that something happened
+  /// since the pause that queued it.
+  int _event = 0;
+
+  /// Whether the pause that queued a job is still the latest thing that
+  /// happened: same event, app on screen, player still paused.
+  bool _stillPaused(int event) =>
+      event == _event &&
+      ref.mounted &&
+      ref.read(appInForegroundProvider)() &&
+      !ref.read(nowPlayingProvider).isPlaying;
+
   @override
   void build() {
     // The web has no store sheet.
@@ -81,6 +93,7 @@ class ReviewPromptController extends Notifier<void> {
 
   void _onPlayer(NowPlaying? previous, NowPlaying next) {
     final now = ref.read(clockProvider)();
+    final event = ++_event;
     if (next.isPlaying) {
       _tracker.started(now);
       return;
@@ -90,14 +103,16 @@ class ReviewPromptController extends Notifier<void> {
     // a failure shows its own; none of those is the listener taking a break.
     final paused = (previous?.isPlaying ?? false) &&
         next.action == PlayAction.play &&
-        _tracker.meaningful;
+        _tracker.meaningful &&
+        ref.read(appInForegroundProvider)();
     if (!counted && !paused) return;
-    _queue = _queue.then((_) => _afterListen(counted: counted, paused: paused));
+    _queue = _queue.then((_) => _afterListen(counted: counted, paused: paused, event: event));
   }
 
   Future<void> _afterListen({
     required bool counted,
     required bool paused,
+    required int event,
   }) async {
     try {
       final prefs = await SharedPreferences.getInstance();
@@ -119,10 +134,15 @@ class ReviewPromptController extends Notifier<void> {
           foreground: ref.read(appInForegroundProvider)(),
         ),
       );
-      if (!ask) return;
+      if (!ask || !_stillPaused(event)) return;
       // Saved first: if the sheet fails, it still does not come back in this
       // version.
       await prefs.setString(askedVersionKey, version);
+      if (!_stillPaused(event)) {
+        // The listener came back during the write: do not spend the ask.
+        await prefs.remove(askedVersionKey);
+        return;
+      }
       await ref.read(reviewPlatformProvider).requestReview();
     } catch (e) {
       if (!kReleaseMode) debugPrint('[review] listen not saved: $e');
