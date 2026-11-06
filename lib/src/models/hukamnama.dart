@@ -373,9 +373,23 @@ class Hukamnama {
 
   /// The shabad line by line from Shabad OS: the Gurmukhi, the pauses, an
   /// English and a Punjabi meaning, and facts about the shabad. Null when the
-  /// mirror has none for the day. It is not used by any screen yet, and [lines]
-  /// is unchanged by it.
+  /// mirror has none for the day. The reader shows these lines when it has
+  /// them, and [lines] is unchanged by it.
   final HukamnamaShabad? shabad;
+
+  /// This day with [shabad] in place of its own. Every other field stays.
+  Hukamnama withShabad(HukamnamaShabad? shabad) => Hukamnama(
+        date: date,
+        lines: lines,
+        ang: ang,
+        headingGurmukhi: headingGurmukhi,
+        headingEnglish: headingEnglish,
+        punjabiMeaning: punjabiMeaning,
+        englishMeaning: englishMeaning,
+        footerGurmukhi: footerGurmukhi,
+        footerEnglish: footerEnglish,
+        shabad: shabad,
+      );
 
   /// Whether this is the text for [sgpcDay] (as returned by `sgpcDayOf`).
   bool isFor(DateTime sgpcDay) =>
@@ -596,7 +610,8 @@ Map<String, dynamic>? _map(Object? value) =>
 String? _joinLines(List<Object?> values) {
   final parts = <String>[
     for (final value in values)
-      if (displayText(value) case final text?) text.replaceAll(RegExp(r'\s+'), ' '),
+      if (displayText(value) case final text?)
+        text.replaceAll(RegExp(r'\s+'), ' '),
   ];
   return parts.isEmpty ? null : parts.join('\n');
 }

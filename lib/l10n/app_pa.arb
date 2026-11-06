@@ -264,6 +264,7 @@
     "listen": "ਸੁਣੋ",
     "sgpc_pdf": "SGPC PDF",
     "hukamnama_ang": "ਅੰਗ {ang}",
+    "hukamnama_lines_credit": "ਹਰ ਤੁਕ ਦੇ ਅਰਥ: {meanings}। ਵਿਸ਼ਰਾਮ: {pauses}। ਸਰੋਤ: {source}।",
     "text_source": "ਪਾਠ ਅਤੇ ਅਰਥ {source} ਤੋਂ",
     "smaller_text": "ਛੋਟੇ ਅੱਖਰ",
     "larger_text": "ਵੱਡੇ ਅੱਖਰ",
@@ -283,6 +284,7 @@
         "description": "ਰੋਜ਼ਾਨਾ ਰਿਮਾਈਂਡਰ ਦਾ ਸਮਾਂ ਦਿਖਾਉਣ ਵਾਲੀ ਕਤਾਰ ਦਾ ਨਾਮ, ਅਤੇ ਸਮਾਂ ਚੁਣਨ ਵਾਲੀ ਸ਼ੀਟ ਦਾ ਸਿਰਲੇਖ"
     },
     "reminder_time_amritsar": "ਅੰਮ੍ਰਿਤਸਰ ਵਿੱਚ {amritsar}, ਇੱਥੇ {here}",
+    "reminder_wheel_amritsar": "ਇੱਥੇ {here} ਵੇਲੇ ਅੰਮ੍ਰਿਤਸਰ ਵਿੱਚ {amritsar}",
     "@reminder_time_amritsar": {
         "description": "ਰਿਮਾਈਂਡਰ ਦਾ ਸਮਾਂ, ਜਦੋਂ ਇਹ ਅੰਮ੍ਰਿਤਸਰ ਦੇ ਸਮੇਂ ਮੁਤਾਬਕ ਹੋਵੇ: ਸ੍ਰੀ ਹਰਿਮੰਦਰ ਸਾਹਿਬ ਦਾ ਸਮਾਂ, ਫਿਰ ਉਹੀ ਪਲ ਸਰੋਤੇ ਦੀ ਆਪਣੀ ਘੜੀ ਉੱਤੇ। ਦੋਵੇਂ ਸਮੇਂ ਪਹਿਲਾਂ ਹੀ ਸਰੋਤੇ ਲਈ ਲਿਖੇ ਹੁੰਦੇ ਹਨ, ਜਿਵੇਂ ਅੰਮ੍ਰਿਤਸਰ ਵਿੱਚ 7:00, ਇੱਥੇ 12:30",
         "placeholders": {

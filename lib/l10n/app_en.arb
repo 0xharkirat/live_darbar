@@ -338,6 +338,21 @@
             }
         }
     },
+    "hukamnama_lines_credit": "Line meanings by {meanings}. Pauses by {pauses}. From {source}.",
+    "@hukamnama_lines_credit": {
+        "description": "Credit under the Hukamnama when each line has its own meaning and pause marks. The names stay as the database writes them.",
+        "placeholders": {
+            "meanings": {
+                "type": "String"
+            },
+            "pauses": {
+                "type": "String"
+            },
+            "source": {
+                "type": "String"
+            }
+        }
+    },
     "text_source": "Text and meaning from {source}",
     "@text_source": {
         "description": "Credit under the Hukamnama text",
@@ -419,6 +434,18 @@
                 "type": "String"
             },
             "here": {
+                "type": "String"
+            }
+        }
+    },
+    "reminder_wheel_amritsar": "{here} here is {amritsar} in Amritsar",
+    "@reminder_wheel_amritsar": {
+        "description": "Under the wheel where the listener picks the reminder time. It changes as the wheel turns: the time on the wheel, then the same moment at Sri Harmandir Sahib. Both times are already written for the listener, for example 1:30 PM here is 8:00 AM in Amritsar",
+        "placeholders": {
+            "here": {
+                "type": "String"
+            },
+            "amritsar": {
                 "type": "String"
             }
         }

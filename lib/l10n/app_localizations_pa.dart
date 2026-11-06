@@ -258,6 +258,11 @@ class AppLocalizationsPa extends AppLocalizations {
   }
 
   @override
+  String hukamnama_lines_credit(String meanings, String pauses, String source) {
+    return 'ਹਰ ਤੁਕ ਦੇ ਅਰਥ: $meanings। ਵਿਸ਼ਰਾਮ: $pauses। ਸਰੋਤ: $source।';
+  }
+
+  @override
   String text_source(String source) {
     return 'ਪਾਠ ਅਤੇ ਅਰਥ $source ਤੋਂ';
   }
@@ -324,6 +329,11 @@ class AppLocalizationsPa extends AppLocalizations {
   @override
   String reminder_time_amritsar(String amritsar, String here) {
     return 'ਅੰਮ੍ਰਿਤਸਰ ਵਿੱਚ $amritsar, ਇੱਥੇ $here';
+  }
+
+  @override
+  String reminder_wheel_amritsar(String here, String amritsar) {
+    return 'ਇੱਥੇ $here ਵੇਲੇ ਅੰਮ੍ਰਿਤਸਰ ਵਿੱਚ $amritsar';
   }
 
   @override

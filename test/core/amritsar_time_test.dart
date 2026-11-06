@@ -88,11 +88,63 @@ void main() {
   group('a time on the listener’s own clock', () {
     test('is returned as it is, on any day', () {
       const picked = ReminderTime(21, 5);
-      for (final day in [DateTime.utc(2026, 10, 3), DateTime.utc(2026, 10, 5)]) {
+      for (final day in [
+        DateTime.utc(2026, 10, 3),
+        DateTime.utc(2026, 10, 5)
+      ]) {
         expect(
           onListenersClock(picked, day, offset: offsetOf('Australia/Sydney')),
           picked,
         );
+      }
+    });
+  });
+
+  // Hark, 6 November: as the wheel turns in Sydney, say what time it is in
+  // Amritsar at that moment.
+  group('a time on the listener’s clock, in Amritsar', () {
+    ReminderTime amritsar(int h, int m, DateTime day, String zone) =>
+        inAmritsar(ReminderTime(h, m), day, offset: offsetOf(zone));
+
+    test('is 5:30 earlier from Sydney in summer, and 4:30 in winter', () {
+      expect(
+          clock(
+              amritsar(13, 30, DateTime.utc(2026, 11, 6), 'Australia/Sydney')),
+          '8:00');
+      expect(
+          clock(amritsar(13, 30, DateTime.utc(2026, 7, 6), 'Australia/Sydney')),
+          '9:00');
+    });
+
+    test('is the same time in India', () {
+      expect(clock(amritsar(6, 45, DateTime.utc(2026, 11, 6), 'Asia/Kolkata')),
+          '6:45');
+    });
+
+    test('wraps round midnight', () {
+      expect(
+          clock(amritsar(2, 0, DateTime.utc(2026, 11, 6), 'Australia/Sydney')),
+          '20:30');
+      expect(
+          clock(amritsar(22, 0, DateTime.utc(2026, 11, 6), 'America/Toronto')),
+          '8:30');
+    });
+
+    test('turns back into the same time on the listener’s clock', () {
+      final day = DateTime.utc(2026, 11, 6);
+      for (final zone in [
+        'Australia/Sydney',
+        'Europe/London',
+        'America/Vancouver'
+      ]) {
+        final there =
+            inAmritsar(const ReminderTime(13, 5), day, offset: offsetOf(zone));
+        final back = onListenersClock(
+          ReminderTime(there.hour, there.minute, zone: ReminderZone.amritsar),
+          day,
+          offset: offsetOf(zone),
+        );
+        expect(clock(back), '13:05', reason: zone);
       }
     });
   });

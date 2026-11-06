@@ -258,6 +258,11 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String hukamnama_lines_credit(String meanings, String pauses, String source) {
+    return 'Line meanings by $meanings. Pauses by $pauses. From $source.';
+  }
+
+  @override
   String text_source(String source) {
     return 'Text and meaning from $source';
   }
@@ -324,6 +329,11 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String reminder_time_amritsar(String amritsar, String here) {
     return '$amritsar in Amritsar, $here here';
+  }
+
+  @override
+  String reminder_wheel_amritsar(String here, String amritsar) {
+    return '$here here is $amritsar in Amritsar';
   }
 
   @override

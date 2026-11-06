@@ -67,30 +67,39 @@ class AboutScreen extends ConsumerWidget {
                               ),
                               // At a large text size the switch no longer
                               // fits beside the label, and drops under it.
-                              child: Wrap(
-                                alignment: WrapAlignment.spaceBetween,
-                                crossAxisAlignment: WrapCrossAlignment.center,
-                                runSpacing: 8,
-                                children: [
-                                  Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      const Icon(
-                                        CupertinoIcons.globe,
-                                        size: 20,
-                                        color: Palette.gold,
-                                      ),
-                                      const SizedBox(width: 16),
-                                      Flexible(
-                                        child: Text(
-                                          l10n.language_tooltip,
-                                          style: AppType.body,
+                              // The group's column centres a child that is
+                              // narrower than it, and a Wrap is only as wide
+                              // as its runs, so the row takes the full width:
+                              // the icon then lines up with the icons under it
+                              // and the switch with the toggles, whatever the
+                              // length of the label in each language.
+                              child: SizedBox(
+                                width: double.infinity,
+                                child: Wrap(
+                                  alignment: WrapAlignment.spaceBetween,
+                                  crossAxisAlignment: WrapCrossAlignment.center,
+                                  runSpacing: 8,
+                                  children: [
+                                    Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        const Icon(
+                                          CupertinoIcons.globe,
+                                          size: 20,
+                                          color: Palette.gold,
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                  const LanguageSwitch(),
-                                ],
+                                        const SizedBox(width: 16),
+                                        Flexible(
+                                          child: Text(
+                                            l10n.language_tooltip,
+                                            style: AppType.body,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    const LanguageSwitch(),
+                                  ],
+                                ),
                               ),
                             ),
                             // The daily reminder is a setting like the

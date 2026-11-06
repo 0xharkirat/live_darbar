@@ -35,7 +35,8 @@ class HukamnamaNotPublishedException extends HukamnamaException {
 /// (`.github/workflows/hukamnama-mirror.yml`) copies SGPC's answer to the
 /// `hukamnama-data` branch. `raw.githubusercontent.com` serves it with
 /// `access-control-allow-origin: *` and `cache-control: max-age=300`, checked
-/// on 3 November 2026. The native apps do not use this.
+/// on 3 November 2026. The native apps read SGPC itself, and read only the
+/// lines with their meanings from here (see [HukamnamaService.fetch]).
 ///
 /// The files are `<this>/hukamnama/YYYY-MM-DD.json`. Overridable, so a web
 /// build can be tried against a folder on the developer's machine:
@@ -95,10 +96,21 @@ const kHukamnamaMirrorUrl = String.fromEnvironment(
 ///   `supported: false` is: [HukamnamaNotPublishedException];
 /// - any other status is a fault: [HukamnamaException], so the controller's
 ///   retry and stale-text logic works as it does on native.
+///
+/// ## The lines, on Android and iPhone
+///
+/// SGPC gives the meaning of the whole shabad, not of each line. The lines with
+/// a meaning under each and the pause marks come from the mirror only. So once
+/// SGPC's answer for a day has passed every check above, the apps also ask the
+/// mirror for that day's file and take its `shabad` and `lines`. This is extra:
+/// SGPC's text stays the day's text, and a mirror that has no file yet, fails,
+/// takes longer than [mirrorTimeout], or holds another day leaves [Hukamnama.shabad]
+/// null. The reader then shows SGPC's lines as before.
 class HukamnamaService {
   HukamnamaService({
     http.Client? client,
     this.timeout = const Duration(seconds: 8),
+    this.mirrorTimeout = const Duration(seconds: 4),
     bool? isWeb,
     String mirrorUrl = kHukamnamaMirrorUrl,
   })  : _client = client ?? http.Client(),
@@ -112,6 +124,10 @@ class HukamnamaService {
   /// How long to wait for the whole response. A request with no deadline can
   /// leave a screen on a spinner forever, so every request has one.
   final Duration timeout;
+
+  /// How long the apps wait for the mirror's lines after SGPC has answered.
+  /// The day is already in hand by then, so the wait is short.
+  final Duration mirrorTimeout;
 
   /// The Hukamnama for [day], an SGPC day.
   ///
@@ -164,7 +180,25 @@ class HukamnamaService {
         'Asked for ${sgpcDayIso(want)} but got ${sgpcDayIso(parsed.date)}.',
       );
     }
-    return parsed;
+    // On web the answer came from the mirror, with its lines already in it.
+    return _isWeb ? parsed : _withMirrorLines(parsed);
+  }
+
+  /// [sgpc] with the lines from the mirror's file for the same day, or [sgpc]
+  /// as it is when that file cannot be had. It never throws.
+  Future<Hukamnama> _withMirrorLines(Hukamnama sgpc) async {
+    try {
+      final response = await _getFromMirror(sgpc.date).timeout(mirrorTimeout);
+      if (response.statusCode != 200) return sgpc;
+      final decoded = jsonDecode(utf8.decode(response.bodyBytes));
+      if (decoded is! Map<String, dynamic>) return sgpc;
+      final mirrored = Hukamnama.fromSgpc(decoded);
+      if (mirrored.date != sgpc.date) return sgpc;
+      return sgpc.withShabad(mirrored.shabad);
+    } catch (e) {
+      if (!kReleaseMode) debugPrint('[hukamnama] no mirror lines: $e');
+      return sgpc;
+    }
   }
 
   Future<http.Response> _postToSgpc(DateTime day) => _client.post(

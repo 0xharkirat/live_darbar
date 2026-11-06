@@ -581,6 +581,12 @@ abstract class AppLocalizations {
   /// **'Ang {ang}'**
   String hukamnama_ang(String ang);
 
+  /// Credit under the Hukamnama when each line has its own meaning and pause marks. The names stay as the database writes them.
+  ///
+  /// In en, this message translates to:
+  /// **'Line meanings by {meanings}. Pauses by {pauses}. From {source}.'**
+  String hukamnama_lines_credit(String meanings, String pauses, String source);
+
   /// Credit under the Hukamnama text
   ///
   /// In en, this message translates to:
@@ -658,6 +664,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{amritsar} in Amritsar, {here} here'**
   String reminder_time_amritsar(String amritsar, String here);
+
+  /// Under the wheel where the listener picks the reminder time. It changes as the wheel turns: the time on the wheel, then the same moment at Sri Harmandir Sahib. Both times are already written for the listener, for example 1:30 PM here is 8:00 AM in Amritsar
+  ///
+  /// In en, this message translates to:
+  /// **'{here} here is {amritsar} in Amritsar'**
+  String reminder_wheel_amritsar(String here, String amritsar);
 
   /// The time of the reminder when it follows Amritsar and the listener’s own clock shows the same time, for example in India. The time is already written for the listener, for example 7:00 AM
   ///

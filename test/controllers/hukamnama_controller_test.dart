@@ -28,6 +28,18 @@ List<int> _bodyFor(DateTime day) {
   return utf8.encode(jsonEncode(json));
 }
 
+/// The mirror's file for [day]: SGPC's answer with the lines and their
+/// meanings added, as the mirror job writes every day it can match.
+List<int> _mirrorBodyFor(DateTime day) {
+  final json = jsonDecode(utf8.decode(_bodyFor(day))) as Map<String, dynamic>;
+  final mirror = jsonDecode(
+    File('test/fixtures/mirror_hukamnama_2026_11_02.json').readAsStringSync(),
+  ) as Map<String, dynamic>;
+  json['shabad'] = mirror['shabad'];
+  json['lines'] = mirror['lines'];
+  return utf8.encode(jsonEncode(json));
+}
+
 /// What SGPC answers for a day it has no Hukamnama for: HTTP 200 and
 /// `supported: false`.
 List<int> _notPostedBody(DateTime day) => utf8.encode(
@@ -38,9 +50,9 @@ List<int> _notPostedBody(DateTime day) => utf8.encode(
 /// A stand-in for SGPC that has the listed days posted, can go offline,
 /// and records which day each request asked for (`yyyy-MM-dd`).
 ///
-/// It also stands in for the web mirror, which has the same days. A GET for
-/// `/hukamnama/yyyy-MM-dd.json` is answered from the mirror's files: the same
-/// body as SGPC's, or a 404 for a day that is not posted.
+/// It also stands in for the mirror, which has the same days. A GET for
+/// `/hukamnama/yyyy-MM-dd.json` is answered from the mirror's files: SGPC's
+/// body with the lines added, or a 404 for a day that is not posted.
 class FakeSgpc {
   FakeSgpc(this.posted);
 
@@ -80,7 +92,10 @@ class FakeSgpc {
           ? http.Response('404: Not Found', 404)
           : http.Response.bytes(_notPostedBody(day), 200);
     }
-    return http.Response.bytes(bodies[day] ?? _bodyFor(day), 200);
+    return http.Response.bytes(
+      bodies[day] ?? (isMirror ? _mirrorBodyFor(day) : _bodyFor(day)),
+      200,
+    );
   });
 }
 
@@ -166,9 +181,20 @@ void main() {
     }
   }
 
-  Future<void> seedDisk(DateTime day) async {
-    await HukamnamaCache(directory: () async => dir).write(Hukamnama.fromSgpc(
-        jsonDecode(utf8.decode(_bodyFor(day))) as Map<String, dynamic>));
+  /// Stores [day] on disk. With [lines], the day also holds the lines with
+  /// their meanings, as a copy fetched since the apps read the mirror does.
+  Future<void> seedDisk(DateTime day, {bool lines = false}) async {
+    final json = jsonDecode(utf8.decode(_bodyFor(day))) as Map<String, dynamic>;
+    if (lines) {
+      final mirror = jsonDecode(
+        File('test/fixtures/mirror_hukamnama_2026_11_02.json')
+            .readAsStringSync(),
+      ) as Map<String, dynamic>;
+      json['shabad'] = mirror['shabad'];
+      json['lines'] = mirror['lines'];
+    }
+    await HukamnamaCache(directory: () async => dir)
+        .write(Hukamnama.fromSgpc(json));
   }
 
   List<String> filesOnDisk() =>
@@ -264,6 +290,25 @@ void main() {
       expect(offline.log, isEmpty, reason: 'no request when today is on disk');
     });
 
+    test(
+        'open today\'s stored text at once, then fetch it once more when it '
+        'has no line meanings', () async {
+      // As a copy saved before this version, or before the mirror had the day.
+      await seedDisk(nov2);
+      final server = FakeSgpc({nov2});
+      final container = launch(server);
+
+      final first = await container.read(hukamnamaProvider.future);
+      expect(first.shabad, isNull, reason: 'the stored copy shows at once');
+      await settle(container);
+
+      final h = container.read(hukamnamaProvider).requireValue;
+      expect(h.date, nov2);
+      expect(h.shabad, isNotNull);
+      expect(server.log, ['2026-11-02']);
+      expect(server.mirrorLog, ['2026-11-02']);
+    });
+
     test('open on yesterday\'s text at once, then switch to today\'s',
         () async {
       await seedDisk(nov1);
@@ -291,7 +336,7 @@ void main() {
     test('keep yesterday\'s text, labelled, while today\'s is not posted',
         () async {
       now = beforeDawn;
-      await seedDisk(nov1);
+      await seedDisk(nov1, lines: true);
       final server = FakeSgpc({nov1});
       final container = launch(server);
 
@@ -303,6 +348,21 @@ void main() {
       expect(h.isFor(sgpcDayOf(now)), isFalse);
       expect(server.log, ['2026-11-02'],
           reason: 'one request, not a second one for the day already held');
+    });
+
+    test(
+        'ask once more for yesterday when the stored copy has no line '
+        'meanings, as one saved before this version has none', () async {
+      now = beforeDawn;
+      await seedDisk(nov1);
+      final server = FakeSgpc({nov1});
+      final container = launch(server);
+
+      await container.read(hukamnamaProvider.future);
+      await settle(container);
+
+      expect(container.read(hukamnamaProvider).requireValue.date, nov1);
+      expect(server.log, ['2026-11-02', '2026-11-01']);
     });
 
     test('keep yesterday\'s text, labelled, when offline', () async {

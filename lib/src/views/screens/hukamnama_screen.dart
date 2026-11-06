@@ -123,6 +123,13 @@ class _HukamnamaScreenState extends ConsumerState<HukamnamaScreen> {
     final scale = ref.watch(readerScaleProvider);
     final stale = !h.isFor(sgpcDayOf(ref.read(clockProvider)()));
 
+    // The mirror's lines carry a meaning under each line and the pauses, so
+    // they are read first. Without them, SGPC's own lines show as before, and
+    // SGPC's meaning of the whole shabad below is the only meaning.
+    final shabad = h.shabad;
+    final lines = shabad?.lines ?? h.lines;
+    final meaningBy = shabad?.credits[punjabi ? 'punjabi' : 'english'];
+
     // One short line: the ang, the Sikh date of the Hukamnama's own day, and
     // the everyday date. SGPC's footer ("Monday, 17th Katak (Samvat 558
     // Nanakshahi)") is too long, so the date comes from the sangrand table
@@ -176,10 +183,13 @@ class _HukamnamaScreenState extends ConsumerState<HukamnamaScreen> {
       SliverPadding(
         padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
         sliver: SliverList.separated(
-          itemCount: h.lines.length,
-          separatorBuilder: (_, __) => const SizedBox(height: 14),
+          itemCount: lines.length,
+          // A line with its meaning under it needs more air before the next,
+          // so each pair reads as 1 unit and not as a wall.
+          separatorBuilder: (_, __) =>
+              SizedBox(height: shabad != null ? 26 : 14),
           itemBuilder: (context, i) => _Column(
-            child: _Line(line: h.lines[i], punjabi: punjabi, scale: scale),
+            child: _Line(line: lines[i], punjabi: punjabi, scale: scale),
           ),
         ),
       ),
@@ -198,15 +208,29 @@ class _HukamnamaScreenState extends ConsumerState<HukamnamaScreen> {
           padding: const EdgeInsets.fromLTRB(20, 40, 20, 32),
           sliver: SliverToBoxAdapter(
             child: _Column(
-              child: Center(
-                child: CupertinoButton(
-                  onPressed: () => openLink(kHukamnamaSourceUrl),
-                  child: Text(
-                    l10n.text_source(kHukamnamaSourceName),
+              children: [
+                if (shabad != null && meaningBy != null)
+                  Text(
+                    l10n.hukamnama_lines_credit(
+                      meaningBy,
+                      shabad.credits['vishraam'] ??
+                          shabad.source ??
+                          'Shabad OS',
+                      shabad.source ?? 'Shabad OS',
+                    ),
+                    textAlign: TextAlign.center,
                     style: AppType.footnote.copyWith(color: Palette.faint),
                   ),
+                Center(
+                  child: CupertinoButton(
+                    onPressed: () => openLink(kHukamnamaSourceUrl),
+                    child: Text(
+                      l10n.text_source(kHukamnamaSourceName),
+                      style: AppType.footnote.copyWith(color: Palette.faint),
+                    ),
+                  ),
                 ),
-              ),
+              ],
             ),
           ),
         ),
@@ -250,6 +274,35 @@ class _Line extends StatelessWidget {
   final bool punjabi;
   final double scale;
 
+  /// The line, with the word before each pause in its colour: kesri for a
+  /// long pause, green for a short one, as Chet colours them. The colour tells
+  /// a reader where to rest, and it breaks up the page.
+  TextSpan _gurmukhi(TextStyle style) {
+    if (line.vishraam.isEmpty)
+      return TextSpan(text: line.gurmukhi, style: style);
+    final pauses = {for (final v in line.vishraam) v.after: v.weight};
+    final words = line.gurmukhi.split(RegExp(r'\s+'));
+    return TextSpan(
+      style: style,
+      children: [
+        for (final (i, word) in words.indexed) ...[
+          if (i > 0) const TextSpan(text: ' '),
+          TextSpan(
+            text: word,
+            style: switch (pauses[i]) {
+              null => null,
+              HukamnamaPause.light =>
+                const TextStyle(color: Palette.pauseShort),
+              HukamnamaPause.medium ||
+              HukamnamaPause.heavy =>
+                const TextStyle(color: Palette.pauseLong),
+            },
+          ),
+        ],
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final meaning = punjabi
@@ -260,9 +313,8 @@ class _Line extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SelectableText(
-          line.gurmukhi,
-          style: AppType.gurbani.copyWith(fontSize: 22 * scale),
+        SelectableText.rich(
+          _gurmukhi(AppType.gurbani.copyWith(fontSize: 22 * scale)),
         ),
         if (roman != null) ...[
           const SizedBox(height: 4),

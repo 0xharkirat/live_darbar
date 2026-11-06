@@ -50,4 +50,14 @@ abstract final class Palette {
   /// Errors. 5.8:1 on [background]. The same red as [live] on purpose: there
   /// is one red in this app, and it always means the stream.
   static const danger = live;
+
+  /// The word before a long pause (vishraam) in Gurbani, as Chet and other
+  /// Gurbani readers colour it, so the reader knows where to rest. Kesri, the
+  /// Sikh saffron, warmer than [gold] and softer than [live]. 8.0:1 on
+  /// [background], 7.5:1 on [surface].
+  static const pauseLong = Color(0xFFF08A5D);
+
+  /// The word before a short pause. A soft green, as Chet's short pause is
+  /// green. 10.5:1 on [background], 9.8:1 on [surface].
+  static const pauseShort = Color(0xFF8FCB9B);
 }

@@ -37,7 +37,9 @@ const kHukamnamaRetryInterval = Duration(minutes: 15);
 /// today's.
 ///
 /// What the listener sees, in order:
-/// 1. Today's text is on disk: it opens at once and nothing is fetched.
+/// 1. Today's text is on disk: it opens at once and nothing is fetched. A copy
+///    with no line meanings (saved before the apps read them, or before the
+///    mirror had the day) is fetched once more in the background.
 /// 2. An earlier day's text is on disk: it opens at once as the value, and
 ///    today's is fetched in the background. If today's is not up yet, or the
 ///    phone is offline, the earlier text stays.
@@ -89,22 +91,27 @@ class HukamnamaController extends AsyncNotifier<Hukamnama> {
     final today = _today();
 
     final cachedToday = await cache.read(today);
-    if (cachedToday != null) return cachedToday;
+    if (cachedToday != null) {
+      if (cachedToday.shabad == null) _refreshAfterBuild();
+      return cachedToday;
+    }
 
     final earlier = await cache.readLatest();
     if (earlier != null) {
-      // Open on this at once, and look for today's afterward. The refresh runs
-      // as its own event, after this build has delivered its value, so the
-      // listener sees the text first and then a loading state that still
-      // holds it. Looking for today's is not a reason to keep the screen
-      // empty.
-      Timer.run(() {
-        if (ref.mounted) unawaited(refresh());
-      });
+      _refreshAfterBuild();
       return earlier;
     }
     return _load(today);
   }
+
+  /// Opens on the stored text at once, and looks for newer text afterward.
+  /// The refresh runs as its own event, after this build has delivered its
+  /// value, so the listener sees the text first and then a loading state that
+  /// still holds it. Looking for newer text is not a reason to keep the screen
+  /// empty.
+  void _refreshAfterBuild() => Timer.run(() {
+        if (ref.mounted) unawaited(refresh());
+      });
 
   /// Asks the service for the newest text again, keeping what is shown
   /// meanwhile.
