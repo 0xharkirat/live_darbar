@@ -16,23 +16,28 @@ name: Hukamnama mirror
 # The branch is an orphan. It holds only `hukamnama/` and a README, and this
 # job creates it on the first run.
 #
-# Two limits of GitHub's schedule:
-# - GitHub turns off scheduled workflows after 60 days with no repository
-#   activity. The web app then stops getting new text. Enable the workflow
-#   again in the Actions tab.
-# - A scheduled run starts late, often by 5 to 15 minutes, and a busy hour can
-#   skip one. The dense window below makes up for that.
+# What starts the job:
+# - The mirror timer, a Cloudflare Worker (tool/mirror_timer). It asks SGPC
+#   every 5 minutes from 04:30 to 08:25 IST, and starts this job through
+#   workflow_dispatch soon after SGPC posts. That is the main start, about once
+#   a day.
+# - The schedule below, as a fallback. GitHub starts scheduled runs late and
+#   skips many of them: on 6 November 2026 it ran 1 of the 40 runs that the
+#   old schedule asked for. The fallback catches a day that the timer missed,
+#   and a change that SGPC makes to the text later in the day.
+#
+# GitHub turns off scheduled workflows after 60 days with no repository
+# activity. The web app then gets new text only from the timer. Enable the
+# workflow again in the Actions tab.
 
 on:
   schedule:
-    # SGPC posts between 05:00 and 08:00 IST, which is 23:30 to 02:30 UTC.
-    # Every 10 minutes in that window.
-    - cron: '30,40,50 23 * * *'
-    - cron: '*/10 0,1 * * *'
-    - cron: '0,10,20,30 2 * * *'
-    # Once an hour the rest of the day. Minute 7, not minute 0, because GitHub
-    # delays the runs at the top of the hour the most.
-    - cron: '7 3-23 * * *'
+    # SGPC posts between about 05:00 and 08:00 IST. 06:15 and 07:45 IST.
+    - cron: '45 0 * * *'
+    - cron: '15 2 * * *'
+    # Then every 6 hours. Minute 7, not minute 0, because GitHub delays the
+    # runs at the top of the hour the most.
+    - cron: '7 4,10,16,22 * * *'
   workflow_dispatch:
 
 permissions:
