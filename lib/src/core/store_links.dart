@@ -11,3 +11,7 @@ const kFeedbackUrl = 'https://forms.gle/HKZtyYzdEYstgbby7';
 
 /// The Live Darbar site. The web app, served from /app/ on it, links back.
 const kSiteUrl = 'https://darbar.live';
+
+/// The app's id on the App Store, the number at the end of [kAppStoreUrl]. The
+/// rate row hands it to the store so the App Store opens on this app.
+const kAppStoreId = '6449766130';

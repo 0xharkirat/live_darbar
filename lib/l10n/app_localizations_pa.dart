@@ -503,4 +503,36 @@ class AppLocalizationsPa extends AppLocalizations {
 
   @override
   String get update_required_body => 'ਇਹ ਵਰਜਨ ਬਹੁਤ ਪੁਰਾਣਾ ਹੈ ਅਤੇ ਠੀਕ ਨਹੀਂ ਚੱਲਦਾ। ਅੱਗੇ ਵਧਣ ਲਈ ਇਸਨੂੰ ਸਟੋਰ ਤੋਂ ਅੱਪਡੇਟ ਕਰੋ।';
+
+  @override
+  String get support_heading => 'ਹੋਰਾਂ ਤੱਕ ਪਹੁੰਚਾਓ';
+
+  @override
+  String get support_body => 'ਲਾਈਵ ਦਰਬਾਰ ਮੁਫ਼ਤ ਹੈ ਅਤੇ ਮੁਫ਼ਤ ਹੀ ਰਹੇਗੀ, ਬਿਨਾਂ ਇਸ਼ਤਿਹਾਰਾਂ ਦੇ। ਇਸਨੂੰ ਸਾਂਝਾ ਕਰਨ ਜਾਂ ਰੇਟਿੰਗ ਦੇਣ ਨਾਲ ਹੋਰ ਸੰਗਤ ਤੱਕ ਪਹੁੰਚਦੀ ਹੈ।';
+
+  @override
+  String get share_app => 'ਲਾਈਵ ਦਰਬਾਰ ਸਾਂਝਾ ਕਰੋ';
+
+  @override
+  String get share_app_message => 'ਸ੍ਰੀ ਦਰਬਾਰ ਸਾਹਿਬ, ਅੰਮ੍ਰਿਤਸਰ ਤੋਂ ਲਾਈਵ ਕੀਰਤਨ, ਅਤੇ ਰੋਜ਼ਾਨਾ ਹੁਕਮਨਾਮਾ ਤੇ ਕਥਾ। ਮੁਫ਼ਤ, ਬਿਨਾਂ ਇਸ਼ਤਿਹਾਰਾਂ ਦੇ।';
+
+  @override
+  String get rate_app => 'ਲਾਈਵ ਦਰਬਾਰ ਨੂੰ ਰੇਟਿੰਗ ਦਿਓ';
+
+  @override
+  String get share => 'ਸਾਂਝਾ ਕਰੋ';
+
+  @override
+  String get share_hukamnama => 'ਇਹ ਹੁਕਮਨਾਮਾ ਸਾਂਝਾ ਕਰੋ';
+
+  @override
+  String share_hukamnama_title(String date) {
+    return 'ਸ੍ਰੀ ਦਰਬਾਰ ਸਾਹਿਬ ਤੋਂ ਹੁਕਮਨਾਮਾ, $date';
+  }
+
+  @override
+  String get share_hukamnama_footer => 'ਪੂਰਾ ਪੜ੍ਹੋ ਅਤੇ ਸੁਣੋ:';
+
+  @override
+  String get link_copied => 'ਕਾਪੀ ਹੋ ਗਿਆ। ਸਾਂਝਾ ਕਰਨ ਲਈ ਪੇਸਟ ਕਰੋ।';
 }

@@ -66,6 +66,12 @@ dependencies:
   # 1 copy of the library, and android/build.gradle names which.
   video_player: ^2.14.1
   wakelock_plus: ^1.5.2
+  # The system share sheet, for "Share Live Darbar" and "Share this
+  # Hukamnama". No tracking; the text goes only where the listener sends it.
+  share_plus: ^12.0.0
+  # The store's own rating sheet, asked for once a version after real use
+  # (see lib/src/core/review_rules.dart), and the store page for the rate row.
+  in_app_review: ^2.0.10
 
 dev_dependencies:
   flutter_test:

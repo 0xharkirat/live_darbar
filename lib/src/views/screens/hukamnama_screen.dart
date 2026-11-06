@@ -19,6 +19,8 @@ import 'package:live_darbar/src/core/motion.dart';
 import 'package:live_darbar/src/core/open_link.dart';
 import 'package:live_darbar/src/core/palette.dart';
 import 'package:live_darbar/src/core/reader_numbers.dart';
+import 'package:live_darbar/src/core/share.dart';
+import 'package:live_darbar/src/core/share_text.dart';
 import 'package:live_darbar/src/models/hukamnama.dart';
 import 'package:live_darbar/src/models/sgpc_day.dart';
 import 'package:live_darbar/src/views/widgets/app_nav_bar.dart';
@@ -152,7 +154,7 @@ class _HukamnamaScreenState extends ConsumerState<HukamnamaScreen> {
                 ),
               ],
               const SizedBox(height: 16),
-              const _Actions(),
+              _Actions(hukamnama: h),
               const SizedBox(height: 8),
             ],
           ),
@@ -407,7 +409,10 @@ class _MeaningState extends ConsumerState<_Meaning> {
 }
 
 class _Actions extends ConsumerWidget {
-  const _Actions();
+  const _Actions({required this.hukamnama});
+
+  /// The text on screen. Share sends its first line, with its own date.
+  final Hukamnama hukamnama;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -422,9 +427,10 @@ class _Actions extends ConsumerWidget {
       bool primary = false,
       bool external = false,
       bool busy = false,
+      String? semanticLabel,
     }) =>
         Pressable(
-          semanticLabel: label,
+          semanticLabel: semanticLabel ?? label,
           onTap: onTap,
           // The label above is the whole of what the reader says.
           child: ExcludeSemantics(
@@ -477,6 +483,16 @@ class _Actions extends ConsumerWidget {
           primary: true,
           onTap: () => togglePlayback(ref, kMukhwakIndex),
         ),
+        // The sangat forwards the Hukamnama every morning. This sends the
+        // first line and the date, as plain text, with a link to the rest.
+        Builder(
+          builder: (button) => pill(
+            icon: CupertinoIcons.share,
+            label: l10n.share,
+            semanticLabel: l10n.share_hukamnama,
+            onTap: () => _shareHukamnama(button, ref, hukamnama),
+          ),
+        ),
         InAppLink(
           url: kHukamnamaPdfPageUrl,
           builder: (context, opening, open) => pill(
@@ -490,6 +506,35 @@ class _Actions extends ConsumerWidget {
       ],
     );
   }
+}
+
+/// Shares [h] from the button at [context].
+///
+/// The date is the Hukamnama's own day, which is not always today (see
+/// [Hukamnama.date]), so the title never says "today".
+Future<void> _shareHukamnama(
+  BuildContext context,
+  WidgetRef ref,
+  Hukamnama h,
+) {
+  final l10n = AppLocalizations.of(context)!;
+  final punjabi = ref.read(localeController) == 'pa';
+  final title = [
+    l10n.share_hukamnama_title(readerDate(h.date, punjabi: punjabi)),
+    if (h.ang != null)
+      l10n.hukamnama_ang(readerNumber(h.ang!, punjabi: punjabi)),
+  ].join(' · ');
+  return shareText(
+    context,
+    hukamnamaShareText(
+      title: title,
+      firstLine: h.lines.first.gurmukhi,
+      more: h.lines.length > 1,
+      footer: l10n.share_hukamnama_footer,
+    ),
+    subject: l10n.mukhwak,
+    copied: l10n.link_copied,
+  );
 }
 
 class _TextSizeControl extends ConsumerWidget {

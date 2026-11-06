@@ -10,6 +10,7 @@ import 'package:intelligence/intelligence.dart';
 import 'package:live_darbar/src/controllers/audio_controller.dart';
 import 'package:live_darbar/src/controllers/locale_controller.dart';
 import 'package:live_darbar/src/controllers/reminder_controller.dart';
+import 'package:live_darbar/src/controllers/review_prompt_controller.dart';
 import 'package:live_darbar/src/controllers/sikh_history_controller.dart';
 import 'package:live_darbar/src/home_screen_widget/widget_actions.dart';
 import 'package:live_darbar/src/home_screen_widget/widget_background.dart';
@@ -224,6 +225,10 @@ class _MyAppState extends ConsumerState<MyApp> {
     // Keep the home screen widget's text in step with the date and the
     // Hukamnama.
     if (HomeWidgetPublisher.isSupported) ref.read(widgetSyncProvider);
+
+    // Counts long listens, and after enough of them asks once for a rating,
+    // when the listener pauses. Never here at launch. See review_rules.dart.
+    ref.read(reviewPromptProvider);
 
     // The iPhone widget opens the app with a link. See widget_links.dart.
     // A running app hears it on the stream. A cold start asks once, after

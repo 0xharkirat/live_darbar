@@ -24,6 +24,7 @@ import 'package:live_darbar/src/core/text_scale.dart';
 import 'package:live_darbar/src/core/motion.dart';
 import 'package:live_darbar/src/core/palette.dart';
 import 'package:live_darbar/src/core/reader_numbers.dart';
+import 'package:live_darbar/src/core/share.dart';
 import 'package:live_darbar/src/models/app_update.dart';
 import 'package:live_darbar/src/models/hukamnama.dart';
 import 'package:live_darbar/src/models/sgpc_day.dart';
@@ -802,9 +803,19 @@ class _Footer extends ConsumerWidget {
 
     return Column(
       children: [
-        link(
-          l10n.about_this_app,
-          () => Navigator.of(context).pushNamed(AppRoutes.about),
+        Wrap(
+          alignment: WrapAlignment.center,
+          children: [
+            link(
+              l10n.about_this_app,
+              () => Navigator.of(context).pushNamed(AppRoutes.about),
+            ),
+            // The share sheet points at the button on an iPad, so the
+            // button's own context goes with it.
+            Builder(
+              builder: (button) => link(l10n.share_app, () => shareApp(button)),
+            ),
+          ],
         ),
         // On the web, the site is often someone's first contact with the
         // app, so it offers the real thing.

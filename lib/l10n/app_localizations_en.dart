@@ -503,4 +503,36 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get update_required_body => 'This version is too old to work well. Update it from the store to go on.';
+
+  @override
+  String get support_heading => 'Help others find it';
+
+  @override
+  String get support_body => 'Live Darbar is free and will stay free, with no ads. Sharing it or rating it helps more of the sangat find it.';
+
+  @override
+  String get share_app => 'Share Live Darbar';
+
+  @override
+  String get share_app_message => 'Live kirtan from Sri Darbar Sahib, Amritsar, and the daily Hukamnama and Katha. Free, with no ads.';
+
+  @override
+  String get rate_app => 'Rate Live Darbar';
+
+  @override
+  String get share => 'Share';
+
+  @override
+  String get share_hukamnama => 'Share this Hukamnama';
+
+  @override
+  String share_hukamnama_title(String date) {
+    return 'Hukamnama from Sri Darbar Sahib, $date';
+  }
+
+  @override
+  String get share_hukamnama_footer => 'Read it all and listen:';
+
+  @override
+  String get link_copied => 'Copied. Paste it to share.';
 }

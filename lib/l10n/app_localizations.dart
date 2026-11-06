@@ -970,6 +970,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'This version is too old to work well. Update it from the store to go on.'**
   String get update_required_body;
+
+  /// Heading in About over the share and rate rows
+  ///
+  /// In en, this message translates to:
+  /// **'Help others find it'**
+  String get support_heading;
+
+  /// Line under the heading in About. It asks for nothing but a share or a rating: the app takes no money
+  ///
+  /// In en, this message translates to:
+  /// **'Live Darbar is free and will stay free, with no ads. Sharing it or rating it helps more of the sangat find it.'**
+  String get support_body;
+
+  /// Row in About and link on Home that opens the share sheet with a link to the app
+  ///
+  /// In en, this message translates to:
+  /// **'Share Live Darbar'**
+  String get share_app;
+
+  /// First line of the text that Share Live Darbar sends. The site and the store links follow it
+  ///
+  /// In en, this message translates to:
+  /// **'Live kirtan from Sri Darbar Sahib, Amritsar, and the daily Hukamnama and Katha. Free, with no ads.'**
+  String get share_app_message;
+
+  /// Row in About that opens the app's page in the store
+  ///
+  /// In en, this message translates to:
+  /// **'Rate Live Darbar'**
+  String get rate_app;
+
+  /// Button beside Listen on the Hukamnama reader
+  ///
+  /// In en, this message translates to:
+  /// **'Share'**
+  String get share;
+
+  /// Screen reader label for the Share button on the Hukamnama reader
+  ///
+  /// In en, this message translates to:
+  /// **'Share this Hukamnama'**
+  String get share_hukamnama;
+
+  /// First line of the shared Hukamnama text. {date} is the day of the Hukamnama, for example 6 November, and may be followed by the Ang
+  ///
+  /// In en, this message translates to:
+  /// **'Hukamnama from Sri Darbar Sahib, {date}'**
+  String share_hukamnama_title(String date);
+
+  /// Last line of the shared Hukamnama text. The darbar.live link follows it
+  ///
+  /// In en, this message translates to:
+  /// **'Read it all and listen:'**
+  String get share_hukamnama_footer;
+
+  /// Short note when the phone or browser has no share sheet and the text was copied instead
+  ///
+  /// In en, this message translates to:
+  /// **'Copied. Paste it to share.'**
+  String get link_copied;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
