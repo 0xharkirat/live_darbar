@@ -106,7 +106,8 @@ class ReviewPromptController extends Notifier<void> {
         _tracker.meaningful &&
         ref.read(appInForegroundProvider)();
     if (!counted && !paused) return;
-    _queue = _queue.then((_) => _afterListen(counted: counted, paused: paused, event: event));
+    _queue = _queue.then(
+        (_) => _afterListen(counted: counted, paused: paused, event: event));
   }
 
   Future<void> _afterListen({

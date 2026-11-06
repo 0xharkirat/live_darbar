@@ -24,6 +24,7 @@ import 'package:live_darbar/src/bootstrap.dart';
 import 'package:live_darbar/src/core/app_theme.dart';
 import 'package:live_darbar/src/core/app_type.dart';
 import 'package:live_darbar/src/core/open_link.dart';
+import 'package:live_darbar/src/core/quick_actions.dart';
 import 'package:live_darbar/src/models/sgpc_day.dart';
 import 'package:live_darbar/src/services/legacy_pdf_cleanup.dart';
 import 'package:live_darbar/src/services/reminder_launch.dart';
@@ -167,6 +168,8 @@ class MyApp extends ConsumerStatefulWidget {
 
 class _MyAppState extends ConsumerState<MyApp> {
   final QuickActions quickActions = const QuickActions();
+  late final QuickActionsWriter _quickActionsWriter =
+      QuickActionsWriter(quickActions.setShortcutItems);
   final Intelligence? _intelligence =
       defaultTargetPlatform == TargetPlatform.iOS ? Intelligence() : null;
   static const MethodChannel _channel =
@@ -206,21 +209,13 @@ class _MyAppState extends ConsumerState<MyApp> {
       shortcutPlay(shortcutType, ref);
     });
 
-    // Set quick action items
-    quickActions.setShortcutItems(<ShortcutItem>[
-      const ShortcutItem(
-        type: 'live_kirtan',
-        localizedTitle: 'Live Kirtan',
-      ),
-      const ShortcutItem(
-        type: 'mukhwak',
-        localizedTitle: 'Mukhwak',
-      ),
-      const ShortcutItem(
-        type: 'mukhwak_katha',
-        localizedTitle: 'Mukhwak Katha',
-      ),
-    ]);
+    // Set the quick action items now, and again when the language changes.
+    // The saved language arrives a moment after launch, and this covers that
+    // too.
+    _setQuickActions(ref.read(localeController));
+    ref.listenManual<String>(localeController, (previous, next) {
+      if (previous != next) _setQuickActions(next);
+    });
 
     // Keep the home screen widget's text in step with the date and the
     // Hukamnama.
@@ -344,6 +339,11 @@ class _MyAppState extends ConsumerState<MyApp> {
     } on PlatformException catch (e) {
       debugPrint(e.toString());
     }
+  }
+
+  void _setQuickActions(String locale) {
+    final l10n = lookupAppLocalizations(Locale(locale));
+    unawaited(_quickActionsWriter.update(quickActionItems(l10n)));
   }
 
   @override
