@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 import 'package:live_darbar/src/models/hukamnama.dart';
@@ -76,8 +77,10 @@ class HukamnamaCache {
       final name = _nameFor(hukamnama.date);
 
       // Write beside the target and rename, so a crash mid-write leaves the
-      // previous file whole instead of half of a new one.
-      final temp = File('${dir.path}/$name.tmp');
+      // previous file whole instead of half of a new one. Each write has its
+      // own temp file: the app and the widget's background refresh can store
+      // the same day at once, and with 1 shared name the 2 writes mixed in it.
+      final temp = File('${dir.path}/$name.${_tempTag()}.tmp');
       await temp.writeAsString(jsonEncode(hukamnama.toJson()), flush: true);
       await temp.rename('${dir.path}/$name');
 
@@ -93,8 +96,15 @@ class HukamnamaCache {
     }
   }
 
-  /// Deletes `hukamnama_*.json.tmp` files a crash left behind between the
-  /// write and the rename.
+  /// A tag that no other write, in this isolate or another, is using now.
+  static String _tempTag() =>
+      '${DateTime.now().microsecondsSinceEpoch}-${_random.nextInt(1 << 32)}';
+
+  static final _random = Random();
+
+  /// Deletes temp files a crash left behind between the write and the rename:
+  /// `hukamnama_*.json.<tag>.tmp`, and `hukamnama_*.json.tmp` from versions
+  /// before the tag.
   ///
   /// A temp file younger than a minute may belong to a write that is still
   /// running, so it is left alone.
@@ -103,7 +113,11 @@ class HukamnamaCache {
     await for (final entity in dir.list()) {
       if (entity is! File) continue;
       final name = entity.uri.pathSegments.last;
-      if (!name.startsWith(_prefix) || !name.endsWith('$_suffix.tmp')) continue;
+      if (!name.startsWith(_prefix) ||
+          !name.contains('$_suffix.') ||
+          !name.endsWith('.tmp')) {
+        continue;
+      }
       if ((await entity.lastModified()).isBefore(cutoff)) await entity.delete();
     }
   }
