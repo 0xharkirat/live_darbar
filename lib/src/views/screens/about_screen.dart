@@ -16,6 +16,7 @@ import 'package:live_darbar/src/views/widgets/language_switch.dart';
 import 'package:live_darbar/src/views/widgets/pressable.dart';
 import 'package:live_darbar/src/views/widgets/reminder_setting.dart';
 import 'package:live_darbar/src/views/widgets/settings_group.dart';
+import 'package:live_darbar/src/views/widgets/update_setting.dart';
 import 'package:live_darbar/src/views/widgets/widget_setting.dart';
 
 /// About the app, the person who made it, and whose work it carries.
@@ -115,6 +116,11 @@ class AboutScreen extends ConsumerWidget {
                             // after the card on home has gone. The web has no
                             // home screen to put it on.
                             if (widgets) const WidgetSetting(),
+                            // The apps offer a new version once, at launch.
+                            // This asks again, when the listener wants. On the
+                            // web a reload is the update.
+                            if (!ref.watch(isWebProvider))
+                              const UpdateSetting(),
                             _LinkRow(
                               icon: CupertinoIcons.chat_bubble_text,
                               label: l10n.about_section_contact,

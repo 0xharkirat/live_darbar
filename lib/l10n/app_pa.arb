@@ -209,6 +209,9 @@
             }
         }
     },
+    "update_check_title": "ਅੱਪਡੇਟ ਦੀ ਜਾਂਚ ਕਰੋ",
+    "update_check_latest": "ਤੁਹਾਡੇ ਕੋਲ ਸਭ ਤੋਂ ਨਵਾਂ ਵਰਜਨ ਹੈ, {version}।",
+    "update_check_failed": "ਜਾਂਚ ਨਹੀਂ ਹੋ ਸਕੀ। ਇੰਟਰਨੈੱਟ ਨਾਲ ਜੁੜ ਕੇ ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ।",
     "update_now": "ਹੁਣੇ ਅੱਪਡੇਟ ਕਰੋ",
     "@update_now": {
         "description": "Primary button that opens the app store listing"

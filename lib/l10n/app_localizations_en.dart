@@ -163,6 +163,17 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get update_check_title => 'Check for updates';
+
+  @override
+  String update_check_latest(String version) {
+    return 'You have the newest version, $version.';
+  }
+
+  @override
+  String get update_check_failed => 'Could not check. Try again when you are online.';
+
+  @override
   String get update_now => 'Update now';
 
   @override

@@ -209,6 +209,23 @@
             }
         }
     },
+    "update_check_title": "Check for updates",
+    "@update_check_title": {
+        "description": "Row on the About screen that looks for a newer version of the app when tapped"
+    },
+    "update_check_latest": "You have the newest version, {version}.",
+    "@update_check_latest": {
+        "description": "Under Check for updates, after a check, when no newer version exists. The version is already written, for example 3.1.0 (11)",
+        "placeholders": {
+            "version": {
+                "type": "String"
+            }
+        }
+    },
+    "update_check_failed": "Could not check. Try again when you are online.",
+    "@update_check_failed": {
+        "description": "Under Check for updates, when the check could not reach the release file"
+    },
     "update_now": "Update now",
     "@update_now": {
         "description": "Primary button that opens the app store listing"

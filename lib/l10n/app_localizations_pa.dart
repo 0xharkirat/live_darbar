@@ -163,6 +163,17 @@ class AppLocalizationsPa extends AppLocalizations {
   }
 
   @override
+  String get update_check_title => 'ਅੱਪਡੇਟ ਦੀ ਜਾਂਚ ਕਰੋ';
+
+  @override
+  String update_check_latest(String version) {
+    return 'ਤੁਹਾਡੇ ਕੋਲ ਸਭ ਤੋਂ ਨਵਾਂ ਵਰਜਨ ਹੈ, $version।';
+  }
+
+  @override
+  String get update_check_failed => 'ਜਾਂਚ ਨਹੀਂ ਹੋ ਸਕੀ। ਇੰਟਰਨੈੱਟ ਨਾਲ ਜੁੜ ਕੇ ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ।';
+
+  @override
   String get update_now => 'ਹੁਣੇ ਅੱਪਡੇਟ ਕਰੋ';
 
   @override

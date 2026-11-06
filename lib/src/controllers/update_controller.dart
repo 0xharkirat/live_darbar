@@ -57,6 +57,18 @@ final releaseManifestProvider = FutureProvider<Map<String, dynamic>?>((
   }
 });
 
+/// The build number of this install, or null when the platform gives none.
+final currentBuildProvider = FutureProvider<int?>((ref) async {
+  final info = await PackageInfo.fromPlatform();
+  return int.tryParse(info.buildNumber);
+});
+
+/// A check the listener asked for could not say whether a newer version
+/// exists: the phone is offline, or the release file cannot be read.
+class UpdateCheckFailed implements Exception {
+  const UpdateCheckFailed();
+}
+
 /// Offers a made-up newer build, so a demo can show the update sheet with no
 /// release: `--dart-define=DEMO_OFFER_UPDATE=true`. Release builds ignore it.
 const kDemoOfferUpdate = bool.fromEnvironment('DEMO_OFFER_UPDATE');
@@ -134,6 +146,22 @@ class UpdateController extends AsyncNotifier<AppUpdate?> {
         notesEn: const ['Demo: a newer build is on offer.'],
         notesPa: const ['ਡੈਮੋ: ਨਵਾਂ ਵਰਜਨ ਉਪਲਬਧ ਹੈ।'],
       );
+
+  /// Looks for a newer version now, because the listener asked.
+  ///
+  /// It reads the release file again, not the copy read at launch, and it
+  /// ignores a release declined before: the listener asked. Returns the newer
+  /// release, or null when this install is the newest. Throws
+  /// [UpdateCheckFailed] when it cannot tell.
+  Future<AppUpdate?> checkNow() async {
+    final build = await ref.read(currentBuildProvider.future);
+    final manifest = await ref.refresh(releaseManifestProvider.future);
+    if (build == null || manifest == null) throw const UpdateCheckFailed();
+    if (!kReleaseMode && kDemoOfferUpdate) return _demoUpdate(build);
+    final newest = AppUpdate.newestBuild(manifest);
+    if (newest == null) throw const UpdateCheckFailed();
+    return AppUpdate.fromManifest(manifest, currentBuild: build);
+  }
 
   /// Remember that this release was declined, and stop offering it.
   Future<void> dismiss() async {

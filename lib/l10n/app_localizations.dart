@@ -395,6 +395,24 @@ abstract class AppLocalizations {
   /// **'Version {version}'**
   String update_version(String version);
 
+  /// Row on the About screen that looks for a newer version of the app when tapped
+  ///
+  /// In en, this message translates to:
+  /// **'Check for updates'**
+  String get update_check_title;
+
+  /// Under Check for updates, after a check, when no newer version exists. The version is already written, for example 3.1.0 (11)
+  ///
+  /// In en, this message translates to:
+  /// **'You have the newest version, {version}.'**
+  String update_check_latest(String version);
+
+  /// Under Check for updates, when the check could not reach the release file
+  ///
+  /// In en, this message translates to:
+  /// **'Could not check. Try again when you are online.'**
+  String get update_check_failed;
+
   /// Primary button that opens the app store listing
   ///
   /// In en, this message translates to:

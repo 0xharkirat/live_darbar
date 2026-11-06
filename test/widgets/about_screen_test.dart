@@ -10,6 +10,7 @@ import 'package:live_darbar/src/services/reminder_platform.dart';
 import 'package:live_darbar/src/views/screens/about_screen.dart';
 import 'package:live_darbar/src/views/widgets/language_switch.dart';
 import 'package:live_darbar/src/views/widgets/settings_group.dart';
+import 'package:live_darbar/src/views/widgets/update_setting.dart';
 import 'package:url_launcher_platform_interface/link.dart';
 import 'package:url_launcher_platform_interface/url_launcher_platform_interface.dart';
 
@@ -71,6 +72,15 @@ void main() {
     await tester.pumpAndSettle();
     return AppLocalizations.delegate.load(Locale(locale));
   }
+
+  testWidgets('has Check for updates in the apps, and not on the web', (
+    tester,
+  ) async {
+    await pump(tester, 'en');
+    expect(find.byType(UpdateSetting), findsOneWidget);
+    await pump(tester, 'en', web: true);
+    expect(find.byType(UpdateSetting), findsNothing);
+  });
 
   for (final locale in ['en', 'pa']) {
     // Hark, 6 November: the globe sat inside the other icons in English, and
