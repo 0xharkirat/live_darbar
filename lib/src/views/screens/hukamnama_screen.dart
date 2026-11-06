@@ -278,8 +278,9 @@ class _Line extends StatelessWidget {
   /// long pause, green for a short one, as Chet colours them. The colour tells
   /// a reader where to rest, and it breaks up the page.
   TextSpan _gurmukhi(TextStyle style) {
-    if (line.vishraam.isEmpty)
+    if (line.vishraam.isEmpty) {
       return TextSpan(text: line.gurmukhi, style: style);
+    }
     final pauses = {for (final v in line.vishraam) v.after: v.weight};
     final words = line.gurmukhi.split(RegExp(r'\s+'));
     return TextSpan(
