@@ -13,6 +13,9 @@ enum WidgetPalette {
   static let muted = Color(hex: 0xADA398)
   static let gold = Color(hex: 0xE8B04B)
   static let onGold = Color(hex: 0x0C0A09)
+  /// The word before a short pause, and before a long one, as in the reader.
+  static let pauseShort = Color(hex: 0x8FCB9B)
+  static let pauseLong = Color(hex: 0xF08A5D)
 }
 
 extension Color {
@@ -58,6 +61,10 @@ struct WidgetContent: Equatable {
   var meta: String
   /// The Rahao line in Gurmukhi. Nil until the app has loaded a Hukamnama.
   var line: String?
+  /// The words of [line] before a pause, by index: true for a long pause.
+  var pauses: [Int: Bool] = [:]
+  /// The English meaning of [line], for 1 line under it.
+  var meaning: String?
   /// What a screen reader says for the widget away from its buttons.
   var openLabel: String
   var hukamnamaName: String
@@ -79,27 +86,72 @@ struct LiveDarbarWidgetView: View {
   /// 109 pt), the full layout cuts the Rahao line to 1 line.
   static let compactHeight: CGFloat = 120
 
+  /// The line, with the word before each pause in its colour: green before
+  /// a short pause, kesri before a long one. Words are split at white space,
+  /// as Dart counts them.
+  static func gurbani(_ line: String, pauses: [Int: Bool]) -> Text {
+    let words = line.split(whereSeparator: { $0.isWhitespace }).map(String.init)
+    guard !pauses.isEmpty, !words.isEmpty else {
+      return Text(line).foregroundColor(WidgetPalette.foreground)
+    }
+    var text = Text("")
+    for (index, word) in words.enumerated() {
+      if index > 0 { text = text + Text(" ") }
+      let colour: Color
+      switch pauses[index] {
+      case .some(true): colour = WidgetPalette.pauseLong
+      case .some(false): colour = WidgetPalette.pauseShort
+      case .none: colour = WidgetPalette.foreground
+      }
+      text = text + Text(word).foregroundColor(colour)
+    }
+    return text
+  }
+
   var body: some View {
     GeometryReader { space in
       layout(compact: space.size.height < Self.compactHeight)
     }
   }
 
+  /// The widget tries the layout with the English meaning first, and keeps
+  /// it only when the whole Gurbani still fits in its 2 lines. Else it shows
+  /// the Gurbani alone, as before the meaning: the Gurbani is never cut to
+  /// make room for the English.
   private func layout(compact: Bool) -> some View {
+    ViewThatFits(in: .vertical) {
+      if content.line != nil && content.meaning != nil {
+        stack(compact: compact, meaning: true)
+      }
+      stack(compact: compact, meaning: false)
+    }
+    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+  }
+
+  private func stack(compact: Bool, meaning: Bool) -> some View {
     VStack(alignment: .leading, spacing: 0) {
       topLine
       if let line = content.line {
         // Never letter spacing on Gurmukhi: it breaks the matras. The extra
-        // line spacing keeps the tall matras of 2 lines from touching.
-        Text(line)
+        // line spacing keeps the tall matras of 2 lines from touching. Fixed
+        // in height, so the layout never squeezes it to 1 cut line.
+        Self.gurbani(line, pauses: content.pauses)
           .font(.custom(Self.gurbaniFont, size: compact ? 16 : 17))
-          .foregroundColor(WidgetPalette.foreground)
-          .lineSpacing(compact ? 3 : 6)
+          .lineSpacing(compact ? 3 : (meaning ? 4 : 6))
           .lineLimit(2)
-          .padding(.top, compact ? 5 : 8)
+          .fixedSize(horizontal: false, vertical: true)
+          .padding(.top, compact ? 5 : (meaning ? 6 : 8))
           .accessibilityLabel(content.openLabel)
+        if meaning, let text = content.meaning {
+          Text(text)
+            .font(.system(size: compact ? 11 : 12))
+            .foregroundColor(WidgetPalette.muted)
+            .lineLimit(1)
+            .padding(.top, compact ? 1 : 3)
+            .accessibilityHidden(true)
+        }
       }
-      Spacer(minLength: compact ? 6 : 10)
+      Spacer(minLength: compact ? 6 : (meaning ? 8 : 10))
       HStack(spacing: 8) {
         WidgetButton(
           name: content.hukamnamaName,
@@ -117,8 +169,8 @@ struct LiveDarbarWidgetView: View {
         )
       }
     }
-    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
   }
+
 
   private var topLine: some View {
     let rest = content.meta.isEmpty ? "" : " · \(content.meta)"

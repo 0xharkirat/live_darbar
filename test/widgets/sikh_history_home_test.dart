@@ -7,6 +7,7 @@ import 'package:live_darbar/src/views/screens/history_screen.dart';
 import 'package:live_darbar/src/models/sgpc_day.dart';
 import 'package:live_darbar/src/models/sgpc_event.dart';
 import 'package:live_darbar/src/models/sikh_date.dart';
+import 'package:live_darbar/src/views/widgets/sangrand_row.dart';
 
 import '../support/app_harness.dart';
 
@@ -64,8 +65,14 @@ void main() {
   /// The line's text. It is the only rich text on Home: the label, then the
   /// title. ("TODAY" is also the heading of the tiles, so a plain text search
   /// would find 2.)
-  Finder line(String text) => find.byWidgetPredicate(
-        (w) => w is Text && (w.textSpan?.toPlainText().contains(text) ?? false),
+  /// The history line's text. Home has another line of the same shape, the
+  /// Sangrand row, which is not this one.
+  Finder line(String text) => find.byElementPredicate(
+        (e) =>
+            e.widget is Text &&
+            ((e.widget as Text).textSpan?.toPlainText().contains(text) ??
+                false) &&
+            e.findAncestorWidgetOfExactType<SangrandRow>() == null,
       );
 
   /// No line at all.

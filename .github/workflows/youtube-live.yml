@@ -1,0 +1,105 @@
+# Checks every 5 minutes which of SGPC's YouTube streams are live, and writes
+# the answer to the youtube-live branch: live.json, with the video streams
+# first. The app reads it from raw.githubusercontent.com, and opens the kirtan
+# video, never the audio stream. See tool/youtube_live_check.dart.
+#
+# The branch holds 1 commit. Each run replaces it, so 288 runs a day add no
+# history. events.jsonl on the branch keeps the record of each stream's start
+# and end.
+#
+# GitHub runs a schedule late, or skips it, when it is busy. The app trusts
+# live.json for 20 minutes after checkedAt, and after that it falls back to its
+# timetable.
+name: YouTube live check
+
+on:
+  schedule:
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: youtube-live
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      DATA_BRANCH: youtube-live
+    steps:
+      - name: Check out the script
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          path: src
+          persist-credentials: false
+          sparse-checkout: tool
+
+      - name: Set up Dart
+        uses: dart-lang/setup-dart@6afc89df92d6eb3834022f73cd65adc8cdfcb92d # v1.8.1
+        with:
+          sdk: stable
+
+      - name: Check out the data branch
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh auth setup-git
+          url="https://github.com/${GITHUB_REPOSITORY}.git"
+          status=0
+          git ls-remote --exit-code --heads "$url" "$DATA_BRANCH" >/dev/null || status=$?
+          case "$status" in
+            0) git clone --quiet --depth 1 --branch "$DATA_BRANCH" "$url" data ;;
+            2)
+              echo "No $DATA_BRANCH branch yet. Creating it."
+              git init --quiet --initial-branch "$DATA_BRANCH" data
+              git -C data remote add origin "$url"
+              ;;
+            *) exit "$status" ;;
+          esac
+
+      - name: Add the README
+        run: cp src/tool/youtube_live_README.md data/README.md
+
+      - name: Check YouTube
+        id: check
+        continue-on-error: true
+        run: dart src/tool/youtube_live_check.dart --out data
+
+      - name: Push the answer
+        if: steps.check.outcome == 'success'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          cd data
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git checkout --quiet --orphan next
+          git add --all
+          live=$(jq -r '[.live[] | .kind] | if length == 0 then "nothing" else join(", ") end' live.json)
+          git commit --quiet -m "YouTube live check: $live"
+          git push --quiet --force origin "next:$DATA_BRANCH"
+          echo "Live: $live"
+
+      - name: Warn, and fail once the answer is 1 hour old
+        if: steps.check.outcome == 'failure'
+        run: |
+          set -euo pipefail
+          # The tool wrote nothing, so live.json is still the last good answer.
+          last=$(jq -r '.checkedAt // empty' data/live.json 2>/dev/null || true)
+          age=-1
+          if [ -n "$last" ]; then
+            age=$(( ($(date -u +%s) - $(date -u -d "$last" +%s)) / 60 ))
+          fi
+          echo "::warning::YouTube could not be checked. The last good answer is $age minutes old. See the \"Check YouTube\" step."
+          # GitHub emails the owner for each failed scheduled run. Fail only
+          # while the last good answer is 60 to 90 minutes old, so 1 outage
+          # sends a few emails, not 1 every 5 minutes. A run started by hand
+          # always fails, because someone is watching it.
+          if [ "$GITHUB_EVENT_NAME" = workflow_dispatch ]; then exit 1; fi
+          if [ "$age" -ge 60 ] && [ "$age" -lt 90 ]; then exit 1; fi

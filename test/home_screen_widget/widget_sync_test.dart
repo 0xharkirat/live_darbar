@@ -103,6 +103,21 @@ void main() {
     await Future<void>.delayed(const Duration(milliseconds: 50));
   }
 
+  /// Waits until [done] holds, for up to 10 seconds. A fixed wait failed
+  /// once on a loaded Mac (7 November 2026): the write came after it.
+  Future<void> until(bool Function() done) async {
+    final end = DateTime.now().add(const Duration(seconds: 10));
+    while (!done() && DateTime.now().isBefore(end)) {
+      await Future<void>.delayed(const Duration(milliseconds: 10));
+    }
+  }
+
+  String? firstDate() => recorder.writes.isEmpty
+      ? null
+      : (jsonDecode(recorder.writes.last[WidgetKeys.dates]!) as Map)
+          .keys
+          .first as String;
+
   test('writes the date and the Rahao line once the Hukamnama has loaded',
       () async {
     launch();
@@ -204,7 +219,7 @@ void main() {
     // here the test does what the timer does.
     now = DateTime.utc(2026, 11, 2, 18, 40);
     container.invalidate(sikhDateProvider);
-    await settled();
+    await until(() => firstDate() == '2026-11-03');
 
     final dates =
         jsonDecode(recorder.writes.last[WidgetKeys.dates]!) as Map;

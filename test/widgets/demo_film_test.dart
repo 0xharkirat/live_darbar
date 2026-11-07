@@ -100,6 +100,36 @@ void main() {
       });
     }
 
+    // Hark, 6 November: number the steps as the film plays them, subtly.
+    test('say which of the 3 steps the iPhone film is on', () {
+      const film = DemoFilm.iphone;
+      expect(film.stepAt(film.marks[0].t), 0, reason: 'press and hold');
+      expect(film.stepAt(film.marks[1].t), 1, reason: 'Edit');
+      expect(film.stepAt(film.marks[2].t), 1, reason: 'Add Widget');
+      expect(film.stepAt(film.marks[3].t), 2, reason: 'the search field');
+      expect(film.stepAt(film.marks[5].t), 2, reason: 'add the medium size');
+      expect(film.stepAt(film.marks[6].t), isNull, reason: 'Done is after');
+      expect(film.stepAt(film.seconds), isNull);
+    });
+
+    test('say which of the 3 steps the Android film is on', () {
+      const film = DemoFilm.android;
+      expect(film.stepAt(film.marks[0].t), 0, reason: 'press and hold');
+      expect(film.stepAt(film.marks[1].t), 1, reason: 'Widgets');
+      expect(film.stepAt(film.marks[2].t), 2, reason: 'Browse');
+      expect(film.stepAt(film.marks[6].t), 2, reason: 'the drag');
+      expect(film.stepAt(film.seconds), isNull);
+    });
+
+    test('light each step a little before its first tap', () {
+      for (final film in [DemoFilm.iphone, DemoFilm.android]) {
+        for (final (i, start) in film.stepStarts.indexed) {
+          final firstTap = film.marks.firstWhere((m) => film.stepAt(m.t) == i);
+          expect(firstTap.t - start, inInclusiveRange(0.2, 0.6));
+        }
+      }
+    });
+
     test('hold at a press for a long press, and move through a drag', () {
       final drag = DemoFilm.android.marks.last;
       expect(drag.hold, greaterThan(1));

@@ -96,6 +96,18 @@ class AppUpdate {
     );
   }
 
+  /// The newest build the manifest names for this platform, or null when it
+  /// names none it can read. [fromManifest] returns null both for "nothing
+  /// newer" and for a bad file, and a check the listener asked for must tell
+  /// the two apart.
+  static int? newestBuild(Map<String, dynamic> json) {
+    final key = _platformKey;
+    final entry = key == null ? null : json[key];
+    if (entry is! Map) return null;
+    final build = entry['build'];
+    return build is int && entry['version'] is String ? build : null;
+  }
+
   static String _storeUrlFor(String platformKey) =>
       platformKey == 'android' ? kPlayStoreUrl : kAppStoreUrl;
 

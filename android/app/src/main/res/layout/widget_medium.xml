@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-    The widget's one layout, 4 cells wide and 2 rows or more high.
+    The widget's one layout, 4 cells wide and 1 row or more high.
 
     Top to bottom: one line that says what this is, "Hukamnama · 2 Nov ·
-    Ang 668", then the Rahao line, then the two buttons.
+    Ang 668", then the Rahao line, its English meaning, then the two
+    buttons. When the widget is short, WidgetRenderer draws the parts
+    closer together, and drops the meaning, then the top line, when it is
+    shorter still: WidgetForm says what each height shows.
 
     - widget_hukamnama_button plays today's Hukamnama recording, and while it
       plays, pauses it.
@@ -23,6 +26,7 @@
     android:foreground="@drawable/widget_ripple">
 
     <LinearLayout
+        android:id="@+id/widget_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
@@ -78,6 +82,21 @@
             android:textColor="@color/widget_foreground"
             android:textSize="17sp"
             style="@style/WidgetGurbani" />
+
+        <!--
+            The English meaning of the line, in 1 muted line that ends in an
+            ellipsis. WidgetRenderer hides it when the line has none.
+        -->
+        <TextView
+            android:id="@+id/widget_meaning"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="6dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="@color/widget_muted"
+            android:textSize="12sp"
+            android:visibility="gone" />
 
         <!--
             The two buttons, the same size side by side: Hukamnama, then Live

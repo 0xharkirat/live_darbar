@@ -53,9 +53,9 @@ void main() {
   }
 
   ProviderContainer container(WidgetTester tester) => ProviderScope.containerOf(
-    tester.element(find.byType(HukamnamaScreen)),
-    listen: false,
-  );
+        tester.element(find.byType(HukamnamaScreen)),
+        listen: false,
+      );
 
   Finder bell() => find.byType(ReminderBell);
   Finder bellIcon(IconData icon) =>
@@ -63,7 +63,7 @@ void main() {
 
   setUp(() => phone = FakeReminderPlatform());
 
-  testWidgets('is in the top bar, next to the text size controls', (
+  testWidgets('is in the top bar, next to the reading options', (
     tester,
   ) async {
     await openReader(tester);
@@ -71,8 +71,8 @@ void main() {
     expect(bell(), findsOneWidget);
     expect(bellIcon(CupertinoIcons.bell), findsOneWidget);
     final bellBox = tester.getRect(bell());
-    final larger = tester.getRect(find.text('A+'));
-    expect(bellBox.right, lessThan(larger.left), reason: 'before A− and A+');
+    final larger = tester.getRect(find.byKey(const ValueKey('reader-options')));
+    expect(bellBox.right, lessThanOrEqualTo(larger.left), reason: 'before Aa');
     expect(
       (bellBox.center.dy - larger.center.dy).abs(),
       lessThan(4),
@@ -103,7 +103,8 @@ void main() {
     final semantics = tester.ensureSemantics();
     await openReader(tester);
 
-    var node = tester.getSemantics(find.bySemanticsLabel(l10n.reminder_setting));
+    var node =
+        tester.getSemantics(find.bySemanticsLabel(l10n.reminder_setting));
     expect(node.label, l10n.reminder_setting);
     expect(node.value, l10n.reminder_off);
     expect(tester.getSize(find.bySemanticsLabel(l10n.reminder_setting)).height,
@@ -118,7 +119,8 @@ void main() {
   });
 
   group('when the reminder is off', () {
-    testWidgets('opens the question, and Remind me turns it on', (tester) async {
+    testWidgets('opens the question, and Remind me turns it on',
+        (tester) async {
       await openReader(tester);
 
       await tester.tap(bell());

@@ -129,6 +129,19 @@
       <img class="center" aria-hidden="true" src="splash/img/light-1x.png" alt="" style="background-color: white; border-radius: 16px; padding: 16px;">
   </picture>
   
+  <!--
+    The app's addresses have no # since 7 November 2026: /app/hukamnama, not
+    /app/#/hukamnama. A link shared before that still opens its page: this
+    moves the page from after the # into the path, before Flutter reads it.
+  -->
+  <script id="legacy-hash-address">
+    (function () {
+      var hash = location.hash;
+      if (hash.indexOf('#/') !== 0) return;
+      var base = document.querySelector('base').getAttribute('href') || '/';
+      history.replaceState(null, '', base + hash.slice(2) + location.search);
+    })();
+  </script>
   <script src="flutter_bootstrap.js" async=""></script>
 
 

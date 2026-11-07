@@ -1,5 +1,7 @@
-• A home screen widget for iPhone: play today's Hukamnama or live kirtan without opening the app
+• Hukamnama line by line: the Punjabi and English meaning under each line, with the pauses in colour
+• Read earlier Hukamnamas, and the Sangrand Hukamnama each month
+• A home screen widget for iPhone: today's Hukamnama line with its meaning. Play the Hukamnama or live kirtan without opening the app
+• Watch the live video from Sri Harmandir Sahib on YouTube during the kirtan hours
 • A daily Hukamnama reminder, at the time you choose
-• Today in Sikh history, with the whole Nanakshahi year as a calendar
-• Easier to read with large text sizes
-• The screen stays on while you read the Hukamnama
+• Today in Sikh history, with the whole Nanakshahi year and search
+• Easier to read with large text, and the screen stays on while you read

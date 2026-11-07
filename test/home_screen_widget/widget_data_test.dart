@@ -15,6 +15,15 @@ Hukamnama recorded() => Hukamnama.fromSgpc(
       ) as Map<String, dynamic>,
     );
 
+/// The same day as the mirror holds it: the lines with their pauses and
+/// meanings.
+Hukamnama mirrored() => Hukamnama.fromSgpc(
+      jsonDecode(
+        File('test/fixtures/mirror_hukamnama_2026_11_02.json')
+            .readAsStringSync(),
+      ) as Map<String, dynamic>,
+    );
+
 Hukamnama onDay(Hukamnama h, DateTime day) => Hukamnama(
       date: day,
       ang: h.ang,
@@ -107,7 +116,8 @@ void main() {
     test('is in Punjabi when the app is, with Gurmukhi digits', () {
       final data = build(language: 'pa', hukamnama: recorded());
       expect(data[WidgetKeys.language], 'pa');
-      expect(data[WidgetKeys.hukamnamaMeta], matches(RegExp(r'^੨ \S+ · ਅੰਗ ੬੬੮$')));
+      expect(data[WidgetKeys.hukamnamaMeta],
+          matches(RegExp(r'^੨ \S+ · ਅੰਗ ੬੬੮$')));
     });
 
     test('leaves out the Ang when SGPC gave none', () {
@@ -116,6 +126,37 @@ void main() {
         lines: recorded().lines,
       );
       expect(build(hukamnama: h)[WidgetKeys.hukamnamaMeta], '1 Nov');
+    });
+
+    // Hark, 7 November: "one line of english translation as well on widget
+    // along with same color formatting of hukamnama".
+    test('takes the Rahao line from the mirror, with its pauses and English',
+        () {
+      final h = mirrored();
+      final rahao =
+          h.shabad!.lines.firstWhere((l) => l.gurmukhi.contains('ਰਹਾਉ'));
+      final data = build(hukamnama: h);
+
+      expect(data[WidgetKeys.line], rahao.gurmukhi);
+      expect(data[WidgetKeys.lineMeaning], rahao.english);
+      expect(jsonDecode(data[WidgetKeys.linePauses]!), {
+        for (final v in rahao.vishraam)
+          '${v.after}': v.weight == HukamnamaPause.light ? 'short' : 'long',
+      });
+      expect(rahao.vishraam, isNotEmpty, reason: 'the fixture has pauses');
+    });
+
+    test('gives the English meaning in Punjabi too', () {
+      final data = build(language: 'pa', hukamnama: mirrored());
+      expect(data[WidgetKeys.lineMeaning], isNotEmpty);
+    });
+
+    test('clears the pauses and the meaning on a day with SGPC\'s text only',
+        () {
+      // So a meaning of an earlier line never shows under this one.
+      final data = build(hukamnama: recorded());
+      expect(data[WidgetKeys.linePauses], '{}');
+      expect(data[WidgetKeys.lineMeaning], '');
     });
 
     test('is left out entirely until a text has loaded', () {

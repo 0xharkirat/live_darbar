@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:live_darbar/l10n/app_localizations.dart';
 import 'package:live_darbar/src/controllers/widget_card_controller.dart';
+import 'package:live_darbar/src/core/palette.dart';
 import 'package:live_darbar/src/core/widget_card_rules.dart';
 import 'package:live_darbar/src/views/screens/home_screen.dart';
 import 'package:live_darbar/src/views/widgets/demo_film.dart';
@@ -55,7 +56,8 @@ Future<void> _pumpHome(
 
 /// Whether a [CustomPaint] is the one that draws a film's taps.
 bool _isMarks(Element e) =>
-    e.widget is CustomPaint && (e.widget as CustomPaint).painter is TapMarksPainter;
+    e.widget is CustomPaint &&
+    (e.widget as CustomPaint).painter is TapMarksPainter;
 
 /// The app goes to the background and comes back, as when the listener adds
 /// the widget on the home screen.
@@ -420,6 +422,33 @@ void main() {
         expect(title, lessThan(step1));
       });
 
+      testWidgets('lights the step the film is on, and none after the last', (
+        tester,
+      ) async {
+        final films = FakeFilmPlayers();
+        await openOnIphone(tester, films: films);
+
+        Color? badge(int i) => (tester
+                .widget<AnimatedContainer>(
+                  find.descendant(
+                    of: find.byKey(ValueKey('widget-step-$i')),
+                    matching: find.byType(AnimatedContainer),
+                  ),
+                )
+                .decoration as BoxDecoration?)
+            ?.color;
+        Future<List<bool>> lit(double seconds) async {
+          films.last!.playAt(seconds);
+          await tester.pump(const Duration(milliseconds: 400));
+          return [for (var i = 0; i < 3; i++) badge(i) == Palette.gold];
+        }
+
+        expect(await lit(0.6), [true, false, false]);
+        expect(await lit(3.0), [false, true, false]);
+        expect(await lit(8.0), [false, false, true]);
+        expect(await lit(17.0), [false, false, false]);
+      });
+
       testWidgets('is a phone frame in the film’s own ratio, centred', (
         tester,
       ) async {
@@ -454,7 +483,8 @@ void main() {
         expect(videoOpacity(tester), 1);
         expect(posterAsset(tester), DemoFilm.iphone.poster,
             reason: 'the poster stays under the film');
-        expect(find.byType(CustomPaint).evaluate().where(_isMarks), hasLength(1));
+        expect(
+            find.byType(CustomPaint).evaluate().where(_isMarks), hasLength(1));
       });
 
       testWidgets('draws the taps over the film, and moves them with it', (
@@ -545,8 +575,10 @@ void main() {
         expect(player.playing, isFalse);
 
         tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.hidden);
-        tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.inactive);
-        tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+        tester.binding
+            .handleAppLifecycleStateChanged(AppLifecycleState.inactive);
+        tester.binding
+            .handleAppLifecycleStateChanged(AppLifecycleState.resumed);
         await tester.pump();
         expect(player.plays, greaterThan(plays));
         expect(player.playing, isTrue);
@@ -636,18 +668,18 @@ void main() {
           }
         });
 
-        test('are all that the app carries: 2 films, 2 posters, under 1 MB', () {
-          final files = Directory('assets/videos')
-              .listSync()
-              .whereType<File>()
-              .toList();
+        test('are all that the app carries: 2 films, 2 posters, under 1 MB',
+            () {
+          final files =
+              Directory('assets/videos').listSync().whereType<File>().toList();
           expect(files, hasLength(4));
           final total = files.fold<int>(0, (s, f) => s + f.lengthSync());
           expect(total, lessThan(1000 * 1000), reason: '$total bytes');
         });
 
         test('replace the animated clip, which is gone', () {
-          expect(File('assets/images/add_widget_demo.webp').existsSync(), isFalse);
+          expect(
+              File('assets/images/add_widget_demo.webp').existsSync(), isFalse);
           expect(
             File('assets/images/add_widget_demo_still.webp').existsSync(),
             isFalse,

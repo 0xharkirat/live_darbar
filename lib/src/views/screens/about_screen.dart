@@ -2,11 +2,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:live_darbar/l10n/app_localizations.dart';
+import 'package:live_darbar/src/controllers/review_prompt_controller.dart';
 import 'package:live_darbar/src/core/app_type.dart';
 import 'package:live_darbar/src/core/app_version.dart';
 import 'package:live_darbar/src/core/open_link.dart';
 import 'package:live_darbar/src/core/palette.dart';
 import 'package:live_darbar/src/core/platform.dart';
+import 'package:live_darbar/src/core/share.dart';
 import 'package:live_darbar/src/core/store_links.dart';
 import 'package:live_darbar/src/home_screen_widget/widget_install.dart';
 import 'package:live_darbar/src/services/reminder_platform.dart';
@@ -16,6 +18,7 @@ import 'package:live_darbar/src/views/widgets/language_switch.dart';
 import 'package:live_darbar/src/views/widgets/pressable.dart';
 import 'package:live_darbar/src/views/widgets/reminder_setting.dart';
 import 'package:live_darbar/src/views/widgets/settings_group.dart';
+import 'package:live_darbar/src/views/widgets/update_setting.dart';
 import 'package:live_darbar/src/views/widgets/widget_setting.dart';
 
 /// About the app, the person who made it, and whose work it carries.
@@ -67,30 +70,39 @@ class AboutScreen extends ConsumerWidget {
                               ),
                               // At a large text size the switch no longer
                               // fits beside the label, and drops under it.
-                              child: Wrap(
-                                alignment: WrapAlignment.spaceBetween,
-                                crossAxisAlignment: WrapCrossAlignment.center,
-                                runSpacing: 8,
-                                children: [
-                                  Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      const Icon(
-                                        CupertinoIcons.globe,
-                                        size: 20,
-                                        color: Palette.gold,
-                                      ),
-                                      const SizedBox(width: 16),
-                                      Flexible(
-                                        child: Text(
-                                          l10n.language_tooltip,
-                                          style: AppType.body,
+                              // The group's column centres a child that is
+                              // narrower than it, and a Wrap is only as wide
+                              // as its runs, so the row takes the full width:
+                              // the icon then lines up with the icons under it
+                              // and the switch with the toggles, whatever the
+                              // length of the label in each language.
+                              child: SizedBox(
+                                width: double.infinity,
+                                child: Wrap(
+                                  alignment: WrapAlignment.spaceBetween,
+                                  crossAxisAlignment: WrapCrossAlignment.center,
+                                  runSpacing: 8,
+                                  children: [
+                                    Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        const Icon(
+                                          CupertinoIcons.globe,
+                                          size: 20,
+                                          color: Palette.gold,
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                  const LanguageSwitch(),
-                                ],
+                                        const SizedBox(width: 16),
+                                        Flexible(
+                                          child: Text(
+                                            l10n.language_tooltip,
+                                            style: AppType.body,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    const LanguageSwitch(),
+                                  ],
+                                ),
                               ),
                             ),
                             // The daily reminder is a setting like the
@@ -106,6 +118,11 @@ class AboutScreen extends ConsumerWidget {
                             // after the card on home has gone. The web has no
                             // home screen to put it on.
                             if (widgets) const WidgetSetting(),
+                            // The apps offer a new version once, at launch.
+                            // This asks again, when the listener wants. On the
+                            // web a reload is the update.
+                            if (!ref.watch(isWebProvider))
+                              const UpdateSetting(),
                             _LinkRow(
                               icon: CupertinoIcons.chat_bubble_text,
                               label: l10n.about_section_contact,
@@ -124,6 +141,32 @@ class AboutScreen extends ConsumerWidget {
                                 icon: CupertinoIcons.house,
                                 label: l10n.about_site,
                                 url: kSiteUrl,
+                              ),
+                          ],
+                        ),
+                        const SizedBox(height: 36),
+                        // Free forever, so the only help asked for is a
+                        // share or a rating. No money, no tip jar.
+                        _Heading(l10n.support_heading),
+                        _Prose([l10n.support_body]),
+                        const SizedBox(height: 16),
+                        SettingsGroup(
+                          children: [
+                            _LinkRow.action(
+                              icon: CupertinoIcons.share,
+                              label: l10n.share_app,
+                              onTap: (context) => shareApp(context),
+                            ),
+                            // The web has no store of its own; its footer on
+                            // Home already links both.
+                            if (!ref.watch(isWebProvider))
+                              _LinkRow.action(
+                                icon: CupertinoIcons.star,
+                                label: l10n.rate_app,
+                                trailing: CupertinoIcons.arrow_up_right,
+                                onTap: (_) => ref
+                                    .read(reviewPlatformProvider)
+                                    .openStoreListing(),
                               ),
                           ],
                         ),
@@ -261,18 +304,42 @@ class _Prose extends StatelessWidget {
 }
 
 class _LinkRow extends StatelessWidget {
-  const _LinkRow({required this.icon, required this.label, required this.url});
+  const _LinkRow({required this.icon, required this.label, required this.url})
+      : action = null,
+        trailing = CupertinoIcons.arrow_up_right;
+
+  /// A row that does something in the app, such as opening the share sheet,
+  /// rather than opening a link. [action] gets the row's own context, which
+  /// the share sheet points at on an iPad.
+  const _LinkRow.action({
+    required this.icon,
+    required this.label,
+    required void Function(BuildContext context) onTap,
+    this.trailing = CupertinoIcons.chevron_right,
+  })  : action = onTap,
+        url = null;
 
   final IconData icon;
   final String label;
-  final String url;
+  final String? url;
+  final void Function(BuildContext context)? action;
+  final IconData trailing;
+
+  void _onTap(BuildContext context) {
+    final url = this.url;
+    if (url != null) {
+      openLink(url);
+    } else {
+      action?.call(context);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Pressable(
       scale: 0.99,
       semanticLabel: label,
-      onTap: () => openLink(url),
+      onTap: () => _onTap(context),
       child: ConstrainedBox(
         constraints: const BoxConstraints(minHeight: 52),
         child: Padding(
@@ -282,11 +349,7 @@ class _LinkRow extends StatelessWidget {
               Icon(icon, size: 20, color: Palette.gold),
               const SizedBox(width: 16),
               Expanded(child: Text(label, style: AppType.body)),
-              const Icon(
-                CupertinoIcons.arrow_up_right,
-                size: 15,
-                color: Palette.faint,
-              ),
+              Icon(trailing, size: 15, color: Palette.faint),
             ],
           ),
         ),

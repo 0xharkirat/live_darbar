@@ -302,6 +302,66 @@ void main() {
     });
   });
 
+  // 7 November 2026: SGPC's Hukamnama was pauris 69 to 73 of Sidh Gosht, on
+  // Ang 946. SGPC first printed the title "ਰਾਮਕਲੀ ਮਹਲਾ ੧ ਸਿਧ ਗੋਸਟਿ", and then
+  // changed it to "ਰਾਮਕਲੀ ਮਹਲਾ ੧ ਦਖਣੀ ਓਅੰਕਾਰ", the bani before it. Hark asked
+  // for the right title, and a meaning for ੴ.
+  group('the title of a part of a long bani', () {
+    late Directory dir;
+    late ShabadOsLines lines;
+
+    setUpAll(() {
+      if (!hasSqlite) return;
+      dir = Directory.systemTemp.createTempSync('shabad_os_sidh_gosht_test');
+      final file = buildShabadOsDatabase(dir, fixture: shabadOsSidhGosht);
+      lines = ShabadOsLines(
+        ShabadOsDatabase(
+          file,
+          expectedBytes: file.lengthSync(),
+          download: (_) async => fail('It must not download.'),
+        ),
+      );
+    });
+    tearDownAll(() {
+      if (hasSqlite) dir.deleteSync(recursive: true);
+    });
+
+    test('is the title at the start of the bani, not SGPC\'s', () async {
+      final day = _sgpc('2026_11_07');
+      expect(day['gheading1'], 'ਰਾਮਕਲੀ ਮਹਲਾ ੧ ਦਖਣੀ ਓਅੰਕਾਰ');
+
+      final result = await lines.linesFor(day);
+      expect(result.shabad['matched'], isTrue);
+      expect(result.lines, hasLength(30));
+
+      final heading =
+          (result.shabad['heading'] as List).cast<Map<String, Object?>>();
+      expect([
+        for (final h in heading) h['gurmukhi']
+      ], [
+        'ਰਾਮਕਲੀ ਮਹਲਾ ੧ ਸਿਧ ਗੋਸਟਿ ॥',
+        'ੴ ਸਤਿਗੁਰ ਪ੍ਰਸਾਦਿ ॥',
+      ]);
+      expect(heading.first['ang'], 938);
+    }, skip: hasSqlite ? false : 'sqlite3 is not installed');
+
+    test('gives ੴ its meanings', () async {
+      final result = await lines.linesFor(_sgpc('2026_11_07'));
+      final onkar =
+          (result.shabad['heading'] as List).cast<Map<String, Object?>>()[1];
+      expect(
+        onkar['english'],
+        'One Universal Creator God. By The Grace Of The True Guru:',
+      );
+      expect(onkar['punjabi'],
+          'ਅਕਾਲ ਪੁਰਖ ਇੱਕ ਹੈ ਅਤੇ ਸਤਿਗੁਰੂ ਦੀ ਕਿਰਪਾ ਨਾਲ ਮਿਲਦਾ ਹੈ।');
+    }, skip: hasSqlite ? false : 'sqlite3 is not installed');
+
+    test('asks the mirror to look at every day again', () {
+      expect(kMatcherVersion, 2);
+    });
+  });
+
   group('ShabadOsDatabase.ensure', () {
     late Directory dir;
     setUp(() {
@@ -399,6 +459,21 @@ void main() {
       ]);
       expect(result.shabad['credits'], kCredits);
       expect([for (final l in result.lines) l['id']], _nov2Ids);
+    }, skip: hasSqlite ? false : 'sqlite3 is not installed');
+
+    // SGPC prints the title apart from the text (`gheading1`, `gheading2`).
+    // The mirror gives it from the database too, with its meanings.
+    test('gives the title line of a shabad, with its meanings', () async {
+      final result = await lines.linesFor(_sgpc('2026_11_02'));
+      final heading =
+          (result.shabad['heading'] as List).cast<Map<String, Object?>>();
+
+      expect([for (final h in heading) h['gurmukhi']], ['ਧਨਾਸਰੀ ਮਹਲਾ ੪ ॥']);
+      expect(heading.single['english'], 'Dhanaasaree, Fourth Mehl:');
+      // Prof. Sahib Singh gives no Punjabi meaning for a raag title.
+      expect(heading.single['punjabi'], isNull);
+      // The title is not a line of the text.
+      expect(result.lines.first['gurmukhi'], isNot(contains('ਮਹਲਾ')));
     }, skip: hasSqlite ? false : 'sqlite3 is not installed');
 
     test('writes the pauses apart from the Gurmukhi', () async {

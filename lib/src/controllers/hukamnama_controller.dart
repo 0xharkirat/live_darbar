@@ -26,6 +26,15 @@ final hukamnamaCacheProvider = Provider<HukamnamaCache>((ref) {
 /// requests an hour.
 const kHukamnamaRetryInterval = Duration(minutes: 15);
 
+/// How many more times in a day the controller asks for today's line
+/// meanings, while it holds today's text without them.
+///
+/// The mirror adds the lines some minutes after SGPC posts: on 7 November
+/// 2026, an hour after. 8 asks, 15 minutes apart, wait about 2 hours. A day
+/// that still has no lines then has none that day: the mirror could not match
+/// its shabad.
+const kHukamnamaLineRetries = 8;
+
 /// The Hukamnama as text, for the most recent day available.
 ///
 /// The value is a [Hukamnama] with its own [Hukamnama.date]. That date is not
@@ -37,7 +46,9 @@ const kHukamnamaRetryInterval = Duration(minutes: 15);
 /// today's.
 ///
 /// What the listener sees, in order:
-/// 1. Today's text is on disk: it opens at once and nothing is fetched.
+/// 1. Today's text is on disk: it opens at once and nothing is fetched. A copy
+///    with no line meanings (saved before the apps read them, or before the
+///    mirror had the day) is fetched once more in the background.
 /// 2. An earlier day's text is on disk: it opens at once as the value, and
 ///    today's is fetched in the background. If today's is not up yet, or the
 ///    phone is offline, the earlier text stays.
@@ -57,9 +68,19 @@ const kHukamnamaRetryInterval = Duration(minutes: 15);
 /// asks again every [kHukamnamaRetryInterval], for as long as it is alive. It
 /// stops as soon as it holds today's text, and starts again at the next SGPC
 /// midnight. This is the same on web, where the service reads the mirror.
+///
+/// Today's text with no line meanings is asked for again the same way, at most
+/// [kHukamnamaLineRetries] times a day, and at once when the reader opens
+/// ([refreshForLines]). The mirror can copy the day after SGPC posts it.
 class HukamnamaController extends AsyncNotifier<Hukamnama> {
   Timer? _rollover;
   Timer? _retry;
+
+  /// The SGPC day that [_lineRetries] counts for.
+  DateTime? _lineRetriesDay;
+
+  /// How many retries for line meanings ran on [_lineRetriesDay].
+  int _lineRetries = 0;
 
   /// How many [refresh] calls are running. A retry that comes due while one is
   /// running does nothing, because that one re-arms the retry when it ends.
@@ -89,22 +110,27 @@ class HukamnamaController extends AsyncNotifier<Hukamnama> {
     final today = _today();
 
     final cachedToday = await cache.read(today);
-    if (cachedToday != null) return cachedToday;
+    if (cachedToday != null) {
+      if (cachedToday.shabad == null) _refreshAfterBuild();
+      return cachedToday;
+    }
 
     final earlier = await cache.readLatest();
     if (earlier != null) {
-      // Open on this at once, and look for today's afterward. The refresh runs
-      // as its own event, after this build has delivered its value, so the
-      // listener sees the text first and then a loading state that still
-      // holds it. Looking for today's is not a reason to keep the screen
-      // empty.
-      Timer.run(() {
-        if (ref.mounted) unawaited(refresh());
-      });
+      _refreshAfterBuild();
       return earlier;
     }
     return _load(today);
   }
+
+  /// Opens on the stored text at once, and looks for newer text afterward.
+  /// The refresh runs as its own event, after this build has delivered its
+  /// value, so the listener sees the text first and then a loading state that
+  /// still holds it. Looking for newer text is not a reason to keep the screen
+  /// empty.
+  void _refreshAfterBuild() => Timer.run(() {
+        if (ref.mounted) unawaited(refresh());
+      });
 
   /// Asks the service for the newest text again, keeping what is shown
   /// meanwhile.
@@ -138,6 +164,18 @@ class HukamnamaController extends AsyncNotifier<Hukamnama> {
     }
   }
 
+  /// Asks again for today's line meanings when the text on screen is today's
+  /// and has none. The reader calls it when it opens, so a listener who opens
+  /// it after the mirror copied the day sees the lines without waiting for the
+  /// next retry. It does nothing while a refresh runs, and nothing for an
+  /// earlier day's text, which has its own retry.
+  void refreshForLines() {
+    final shown = state.value;
+    if (shown == null || shown.shabad != null || _refreshing > 0) return;
+    if (!shown.isFor(_today())) return;
+    unawaited(refresh());
+  }
+
   DateTime _today() => sgpcDayOf(ref.read(clockProvider)());
 
   /// Arms one timer for the start of the next SGPC day, replacing any other.
@@ -148,7 +186,8 @@ class HukamnamaController extends AsyncNotifier<Hukamnama> {
     });
   }
 
-  /// Arms one retry timer when [shown] is not today's text, else none.
+  /// Arms one retry timer when [shown] is not today's text, or is today's
+  /// with no line meanings and the day has retries left. Else none.
   ///
   /// [shown] is null when there is nothing to show, which is a failure to
   /// retry as well. Any timer already armed is replaced, so calling this after
@@ -159,11 +198,23 @@ class HukamnamaController extends AsyncNotifier<Hukamnama> {
     _retry?.cancel();
     _retry = null;
     if (!ref.mounted) return;
-    if (shown != null && shown.isFor(_today())) return;
+
+    final today = _today();
+    final forLines = shown != null && shown.isFor(today);
+    if (forLines) {
+      if (shown.shabad != null) return;
+      if (_lineRetriesDay != today) {
+        _lineRetriesDay = today;
+        _lineRetries = 0;
+      }
+      if (_lineRetries >= kHukamnamaLineRetries) return;
+    }
 
     _retry = Timer(kHukamnamaRetryInterval, () {
       _retry = null;
-      if (ref.mounted && _refreshing == 0) unawaited(refresh());
+      if (!ref.mounted || _refreshing > 0) return;
+      if (forLines) _lineRetries++;
+      unawaited(refresh());
     });
   }
 
@@ -183,5 +234,28 @@ final hukamnamaProvider = AsyncNotifierProvider<HukamnamaController, Hukamnama>(
   // A failed build is shown as an error with a retry button. Riverpod's
   // default is to retry a failing build by itself, up to 10 times, behind the
   // listener's back. This feature already has an explicit way to try again.
+  retry: (retryCount, error) => null,
+);
+
+/// The Hukamnama of an earlier day, for the reader that opens it.
+///
+/// [day] is an SGPC day, as UTC midnight (`parseSgpcDay`, `sgpcDayOf`). It is
+/// asked of the service as it is, so the native apps read SGPC's archive and
+/// the web reads its copy (see [HukamnamaService.fetch]). A day with no text
+/// is a [HukamnamaNotPublishedException]; a phone that is offline gets the
+/// client's own error.
+///
+/// An earlier day never changes, so a text that was read stays for the rest of
+/// the session and reopening the day asks nothing. It is not stored on disk:
+/// the stored text is today's, for the controller above and the home screen
+/// widget. A failure is not kept, and nothing retries it behind the reader's
+/// back. The reader has a retry button, which invalidates this.
+final hukamnamaForDayProvider =
+    FutureProvider.autoDispose.family<Hukamnama, DateTime>(
+  (ref, day) async {
+    final read = await ref.watch(hukamnamaServiceProvider).fetch(day);
+    ref.keepAlive();
+    return read;
+  },
   retry: (retryCount, error) => null,
 );

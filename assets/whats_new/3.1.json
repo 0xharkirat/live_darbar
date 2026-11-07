@@ -2,7 +2,29 @@
   "release": "3.1",
   "items": [
     {
-      "only": ["ios"],
+      "title": {
+        "en": "Hukamnama line by line",
+        "pa": "ਹੁਕਮਨਾਮਾ ਤੁਕ-ਤੁਕ ਕਰਕੇ"
+      },
+      "body": {
+        "en": "The Punjabi and English meaning under each line, with the pauses in colour.",
+        "pa": "ਹਰ ਤੁਕ ਹੇਠਾਂ ਪੰਜਾਬੀ ਅਤੇ ਅੰਗਰੇਜ਼ੀ ਅਰਥ, ਵਿਸ਼ਰਾਮ ਰੰਗਾਂ ਵਿੱਚ।"
+      }
+    },
+    {
+      "title": {
+        "en": "Earlier and Sangrand Hukamnamas",
+        "pa": "ਪਿਛਲੇ ਅਤੇ ਸੰਗਰਾਂਦ ਦੇ ਹੁਕਮਨਾਮੇ"
+      },
+      "body": {
+        "en": "Tap the date in the reader to read an earlier day. Each month, read the Sangrand Hukamnama.",
+        "pa": "ਪਿਛਲੇ ਦਿਨ ਦਾ ਹੁਕਮਨਾਮਾ ਪੜ੍ਹਨ ਲਈ ਤਾਰੀਖ਼ ਦਬਾਓ। ਹਰ ਮਹੀਨੇ ਸੰਗਰਾਂਦ ਦਾ ਹੁਕਮਨਾਮਾ ਪੜ੍ਹੋ।"
+      }
+    },
+    {
+      "only": [
+        "ios"
+      ],
       "title": {
         "en": "Hukamnama widget on your iPhone home screen",
         "pa": "ਤੁਹਾਡੀ ਆਈਫੋਨ ਹੋਮ ਸਕ੍ਰੀਨ ਉੱਤੇ ਹੁਕਮਨਾਮਾ ਵਿਜੇਟ"
@@ -13,7 +35,9 @@
       }
     },
     {
-      "only": ["android"],
+      "only": [
+        "android"
+      ],
       "title": {
         "en": "Add the Hukamnama widget in 1 tap",
         "pa": "ਇੱਕ ਟੈਪ ਨਾਲ ਹੁਕਮਨਾਮਾ ਵਿਜੇਟ ਜੋੜੋ"
@@ -24,35 +48,13 @@
       }
     },
     {
-      "only": ["android", "ios"],
       "title": {
-        "en": "Daily Hukamnama reminder",
-        "pa": "ਰੋਜ਼ਾਨਾ ਹੁਕਮਨਾਮਾ ਰਿਮਾਈਂਡਰ"
+        "en": "Watch live on YouTube",
+        "pa": "YouTube ਉੱਤੇ ਲਾਈਵ ਦੇਖੋ"
       },
       "body": {
-        "en": "Get a reminder each day, at the time you choose.",
-        "pa": "ਹਰ ਰੋਜ਼, ਤੁਹਾਡੀ ਚੁਣੀ ਹੋਈ ਵੇਲੇ, ਇੱਕ ਰਿਮਾਈਂਡਰ ਮਿਲੇਗਾ।"
-      }
-    },
-    {
-      "title": {
-        "en": "Today in Sikh history",
-        "pa": "ਸਿੱਖ ਇਤਿਹਾਸ ਵਿੱਚ ਅੱਜ"
-      },
-      "body": {
-        "en": "See what happened on each day of the Nanakshahi year.",
-        "pa": "ਨਾਨਕਸ਼ਾਹੀ ਸਾਲ ਦੇ ਹਰ ਦਿਨ ਦੀਆਂ ਘਟਨਾਵਾਂ ਵੇਖੋ।"
-      }
-    },
-    {
-      "only": ["ios"],
-      "title": {
-        "en": "Films that show how to add the widget",
-        "pa": "ਵਿਜੇਟ ਜੋੜਨ ਦਾ ਤਰੀਕਾ ਦੱਸਣ ਵਾਲੀਆਂ ਫ਼ਿਲਮਾਂ"
-      },
-      "body": {
-        "en": "Watch the steps, then do them on your phone.",
-        "pa": "ਪਹਿਲਾਂ ਕਦਮ ਵੇਖੋ, ਫਿਰ ਆਪਣੇ ਫ਼ੋਨ ਤੇ ਕਰੋ।"
+        "en": "During the kirtan hours, open the live video from Sri Harmandir Sahib.",
+        "pa": "ਕੀਰਤਨ ਦੇ ਸਮੇਂ, ਸ੍ਰੀ ਹਰਿਮੰਦਰ ਸਾਹਿਬ ਤੋਂ ਲਾਈਵ ਵੀਡੀਓ ਖੋਲ੍ਹੋ।"
       }
     }
   ]

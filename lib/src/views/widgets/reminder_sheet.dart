@@ -9,6 +9,7 @@ import 'package:live_darbar/src/core/amritsar_time.dart';
 import 'package:live_darbar/src/core/app_type.dart';
 import 'package:live_darbar/src/core/clock.dart';
 import 'package:live_darbar/src/core/motion.dart';
+import 'package:live_darbar/src/core/palette.dart';
 import 'package:live_darbar/src/models/reminder_settings.dart';
 import 'package:live_darbar/src/models/reminder_time.dart';
 import 'package:live_darbar/src/models/sgpc_day.dart';
@@ -56,7 +57,8 @@ String reminderWhenLabel(
       reminderClockLabel(context, ReminderTime(time.hour, time.minute));
   return here.minutes == time.minutes
       ? l10n.reminder_time_amritsar_only(amritsar)
-      : l10n.reminder_time_amritsar(amritsar, reminderClockLabel(context, here));
+      : l10n.reminder_time_amritsar(
+          amritsar, reminderClockLabel(context, here));
 }
 
 /// How long the reader must be calm, on top and at rest, before the question
@@ -192,8 +194,7 @@ class ReminderPrompt extends ConsumerStatefulWidget {
 class _ReminderPromptState extends ConsumerState<ReminderPrompt> {
   /// Whether the reminder was on when the sheet opened. The sheet keeps its
   /// shape while it closes after "Remind me", so it does not flash the other.
-  late final bool _wasOn =
-      ref.read(reminderProvider).value?.enabled ?? false;
+  late final bool _wasOn = ref.read(reminderProvider).value?.enabled ?? false;
 
   bool _busy = false;
   ReminderProblem _problem = ReminderProblem.none;
@@ -245,9 +246,8 @@ class _ReminderPromptState extends ConsumerState<ReminderPrompt> {
         : ReminderProblem.none;
     final shown = failed ? _problem : liveProblem;
     final message = switch (shown) {
-      ReminderProblem.none => _wasOn
-          ? l10n.reminder_on_body(when)
-          : l10n.reminder_prompt_body(when),
+      ReminderProblem.none =>
+        _wasOn ? l10n.reminder_on_body(when) : l10n.reminder_prompt_body(when),
       ReminderProblem.blocked => l10n.reminder_blocked_hint,
       ReminderProblem.failed => l10n.reminder_failed_hint,
     };
@@ -321,6 +321,23 @@ class _ReminderTimeSheetState extends ConsumerState<_ReminderTimeSheet> {
   /// the time as it was, in its own zone.
   ReminderTime? _picked;
 
+  /// The time on the wheel, said in Amritsar: "1:30 PM here is 8:00 AM in
+  /// Amritsar". It follows the wheel, so a listener abroad can pick a time by
+  /// the Darbar Sahib's clock. Null where the 2 clocks read the same.
+  String? _inAmritsar(AppLocalizations l10n) {
+    final here = _picked ?? _start;
+    final there = inAmritsar(
+      here,
+      sgpcDayOf(ref.read(clockProvider)()),
+      offset: ref.read(localOffsetProvider),
+    );
+    if (there.minutes == here.minutes) return null;
+    return l10n.reminder_wheel_amritsar(
+      reminderClockLabel(context, here),
+      reminderClockLabel(context, ReminderTime(there.hour, there.minute)),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -344,10 +361,22 @@ class _ReminderTimeSheetState extends ConsumerState<_ReminderTimeSheet> {
             // Only the time of day is read, so the date is any date.
             initialDateTime: DateTime(2026, 1, 1, _start.hour, _start.minute),
             use24hFormat: _uses24Hour(context),
-            onDateTimeChanged: (picked) =>
-                _picked = ReminderTime(picked.hour, picked.minute),
+            // Each tick redraws the line under the wheel, with no animation:
+            // it changes as often as the wheel clicks.
+            onDateTimeChanged: (picked) => setState(
+              () => _picked = ReminderTime(picked.hour, picked.minute),
+            ),
           ),
         ),
+        if (_inAmritsar(l10n) case final line?)
+          Text(
+            line,
+            textAlign: TextAlign.center,
+            style: AppType.callout.copyWith(
+              color: Palette.gold,
+              fontFeatures: const [FontFeature.tabularFigures()],
+            ),
+          ),
         const SizedBox(height: 16),
         GoldSheetButton(
           label: l10n.reminder_done,

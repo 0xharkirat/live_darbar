@@ -16,6 +16,8 @@ struct WidgetStore {
     static let title = "ld_title"
     static let dates = "ld_dates"
     static let line = "ld_line"
+    static let linePauses = "ld_line_pauses"
+    static let lineMeaning = "ld_line_meaning"
     static let hukamnamaMeta = "ld_hukamnama_meta"
     static let openLabel = "ld_open_label"
     static let labels = "ld_labels"
@@ -39,8 +41,9 @@ struct WidgetStore {
   static func shared() -> WidgetStore {
     let defaults = UserDefaults(suiteName: appGroup)
     let keys = [
-      Key.language, Key.title, Key.dates, Key.line, Key.hukamnamaMeta,
-      Key.openLabel, Key.labels, Key.playback,
+      Key.language, Key.title, Key.dates, Key.line, Key.linePauses,
+      Key.lineMeaning, Key.hukamnamaMeta, Key.openLabel, Key.labels,
+      Key.playback,
     ]
     var values: [String: String] = [:]
     for key in keys {
@@ -100,6 +103,11 @@ struct WidgetStore {
       title: values[Key.title] ?? hukamnamaName,
       meta: meta,
       line: line,
+      pauses: line == nil ? [:] : pauses,
+      meaning: line == nil ? nil : values[Key.lineMeaning].flatMap {
+        let text = $0.trimmingCharacters(in: .whitespacesAndNewlines)
+        return text.isEmpty ? nil : text
+      },
       openLabel: values[Key.openLabel] ?? hukamnamaName,
       hukamnamaName: hukamnamaName,
       liveName: liveName,
@@ -127,6 +135,22 @@ struct WidgetStore {
   }
 
   // MARK: - The JSON values
+
+  /// The pauses Dart wrote, `{"1": "short", "4": "long"}`: true for a long
+  /// pause. Empty when there are none or they cannot be read.
+  private var pauses: [Int: Bool] {
+    guard
+      let text = values[Key.linePauses],
+      let data = text.data(using: .utf8),
+      let json = try? JSONSerialization.jsonObject(with: data) as? [String: String]
+    else { return [:] }
+    var pauses: [Int: Bool] = [:]
+    for (key, kind) in json {
+      guard let index = Int(key), kind == "short" || kind == "long" else { continue }
+      pauses[index] = kind == "long"
+    }
+    return pauses
+  }
 
   private var dates: [String: String] {
     decode(values[Key.dates]) ?? [:]
