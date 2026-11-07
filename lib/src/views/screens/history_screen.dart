@@ -15,6 +15,7 @@ import 'package:live_darbar/src/models/sgpc_event.dart';
 import 'package:live_darbar/src/services/reminder_platform.dart';
 import 'package:live_darbar/src/views/widgets/app_nav_bar.dart';
 import 'package:live_darbar/src/views/widgets/history_setting.dart';
+import 'package:live_darbar/src/views/widgets/loading_ring.dart';
 import 'package:live_darbar/src/views/widgets/pressable.dart';
 import 'package:live_darbar/src/views/widgets/settings_group.dart';
 
@@ -191,9 +192,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                           else
                             const Padding(
                               padding: EdgeInsets.symmetric(vertical: 48),
-                              child: Center(
-                                child: CupertinoActivityIndicator(),
-                              ),
+                              child: Center(child: LoadingRing(size: 28)),
                             ),
                         ],
                       ],

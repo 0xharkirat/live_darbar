@@ -646,4 +646,12 @@ class AppLocalizationsPa extends AppLocalizations {
 
   @override
   String get youtube_live_semantics => 'ਸ੍ਰੀ ਹਰਿਮੰਦਰ ਸਾਹਿਬ ਦੀ ਲਾਈਵ ਵੀਡੀਓ YouTube ਉੱਤੇ ਦੇਖੋ। YouTube ਐਪ ਖੁੱਲ੍ਹੇਗੀ।';
+
+  @override
+  String get scrubber_label => 'ਚੱਲ ਰਹੀ ਥਾਂ';
+
+  @override
+  String scrubber_value(String elapsed, String total) {
+    return '$total ਵਿੱਚੋਂ $elapsed';
+  }
 }

@@ -252,9 +252,7 @@ class AboutScreen extends ConsumerWidget {
                           Text(
                             l10n.update_version(version),
                             textAlign: TextAlign.center,
-                            style: AppType.footnote.copyWith(
-                              color: Palette.faint,
-                            ),
+                            style: AppType.footnote,
                           ),
                         ],
                       ],

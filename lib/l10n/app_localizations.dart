@@ -1204,6 +1204,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Watch live video from Sri Harmandir Sahib on YouTube. Opens the YouTube app.'**
   String get youtube_live_semantics;
+
+  /// What a screen reader calls the bar under a recording in the player. A swipe up or down on it moves 15 seconds
+  ///
+  /// In en, this message translates to:
+  /// **'Playback position'**
+  String get scrubber_label;
+
+  /// What a screen reader says for the bar's place in a recording, such as 4:05 of 22:30
+  ///
+  /// In en, this message translates to:
+  /// **'{elapsed} of {total}'**
+  String scrubber_value(String elapsed, String total);
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

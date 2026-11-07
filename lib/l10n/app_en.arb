@@ -890,5 +890,17 @@
     "youtube_live_semantics": "Watch live video from Sri Harmandir Sahib on YouTube. Opens the YouTube app.",
     "@youtube_live_semantics": {
         "description": "What a screen reader says for the Home row that opens the live video on YouTube. It also says the row leaves this app"
+    },
+    "scrubber_label": "Playback position",
+    "@scrubber_label": {
+        "description": "What a screen reader calls the bar under a recording in the player. A swipe up or down on it moves 15 seconds"
+    },
+    "scrubber_value": "{elapsed} of {total}",
+    "@scrubber_value": {
+        "description": "What a screen reader says for the bar's place in a recording, such as 4:05 of 22:30",
+        "placeholders": {
+            "elapsed": {"type": "String"},
+            "total": {"type": "String"}
+        }
     }
 }

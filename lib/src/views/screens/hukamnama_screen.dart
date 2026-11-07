@@ -35,6 +35,8 @@ import 'package:live_darbar/src/views/widgets/app_nav_bar.dart';
 import 'package:live_darbar/src/views/widgets/busy_icon.dart';
 import 'package:live_darbar/src/views/widgets/in_app_link.dart';
 import 'package:live_darbar/src/views/widgets/keep_screen_awake.dart';
+import 'package:live_darbar/src/views/widgets/loading_ring.dart';
+import 'package:live_darbar/src/views/widgets/mini_player_widget.dart';
 import 'package:live_darbar/src/views/widgets/pressable.dart';
 import 'package:live_darbar/src/views/widgets/reminder_bell.dart';
 import 'package:live_darbar/src/views/widgets/reminder_sheet.dart';
@@ -130,7 +132,7 @@ class _HukamnamaScreenState extends ConsumerState<HukamnamaScreen> {
 
     return Scaffold(
       backgroundColor: Palette.background,
-      body: CustomScrollView(
+      body: _ReaderFrame(
         slivers: [
           AppNavBar(
             title: l10n.mukhwak,
@@ -155,7 +157,7 @@ class _HukamnamaScreenState extends ConsumerState<HukamnamaScreen> {
           else
             const SliverFillRemaining(
               hasScrollBody: false,
-              child: Center(child: CupertinoActivityIndicator()),
+              child: Center(child: LoadingRing(size: 28)),
             ),
         ],
       ),
@@ -299,7 +301,7 @@ class _HukamnamaScreenState extends ConsumerState<HukamnamaScreen> {
       SliverSafeArea(
         top: false,
         sliver: SliverPadding(
-          padding: const EdgeInsets.fromLTRB(20, 40, 20, 32),
+          padding: EdgeInsets.fromLTRB(20, 40, 20, _ReaderFrame.endOf(context)),
           sliver: SliverToBoxAdapter(
             child: _Column(
               children: [
@@ -313,7 +315,7 @@ class _HukamnamaScreenState extends ConsumerState<HukamnamaScreen> {
                       shabad.source ?? 'Shabad OS',
                     ),
                     textAlign: TextAlign.center,
-                    style: AppType.footnote.copyWith(color: Palette.faint),
+                    style: AppType.footnote,
                   ),
                 // SGPC's own page of the day, next to SGPC's name: it is the
                 // source, read once in a while, so it is not at the top.
@@ -328,7 +330,8 @@ class _HukamnamaScreenState extends ConsumerState<HukamnamaScreen> {
                       shabad != null
                           ? l10n.hukamnama_source(kHukamnamaSourceName)
                           : l10n.text_source(kHukamnamaSourceName),
-                      style: AppType.footnote.copyWith(color: Palette.faint),
+                      // Gold, as every link in the reader is.
+                      style: AppType.footnote.copyWith(color: Palette.gold),
                     ),
                   ),
                 ),
@@ -425,7 +428,7 @@ class SangrandScreen extends ConsumerWidget {
     return KeepScreenAwake(
       child: Scaffold(
         backgroundColor: Palette.background,
-        body: CustomScrollView(
+        body: _ReaderFrame(
           slivers: [
             AppNavBar(
               title: l10n.sangrand_title,
@@ -435,7 +438,7 @@ class SangrandScreen extends ConsumerWidget {
             if (sangrand == null)
               const SliverFillRemaining(
                 hasScrollBody: false,
-                child: Center(child: CupertinoActivityIndicator()),
+                child: Center(child: LoadingRing(size: 28)),
               )
             else
               ..._content(context, ref, sangrand),
@@ -458,7 +461,7 @@ class SangrandScreen extends ConsumerWidget {
       SliverSafeArea(
         top: false,
         sliver: SliverPadding(
-          padding: const EdgeInsets.fromLTRB(20, 40, 20, 32),
+          padding: EdgeInsets.fromLTRB(20, 40, 20, _ReaderFrame.endOf(context)),
           sliver: SliverToBoxAdapter(
             child: _Column(
               child: Text(
@@ -468,7 +471,7 @@ class SangrandScreen extends ConsumerWidget {
                   'Shabad OS',
                 ),
                 textAlign: TextAlign.center,
-                style: AppType.footnote.copyWith(color: Palette.faint),
+                style: AppType.footnote,
               ),
             ),
           ),
@@ -479,6 +482,73 @@ class SangrandScreen extends ConsumerWidget {
 }
 
 /// Keeps reading width comfortable on a tablet or a Mac window.
+/// A reader page: its slivers, the floating player over their end, and a fade
+/// under both.
+///
+/// People read and listen together here, and the screen stays on. The Listen
+/// button scrolls away with the text, so the player floats here as it does on
+/// Home: pause is always 1 tap away. It shows only once something has played,
+/// as on Home.
+///
+/// The fade runs under the player and under the Android navigation buttons,
+/// so the text goes soft before it reaches them instead of showing through.
+class _ReaderFrame extends ConsumerWidget {
+  const _ReaderFrame({required this.slivers});
+
+  final List<Widget> slivers;
+
+  /// The room under the last line of a reader page, so it scrolls clear of
+  /// the player. It is always there, so the page does not move when sound
+  /// starts.
+  static double endOf(BuildContext context) =>
+      32 + MiniPlayer.heightOf(context) + 10;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final bottom = MediaQuery.paddingOf(context).bottom;
+    final started = ref.watch(nowPlayingProvider.select((n) => n.started));
+    final reduced = Motion.reduced(context);
+
+    return Stack(
+      children: [
+        CustomScrollView(slivers: slivers),
+        AnimatedPositioned(
+          duration: reduced ? Duration.zero : Motion.slow,
+          curve: Motion.easeOut,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          height: bottom + (started ? MiniPlayer.heightOf(context) + 36 : 24),
+          child: const IgnorePointer(
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.bottomCenter,
+                  end: Alignment.topCenter,
+                  colors: [Palette.background, Color(0x000C0A09)],
+                  stops: [0.55, 1],
+                ),
+              ),
+            ),
+          ),
+        ),
+        Positioned(
+          left: 12,
+          right: 12,
+          bottom: bottom + 10,
+          child: Center(
+            child: ConstrainedBox(
+              constraints:
+                  const BoxConstraints(maxWidth: _Column.maxWidth + 16),
+              child: const MiniPlayer(),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
 class _Column extends StatelessWidget {
   const _Column({this.child, this.children});
 
@@ -647,23 +717,33 @@ class _MeaningState extends ConsumerState<_Meaning> {
                   setState(() => _punjabi = forPunjabi);
                 }
               : null,
-          child: AnimatedContainer(
-            duration: Motion.quick,
-            curve: Motion.easeOut,
-            height: 34,
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            alignment: Alignment.center,
-            decoration: ShapeDecoration(
-              color: active ? Palette.surfaceHigh : Colors.transparent,
-              shape: RoundedSuperellipseBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
+          // The frame's 3 pt edge is part of the target, so a tap anywhere in
+          // the 44 pt frame lands. Punjabi is the first option.
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(
+              forPunjabi ? 3 : 0,
+              3,
+              forPunjabi ? 0 : 3,
+              3,
             ),
-            child: Text(
-              label,
-              style: AppType.footnote.copyWith(
-                color: active ? Palette.foreground : Palette.muted,
-                fontWeight: active ? FontWeight.w700 : FontWeight.w500,
+            child: AnimatedContainer(
+              duration: Motion.quick,
+              curve: Motion.easeOut,
+              height: 38,
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              alignment: Alignment.center,
+              decoration: ShapeDecoration(
+                color: active ? Palette.surfaceHigh : Colors.transparent,
+                shape: RoundedSuperellipseBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+              child: Text(
+                label,
+                style: AppType.footnote.copyWith(
+                  color: active ? Palette.foreground : Palette.muted,
+                  fontWeight: active ? FontWeight.w700 : FontWeight.w500,
+                ),
               ),
             ),
           ),
@@ -678,8 +758,9 @@ class _MeaningState extends ConsumerState<_Meaning> {
           children: [
             Expanded(child: Text(l10n.meaning, style: AppType.title2)),
             if (hasPa && hasEn)
-              Container(
-                padding: const EdgeInsets.all(3),
+              // A DecoratedBox, not a Container, which would pad by the
+              // border: the frame is the 44 pt target, edge to edge.
+              DecoratedBox(
                 decoration: ShapeDecoration(
                   shape: RoundedSuperellipseBorder(
                     borderRadius: BorderRadius.circular(13),

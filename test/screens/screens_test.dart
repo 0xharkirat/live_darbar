@@ -66,6 +66,7 @@ import '../support/load_fonts.dart';
 /// The images land in build/screens/. They are for looking at, in review and
 /// for store screenshots; nothing is compared, so they never fail a build.
 void main() {
+  _RealShadowsBinding();
   setUpAll(() async {
     SharedPreferences.setMockInitialValues({});
     await loadAppFonts();
@@ -637,7 +638,7 @@ Future<void> _pump(
           connectivityController.overrideWith(_Online.new),
           updateController.overrideWith(_NoUpdate.new),
           localeController.overrideWith(() => _Locale(locale)),
-          appVersionProvider.overrideWith((ref) async => '3.0.0 (10)'),
+          appVersionProvider.overrideWith((ref) async => _version),
           // The renders show the reminder, which a phone offers.
           reminderPlatformProvider
               .overrideWithValue(reminders ?? FakeReminderPlatform()),
@@ -723,6 +724,26 @@ Future<void> _precache(WidgetTester tester) async {
   await tester.pump(const Duration(milliseconds: 600));
   if (animated) await tester.pump(const Duration(milliseconds: 600));
 }
+
+/// The test binding, with shadows drawn as a phone draws them.
+///
+/// The usual test binding draws a shadow with no blur, as a hard black block.
+/// The 3.0 store pictures showed one under the hero, the player's artwork and
+/// the floating player, where a phone shows a soft shade.
+class _RealShadowsBinding extends AutomatedTestWidgetsFlutterBinding {
+  @override
+  bool get disableShadows => false;
+}
+
+/// The app's version as About shows it, "3.1.0 (11)", from pubspec.yaml, so
+/// the pictures of a release show that release.
+final String _version = () {
+  final line = File('pubspec.yaml')
+      .readAsLinesSync()
+      .firstWhere((l) => l.startsWith('version:'));
+  final match = RegExp(r'version:\s*([\d.]+)\+(\d+)').firstMatch(line)!;
+  return '${match[1]} (${match[2]})';
+}();
 
 Future<void> _shot(WidgetTester tester, String name) async {
   final boundary = tester.renderObject<RenderRepaintBoundary>(

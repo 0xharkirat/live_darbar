@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:live_darbar/l10n/app_localizations.dart';
+import 'package:live_darbar/src/controllers/audio_controller.dart';
+import 'package:live_darbar/src/controllers/now_playing_controller.dart';
 import 'package:live_darbar/src/controllers/sikh_date_controller.dart';
 import 'package:live_darbar/src/core/app_theme.dart';
+import 'package:live_darbar/src/models/live_playback_state.dart';
 import 'package:live_darbar/src/models/sikh_date.dart';
 import 'package:live_darbar/src/views/app_router.dart';
 import 'package:live_darbar/src/views/screens/hukamnama_screen.dart';
@@ -37,6 +40,16 @@ void main() {
       ProviderScope(
         overrides: [
           sikhDateProvider.overrideWith((ref) async => date ?? katak()),
+          // Nothing has played: the page's floating player stays hidden, and
+          // no audio player starts.
+          nowPlayingProvider.overrideWithValue(
+            const NowPlaying(
+              index: kLiveIndex,
+              action: PlayAction.play,
+              started: false,
+              live: LivePlaybackState(),
+            ),
+          ),
         ],
         child: MaterialApp(
           theme: AppTheme.material,

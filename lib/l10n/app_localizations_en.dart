@@ -646,4 +646,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get youtube_live_semantics => 'Watch live video from Sri Harmandir Sahib on YouTube. Opens the YouTube app.';
+
+  @override
+  String get scrubber_label => 'Playback position';
+
+  @override
+  String scrubber_value(String elapsed, String total) {
+    return '$elapsed of $total';
+  }
 }

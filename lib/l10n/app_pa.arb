@@ -646,5 +646,7 @@
     "youtube_live_semantics": "ਸ੍ਰੀ ਹਰਿਮੰਦਰ ਸਾਹਿਬ ਦੀ ਲਾਈਵ ਵੀਡੀਓ YouTube ਉੱਤੇ ਦੇਖੋ। YouTube ਐਪ ਖੁੱਲ੍ਹੇਗੀ।",
     "@youtube_live_semantics": {
         "description": "ਸਕ੍ਰੀਨ ਰੀਡਰ YouTube ਉੱਤੇ ਲਾਈਵ ਵੀਡੀਓ ਵਾਲੀ ਸਤਰ ਬਾਰੇ ਕੀ ਬੋਲਦਾ ਹੈ। ਇਹ ਵੀ ਦੱਸਦਾ ਹੈ ਕਿ ਸਤਰ ਇਸ ਐਪ ਤੋਂ ਬਾਹਰ ਲੈ ਜਾਂਦੀ ਹੈ"
-    }
+    },
+    "scrubber_label": "ਚੱਲ ਰਹੀ ਥਾਂ",
+    "scrubber_value": "{total} ਵਿੱਚੋਂ {elapsed}"
 }

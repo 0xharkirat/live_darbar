@@ -145,60 +145,86 @@ class _ScrubberState extends State<_Scrubber> {
     final elapsed = hasDuration ? _total * played : Duration.zero;
     final remaining = _total - elapsed;
 
+    final l10n = AppLocalizations.of(context)!;
+    final total = _format(_total);
+    Duration step(int seconds) {
+      final d = elapsed + Duration(seconds: seconds);
+      if (d < Duration.zero) return Duration.zero;
+      return d > _total ? _total : d;
+    }
+
     return LayoutBuilder(
       builder: (context, constraints) {
         final width = constraints.maxWidth;
-        return GestureDetector(
-          behavior: HitTestBehavior.opaque,
-          onHorizontalDragStart:
-              hasDuration ? (d) => _update(d.localPosition, width) : null,
-          onHorizontalDragUpdate:
-              hasDuration ? (d) => _update(d.localPosition, width) : null,
-          onHorizontalDragEnd: hasDuration ? (_) => _commit() : null,
-          onTapUp: hasDuration
-              ? (d) {
-                  _update(d.localPosition, width);
-                  _commit();
-                }
+        // A screen reader hears the place and the length, and a swipe up or
+        // down moves 15 seconds, as the buttons under it do. The times under
+        // the bar say the same, so they are left out.
+        return Semantics(
+          slider: true,
+          excludeSemantics: true,
+          label: l10n.scrubber_label,
+          value:
+              hasDuration ? l10n.scrubber_value(_format(elapsed), total) : null,
+          increasedValue: hasDuration
+              ? l10n.scrubber_value(_format(step(15)), total)
               : null,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const SizedBox(height: 8),
-              SizedBox(
-                height: 8,
-                child: Center(
-                  // The bar thickens under the finger: the target grows while
-                  // it is being used, Apple Music's trick.
-                  child: AnimatedContainer(
-                    duration: Motion.quick,
-                    curve: Motion.easeOut,
-                    height: dragging ? 8 : 4,
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(4),
-                      child: CustomPaint(
-                        size: Size(width, dragging ? 8 : 4),
-                        painter: _BarPainter(
-                          played: hasDuration ? played : 0,
-                          buffered: hasDuration ? buffered : 0,
+          decreasedValue: hasDuration
+              ? l10n.scrubber_value(_format(step(-15)), total)
+              : null,
+          onIncrease: hasDuration ? () => widget.onSeek(step(15)) : null,
+          onDecrease: hasDuration ? () => widget.onSeek(step(-15)) : null,
+          child: GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onHorizontalDragStart:
+                hasDuration ? (d) => _update(d.localPosition, width) : null,
+            onHorizontalDragUpdate:
+                hasDuration ? (d) => _update(d.localPosition, width) : null,
+            onHorizontalDragEnd: hasDuration ? (_) => _commit() : null,
+            onTapUp: hasDuration
+                ? (d) {
+                    _update(d.localPosition, width);
+                    _commit();
+                  }
+                : null,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const SizedBox(height: 8),
+                SizedBox(
+                  height: 8,
+                  child: Center(
+                    // The bar thickens under the finger: the target grows while
+                    // it is being used, Apple Music's trick.
+                    child: AnimatedContainer(
+                      duration: Motion.quick,
+                      curve: Motion.easeOut,
+                      height: dragging ? 8 : 4,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(4),
+                        child: CustomPaint(
+                          size: Size(width, dragging ? 8 : 4),
+                          painter: _BarPainter(
+                            played: hasDuration ? played : 0,
+                            buffered: hasDuration ? buffered : 0,
+                          ),
                         ),
                       ),
                     ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 8),
-              Row(
-                children: [
-                  Text(_format(elapsed), style: AppType.timecode),
-                  const Spacer(),
-                  Text(
-                    hasDuration ? '−${_format(remaining)}' : '--:--',
-                    style: AppType.timecode,
-                  ),
-                ],
-              ),
-            ],
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    Text(_format(elapsed), style: AppType.timecode),
+                    const Spacer(),
+                    Text(
+                      hasDuration ? '−${_format(remaining)}' : '--:--',
+                      style: AppType.timecode,
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         );
       },

@@ -842,10 +842,7 @@ class _Footer extends ConsumerWidget {
           ),
         if (version != null) ...[
           const SizedBox(height: 4),
-          Text(
-            l10n.update_version(version),
-            style: AppType.footnote.copyWith(color: Palette.faint),
-          ),
+          Text(l10n.update_version(version), style: AppType.footnote),
         ],
       ],
     );

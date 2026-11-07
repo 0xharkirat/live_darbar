@@ -154,7 +154,9 @@ class MiniPlayer extends ConsumerWidget {
           opacity: now.started ? 1 : 0,
           duration: Motion.standard,
           curve: Motion.easeOut,
-          child: bar,
+          // Until then the bar is not built, so a hidden bar follows no
+          // stream. It is built on the frame it starts to rise.
+          child: now.started ? bar : SizedBox(height: heightOf(context)),
         ),
       ),
     );
