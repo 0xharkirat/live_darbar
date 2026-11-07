@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:http/http.dart' as http;
+import 'package:http/testing.dart';
 import 'package:live_darbar/l10n/app_localizations.dart';
 import 'package:live_darbar/src/controllers/audio_controller.dart';
 import 'package:live_darbar/src/controllers/connectivity_controller.dart';
@@ -15,6 +17,7 @@ import 'package:live_darbar/src/controllers/now_playing_controller.dart';
 import 'package:live_darbar/src/controllers/sgpc_events_controller.dart';
 import 'package:live_darbar/src/controllers/sikh_date_controller.dart';
 import 'package:live_darbar/src/controllers/update_controller.dart';
+import 'package:live_darbar/src/controllers/youtube_live_controller.dart';
 import 'package:live_darbar/src/controllers/whats_new_controller.dart';
 import 'package:live_darbar/src/controllers/widget_card_controller.dart';
 import 'package:live_darbar/src/core/amritsar_time.dart';
@@ -29,11 +32,13 @@ import 'package:live_darbar/src/models/audio_progress_state.dart';
 import 'package:live_darbar/src/models/hukamnama.dart';
 import 'package:live_darbar/src/models/live_playback_state.dart';
 import 'package:live_darbar/src/models/maintenance.dart';
+import 'package:live_darbar/src/models/sgpc_day.dart';
 import 'package:live_darbar/src/models/sgpc_event.dart';
 import 'package:live_darbar/src/models/sikh_date.dart';
 import 'package:live_darbar/src/models/whats_new.dart';
 import 'package:live_darbar/src/services/reminder_platform.dart';
 import 'package:live_darbar/src/services/screen_awake.dart';
+import 'package:live_darbar/src/services/youtube_live_service.dart';
 import 'package:live_darbar/src/views/app_builder.dart';
 import 'package:live_darbar/src/views/app_scroll_behavior.dart';
 import 'package:live_darbar/src/views/browser_title.dart';
@@ -90,6 +95,18 @@ class FixtureHukamnama extends HukamnamaController {
   Future<void> refresh() async {}
 }
 
+/// The 2 November fixture re-dated to [day], with the Ang set to 600 plus the
+/// day of the month, so a test can tell one day's text from another's.
+Hukamnama fixtureHukamnamaOn(DateTime day) {
+  final json = jsonDecode(
+    File('test/fixtures/sgpc_hukamnama_2026_11_02.json').readAsStringSync(),
+  ) as Map<String, dynamic>;
+  final text = json['hukamnama'] as Map<String, dynamic>;
+  text['date'] = sgpcDayIso(day);
+  text['ang'] = '${600 + day.day}';
+  return Hukamnama.fromSgpc(json);
+}
+
 class _Online extends ConnectivityController {
   @override
   Stream<bool> build() => Stream.value(true);
@@ -131,7 +148,10 @@ const desktop = Size(1280, 800);
 /// does in the app.
 /// [initialRoute] is what a browser hands the app after the `#`.
 /// [update] is a newer release, for the update sheet to offer at launch.
-/// [clock] fixes the moment; the app otherwise reads the real one. [sikh] is
+/// [clock] fixes the moment; the app otherwise reads the real one, and Home
+/// does not show the YouTube row. [youtubeLive] is the service behind that
+/// row's file of live streams; by default the file is not there (404), so the
+/// row follows the timetable, and nothing goes to the network. [sikh] is
 /// the Sikh date on home, and [events] is the calendar of Sikh history, which
 /// is empty unless a test gives one.
 /// [widgetInstall] is the phone behind the "add the widget" card. By default
@@ -153,6 +173,10 @@ const desktop = Size(1280, 800);
 /// default no release has notes, so Home shows what it showed before the
 /// notes existed. [whatsNewSettle] is how long Home must be calm before they
 /// open: none, unless a test says otherwise.
+/// [sangrandTable] is the table of month starts, which gives the Sikh date of
+/// a day. By default there is none, so a reader shows no Sikh date.
+/// [earlierDay] gives the text of an earlier day in the Hukamnama reader. By
+/// default it is the 2 November fixture re-dated ([fixtureHukamnamaOn]).
 Future<void> pumpApp(
   WidgetTester tester, {
   String locale = 'en',
@@ -162,6 +186,7 @@ Future<void> pumpApp(
   NowPlaying now = idle,
   AppUpdate? update,
   DateTime? clock,
+  YoutubeLiveService? youtubeLive,
   SikhDate? sikh,
   SgpcEventTable? events,
   FakeWidgetInstall? widgetInstall,
@@ -175,6 +200,8 @@ Future<void> pumpApp(
   Map<String, WhatsNew> whatsNew = const {},
   Duration whatsNewSettle = Duration.zero,
   Maintenance? maintenance,
+  SangrandTable? sangrandTable,
+  Future<Hukamnama> Function(DateTime day)? earlierDay,
 }) async {
   SharedPreferences.setMockInitialValues(prefs);
   AppType.tracking = locale != 'pa';
@@ -203,11 +230,29 @@ Future<void> pumpApp(
       update == null ? NoUpdate.new : () => OfferUpdate(update),
     ),
     localeController.overrideWith(() => _Locale(locale)),
-    sangrandTableProvider.overrideWith((ref) async => null),
+    sangrandTableProvider.overrideWith((ref) async => sangrandTable),
     sgpcEventsProvider.overrideWith((ref) async => events ?? SgpcEventTable.empty),
     sikhDateProvider.overrideWith((ref) async => sikh),
     if (clock != null) clockProvider.overrideWithValue(() => clock),
+    // The YouTube row follows the checked answer, and with none it shows only
+    // in the hours of SGPC's stream. With the real clock, whether Home has it
+    // would depend on when the suite runs. A test that gives [clock] gets the
+    // real rule at that moment. Nothing asks the network: without
+    // [youtubeLive], the published file is not there.
+    if (clock == null && youtubeLive == null)
+      youtubeLiveProvider.overrideWithValue(null),
+    youtubeLiveServiceProvider.overrideWithValue(
+      youtubeLive ??
+          YoutubeLiveService(
+            client: MockClient((_) async => http.Response('Not Found', 404)),
+          ),
+    ),
     hukamnamaProvider.overrideWith(FixtureHukamnama.new),
+    // An earlier day's text, from the same fixture. Nothing goes to SGPC.
+    hukamnamaForDayProvider.overrideWith(
+      (ref, day) async =>
+          (earlierDay ?? (d) async => fixtureHukamnamaOn(d))(day),
+    ),
     appVersionProvider.overrideWith((ref) async => '2.2.1 (9)'),
     isWebProvider.overrideWithValue(web),
     // The daily reminder has its own tests. Here the platform cannot remind,

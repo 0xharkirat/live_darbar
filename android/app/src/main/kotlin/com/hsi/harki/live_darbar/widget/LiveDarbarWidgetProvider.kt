@@ -3,6 +3,7 @@ package com.hsi.harki.live_darbar.widget
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.Context
+import android.os.Bundle
 
 /**
  * The home screen widget: one line that names today's Hukamnama, its Rahao
@@ -32,6 +33,21 @@ class LiveDarbarWidgetProvider : AppWidgetProvider() {
     ) {
         for (id in appWidgetIds) WidgetRenderer.update(context, appWidgetManager, id)
         WidgetRefresh.schedule(context)
+    }
+
+    /**
+     * The widget was resized. Before Android 12 the widget picks its
+     * [WidgetForm] from its size when it draws, so it draws again. From
+     * Android 12 the launcher holds every form and picks one itself, and this
+     * draw changes nothing.
+     */
+    override fun onAppWidgetOptionsChanged(
+        context: Context,
+        appWidgetManager: AppWidgetManager,
+        appWidgetId: Int,
+        newOptions: Bundle,
+    ) {
+        WidgetRenderer.update(context, appWidgetManager, appWidgetId)
     }
 
     /**

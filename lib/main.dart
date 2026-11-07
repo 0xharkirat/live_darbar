@@ -5,11 +5,13 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_web_plugins/url_strategy.dart';
 import 'package:home_widget/home_widget.dart';
 import 'package:intelligence/intelligence.dart';
 import 'package:live_darbar/src/controllers/audio_controller.dart';
 import 'package:live_darbar/src/controllers/locale_controller.dart';
 import 'package:live_darbar/src/controllers/reminder_controller.dart';
+import 'package:live_darbar/src/controllers/review_prompt_controller.dart';
 import 'package:live_darbar/src/controllers/sikh_history_controller.dart';
 import 'package:live_darbar/src/home_screen_widget/widget_actions.dart';
 import 'package:live_darbar/src/home_screen_widget/widget_background.dart';
@@ -23,6 +25,7 @@ import 'package:live_darbar/src/bootstrap.dart';
 import 'package:live_darbar/src/core/app_theme.dart';
 import 'package:live_darbar/src/core/app_type.dart';
 import 'package:live_darbar/src/core/open_link.dart';
+import 'package:live_darbar/src/core/quick_actions.dart';
 import 'package:live_darbar/src/models/sgpc_day.dart';
 import 'package:live_darbar/src/services/legacy_pdf_cleanup.dart';
 import 'package:live_darbar/src/services/reminder_launch.dart';
@@ -53,6 +56,11 @@ LiveDarbarAudioHandler? _mediaSession;
 /// Retry, not a blank one. See [bootstrap]. A widget that breaks later shows
 /// a small, calm box in its place in a release build. See [installErrorView].
 Future<void> main() {
+  // The web writes each page into the path, darbar.live/app/hukamnama, not
+  // after a #. Firebase answers every /app/ path with the app (firebase.json),
+  // and web/index.html moves an old /app/#/hukamnama link into the path. It
+  // does nothing on Android and iPhone.
+  usePathUrlStrategy();
   // Before [bootstrap], which watches this builder during the first frame.
   installErrorView();
   return bootstrap<ProviderContainer>(
@@ -166,6 +174,8 @@ class MyApp extends ConsumerStatefulWidget {
 
 class _MyAppState extends ConsumerState<MyApp> {
   final QuickActions quickActions = const QuickActions();
+  late final QuickActionsWriter _quickActionsWriter =
+      QuickActionsWriter(quickActions.setShortcutItems);
   final Intelligence? _intelligence =
       defaultTargetPlatform == TargetPlatform.iOS ? Intelligence() : null;
   static const MethodChannel _channel =
@@ -205,25 +215,21 @@ class _MyAppState extends ConsumerState<MyApp> {
       shortcutPlay(shortcutType, ref);
     });
 
-    // Set quick action items
-    quickActions.setShortcutItems(<ShortcutItem>[
-      const ShortcutItem(
-        type: 'live_kirtan',
-        localizedTitle: 'Live Kirtan',
-      ),
-      const ShortcutItem(
-        type: 'mukhwak',
-        localizedTitle: 'Mukhwak',
-      ),
-      const ShortcutItem(
-        type: 'mukhwak_katha',
-        localizedTitle: 'Mukhwak Katha',
-      ),
-    ]);
+    // Set the quick action items now, and again when the language changes.
+    // The saved language arrives a moment after launch, and this covers that
+    // too.
+    _setQuickActions(ref.read(localeController));
+    ref.listenManual<String>(localeController, (previous, next) {
+      if (previous != next) _setQuickActions(next);
+    });
 
     // Keep the home screen widget's text in step with the date and the
     // Hukamnama.
     if (HomeWidgetPublisher.isSupported) ref.read(widgetSyncProvider);
+
+    // Counts long listens, and after enough of them asks once for a rating,
+    // when the listener pauses. Never here at launch. See review_rules.dart.
+    ref.read(reviewPromptProvider);
 
     // The iPhone widget opens the app with a link. See widget_links.dart.
     // A running app hears it on the stream. A cold start asks once, after
@@ -339,6 +345,11 @@ class _MyAppState extends ConsumerState<MyApp> {
     } on PlatformException catch (e) {
       debugPrint(e.toString());
     }
+  }
+
+  void _setQuickActions(String locale) {
+    final l10n = lookupAppLocalizations(Locale(locale));
+    unawaited(_quickActionsWriter.update(quickActionItems(l10n)));
   }
 
   @override

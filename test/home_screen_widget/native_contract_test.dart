@@ -44,6 +44,8 @@ void main() {
         WidgetKeys.title,
         WidgetKeys.dates,
         WidgetKeys.line,
+        WidgetKeys.linePauses,
+        WidgetKeys.lineMeaning,
         WidgetKeys.hukamnamaMeta,
         WidgetKeys.openLabel,
         WidgetKeys.labels,
@@ -416,14 +418,27 @@ void main() {
       expect(renderer, contains('button = R.id.widget_hukamnama_button'));
     });
 
-    test('a resize needs no redraw, because there is one layout', () {
+    test('the widget goes on the home screen 1 row high', () {
+      // Hark, 7 November: at 2 rows it was "too big". It can still be
+      // stretched, and then it shows everything.
+      final info = read('$_res/xml/live_darbar_widget_info.xml');
+      expect(info, contains('android:targetCellHeight="1"'));
+      expect(info, contains('android:minResizeHeight="40dp"'));
+    });
+
+    test('one layout shows less when short: Android 12 picks the form', () {
       final renderer = read('$_kotlin/widget/WidgetRenderer.kt');
       expect(renderer,
           contains('RemoteViews(context.packageName, R.layout.widget_medium)'));
       expect(renderer, isNot(contains('widget_compact')));
+      // From Android 12 the launcher holds every form, and picks again on a
+      // resize with no draw from us.
+      expect(renderer, contains('WidgetForm.entries.associate'));
+      // Before Android 12 the widget picks its form from its size, so a
+      // resize draws again.
       expect(
         read('$_kotlin/widget/LiveDarbarWidgetProvider.kt'),
-        isNot(contains('onAppWidgetOptionsChanged')),
+        contains('onAppWidgetOptionsChanged'),
       );
     });
 
@@ -506,9 +521,21 @@ void main() {
       // The date and the Ang are written in Gurmukhi digits in Punjabi.
       expect(english, contains('>" · 2 Nov · Ang 668"<'));
       expect(punjabi, contains('>" · ੨ ਨਵੰ · ਅੰਗ ੬੬੮"<'));
-      // The Gurbani is the same in both, so it is written once.
+      // The Gurbani and the English meaning are the same in both, so they
+      // are written once.
       expect(english, contains('name="widget_preview_line"'));
+      expect(english, contains('name="widget_preview_meaning"'));
       expect(punjabi, isNot(contains('widget_preview_line')));
+      expect(punjabi, isNot(contains('widget_preview_meaning')));
+    });
+
+    test('it shows every part of the 1 row form, the top line too', () {
+      // Hark, 7 November: the 1 row widget keeps "Hukamnama · date · Ang".
+      final preview = read('$_res/layout/widget_preview.xml');
+      expect(preview, contains('@string/widget_preview_meta'));
+      expect(preview, contains('@string/widget_preview_line'));
+      expect(preview, contains('@string/widget_preview_meaning'));
+      expect(preview, contains('android:layout_height="18dp"'));
     });
   });
 
@@ -575,6 +602,8 @@ void main() {
         WidgetKeys.title,
         WidgetKeys.dates,
         WidgetKeys.line,
+        WidgetKeys.linePauses,
+        WidgetKeys.lineMeaning,
         WidgetKeys.hukamnamaMeta,
         WidgetKeys.openLabel,
         WidgetKeys.labels,

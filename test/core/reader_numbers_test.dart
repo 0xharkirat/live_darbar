@@ -40,6 +40,15 @@ void main() {
       );
     });
 
+    test('with the year, for a day that is not of this year', () {
+      expect(readerDate(date, punjabi: false, year: true), '2 November 2026');
+      expect(readerDate(date, punjabi: true, year: true), '੨ ਨਵੰਬਰ ੨੦੨੬');
+      expect(
+        readerDate(date, punjabi: false, weekday: true, year: true),
+        'Monday, 2 November 2026',
+      );
+    });
+
     test('English: day before month, Latin digits', () {
       expect(readerDate(date, punjabi: false), '2 November');
       expect(

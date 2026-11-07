@@ -73,6 +73,10 @@ class FakeSgpc {
   /// A day listed here is answered with this body instead of the usual one.
   final Map<DateTime, List<int>> bodies = {};
 
+  /// Days that SGPC has posted but the mirror has not copied yet: the mirror
+  /// answers 404 for them, as it did until about 07:00 IST on 7 November.
+  final Set<DateTime> mirrorLate = {};
+
   late final MockClient client = MockClient((request) async {
     final isMirror = request.method == 'GET';
     final asked = isMirror
@@ -87,7 +91,7 @@ class FakeSgpc {
     await gates[day]?.future;
     if (offline) throw const SocketException('Failed host lookup');
     if (hang) return Completer<http.Response>().future;
-    if (!posted.contains(day)) {
+    if (!posted.contains(day) || (isMirror && mirrorLate.contains(day))) {
       return isMirror
           ? http.Response('404: Not Found', 404)
           : http.Response.bytes(_notPostedBody(day), 200);
@@ -614,6 +618,88 @@ void main() {
     Hukamnama textFor(DateTime day) => Hukamnama.fromSgpc(
         jsonDecode(utf8.decode(_bodyFor(day))) as Map<String, dynamic>);
     const step = Duration(minutes: 15);
+
+    // 7 November: SGPC posted at about 06:00 IST and the mirror copied the
+    // day an hour later. The simulator, opened in between, kept today's text
+    // with no line meanings until the app was closed.
+    group('line meanings retry', () {
+      fakeTimeTest(
+        'asks every 15 minutes while today\'s text has no line meanings, '
+        'then stops once they come',
+        morning,
+        FakeSgpc({nov2})..mirrorLate.add(nov2),
+        (async, container, server) {
+          expect(shown(container)?.date, nov2);
+          expect(shown(container)?.shabad, isNull);
+          expect(server.mirrorLog, ['2026-11-02']);
+
+          async.elapse(step - const Duration(seconds: 1));
+          expect(server.mirrorLog, hasLength(1));
+          async.elapse(const Duration(seconds: 1));
+          expect(server.mirrorLog, hasLength(2));
+          expect(shown(container)?.shabad, isNull);
+
+          // The mirror copies the day.
+          server.mirrorLate.remove(nov2);
+          async.elapse(step);
+          expect(server.mirrorLog, hasLength(3));
+          expect(shown(container)?.shabad, isNotNull);
+
+          // It has the lines now, so it stops asking.
+          async.elapse(const Duration(hours: 3));
+          expect(server.mirrorLog, hasLength(3));
+        },
+      );
+
+      fakeTimeTest(
+        'gives up on the line meanings after $kHukamnamaLineRetries more asks '
+        'in a day',
+        morning,
+        // A day the mirror cannot match has no lines at all.
+        FakeSgpc({nov2})..mirrorLate.add(nov2),
+        (async, container, server) {
+          async.elapse(const Duration(hours: 6));
+          expect(server.mirrorLog, hasLength(1 + kHukamnamaLineRetries));
+          expect(shown(container)?.date, nov2, reason: 'the text stays');
+        },
+      );
+
+      fakeTimeTest(
+        'asks again for the line meanings when the reader opens',
+        morning,
+        FakeSgpc({nov2})..mirrorLate.add(nov2),
+        (async, container, server) {
+          expect(shown(container)?.shabad, isNull);
+          server.mirrorLate.remove(nov2);
+
+          container.read(hukamnamaProvider.notifier).refreshForLines();
+          async.flushMicrotasks();
+          expect(server.mirrorLog, hasLength(2));
+          expect(shown(container)?.shabad, isNotNull);
+
+          // With the lines on screen, opening the reader asks nothing.
+          container.read(hukamnamaProvider.notifier).refreshForLines();
+          async.flushMicrotasks();
+          expect(server.mirrorLog, hasLength(2));
+          expect(server.log, hasLength(2));
+        },
+      );
+
+      fakeTimeTest(
+        'does not ask for line meanings when the reader opens on yesterday\'s '
+        'text',
+        beforeDawn,
+        FakeSgpc({nov1}),
+        (async, container, server) {
+          expect(shown(container)?.date, nov1);
+          final asks = server.log.length;
+          container.read(hukamnamaProvider.notifier).refreshForLines();
+          async.flushMicrotasks();
+          expect(server.log, hasLength(asks),
+              reason: 'the 15-minute retry for today already runs');
+        },
+      );
+    });
 
     group('stale retry', () {
       fakeTimeTest(

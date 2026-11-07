@@ -268,13 +268,30 @@
     "sgpc_pdf": "SGPC PDF",
     "hukamnama_ang": "ਅੰਗ {ang}",
     "hukamnama_lines_credit": "ਹਰ ਤੁਕ ਦੇ ਅਰਥ: {meanings}। ਵਿਸ਼ਰਾਮ: {pauses}। ਸਰੋਤ: {source}।",
+    "hukamnama_source": "ਹੁਕਮਨਾਮਾ {source} ਤੋਂ",
     "text_source": "ਪਾਠ ਅਤੇ ਅਰਥ {source} ਤੋਂ",
     "smaller_text": "ਛੋਟੇ ਅੱਖਰ",
     "larger_text": "ਵੱਡੇ ਅੱਖਰ",
     "hukamnama_unavailable": "ਅੱਜ ਦੇ ਹੁਕਮਨਾਮੇ ਦਾ ਪਾਠ ਲੋਡ ਨਹੀਂ ਹੋ ਸਕਿਆ",
     "hukamnama_of": "{date} ਦਾ ਹੁਕਮਨਾਮਾ",
     "hukamnama_not_out": "ਅੱਜ ਦਾ ਹੁਕਮਨਾਮਾ ਅਜੇ ਨਹੀਂ ਆਇਆ। ਇਹ {date} ਦਾ ਹੈ।",
+    "hukamnama_pick_day": "ਹੋਰ ਦਿਨ ਚੁਣੋ",
+    "archive_title": "ਪਿਛਲੇ ਦਿਨਾਂ ਦਾ ਹੁਕਮਨਾਮਾ",
+    "archive_body": "ਹੁਕਮਨਾਮਾ ਪੜ੍ਹਨ ਲਈ ਦਿਨ ਚੁਣੋ।",
+    "archive_body_web": "ਪਿਛਲੇ {days} ਦਿਨਾਂ ਵਿੱਚੋਂ ਦਿਨ ਚੁਣੋ।",
+    "archive_open": "ਖੋਲ੍ਹੋ",
+    "archive_yesterday": "ਬੀਤਿਆ ਕੱਲ੍ਹ",
+    "archive_none": "ਇਸ ਦਿਨ ਦਾ ਹੁਕਮਨਾਮਾ ਨਹੀਂ ਮਿਲਿਆ।",
+    "archive_failed": "ਇਹ ਹੁਕਮਨਾਮਾ ਲੋਡ ਨਹੀਂ ਹੋ ਸਕਿਆ",
+    "archive_other_day": "ਹੋਰ ਦਿਨ ਚੁਣੋ",
     "meaning": "ਅਰਥ",
+    "sangrand_title": "ਸੰਗਰਾਂਦ ਦਾ ਹੁਕਮਨਾਮਾ",
+    "barah_maha": "ਬਾਰਹ ਮਾਹਾ",
+    "sangrand_row": "ਸੰਗਰਾਂਦ · {month}",
+    "sangrand_row_today": "ਅੱਜ ਸੰਗਰਾਂਦ ਹੈ · {month}",
+    "reader_options": "ਪੜ੍ਹਨ ਦੀਆਂ ਚੋਣਾਂ",
+    "reader_text_size": "ਅੱਖਰਾਂ ਦਾ ਆਕਾਰ",
+    "reader_meanings": "ਅਰਥ",
     "open_on_sgpc": "SGPC ਦੀ ਵੈੱਬਸਾਈਟ ਉੱਤੇ ਪੜ੍ਹੋ",
     "widget_live_control": "{state, select, loading{ਲਾਈਵ ਕੀਰਤਨ ਸ਼ੁਰੂ ਹੋ ਰਿਹਾ ਹੈ। ਰੱਦ ਕਰਨ ਲਈ ਦੋ ਵਾਰ ਟੈਪ ਕਰੋ।} playing{ਲਾਈਵ ਕੀਰਤਨ ਚੱਲ ਰਿਹਾ ਹੈ। ਬੰਦ ਕਰਨ ਲਈ ਦੋ ਵਾਰ ਟੈਪ ਕਰੋ।} paused{ਲਾਈਵ ਕੀਰਤਨ ਰੁਕਿਆ ਹੋਇਆ ਹੈ। ਚਲਾਉਣ ਲਈ ਦੋ ਵਾਰ ਟੈਪ ਕਰੋ।} other{ਲਾਈਵ ਕੀਰਤਨ ਚਲਾਓ}}",
     "widget_hukamnama_control": "{state, select, loading{ਹੁਕਮਨਾਮਾ ਸ਼ੁਰੂ ਹੋ ਰਿਹਾ ਹੈ। ਰੱਦ ਕਰਨ ਲਈ ਦੋ ਵਾਰ ਟੈਪ ਕਰੋ।} playing{ਹੁਕਮਨਾਮਾ ਚੱਲ ਰਿਹਾ ਹੈ। ਰੋਕਣ ਲਈ ਦੋ ਵਾਰ ਟੈਪ ਕਰੋ।} paused{ਹੁਕਮਨਾਮਾ ਰੁਕਿਆ ਹੋਇਆ ਹੈ। ਮੁੜ ਚਲਾਉਣ ਲਈ ਦੋ ਵਾਰ ਟੈਪ ਕਰੋ।} other{ਅੱਜ ਦਾ ਹੁਕਮਨਾਮਾ ਸੁਣੋ}}",
@@ -575,5 +592,59 @@
     "update_required_body": "ਇਹ ਵਰਜਨ ਬਹੁਤ ਪੁਰਾਣਾ ਹੈ ਅਤੇ ਠੀਕ ਨਹੀਂ ਚੱਲਦਾ। ਅੱਗੇ ਵਧਣ ਲਈ ਇਸਨੂੰ ਸਟੋਰ ਤੋਂ ਅੱਪਡੇਟ ਕਰੋ।",
     "@update_required_body": {
         "description": "ਉਸ ਅੱਪਡੇਟ ਸ਼ੀਟ ਦੇ ਸਿਰਲੇਖ ਹੇਠਲੀ ਸਤਰ ਜੋ ਬੰਦ ਨਹੀਂ ਹੋ ਸਕਦੀ"
+    },
+    "support_heading": "ਹੋਰਾਂ ਤੱਕ ਪਹੁੰਚਾਓ",
+    "@support_heading": {
+        "description": "ਬਾਰੇ ਸਕ੍ਰੀਨ ਵਿੱਚ ਸਾਂਝਾ ਕਰਨ ਅਤੇ ਰੇਟਿੰਗ ਵਾਲੀਆਂ ਲਾਈਨਾਂ ਦਾ ਸਿਰਲੇਖ"
+    },
+    "support_body": "ਲਾਈਵ ਦਰਬਾਰ ਮੁਫ਼ਤ ਹੈ ਅਤੇ ਮੁਫ਼ਤ ਹੀ ਰਹੇਗੀ, ਬਿਨਾਂ ਇਸ਼ਤਿਹਾਰਾਂ ਦੇ। ਇਸਨੂੰ ਸਾਂਝਾ ਕਰਨ ਜਾਂ ਰੇਟਿੰਗ ਦੇਣ ਨਾਲ ਹੋਰ ਸੰਗਤ ਤੱਕ ਪਹੁੰਚਦੀ ਹੈ।",
+    "@support_body": {
+        "description": "ਸਿਰਲੇਖ ਹੇਠਲੀ ਸਤਰ। ਐਪ ਕੋਈ ਪੈਸਾ ਨਹੀਂ ਲੈਂਦੀ"
+    },
+    "share_app": "ਲਾਈਵ ਦਰਬਾਰ ਸਾਂਝਾ ਕਰੋ",
+    "@share_app": {
+        "description": "ਐਪ ਦਾ ਲਿੰਕ ਸਾਂਝਾ ਕਰਨ ਵਾਲਾ ਬਟਨ"
+    },
+    "share_app_message": "ਸ੍ਰੀ ਦਰਬਾਰ ਸਾਹਿਬ, ਅੰਮ੍ਰਿਤਸਰ ਤੋਂ ਲਾਈਵ ਕੀਰਤਨ, ਅਤੇ ਰੋਜ਼ਾਨਾ ਹੁਕਮਨਾਮਾ ਤੇ ਕਥਾ। ਮੁਫ਼ਤ, ਬਿਨਾਂ ਇਸ਼ਤਿਹਾਰਾਂ ਦੇ।",
+    "@share_app_message": {
+        "description": "ਸਾਂਝੇ ਕੀਤੇ ਜਾਣ ਵਾਲੇ ਸੁਨੇਹੇ ਦੀ ਪਹਿਲੀ ਸਤਰ"
+    },
+    "rate_app": "ਲਾਈਵ ਦਰਬਾਰ ਨੂੰ ਰੇਟਿੰਗ ਦਿਓ",
+    "@rate_app": {
+        "description": "ਸਟੋਰ ਵਿੱਚ ਐਪ ਦਾ ਪੰਨਾ ਖੋਲ੍ਹਣ ਵਾਲੀ ਲਾਈਨ"
+    },
+    "share": "ਸਾਂਝਾ ਕਰੋ",
+    "@share": {
+        "description": "ਹੁਕਮਨਾਮਾ ਪੰਨੇ 'ਤੇ ਸੁਣੋ ਦੇ ਨਾਲ ਵਾਲਾ ਬਟਨ"
+    },
+    "share_hukamnama": "ਇਹ ਹੁਕਮਨਾਮਾ ਸਾਂਝਾ ਕਰੋ",
+    "@share_hukamnama": {
+        "description": "ਸਕ੍ਰੀਨ ਰੀਡਰ ਲਈ ਸਾਂਝਾ ਕਰੋ ਬਟਨ ਦਾ ਨਾਮ"
+    },
+    "share_hukamnama_title": "ਸ੍ਰੀ ਦਰਬਾਰ ਸਾਹਿਬ ਤੋਂ ਹੁਕਮਨਾਮਾ, {date}",
+    "@share_hukamnama_title": {
+        "description": "ਸਾਂਝੇ ਕੀਤੇ ਹੁਕਮਨਾਮੇ ਦੀ ਪਹਿਲੀ ਸਤਰ। {date} ਹੁਕਮਨਾਮੇ ਦੀ ਤਾਰੀਖ਼ ਹੈ",
+        "placeholders": {
+            "date": {
+                "type": "String"
+            }
+        }
+    },
+    "share_hukamnama_footer": "ਪੂਰਾ ਪੜ੍ਹੋ ਅਤੇ ਸੁਣੋ:",
+    "@share_hukamnama_footer": {
+        "description": "ਸਾਂਝੇ ਕੀਤੇ ਹੁਕਮਨਾਮੇ ਦੀ ਆਖਰੀ ਸਤਰ, ਜਿਸ ਮਗਰੋਂ darbar.live ਲਿੰਕ ਆਉਂਦਾ ਹੈ"
+    },
+    "share_hukamnama_footer_day": "ਪੂਰਾ ਪੜ੍ਹੋ:",
+    "link_copied": "ਕਾਪੀ ਹੋ ਗਿਆ। ਸਾਂਝਾ ਕਰਨ ਲਈ ਪੇਸਟ ਕਰੋ।",
+    "@link_copied": {
+        "description": "ਜਦੋਂ ਸਾਂਝਾ ਕਰਨ ਦੀ ਥਾਂ ਲਿਖਤ ਕਾਪੀ ਹੋਈ"
+    },
+    "youtube_live": "YouTube ਉੱਤੇ ਲਾਈਵ ਦੇਖੋ",
+    "@youtube_live": {
+        "description": "ਮੁੱਖ ਸਕ੍ਰੀਨ ਦੀ ਉਸ ਸਤਰ ਦਾ ਨਾਂ ਜੋ SGPC ਦੀ ਸ੍ਰੀ ਹਰਿਮੰਦਰ ਸਾਹਿਬ ਦੀ ਲਾਈਵ ਵੀਡੀਓ YouTube ਐਪ ਵਿੱਚ ਖੋਲ੍ਹਦੀ ਹੈ। ਸਤਰ ਉਦੋਂ ਹੀ ਦਿਸਦੀ ਹੈ ਜਦੋਂ ਵੀਡੀਓ ਸਟ੍ਰੀਮ ਲਾਈਵ ਹੋਵੇ, ਜਿਵੇਂ YouTube ਦੀ ਹਰ 5 ਮਿੰਟ ਦੀ ਜਾਂਚ ਦੱਸਦੀ ਹੈ। ਤਾਜ਼ਾ ਜਾਂਚ ਨਾ ਹੋਵੇ ਤਾਂ ਇਹ ਸਟ੍ਰੀਮ ਦੇ ਆਮ ਸਮਿਆਂ ਵਿੱਚ ਦਿਸਦੀ ਹੈ"
+    },
+    "youtube_live_semantics": "ਸ੍ਰੀ ਹਰਿਮੰਦਰ ਸਾਹਿਬ ਦੀ ਲਾਈਵ ਵੀਡੀਓ YouTube ਉੱਤੇ ਦੇਖੋ। YouTube ਐਪ ਖੁੱਲ੍ਹੇਗੀ।",
+    "@youtube_live_semantics": {
+        "description": "ਸਕ੍ਰੀਨ ਰੀਡਰ YouTube ਉੱਤੇ ਲਾਈਵ ਵੀਡੀਓ ਵਾਲੀ ਸਤਰ ਬਾਰੇ ਕੀ ਬੋਲਦਾ ਹੈ। ਇਹ ਵੀ ਦੱਸਦਾ ਹੈ ਕਿ ਸਤਰ ਇਸ ਐਪ ਤੋਂ ਬਾਹਰ ਲੈ ਜਾਂਦੀ ਹੈ"
     }
 }

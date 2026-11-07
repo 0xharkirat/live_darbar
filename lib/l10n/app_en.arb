@@ -370,6 +370,15 @@
             }
         }
     },
+    "hukamnama_source": "Hukamnama from {source}",
+    "@hukamnama_source": {
+        "description": "Credit under the Hukamnama when the meanings under the lines come from another source. SGPC chose the Hukamnama and gave its text.",
+        "placeholders": {
+            "source": {
+                "type": "String"
+            }
+        }
+    },
     "text_source": "Text and meaning from {source}",
     "@text_source": {
         "description": "Credit under the Hukamnama text",
@@ -409,9 +418,90 @@
             }
         }
     },
+    "hukamnama_pick_day": "Choose another day",
+    "@hukamnama_pick_day": {
+        "description": "Screen reader hint for the date line at the top of the Hukamnama reader. The line is a button that opens the sheet to pick an earlier day"
+    },
+    "archive_title": "Earlier Hukamnama",
+    "@archive_title": {
+        "description": "Title of the sheet where the listener picks an earlier day to read"
+    },
+    "archive_body": "Pick a day to read its Hukamnama.",
+    "@archive_body": {
+        "description": "Line under the title of the archive sheet on the phone apps"
+    },
+    "archive_body_web": "Pick a day from the last {days} days.",
+    "@archive_body_web": {
+        "description": "Line under the title of the archive sheet on the web, where only the last days are kept. The number arrives already written: Gurmukhi digits in Punjabi, Latin digits in English",
+        "placeholders": {
+            "days": {
+                "type": "String"
+            }
+        }
+    },
+    "archive_open": "Open",
+    "@archive_open": {
+        "description": "The gold button of the archive sheet. It opens the Hukamnama of the day on the wheel"
+    },
+    "archive_yesterday": "Yesterday",
+    "@archive_yesterday": {
+        "description": "The quiet button of the archive sheet. It opens the Hukamnama of the day before today"
+    },
+    "archive_none": "There is no Hukamnama for this day.",
+    "@archive_none": {
+        "description": "Shown in the reader when an earlier day has no Hukamnama text: SGPC has none, or the web copy does not reach back that far"
+    },
+    "archive_failed": "This Hukamnama could not be loaded",
+    "@archive_failed": {
+        "description": "Shown in the reader when an earlier day's text fails to load, for example with no network"
+    },
+    "archive_other_day": "Choose another day",
+    "@archive_other_day": {
+        "description": "Text button under the message in the reader when an earlier day has no Hukamnama. It opens the archive sheet"
+    },
     "meaning": "Meaning",
     "@meaning": {
         "description": "Heading above the explanation of the Hukamnama"
+    },
+    "sangrand_title": "Sangrand Hukamnama",
+    "@sangrand_title": {
+        "description": "Title of the page with the Sangrand Hukamnama: the pauri of Barah Maha Maajh for the Sikh month"
+    },
+    "barah_maha": "Barah Maha",
+    "@barah_maha": {
+        "description": "The name of the bani Barah Maha, on the Sangrand page: Barah Maha · Katak · Ang 135"
+    },
+    "sangrand_row": "Sangrand · {month}",
+    "@sangrand_row": {
+        "description": "Small label on the Home row that opens the Sangrand Hukamnama of the Sikh month. English writes it in capitals",
+        "placeholders": {
+            "month": {
+                "type": "String",
+                "example": "Katak"
+            }
+        }
+    },
+    "sangrand_row_today": "Today is Sangrand · {month}",
+    "@sangrand_row_today": {
+        "description": "The Home row's label on Sangrand day itself, the 1st of the Sikh month. English writes it in capitals",
+        "placeholders": {
+            "month": {
+                "type": "String",
+                "example": "Katak"
+            }
+        }
+    },
+    "reader_options": "Reading options",
+    "@reader_options": {
+        "description": "The Aa button in the Hukamnama reader, and the title of the sheet it opens: text size and meanings"
+    },
+    "reader_text_size": "Text size",
+    "@reader_text_size": {
+        "description": "Label above the smaller and larger text buttons in the reading options"
+    },
+    "reader_meanings": "Meanings",
+    "@reader_meanings": {
+        "description": "Label before the 2 switches that show the Punjabi and the English meaning under each line of the Hukamnama"
     },
     "open_on_sgpc": "Read it on SGPC’s website",
     "@open_on_sgpc": {
@@ -743,5 +833,62 @@
     "update_required_body": "This version is too old to work well. Update it from the store to go on.",
     "@update_required_body": {
         "description": "Line under the title of the update sheet that cannot be dismissed"
+    },
+    "support_heading": "Help others find it",
+    "@support_heading": {
+        "description": "Heading in About over the share and rate rows"
+    },
+    "support_body": "Live Darbar is free and will stay free, with no ads. Sharing it or rating it helps more of the sangat find it.",
+    "@support_body": {
+        "description": "Line under the heading in About. It asks for nothing but a share or a rating: the app takes no money"
+    },
+    "share_app": "Share Live Darbar",
+    "@share_app": {
+        "description": "Row in About and link on Home that opens the share sheet with a link to the app"
+    },
+    "share_app_message": "Live kirtan from Sri Darbar Sahib, Amritsar, and the daily Hukamnama and Katha. Free, with no ads.",
+    "@share_app_message": {
+        "description": "First line of the text that Share Live Darbar sends. The site and the store links follow it"
+    },
+    "rate_app": "Rate Live Darbar",
+    "@rate_app": {
+        "description": "Row in About that opens the app's page in the store"
+    },
+    "share": "Share",
+    "@share": {
+        "description": "Button beside Listen on the Hukamnama reader"
+    },
+    "share_hukamnama": "Share this Hukamnama",
+    "@share_hukamnama": {
+        "description": "Screen reader label for the Share button on the Hukamnama reader"
+    },
+    "share_hukamnama_title": "Hukamnama from Sri Darbar Sahib, {date}",
+    "@share_hukamnama_title": {
+        "description": "First line of the shared Hukamnama text. {date} is the day of the Hukamnama, for example 6 November, and may be followed by the Ang",
+        "placeholders": {
+            "date": {
+                "type": "String"
+            }
+        }
+    },
+    "share_hukamnama_footer": "Read it all and listen:",
+    "@share_hukamnama_footer": {
+        "description": "Last line of the shared Hukamnama text. The darbar.live link follows it"
+    },
+    "share_hukamnama_footer_day": "Read it all:",
+    "@share_hukamnama_footer_day": {
+        "description": "Last line of the shared text for an earlier day's Hukamnama. The link to that day follows it. There is no recording for an earlier day, so it does not say listen"
+    },
+    "link_copied": "Copied. Paste it to share.",
+    "@link_copied": {
+        "description": "Short note when the phone or browser has no share sheet and the text was copied instead"
+    },
+    "youtube_live": "Watch live on YouTube",
+    "@youtube_live": {
+        "description": "Label of the Home row that opens SGPC's live video of Sri Harmandir Sahib in the YouTube app. The row shows only while a video stream is live, as a check of YouTube every 5 minutes says. With no fresh check, it shows at the usual times of the stream"
+    },
+    "youtube_live_semantics": "Watch live video from Sri Harmandir Sahib on YouTube. Opens the YouTube app.",
+    "@youtube_live_semantics": {
+        "description": "What a screen reader says for the Home row that opens the live video on YouTube. It also says the row leaves this app"
     }
 }

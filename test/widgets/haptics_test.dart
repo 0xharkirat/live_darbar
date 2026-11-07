@@ -114,8 +114,15 @@ void main() {
   });
 
   group('the text size buttons', () {
-    testWidgets('A+ ticks, and A- ticks once it can shrink', (tester) async {
+    /// The buttons are in the reading options, behind Aa in the top bar.
+    Future<void> openSizes(WidgetTester tester) async {
       await openReader(tester);
+      await tester.tap(find.byKey(const ValueKey('reader-options')));
+      await tester.pumpAndSettle();
+    }
+
+    testWidgets('A+ ticks, and A- ticks once it can shrink', (tester) async {
+      await openSizes(tester);
       final calls = haptics(tester);
 
       await tester.tap(find.text('A+'));
@@ -128,7 +135,7 @@ void main() {
     });
 
     testWidgets('A- is quiet at the smallest size', (tester) async {
-      await openReader(tester);
+      await openSizes(tester);
       final calls = haptics(tester);
 
       await tester.tap(find.text('A−'));
@@ -138,7 +145,7 @@ void main() {
     });
 
     testWidgets('A+ is quiet at the largest size', (tester) async {
-      await openReader(tester);
+      await openSizes(tester);
       for (var i = 0; i < 4; i++) {
         await tester.tap(find.text('A+'));
         await tester.pump();

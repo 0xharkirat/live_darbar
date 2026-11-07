@@ -274,6 +274,11 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String hukamnama_source(String source) {
+    return 'Hukamnama from $source';
+  }
+
+  @override
   String text_source(String source) {
     return 'Text and meaning from $source';
   }
@@ -298,7 +303,61 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get hukamnama_pick_day => 'Choose another day';
+
+  @override
+  String get archive_title => 'Earlier Hukamnama';
+
+  @override
+  String get archive_body => 'Pick a day to read its Hukamnama.';
+
+  @override
+  String archive_body_web(String days) {
+    return 'Pick a day from the last $days days.';
+  }
+
+  @override
+  String get archive_open => 'Open';
+
+  @override
+  String get archive_yesterday => 'Yesterday';
+
+  @override
+  String get archive_none => 'There is no Hukamnama for this day.';
+
+  @override
+  String get archive_failed => 'This Hukamnama could not be loaded';
+
+  @override
+  String get archive_other_day => 'Choose another day';
+
+  @override
   String get meaning => 'Meaning';
+
+  @override
+  String get sangrand_title => 'Sangrand Hukamnama';
+
+  @override
+  String get barah_maha => 'Barah Maha';
+
+  @override
+  String sangrand_row(String month) {
+    return 'Sangrand · $month';
+  }
+
+  @override
+  String sangrand_row_today(String month) {
+    return 'Today is Sangrand · $month';
+  }
+
+  @override
+  String get reader_options => 'Reading options';
+
+  @override
+  String get reader_text_size => 'Text size';
+
+  @override
+  String get reader_meanings => 'Meanings';
 
   @override
   String get open_on_sgpc => 'Read it on SGPC’s website';
@@ -546,4 +605,45 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get update_required_body => 'This version is too old to work well. Update it from the store to go on.';
+
+  @override
+  String get support_heading => 'Help others find it';
+
+  @override
+  String get support_body => 'Live Darbar is free and will stay free, with no ads. Sharing it or rating it helps more of the sangat find it.';
+
+  @override
+  String get share_app => 'Share Live Darbar';
+
+  @override
+  String get share_app_message => 'Live kirtan from Sri Darbar Sahib, Amritsar, and the daily Hukamnama and Katha. Free, with no ads.';
+
+  @override
+  String get rate_app => 'Rate Live Darbar';
+
+  @override
+  String get share => 'Share';
+
+  @override
+  String get share_hukamnama => 'Share this Hukamnama';
+
+  @override
+  String share_hukamnama_title(String date) {
+    return 'Hukamnama from Sri Darbar Sahib, $date';
+  }
+
+  @override
+  String get share_hukamnama_footer => 'Read it all and listen:';
+
+  @override
+  String get share_hukamnama_footer_day => 'Read it all:';
+
+  @override
+  String get link_copied => 'Copied. Paste it to share.';
+
+  @override
+  String get youtube_live => 'Watch live on YouTube';
+
+  @override
+  String get youtube_live_semantics => 'Watch live video from Sri Harmandir Sahib on YouTube. Opens the YouTube app.';
 }

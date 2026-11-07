@@ -70,13 +70,14 @@ It looks again when SGPC changes the text, or when `shabad.version` or `shabad.m
 | `angEnd` | number | The Ang where it ends. |
 | `sections` | list | The raag or other section, for example `{"roman": "Raag Dhanaasree"}`. |
 | `writers` | list | The writers, for example `{"roman": "Guru Ramdas", "gurmukhi": "ਗੁਰੂ ਰਾਮਦਾਸ"}`. |
+| `heading` | list | Optional. The title lines, such as `ਰਾਮਕਲੀ ਮਹਲਾ ੧ ਸਿਧ ਗੋਸਟਿ ॥` and `ੴ ਸਤਿਗੁਰ ਪ੍ਰਸਾਦਿ ॥`, each with the keys of a line in `lines`. They come from the database: the title lines that open the shabad, or the bani for a part of a long bani. There is no `heading` when the job finds no title to be sure of. |
 | `assets` | object | The Shabad OS asset id of each kind of data. |
 | `credits` | object | Who made each kind of data, as short text for a screen. |
 
 ### `lines`
 
 An array in reading order.
-The title line of the shabad (for example `ਧਨਾਸਰੀ ਮਹਲਾ ੪ ॥`) is not in it, because SGPC gives it apart.
+The title line of the shabad (for example `ਧਨਾਸਰੀ ਮਹਲਾ ੪ ॥`) is not in it, because SGPC gives it apart. It is in `shabad.heading`.
 
 | Key | Type | Meaning |
 | --- | --- | --- |
@@ -102,7 +103,7 @@ Example (cut short):
   "shabad": {
     "source": "Shabad OS",
     "version": "5.0.0-next.0",
-    "matcher": 1,
+    "matcher": 2,
     "matched": true,
     "similarity": 1.0,
     "ids": ["R5B"],

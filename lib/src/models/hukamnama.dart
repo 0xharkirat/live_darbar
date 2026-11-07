@@ -203,6 +203,7 @@ class HukamnamaName {
 class HukamnamaShabad {
   const HukamnamaShabad({
     required this.lines,
+    this.heading = const [],
     required this.ids,
     required this.ang,
     required this.angEnd,
@@ -216,6 +217,13 @@ class HukamnamaShabad {
 
   /// The lines, in reading order. Never empty.
   final List<HukamnamaLine> lines;
+
+  /// The title lines, such as "ਰਾਮਕਲੀ ਮਹਲਾ ੧ ਸਿਧ ਗੋਸਟਿ ॥" and
+  /// "ੴ ਸਤਿਗੁਰ ਪ੍ਰਸਾਦਿ ॥", with their meanings. They come from the database,
+  /// so they are the Granth's own title even when SGPC prints another (it did
+  /// on 7 November 2026). Empty when the mirror found none to be sure of, and
+  /// for files written before that day: the screen then shows SGPC's heading.
+  final List<HukamnamaLine> heading;
 
   /// The Shabad OS ids of the shabad (a Hukamnama can cover more than one).
   final List<String> ids;
@@ -257,8 +265,26 @@ class HukamnamaShabad {
         'sections': [for (final s in sections) s.toJson()],
         'writers': [for (final w in writers) w.toJson()],
         'credits': credits,
+        if (heading.isNotEmpty)
+          'heading': [for (final l in heading) l.toJson()],
         'lines': [for (final l in lines) l.toJson()],
       };
+
+  /// The title lines, or none when they are missing or cannot all be read.
+  /// A title is extra: a fault in it never costs the lines.
+  static List<HukamnamaLine> _heading(Object? rows) {
+    if (rows is! List || rows.isEmpty) return const [];
+    try {
+      return List.unmodifiable([
+        for (final row in rows)
+          row is Map<String, dynamic>
+              ? HukamnamaLine.fromJson(row)
+              : throw const FormatException('A title line is not an object.'),
+      ]);
+    } on Object {
+      return const [];
+    }
+  }
 
   /// Reads the `shabad` object and the `lines` array of a mirror file.
   /// Returns null, and never throws, when the day has no matched shabad or
@@ -284,6 +310,7 @@ class HukamnamaShabad {
                 ? HukamnamaLine.fromJson(line)
                 : throw const FormatException('A line is not an object.'),
         ]),
+        heading: _heading(shabad['heading']),
         ids:
             ids is List ? List.unmodifiable(ids.whereType<String>()) : const [],
         ang: ang,

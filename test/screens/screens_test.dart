@@ -317,6 +317,47 @@ void main() {
     });
   }
 
+  // The archive: an earlier day in the same reader, and the sheet that picks
+  // the day. The date line at the top opens the sheet.
+  final earlierDay = hukamnamaForDayProvider.overrideWith((ref, day) async {
+    final json = jsonDecode(
+      File('test/fixtures/sgpc_hukamnama_2026_11_02.json').readAsStringSync(),
+    ) as Map<String, dynamic>;
+    final text = json['hukamnama'] as Map<String, dynamic>;
+    text['date'] = sgpcDayIso(day);
+    text['ang'] = '${600 + day.day}';
+    return Hukamnama.fromSgpc(json);
+  });
+  final sevenNovember = DateTime.utc(2026, 11, 7, 6);
+
+  for (final locale in ['en', 'pa']) {
+    testWidgets('hukamnama, an earlier day, $locale', (tester) async {
+      await _pump(
+        tester,
+        HukamnamaScreen(day: DateTime.utc(2026, 11, 1)),
+        locale: locale,
+        at: sevenNovember,
+        overrides: [earlierDay],
+      );
+      await tester.pump(const Duration(seconds: 1));
+      await _shot(tester, 'hukamnama_earlier_$locale');
+    });
+
+    testWidgets('hukamnama, archive sheet, $locale', (tester) async {
+      await _pump(
+        tester,
+        const HukamnamaScreen(),
+        locale: locale,
+        at: sevenNovember,
+        overrides: [earlierDay],
+      );
+      await tester.tap(find.byKey(const ValueKey('reader-date')));
+      await tester.pump();
+      await tester.pump(const Duration(seconds: 1));
+      await _shot(tester, 'hukamnama_archive_sheet_$locale');
+    });
+  }
+
   for (final locale in ['en', 'pa']) {
     testWidgets('quality sheet, $locale', (tester) async {
       await _pump(tester, const HomeScreen(), now: _livePlaying, locale: locale);
@@ -696,12 +737,14 @@ Future<void> _shot(WidgetTester tester, String name) async {
   });
 }
 
-/// The real Hukamnama for 2 November 2026, as SGPC's feed served it.
+/// The real Hukamnama for 2 November 2026, as the mirror serves it: SGPC's
+/// answer with the lines, their meanings and pauses, and the title. So the
+/// store pictures show the reader as a listener sees it (3.1).
 class _Fixture extends HukamnamaController {
   @override
   Future<Hukamnama> build() async {
-    final json =
-        File('test/fixtures/sgpc_hukamnama_2026_11_02.json').readAsStringSync();
+    final json = File('test/fixtures/mirror_hukamnama_2026_11_02.json')
+        .readAsStringSync();
     return Hukamnama.fromSgpc(jsonDecode(json) as Map<String, dynamic>);
   }
 

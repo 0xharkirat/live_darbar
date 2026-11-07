@@ -1,0 +1,1533 @@
+{
+  "_note": "Rows cut from the Shabad OS database 5.0.0-next.0 for 7 November 2026: every Gurmukhi line on Ang 946 (pauris 69 to 73 of Sidh Gosht), and the first 4 lines of the bani Sidh Gosht (SGST) on Ang 938, its title lines and first verse. With their groups, sections, authors, English (DSSK) and Punjabi (PSST) meanings, and bani rows. The tables and columns are the database's own.",
+  "lines": [
+    {
+      "id": "041Z",
+      "line_group_id": "5HE",
+      "line_group_order": 11
+    },
+    {
+      "id": "05MZ",
+      "line_group_id": "8Q5",
+      "line_group_order": 7
+    },
+    {
+      "id": "0EXX",
+      "line_group_id": "8Q5",
+      "line_group_order": 10
+    },
+    {
+      "id": "12NL",
+      "line_group_id": "8Q5",
+      "line_group_order": 9
+    },
+    {
+      "id": "1LDG",
+      "line_group_id": "8Q5",
+      "line_group_order": 1
+    },
+    {
+      "id": "1PNK",
+      "line_group_id": "8Q5",
+      "line_group_order": 5
+    },
+    {
+      "id": "3QNM",
+      "line_group_id": "8Q5",
+      "line_group_order": 6
+    },
+    {
+      "id": "4490",
+      "line_group_id": "TJD",
+      "line_group_order": 18
+    },
+    {
+      "id": "473D",
+      "line_group_id": "G51",
+      "line_group_order": 2
+    },
+    {
+      "id": "7A69",
+      "line_group_id": "5HE",
+      "line_group_order": 5
+    },
+    {
+      "id": "7TEQ",
+      "line_group_id": "8Q5",
+      "line_group_order": 4
+    },
+    {
+      "id": "7YX0",
+      "line_group_id": "V3M",
+      "line_group_order": 6
+    },
+    {
+      "id": "8AB3",
+      "line_group_id": "5HE",
+      "line_group_order": 9
+    },
+    {
+      "id": "8Q41",
+      "line_group_id": "5HE",
+      "line_group_order": 1
+    },
+    {
+      "id": "8UNW",
+      "line_group_id": "8Q5",
+      "line_group_order": 8
+    },
+    {
+      "id": "99LS",
+      "line_group_id": "V3M",
+      "line_group_order": 4
+    },
+    {
+      "id": "A7H8",
+      "line_group_id": "8Q5",
+      "line_group_order": 3
+    },
+    {
+      "id": "AQ01",
+      "line_group_id": "V3M",
+      "line_group_order": 10
+    },
+    {
+      "id": "BC9S",
+      "line_group_id": "5HE",
+      "line_group_order": 12
+    },
+    {
+      "id": "BJE1",
+      "line_group_id": "V3M",
+      "line_group_order": 2
+    },
+    {
+      "id": "CKWW",
+      "line_group_id": "8Q5",
+      "line_group_order": 12
+    },
+    {
+      "id": "CQB4",
+      "line_group_id": "5HE",
+      "line_group_order": 8
+    },
+    {
+      "id": "ET9F",
+      "line_group_id": "5HE",
+      "line_group_order": 4
+    },
+    {
+      "id": "EV8S",
+      "line_group_id": "V3M",
+      "line_group_order": 12
+    },
+    {
+      "id": "F8TP",
+      "line_group_id": "TJD",
+      "line_group_order": 17
+    },
+    {
+      "id": "HLWB",
+      "line_group_id": "V3M",
+      "line_group_order": 7
+    },
+    {
+      "id": "L1JE",
+      "line_group_id": "V3M",
+      "line_group_order": 11
+    },
+    {
+      "id": "LB86",
+      "line_group_id": "8Q5",
+      "line_group_order": 2
+    },
+    {
+      "id": "N8YB",
+      "line_group_id": "5HE",
+      "line_group_order": 10
+    },
+    {
+      "id": "NTKK",
+      "line_group_id": "G51",
+      "line_group_order": 4
+    },
+    {
+      "id": "P7ZE",
+      "line_group_id": "G51",
+      "line_group_order": 3
+    },
+    {
+      "id": "PF2N",
+      "line_group_id": "G51",
+      "line_group_order": 1
+    },
+    {
+      "id": "PWJ0",
+      "line_group_id": "V3M",
+      "line_group_order": 9
+    },
+    {
+      "id": "QCFQ",
+      "line_group_id": "V3M",
+      "line_group_order": 8
+    },
+    {
+      "id": "S4J7",
+      "line_group_id": "V3M",
+      "line_group_order": 1
+    },
+    {
+      "id": "SFHH",
+      "line_group_id": "5HE",
+      "line_group_order": 6
+    },
+    {
+      "id": "TUMF",
+      "line_group_id": "5HE",
+      "line_group_order": 7
+    },
+    {
+      "id": "TXW9",
+      "line_group_id": "5HE",
+      "line_group_order": 2
+    },
+    {
+      "id": "URZV",
+      "line_group_id": "V3M",
+      "line_group_order": 3
+    },
+    {
+      "id": "UULK",
+      "line_group_id": "V3M",
+      "line_group_order": 5
+    },
+    {
+      "id": "XMRB",
+      "line_group_id": "5HE",
+      "line_group_order": 3
+    },
+    {
+      "id": "ZR95",
+      "line_group_id": "8Q5",
+      "line_group_order": 11
+    }
+  ],
+  "line_groups": [
+    {
+      "id": "5HE",
+      "author_id": "NANK",
+      "section_id": "87DX",
+      "section_order": 171
+    },
+    {
+      "id": "8Q5",
+      "author_id": "NANK",
+      "section_id": "87DX",
+      "section_order": 170
+    },
+    {
+      "id": "G51",
+      "author_id": "NANK",
+      "section_id": "87DX",
+      "section_order": 136
+    },
+    {
+      "id": "TJD",
+      "author_id": "NANK",
+      "section_id": "87DX",
+      "section_order": 168
+    },
+    {
+      "id": "V3M",
+      "author_id": "NANK",
+      "section_id": "87DX",
+      "section_order": 169
+    }
+  ],
+  "sections": [
+    {
+      "id": "87DX",
+      "source_id": "SGGS",
+      "source_order": 22,
+      "name": "{\"Latn\":\"Raag Raamkalee\"}",
+      "description": "{\"en\":\"The emotions in Ramkali are like those of a wise teacher disciplining their student. The student is aware of the pain of learning, but is still conscious of the fact that ultimately it is for the best. In this way Ramkali conveys the change from all that we are familiar with, to something we are certain will be better.\"}"
+    }
+  ],
+  "authors": [
+    {
+      "id": "NANK",
+      "name": "{\"Guru\":\"ਗੁਰੂ ਨਾਨਕ\",\"Latn\":\"Guru Nanak\"}",
+      "other_names": "[{\"Latn\":\"Baba Nanak\"}]"
+    }
+  ],
+  "asset_lines": [
+    {
+      "asset_id": "DSSK",
+      "line_id": "041Z",
+      "type": "translation",
+      "data": "The eternal imperishable Lord God has staged this play; the Gurmukh understands it.",
+      "additional": "{\"type\":\"translation\",\"language\":\"en\"}",
+      "priority": 4
+    },
+    {
+      "asset_id": "PSST",
+      "line_id": "041Z",
+      "type": "translation",
+      "data": "ਅਬਿਨਾਸੀ ਪ੍ਰਭੂ ਨੇ (ਇਹ ਜਗਤ ਦੀ) ਖੇਡ ਰਚੀ ਹੈ ਗੁਰਮੁਖ ਮਨੁੱਖ ਨੂੰ ਇਹ ਸਮਝ ਪੈਂਦੀ ਹੈ।",
+      "additional": "{\"type\":\"translation\",\"language\":\"pa\"}",
+      "priority": 6
+    },
+    {
+      "asset_id": "SSA2",
+      "line_id": "041Z",
+      "type": "primary",
+      "data": "ਅਬਿਨਾਸੀ ਪ੍ਰਭਿ ਖੇਲੁ ਰਚਾਇਆ; ਗੁਰਮੁਖਿ ਸੋਝੀ ਹੋਈ ॥",
+      "additional": "{\"type\":\"primary\",\"page\":946,\"line\":18}",
+      "priority": 1
+    },
+    {
+      "asset_id": "DSSK",
+      "line_id": "05MZ",
+      "type": "translation",
+      "data": "The Gurmukh conquers his mind by subduing his ego.",
+      "additional": "{\"type\":\"translation\",\"language\":\"en\"}",
+      "priority": 4
+    },
+    {
+      "asset_id": "PSST",
+      "line_id": "05MZ",
+      "type": "translation",
+      "data": "ਜੋ ਮਨੁੱਖ ਗੁਰੂ ਦੇ ਹੁਕਮ ਵਿਚ ਤੁਰਦਾ ਹੈ ਉਸ ਨੇ (ਆਪਣੀ) ਹਉਮੈ ਨੂੰ ਮਾਰ ਕੇ ਆਪਣਾ ਮਨ ਜਿੱਤ ਲਿਆ ਹੈ।",
+      "additional": "{\"type\":\"translation\",\"language\":\"pa\"}",
+      "priority": 6
+    },
+    {
+      "asset_id": "SSA2",
+      "line_id": "05MZ",
+      "type": "primary",
+      "data": "ਗੁਰਮੁਖਿ ਮਨੁ ਜੀਤਾ; ਹਉਮੈ ਮਾਰਿ ॥",
+      "additional": "{\"type\":\"primary\",\"page\":946,\"line\":10}",
+      "priority": 1
+    },
+    {
+      "asset_id": "DSSK",
+      "line_id": "0EXX",
+      "type": "translation",
+      "data": "The Gurmukh does not lose in the Court of the Lord.",
+      "additional": "{\"type\":\"translation\",\"language\":\"en\"}",
+      "priority": 4
+    },
+    {
+      "asset_id": "PSST",
+      "line_id": "0EXX",
+      "type": "translation",
+      "data": "ਗੁਰੂ ਦੇ ਹੁਕਮ ਵਿਚ ਤੁਰਨ ਵਾਲਾ (ਮਨੁੱਖਾ ਜੀਵਨ ਦੀ ਬਾਜ਼ੀ) ਹਾਰ ਕੇ ਹਜ਼ੂਰੀ ਵਿਚ ਨਹੀਂ ਜਾਂਦਾ (ਭਾਵ, ਜਿੱਤ ਕੇ ਜਾਂਦਾ ਹੈ)।",
+      "additional": "{\"type\":\"translation\",\"language\":\"pa\"}",
+      "priority": 6
+    },
+    {
+      "asset_id": "SSA2",
+      "line_id": "0EXX",
+      "type": "primary",
+      "data": "ਗੁਰਮੁਖਿ; ਦਰਗਹ. ਨ ਆਵੈ ਹਾਰਿ ॥",
+      "additional": "{\"type\":\"primary\",\"page\":946,\"line\":11}",
+      "priority": 1
+    },
+    {
+      "asset_id": "DSSK",
+      "line_id": "12NL",
+      "type": "translation",
+      "data": "The Gurmukh conquers the world; he knocks down the Messenger of Death, and kills it.",
+      "additional": "{\"type\":\"translation\",\"language\":\"en\"}",
+      "priority": 4
+    },
+    {
+      "asset_id": "PSST",
+      "line_id": "12NL",
+      "type": "translation",
+      "data": "ਗੁਰੂ ਦੇ ਹੁਕਮ ਵਿਚ ਤੁਰਨ ਵਾਲੇ ਨੇ ਮੌਤ ਦਾ ਡਰ ਮਾਰ ਮੁਕਾ ਕੇ ਉਸ ਨੇ ਜਗਤ ਜਿੱਤ ਲਿਆ ਹੈ।",
+      "additional": "{\"type\":\"translation\",\"language\":\"pa\"}",
+      "priority": 6
+    },
+    {
+      "asset_id": "SSA2",
+      "line_id": "12NL",
+      "type": "primary",
+      "data": "ਗੁਰਮੁਖਿ ਜਗੁ ਜੀਤਾ; ਜਮਕਾਲੁ ਮਾਰਿ ਬਿਦਾਰਿ ॥",
+      "additional": "{\"type\":\"primary\",\"page\":946,\"line\":11}",
+      "priority": 1
+    },
+    {
+      "asset_id": "DSSK",
+      "line_id": "1LDG",
+      "type": "translation",
+      "data": "Without serving the True Guru, Yoga is not attained;",
+      "additional": "{\"type\":\"translation\",\"language\":\"en\"}",
+      "priority": 4
+    },
+    {
+      "asset_id": "PSST",
+      "line_id": "1LDG",
+      "type": "translation",
+      "data": "ਸਤਿਗੁਰੂ ਦੀ ਦੱਸੀ ਕਾਰ ਕਰਨ ਤੋਂ ਬਿਨਾ (ਪ੍ਰਭੂ ਨਾਲ) ਮੇਲ ਨਹੀਂ ਹੁੰਦਾ,",
+      "additional": "{\"type\":\"translation\",\"language\":\"pa\"}",
+      "priority": 6
+    },
+    {
+      "asset_id": "SSA2",
+      "line_id": "1LDG",
+      "type": "primary",
+      "data": "ਬਿਨੁ ਸਤਿਗੁਰ ਸੇਵੇ; ਜੋਗੁ. ਨ ਹੋਈ ॥",
+      "additional": "{\"type\":\"primary\",\"page\":946,\"line\":8}",
+      "priority": 1
+    },
+    {
+      "asset_id": "DSSK",
+      "line_id": "1PNK",
+      "type": "translation",
+      "data": "Without meeting the True Guru, there is only the deep darkness of egotistical pride.",
+      "additional": "{\"type\":\"translation\",\"language\":\"en\"}",
+      "priority": 4
+    },
+    {
+      "asset_id": "PSST",
+      "line_id": "1PNK",
+      "type": "translation",
+      "data": "ਗੁਰੂ ਨੂੰ ਮਿਲਣ ਤੋਂ ਬਿਨਾ ਘੋਰ ਹਨੇਰੇ ਵਿਚ ਅਹੰਕਾਰ ਵਿਚ ਰਹਿੰਦਾ ਹੈ।",
+      "additional": "{\"type\":\"translation\",\"language\":\"pa\"}",
+      "priority": 6
+    },
+    {
+      "asset_id": "SSA2",
+      "line_id": "1PNK",
+      "type": "primary",
+      "data": "ਬਿਨੁ ਸਤਿਗੁਰ ਭੇਟੇ; ਮਹਾ ਗਰਬਿ ਗੁਬਾਰਿ ॥",
+      "additional": "{\"type\":\"primary\",\"page\":946,\"line\":9}",
+      "priority": 1
+    },
+    {
+      "asset_id": "DSSK",
+      "line_id": "3QNM",
+      "type": "translation",
+      "data": "O Nanak, without the True Guru, one dies, having lost the opportunity of this life. ||70||",
+      "additional": "{\"type\":\"translation\",\"language\":\"en\"}",
+      "priority": 4
+    },
+    {
+      "asset_id": "PSST",
+      "line_id": "3QNM",
+      "type": "translation",
+      "data": "ਹੇ ਨਾਨਕ! ਸਤਿਗੁਰੂ ਤੋਂ ਬਿਨਾ ਮਨੁੱਖ ਜ਼ਿੰਦਗੀ (ਦੀ ਬਾਜ਼ੀ) ਹਾਰ ਕੇ ਆਤਮਕ ਮੌਤ ਸਹੇੜਦਾ ਹੈ ॥੭੦॥",
+      "additional": "{\"type\":\"translation\",\"language\":\"pa\"}",
+      "priority": 6
+    },
+    {
+      "asset_id": "SSA2",
+      "line_id": "3QNM",
+      "type": "primary",
+      "data": "ਨਾਨਕ. ਬਿਨੁ ਗੁਰ; ਮੁਆ. ਜਨਮੁ ਹਾਰਿ ॥੭੦॥",
+      "additional": "{\"type\":\"primary\",\"page\":946,\"line\":10}",
+      "priority": 1
+    },
+    {
+      "asset_id": "DSSK",
+      "line_id": "4490",
+      "type": "translation",
+      "data": "Without the True Name, no one can become pure; O Nanak, this is the Unspoken Speech. ||67||",
+      "additional": "{\"type\":\"translation\",\"language\":\"en\"}",
+      "priority": 4
+    },
+    {
+      "asset_id": "PSST",
+      "line_id": "4490",
+      "type": "translation",
+      "data": "ਹੇ ਨਾਨਕ! (ਐਸੇ ਉਸ) ਸਦਾ ਕਾਇਮ ਰਹਿਣ ਵਾਲੇ ਪ੍ਰਭੂ (ਨੂੰ ਮਿਲਣ) ਤੋਂ ਬਿਨਾ, ਜਿਸ ਦਾ ਕੋਈ ਸਹੀ ਸਰੂਪ ਬਿਆਨ ਨਹੀਂ ਕੀਤਾ ਜਾ ਸਕਦਾ, ਕੋਈ ਮਨੁੱਖ ਸੁੱਚਾ ਨਹੀਂ ਹੈ ॥੬੭॥",
+      "additional": "{\"type\":\"translation\",\"language\":\"pa\"}",
+      "priority": 6
+    },
+    {
+      "asset_id": "SSA2",
+      "line_id": "4490",
+      "type": "primary",
+      "data": "ਸਾਚ ਬਿਨਾ. ਸੂਚਾ ਕੋ ਨਾਹੀ; ਨਾਨਕ ਅਕਥ ਕਹਾਣੀ ॥੬੭॥",
+      "additional": "{\"type\":\"primary\",\"page\":946,\"line\":1}",
+      "priority": 1
+    },
+    {
+      "asset_id": "DSSK",
+      "line_id": "473D",
+      "type": "translation",
+      "data": "One Universal Creator God. By The Grace Of The True Guru:",
+      "additional": "{\"type\":\"translation\",\"language\":\"en\"}",
+      "priority": 4
+    },
+    {
+      "asset_id": "PSST",
+      "line_id": "473D",
+      "type": "translation",
+      "data": "ਅਕਾਲ ਪੁਰਖ ਇੱਕ ਹੈ ਅਤੇ ਸਤਿਗੁਰੂ ਦੀ ਕਿਰਪਾ ਨਾਲ ਮਿਲਦਾ ਹੈ।",
+      "additional": "{\"type\":\"translation\",\"language\":\"pa\"}",
+      "priority": 5
+    },
+    {
+      "asset_id": "SSA2",
+      "line_id": "473D",
+      "type": "primary",
+      "data": "ੴ ਸਤਿਗੁਰ ਪ੍ਰਸਾਦਿ ॥",
+      "additional": "{\"type\":\"primary\",\"page\":938,\"line\":5}",
+      "priority": 1
+    },
+    {
+      "asset_id": "DSSK",
+      "line_id": "7A69",
+      "type": "translation",
+      "data": "The Name is obtained only from the True Guru, O hermit, and then, the Way of Yoga is found.",
+      "additional": "{\"type\":\"translation\",\"language\":\"en\"}",
+      "priority": 4
+    },
+    {
+      "asset_id": "PSST",
+      "line_id": "7A69",
+      "type": "translation",
+      "data": "ਹੇ ਜੋਗੀ! ਸਤਿਗੁਰੂ ਤੋਂ ਪ੍ਰਭੂ ਦਾ 'ਨਾਮ' ਮਿਲਦਾ ਹੈ ('ਨਾਮ' ਮਿਲਿਆਂ ਹੀ) ਜੋਗ ਦੀ ਸੁਰਤ ਸਿਰੇ ਚੜ੍ਹਦੀ ਹੈ।",
+      "additional": "{\"type\":\"translation\",\"language\":\"pa\"}",
+      "priority": 6
+    },
+    {
+      "asset_id": "SSA2",
+      "line_id": "7A69",
+      "type": "primary",
+      "data": "ਸਤਿਗੁਰ ਤੇ. ਨਾਮੁ ਪਾਈਐ ਅਉਧੂ; ਜੋਗ ਜੁਗਤਿ ਤਾ ਹੋਈ ॥",
+      "additional": "{\"type\":\"primary\",\"page\":946,\"line\":14}",
+      "priority": 1
+    },
+    {
+      "asset_id": "DSSK",
+      "line_id": "7TEQ",
+      "type": "translation",
+      "data": "Without meeting the True Guru, one suffers in terrible pain.",
+      "additional": "{\"type\":\"translation\",\"language\":\"en\"}",
+      "priority": 4
+    },
+    {
+      "asset_id": "PSST",
+      "line_id": "7TEQ",
+      "type": "translation",
+      "data": "ਗੁਰੂ ਨੂੰ ਮਿਲਣ ਤੋਂ ਬਿਨਾ ਮਨੁੱਖ ਬੜਾ ਕਸ਼ਟ ਉਠਾਂਦਾ ਹੈ।",
+      "additional": "{\"type\":\"translation\",\"language\":\"pa\"}",
+      "priority": 6
+    },
+    {
+      "asset_id": "SSA2",
+      "line_id": "7TEQ",
+      "type": "primary",
+      "data": "ਬਿਨੁ ਸਤਿਗੁਰ ਭੇਟੇ; ਮਹਾ ਦੁਖੁ ਪਾਇ ॥",
+      "additional": "{\"type\":\"primary\",\"page\":946,\"line\":9}",
+      "priority": 1
+    },
+    {
+      "asset_id": "DSSK",
+      "line_id": "7YX0",
+      "type": "translation",
+      "data": "O Nanak, without the Name, Yoga is never attained; reflect upon this in your heart, and see. ||68||",
+      "additional": "{\"type\":\"translation\",\"language\":\"en\"}",
+      "priority": 4
+    },
+    {
+      "asset_id": "PSST",
+      "line_id": "7YX0",
+      "type": "translation",
+      "data": "ਹੇ ਨਾਨਕ! ਪ੍ਰਭੂ ਦੇ ਨਾਮ ਤੋਂ ਬਿਨਾ ਪ੍ਰਭੂ ਨਾਲ ਮਿਲਾਪ ਕਦੇ ਨਹੀਂ ਹੋ ਸਕਦਾ, ਆਪਣੇ ਹਿਰਦੇ ਵਿਚ ਵਿਚਾਰ ਕੇ ਵੇਖ ਲਵੋ (ਭਾਵ, ਤੁਹਾਡਾ ਆਪਣਾ ਜ਼ਾਤੀ ਤਜਰਬਾ ਇਹੀ ਗਵਾਹੀ ਦੇਵੇਗਾ) ॥੬੮॥",
+      "additional": "{\"type\":\"translation\",\"language\":\"pa\"}",
+      "priority": 6
+    },
+    {
+      "asset_id": "SSA2",
+      "line_id": "7YX0",
+      "type": "primary",
+      "data": "ਨਾਨਕ ਬਿਨੁ ਨਾਵੈ. ਜੋਗੁ ਕਦੇ, ਨ ਹੋਵੈ; ਦੇਖਹੁ ਰਿਦੈ ਬੀਚਾਰੇ ॥੬੮॥",
+      "additional": "{\"type\":\"primary\",\"page\":946,\"line\":5}",
+      "priority": 1
+    },
+    {
+      "asset_id": "DSSK",
+      "line_id": "8AB3",
+      "type": "translation",
+      "data": "The seekers, the Siddhas, the many gurus and disciples wander around searching for You, according to Your Will.",
+      "additional": "{\"type\":\"translation\",\"language\":\"en\"}",
+      "priority": 4
+    },
+    {
+      "asset_id": "PSST",
+      "line_id": "8AB3",
+      "type": "translation",
+      "data": "ਸਾਧਨ ਕਰਨ ਵਾਲੇ ਤੇ ਸਾਧਨਾਂ ਵਿਚ ਪੁੱਗੇ ਹੋਏ ਜੋਗੀ, ਗੁਰੂ ਤੇ ਉਹਨਾਂ ਦੇ ਕਈ ਚੇਲੇ ਤੇਰੇ ਹੁਕਮ ਵਿਚ ਤੈਨੂੰ ਖੋਜਦੇ ਫਿਰਦੇ ਹਨ,",
+      "additional": "{\"type\":\"translation\",\"language\":\"pa\"}",
+      "priority": 6
+    },
+    {
+      "asset_id": "SSA2",
+      "line_id": "8AB3",
+      "type": "primary",
+      "data": "ਸਾਧਿਕ ਸਿਧ ਗੁਰੂ ਬਹੁ ਚੇਲੇ; ਖੋਜਤ ਫਿਰਹਿ ਫੁਰਮਾਣੈ ॥",
+      "additional": "{\"type\":\"primary\",\"page\":946,\"line\":17}",
+      "priority": 1
+    },
+    {
+      "asset_id": "DSSK",
+      "line_id": "8Q41",
+      "type": "translation",
+      "data": "This is the essence of the Shabad - listen, you hermits and Yogis. Without the Name, there is no Yoga.",
+      "additional": "{\"type\":\"translation\",\"language\":\"en\"}",
+      "priority": 4
+    },
+    {
+      "asset_id": "PSST",
+      "line_id": "8Q41",
+      "type": "translation",
+      "data": "ਹੇ ਜੋਗੀ! ਸੁਣ, ਸਾਰੇ ਉਪਦੇਸ਼ ਦਾ ਸਾਰ (ਇਹ ਹੈ ਕਿ) ਪ੍ਰਭੂ ਦੇ ਨਾਮ ਤੋਂ ਬਿਨਾ ਜੋਗ (ਪ੍ਰਭੂ ਦਾ ਮਿਲਾਪ) ਨਹੀਂ।",
+      "additional": "{\"type\":\"translation\",\"language\":\"pa\"}",
+      "priority": 6
+    },
+    {
+      "asset_id": "SSA2",
+      "line_id": "8Q41",
+      "type": "primary",
+      "data": "ਸਬਦੈ ਕਾ ਨਿਬੇੜਾ ਸੁਣਿ ਤੂ ਅਉਧੂ; ਬਿਨੁ ਨਾਵੈ ਜੋਗੁ. ਨ ਹੋਈ ॥",
+      "additional": "{\"type\":\"primary\",\"page\":946,\"line\":12}",
+      "priority": 1
+    },
+    {
+      "asset_id": "DSSK",
+      "line_id": "8UNW",
+      "type": "translation",
+      "data": "The Gurmukh enshrines Truth in his heart.",
+      "additional": "{\"type\":\"translation\",\"language\":\"en\"}",
+      "priority": 4
+    },
+    {
+      "asset_id": "PSST",
+      "line_id": "8UNW",
+      "type": "translation",
+      "data": "ਗੁਰੂ ਦੇ ਹੁਕਮ ਵਿਚ ਤੁਰਨ ਵਾਲੇ ਨੇ ਸਦਾ ਟਿਕੇ ਰਹਿਣ ਵਾਲੇ ਪ੍ਰਭੂ ਨੂੰ ਆਪਣੇ ਹਿਰਦੇ ਵਿਚ ਪਰੋ ਲਿਆ ਹੈ।",
+      "additional": "{\"type\":\"translation\",\"language\":\"pa\"}",
+      "priority": 6
+    },
+    {
+      "asset_id": "SSA2",
+      "line_id": "8UNW",
+      "type": "primary",
+      "data": "ਗੁਰਮੁਖਿ; ਸਾਚੁ ਰਖਿਆ ਉਰ ਧਾਰਿ ॥",
+      "additional": "{\"type\":\"primary\",\"page\":946,\"line\":10}",
+      "priority": 1
+    },
+    {
+      "asset_id": "DSSK",
+      "line_id": "99LS",
+      "type": "translation",
+      "data": "His body and mind become immaculate, through the Immaculate Bani of the Word. He remains absorbed in Truth.",
+      "additional": "{\"type\":\"translation\",\"language\":\"en\"}",
+      "priority": 4
+    },
+    {
+      "asset_id": "PSST",
+      "line_id": "99LS",
+      "type": "translation",
+      "data": "ਉਸ ਦਾ ਤਨ ਉਸ ਦਾ ਮਨ ਤੇ ਉਸ ਦੀ ਬਾਣੀ ਪਵਿਤ੍ਰ ਹੋ ਜਾਂਦੇ ਹਨ; ਉਹ ਸਦਾ ਕਾਇਮ ਰਹਿਣ ਵਾਲੇ ਪ੍ਰਭੂ ਵਿਚ ਟਿਕਿਆ ਰਹਿੰਦਾ ਹੈ।",
+      "additional": "{\"type\":\"translation\",\"language\":\"pa\"}",
+      "priority": 6
+    },
+    {
+      "asset_id": "SSA2",
+      "line_id": "99LS",
+      "type": "primary",
+      "data": "ਤਨੁ ਮਨੁ ਨਿਰਮਲੁ ਨਿਰਮਲ ਬਾਣੀ; ਸਾਚੈ ਰਹੈ ਸਮਾਏ ॥",
+      "additional": "{\"type\":\"primary\",\"page\":946,\"line\":4}",
+      "priority": 1
+    },
+    {
+      "asset_id": "DSSK",
+      "line_id": "A7H8",
+      "type": "translation",
+      "data": "Without meeting the True Guru, the Naam cannot be found.",
+      "additional": "{\"type\":\"translation\",\"language\":\"en\"}",
+      "priority": 4
+    },
+    {
+      "asset_id": "PSST",
+      "line_id": "A7H8",
+      "type": "translation",
+      "data": "ਗੁਰੂ ਨੂੰ ਮਿਲਣ ਬਗ਼ੈਰ ਪ੍ਰਭੂ ਦਾ ਨਾਮ ਮਿਲ ਨਹੀਂ ਸਕਦਾ,",
+      "additional": "{\"type\":\"translation\",\"language\":\"pa\"}",
+      "priority": 6
+    },
+    {
+      "asset_id": "SSA2",
+      "line_id": "A7H8",
+      "type": "primary",
+      "data": "ਬਿਨੁ ਸਤਿਗੁਰ ਭੇਟੇ; ਨਾਮੁ ਪਾਇਆ. ਨ ਜਾਇ ॥",
+      "additional": "{\"type\":\"primary\",\"page\":946,\"line\":8}",
+      "priority": 1
+    },
+    {
+      "asset_id": "DSSK",
+      "line_id": "AQ01",
+      "type": "translation",
+      "data": "The Gurmukh dwells in the home of the self, deep within.",
+      "additional": "{\"type\":\"translation\",\"language\":\"en\"}",
+      "priority": 4
+    },
+    {
+      "asset_id": "PSST",
+      "line_id": "AQ01",
+      "type": "translation",
+      "data": "ਗੁਰੂ ਦੇ ਸਨਮੁਖ ਮਨੁੱਖ ਦਾ ਨਿਵਾਸ ਆਪਣੇ ਅਸਲ ਸਰੂਪ ਵਿਚ ਹੋਇਆ ਰਹਿੰਦਾ ਹੈ।",
+      "additional": "{\"type\":\"translation\",\"language\":\"pa\"}",
+      "priority": 6
+    },
+    {
+      "asset_id": "SSA2",
+      "line_id": "AQ01",
+      "type": "primary",
+      "data": "ਗੁਰਮੁਖਿ; ਨਿਜ ਘਰਿ ਵਾਸਾ ਹੋਇ ॥",
+      "additional": "{\"type\":\"primary\",\"page\":946,\"line\":7}",
+      "priority": 1
+    },
+    {
+      "asset_id": "DSSK",
+      "line_id": "BC9S",
+      "type": "translation",
+      "data": "O Nanak, He extends Himself throughout the ages; there is no other than Him. ||73||1||",
+      "additional": "{\"type\":\"translation\",\"language\":\"en\"}",
+      "priority": 4
+    },
+    {
+      "asset_id": "PSST",
+      "line_id": "BC9S",
+      "type": "translation",
+      "data": "ਹੇ ਨਾਨਕ! ਸਾਰੇ ਹੀ ਜੁਗਾਂ ਵਿਚ ਉਹ ਆਪ ਹੀ ਮੌਜੂਦ ਹੈ, ਕੋਈ ਹੋਰ ਦੂਜਾ (ਉਸ ਵਰਗਾ) ਨਹੀਂ ॥੭੩॥੧॥",
+      "additional": "{\"type\":\"translation\",\"language\":\"pa\"}",
+      "priority": 6
+    },
+    {
+      "asset_id": "SSA2",
+      "line_id": "BC9S",
+      "type": "primary",
+      "data": "ਨਾਨਕ. ਸਭਿ ਜੁਗ ਆਪੇ ਵਰਤੈ; ਦੂਜਾ ਅਵਰੁ. ਨ ਕੋਈ ॥੭੩॥੧॥",
+      "additional": "{\"type\":\"primary\",\"page\":946,\"line\":19}",
+      "priority": 1
+    },
+    {
+      "asset_id": "DSSK",
+      "line_id": "BJE1",
+      "type": "translation",
+      "data": "In egotism, the world was formed, O man; forgetting the Naam, it suffers and dies.",
+      "additional": "{\"type\":\"translation\",\"language\":\"en\"}",
+      "priority": 4
+    },
+    {
+      "asset_id": "PSST",
+      "line_id": "BJE1",
+      "type": "translation",
+      "data": "(ਉੱਤਰ:) ਹੇ ਪੁਰਖ! ਜਗਤ ਹਉਮੈ ਵਿਚ ਪੈਦਾ ਹੁੰਦਾ ਹੈ, ਜੇ (ਇਸ ਨੂੰ) ਪ੍ਰਭੂ ਦਾ ਨਾਮ ਵਿੱਸਰ ਜਾਏ ਤਾਂ ਦੁੱਖ ਪਾਂਦਾ ਹੈ।",
+      "additional": "{\"type\":\"translation\",\"language\":\"pa\"}",
+      "priority": 6
+    },
+    {
+      "asset_id": "SSA2",
+      "line_id": "BJE1",
+      "type": "primary",
+      "data": "ਹਉਮੈ ਵਿਚਿ ਜਗੁ ਉਪਜੈ ਪੁਰਖਾ; ਨਾਮਿ ਵਿਸਰਿਐ ਦੁਖੁ ਪਾਈ ॥",
+      "additional": "{\"type\":\"primary\",\"page\":946,\"line\":3}",
+      "priority": 1
+    },
+    {
+      "asset_id": "DSSK",
+      "line_id": "CKWW",
+      "type": "translation",
+      "data": "O Nanak, the Gurmukh realizes the Word of the Shabad. ||71||",
+      "additional": "{\"type\":\"translation\",\"language\":\"en\"}",
+      "priority": 4
+    },
+    {
+      "asset_id": "PSST",
+      "line_id": "CKWW",
+      "type": "translation",
+      "data": "ਹੇ ਨਾਨਕ! ਗੁਰੂ ਦੇ ਸਨਮੁਖ ਮਨੁੱਖ ਗੁਰੂ ਦੇ ਸ਼ਬਦ ਦੀ ਰਾਹੀਂ (ਪ੍ਰਭੂ ਨਾਲ) ਜਾਣ-ਪਛਾਣ ਬਣਾ ਲੈਂਦਾ ਹੈ ॥੭੧॥",
+      "additional": "{\"type\":\"translation\",\"language\":\"pa\"}",
+      "priority": 6
+    },
+    {
+      "asset_id": "SSA2",
+      "line_id": "CKWW",
+      "type": "primary",
+      "data": "ਨਾਨਕ; ਗੁਰਮੁਖਿ ਸਬਦਿ ਪਛਾਣੈ ॥੭੧॥",
+      "additional": "{\"type\":\"primary\",\"page\":946,\"line\":12}",
+      "priority": 1
+    },
+    {
+      "asset_id": "DSSK",
+      "line_id": "CQB4",
+      "type": "translation",
+      "data": "You Yourself are hidden, and You Yourself are revealed. You Yourself enjoy all pleasures.",
+      "additional": "{\"type\":\"translation\",\"language\":\"en\"}",
+      "priority": 4
+    },
+    {
+      "asset_id": "PSST",
+      "line_id": "CQB4",
+      "type": "translation",
+      "data": "ਤੂੰ ਆਪ ਹੀ ਲੁਕਿਆ ਹੋਇਆ ਹੈਂ ਤੂੰ ਆਪ ਹੀ ਪਰਗਟ ਹੈਂ (ਭਾਵ, ਸੂਖਮ ਤੇ ਅਸਥੂਲ ਤੂੰ ਆਪ ਹੀ ਹੈਂ), ਤੂੰ ਆਪ ਹੀ ਸਾਰੇ ਰੰਗ ਮਾਣ ਰਿਹਾ ਹੈਂ।",
+      "additional": "{\"type\":\"translation\",\"language\":\"pa\"}",
+      "priority": 6
+    },
+    {
+      "asset_id": "SSA2",
+      "line_id": "CQB4",
+      "type": "primary",
+      "data": "ਤੂ ਆਪੇ ਗੁਪਤਾ. ਆਪੇ ਪਰਗਟੁ; ਆਪੇ ਸਭਿ ਰੰਗ ਮਾਣੈ ॥",
+      "additional": "{\"type\":\"primary\",\"page\":946,\"line\":16}",
+      "priority": 1
+    },
+    {
+      "asset_id": "DSSK",
+      "line_id": "ET9F",
+      "type": "translation",
+      "data": "Without the Name, people wear all sorts of religious robes; the True Lord Himself has confused them.",
+      "additional": "{\"type\":\"translation\",\"language\":\"en\"}",
+      "priority": 4
+    },
+    {
+      "asset_id": "PSST",
+      "line_id": "ET9F",
+      "type": "translation",
+      "data": "ਪ੍ਰਭੂ ਦਾ ਨਾਮ ਛੱਡ ਕੇ ਜੋ ਮਨੁੱਖ ਹੋਰ ਬਥੇਰੇ ਭੇਖ ਕਰਦੇ ਹਨ ਉਹਨਾਂ ਨੂੰ ਸੱਚੇ ਪ੍ਰਭੂ ਨੇ ਆਪ ਹੀ ਕੁਰਾਹੇ ਪਾ ਦਿੱਤਾ ਹੈ।",
+      "additional": "{\"type\":\"translation\",\"language\":\"pa\"}",
+      "priority": 6
+    },
+    {
+      "asset_id": "SSA2",
+      "line_id": "ET9F",
+      "type": "primary",
+      "data": "ਬਿਨੁ ਨਾਵੈ. ਭੇਖ ਕਰਹਿ ਬਹੁਤੇਰੇ; ਸਚੈ ਆਪਿ ਖੁਆਈ ॥",
+      "additional": "{\"type\":\"primary\",\"page\":946,\"line\":14}",
+      "priority": 1
+    },
+    {
+      "asset_id": "DSSK",
+      "line_id": "EV8S",
+      "type": "translation",
+      "data": "O Nanak, the Gurmukh knows the One Lord alone. ||69||",
+      "additional": "{\"type\":\"translation\",\"language\":\"en\"}",
+      "priority": 4
+    },
+    {
+      "asset_id": "PSST",
+      "line_id": "EV8S",
+      "type": "translation",
+      "data": "ਹੇ ਨਾਨਕ! ਗੁਰੂ ਦੇ ਹੁਕਮ ਵਿਚ ਤੁਰਨ ਵਾਲਾ ਮਨੁੱਖ ਇੱਕ ਪ੍ਰਭੂ ਨੂੰ (ਹਰ ਥਾਂ ਵਿਆਪਕ) ਜਾਣਦਾ ਹੈ ॥੬੯॥",
+      "additional": "{\"type\":\"translation\",\"language\":\"pa\"}",
+      "priority": 6
+    },
+    {
+      "asset_id": "SSA2",
+      "line_id": "EV8S",
+      "type": "primary",
+      "data": "ਗੁਰਮੁਖਿ ਨਾਨਕ; ਏਕੋ ਜਾਣੈ ॥੬੯॥",
+      "additional": "{\"type\":\"primary\",\"page\":946,\"line\":7}",
+      "priority": 1
+    },
+    {
+      "asset_id": "DSSK",
+      "line_id": "F8TP",
+      "type": "translation",
+      "data": "Color, dress and form were contained in the One Lord; the Shabad was contained in the One, Wondrous Lord.",
+      "additional": "{\"type\":\"translation\",\"language\":\"en\"}",
+      "priority": 4
+    },
+    {
+      "asset_id": "PSST",
+      "line_id": "F8TP",
+      "type": "translation",
+      "data": "ਇਕੋ ਅਸਚਰਜ ਸ਼ਬਦ-ਰੂਪ ਪ੍ਰਭੂ ਹੀ ਸੀ, ਉਹੀ (ਜਗਤ ਦਾ) ਰੰਗ ਭੇਖ ਤੇ ਰੂਪ ਸੀ।",
+      "additional": "{\"type\":\"translation\",\"language\":\"pa\"}",
+      "priority": 6
+    },
+    {
+      "asset_id": "SSA2",
+      "line_id": "F8TP",
+      "type": "primary",
+      "data": "ਵਰਨੁ ਭੇਖੁ. ਅਸਰੂਪੁ ਸੁ ਏਕੋ; ਏਕੋ ਸਬਦੁ ਵਿਡਾਣੀ ॥",
+      "additional": "{\"type\":\"primary\",\"page\":946,\"line\":1}",
+      "priority": 1
+    },
+    {
+      "asset_id": "DSSK",
+      "line_id": "HLWB",
+      "type": "translation",
+      "data": "The Gurmukh is one who reflects upon the True Word of the Shabad.",
+      "additional": "{\"type\":\"translation\",\"language\":\"en\"}",
+      "priority": 4
+    },
+    {
+      "asset_id": "PSST",
+      "line_id": "HLWB",
+      "type": "translation",
+      "data": "ਜੇ ਕੋਈ ਮਨੁੱਖ ਗੁਰੂ ਦੇ ਹੁਕਮ ਵਿਚ ਤੁਰਦਾ ਹੈ ਉਹ ਸੱਚੇ ਸ਼ਬਦ ਨੂੰ ਵਿਚਾਰਦਾ ਹੈ,",
+      "additional": "{\"type\":\"translation\",\"language\":\"pa\"}",
+      "priority": 6
+    },
+    {
+      "asset_id": "SSA2",
+      "line_id": "HLWB",
+      "type": "primary",
+      "data": "ਗੁਰਮੁਖਿ; ਸਾਚੁ ਸਬਦੁ ਬੀਚਾਰੈ ਕੋਇ ॥",
+      "additional": "{\"type\":\"primary\",\"page\":946,\"line\":6}",
+      "priority": 1
+    },
+    {
+      "asset_id": "DSSK",
+      "line_id": "L1JE",
+      "type": "translation",
+      "data": "The Gurmukh realizes the Way of Yoga.",
+      "additional": "{\"type\":\"translation\",\"language\":\"en\"}",
+      "priority": 4
+    },
+    {
+      "asset_id": "PSST",
+      "line_id": "L1JE",
+      "type": "translation",
+      "data": "ਜੋ ਮਨੁੱਖ ਸਤਿਗੁਰੂ ਦੇ ਹੁਕਮ ਵਿਚ ਤੁਰਦਾ ਹੈ ਉਹੀ (ਅਸਲ) ਜੋਗੀ ਹੈ ਉਹ (ਪ੍ਰਭੂ ਨਾਲ ਮਿਲਾਪ ਦੀ) ਜੁਗਤਿ ਪਛਾਣਦਾ ਹੈ।",
+      "additional": "{\"type\":\"translation\",\"language\":\"pa\"}",
+      "priority": 6
+    },
+    {
+      "asset_id": "SSA2",
+      "line_id": "L1JE",
+      "type": "primary",
+      "data": "ਗੁਰਮੁਖਿ ਜੋਗੀ; ਜੁਗਤਿ ਪਛਾਣੈ ॥",
+      "additional": "{\"type\":\"primary\",\"page\":946,\"line\":7}",
+      "priority": 1
+    },
+    {
+      "asset_id": "DSSK",
+      "line_id": "LB86",
+      "type": "translation",
+      "data": "without meeting the True Guru, no one is liberated.",
+      "additional": "{\"type\":\"translation\",\"language\":\"en\"}",
+      "priority": 4
+    },
+    {
+      "asset_id": "PSST",
+      "line_id": "LB86",
+      "type": "translation",
+      "data": "ਗੁਰੂ ਨੂੰ ਮਿਲਣ ਤੋਂ ਬਿਨਾ ਮੁਕਤੀ ਨਹੀਂ ਲੱਭਦੀ।",
+      "additional": "{\"type\":\"translation\",\"language\":\"pa\"}",
+      "priority": 6
+    },
+    {
+      "asset_id": "SSA2",
+      "line_id": "LB86",
+      "type": "primary",
+      "data": "ਬਿਨੁ ਸਤਿਗੁਰ ਭੇਟੇ; ਮੁਕਤਿ. ਨ ਕੋਈ ॥",
+      "additional": "{\"type\":\"primary\",\"page\":946,\"line\":8}",
+      "priority": 1
+    },
+    {
+      "asset_id": "DSSK",
+      "line_id": "N8YB",
+      "type": "translation",
+      "data": "They beg for Your Name, and You bless them with this charity. I am a sacrifice to the Blessed Vision of Your Darshan.",
+      "additional": "{\"type\":\"translation\",\"language\":\"en\"}",
+      "priority": 4
+    },
+    {
+      "asset_id": "PSST",
+      "line_id": "N8YB",
+      "type": "translation",
+      "data": "ਤੈਥੋਂ ਤੇਰਾ 'ਨਾਮ' ਮੰਗਦੇ ਹਨ, ਤੈਥੋਂ ਇਹ ਭਿੱਖਿਆ ਲੈ ਕੇ ਤੇਰੇ ਦੀਦਾਰ ਤੋਂ ਸਦਕੇ ਹੁੰਦੇ ਹਨ।",
+      "additional": "{\"type\":\"translation\",\"language\":\"pa\"}",
+      "priority": 6
+    },
+    {
+      "asset_id": "SSA2",
+      "line_id": "N8YB",
+      "type": "primary",
+      "data": "ਮਾਗਹਿ ਨਾਮੁ, ਪਾਇ ਇਹ ਭਿਖਿਆ; ਤੇਰੇ ਦਰਸਨ ਕਉ ਕੁਰਬਾਣੈ ॥",
+      "additional": "{\"type\":\"primary\",\"page\":946,\"line\":17}",
+      "priority": 1
+    },
+    {
+      "asset_id": "DSSK",
+      "line_id": "NTKK",
+      "type": "translation",
+      "data": "I offer my salutation to the One who is true, infinite and incomparably beautiful.",
+      "additional": "{\"type\":\"translation\",\"language\":\"en\"}",
+      "priority": 4
+    },
+    {
+      "asset_id": "PSST",
+      "line_id": "NTKK",
+      "type": "translation",
+      "data": "ਸਾਡੀ ਅਰਦਾਸ ਉਸ ਸੰਤ-ਸਭਾ ਅੱਗੇ ਹੈ ਜਿਸ ਵਿਚ ਸਦਾ ਕਾਇਮ ਰਹਿਣ ਵਾਲਾ ਅਪਰ ਅਪਾਰ ਪ੍ਰਭੂ (ਪ੍ਰਤੱਖ ਵੱਸਦਾ) ਹੈ।",
+      "additional": "{\"type\":\"translation\",\"language\":\"pa\"}",
+      "priority": 6
+    },
+    {
+      "asset_id": "SSA2",
+      "line_id": "NTKK",
+      "type": "primary",
+      "data": "ਤਿਸੁ ਆਗੈ ਰਹਰਾਸਿ ਹਮਾਰੀ; ਸਾਚਾ ਅਪਰ ਅਪਾਰੋ ॥",
+      "additional": "{\"type\":\"primary\",\"page\":938,\"line\":6}",
+      "priority": 1
+    },
+    {
+      "asset_id": "DSSK",
+      "line_id": "P7ZE",
+      "type": "translation",
+      "data": "The Siddhas formed an assembly; sitting in their Yogic postures, they shouted, \"Salute this gathering of Saints.\"",
+      "additional": "{\"type\":\"translation\",\"language\":\"en\"}",
+      "priority": 4
+    },
+    {
+      "asset_id": "PSST",
+      "line_id": "P7ZE",
+      "type": "translation",
+      "data": "(ਸਾਡੀ) ਨਮਸਕਾਰ ਉਹਨਾਂ ਸੰਤਾਂ ਦੀ ਸਭਾ ਨੂੰ ਹੈ ਜੋ 'ਰੱਬੀ ਮਜਲਸ' (ਸਤਸੰਗ) ਬਣਾ ਕੇ ਅਡੋਲ ਬੈਠੇ ਹਨ;",
+      "additional": "{\"type\":\"translation\",\"language\":\"pa\"}",
+      "priority": 6
+    },
+    {
+      "asset_id": "SSA2",
+      "line_id": "P7ZE",
+      "type": "primary",
+      "data": "ਸਿਧ ਸਭਾ, ਕਰਿ ਆਸਣਿ ਬੈਠੇ; ਸੰਤ ਸਭਾ ਜੈਕਾਰੋ ॥",
+      "additional": "{\"type\":\"primary\",\"page\":938,\"line\":6}",
+      "priority": 1
+    },
+    {
+      "asset_id": "DSSK",
+      "line_id": "PF2N",
+      "type": "translation",
+      "data": "Raamkalee, First Mehl, Sidh Gosht ~ Conversations With The Siddhas:",
+      "additional": "{\"type\":\"translation\",\"language\":\"en\"}",
+      "priority": 4
+    },
+    {
+      "asset_id": "PSST",
+      "line_id": "PF2N",
+      "type": "translation",
+      "data": "ਰਾਗ ਰਾਮਕਲੀ ਵਿੱਚ ਗੁਰੂ ਨਾਨਕਦੇਵ ਜੀ ਦੀ ਬਾਣੀ 'ਸਿਧ ਗੋਸਟਿ'।",
+      "additional": "{\"type\":\"translation\",\"language\":\"pa\"}",
+      "priority": 6
+    },
+    {
+      "asset_id": "SSA2",
+      "line_id": "PF2N",
+      "type": "primary",
+      "data": "ਰਾਮਕਲੀ ਮਹਲਾ ੧ ਸਿਧ ਗੋਸਟਿ ॥",
+      "additional": "{\"type\":\"primary\",\"page\":938,\"line\":5}",
+      "priority": 1
+    },
+    {
+      "asset_id": "DSSK",
+      "line_id": "PWJ0",
+      "type": "translation",
+      "data": "The mind of the Gurmukh is drenched with the Lord's Love, but how rare are those who understand this.",
+      "additional": "{\"type\":\"translation\",\"language\":\"en\"}",
+      "priority": 4
+    },
+    {
+      "asset_id": "PSST",
+      "line_id": "PWJ0",
+      "type": "translation",
+      "data": "ਗੁਰਮੁਖਿ ਮਨੁੱਖ ਦਾ ਮਨ (ਨਾਮ-ਰਸ ਵਿਚ) ਭਿੱਜਦਾ ਹੈ, (ਪਰ ਇਸ ਗੱਲ ਨੂੰ) ਕੋਈ ਵਿਰਲਾ ਸਮਝਦਾ ਹੈ।",
+      "additional": "{\"type\":\"translation\",\"language\":\"pa\"}",
+      "priority": 6
+    },
+    {
+      "asset_id": "SSA2",
+      "line_id": "PWJ0",
+      "type": "primary",
+      "data": "ਗੁਰਮੁਖਿ ਮਨੁ ਭੀਜੈ; ਵਿਰਲਾ ਬੂਝੈ ਕੋਇ ॥",
+      "additional": "{\"type\":\"primary\",\"page\":946,\"line\":6}",
+      "priority": 1
+    },
+    {
+      "asset_id": "DSSK",
+      "line_id": "QCFQ",
+      "type": "translation",
+      "data": "The True Bani is revealed to the Gurmukh.",
+      "additional": "{\"type\":\"translation\",\"language\":\"en\"}",
+      "priority": 4
+    },
+    {
+      "asset_id": "PSST",
+      "line_id": "QCFQ",
+      "type": "translation",
+      "data": "ਸਤਿਗੁਰੂ ਦੀ ਬਾਣੀ ਦੀ ਰਾਹੀਂ ਸੱਚਾ ਪ੍ਰਭੂ (ਉਸ ਦੇ ਹਿਰਦੇ ਵਿਚ) ਪਰਗਟ ਹੋ ਜਾਂਦਾ ਹੈ।",
+      "additional": "{\"type\":\"translation\",\"language\":\"pa\"}",
+      "priority": 6
+    },
+    {
+      "asset_id": "SSA2",
+      "line_id": "QCFQ",
+      "type": "primary",
+      "data": "ਗੁਰਮੁਖਿ; ਸਚੁ ਬਾਣੀ ਪਰਗਟੁ ਹੋਇ ॥",
+      "additional": "{\"type\":\"primary\",\"page\":946,\"line\":6}",
+      "priority": 1
+    },
+    {
+      "asset_id": "DSSK",
+      "line_id": "S4J7",
+      "type": "translation",
+      "data": "\"How, in what way, was the world formed, O man? And what disaster will end it?\"",
+      "additional": "{\"type\":\"translation\",\"language\":\"en\"}",
+      "priority": 4
+    },
+    {
+      "asset_id": "PSST",
+      "line_id": "S4J7",
+      "type": "translation",
+      "data": "(ਪ੍ਰਸ਼ਨ:) ਹੇ ਪੁਰਖ! ਜਗਤ ਕਿਸ ਕਿਸ ਵਿਧੀ ਨਾਲ ਉਪਜਦਾ ਹੈ, ਕਿਸ ਤਰ੍ਹਾਂ ਦੁੱਖ ਵਿਚ (ਪੈਂਦਾ) ਹੈ ਤੇ ਕਿਵੇਂ ਨਾਸ ਹੋ ਜਾਂਦਾ ਹੈ?",
+      "additional": "{\"type\":\"translation\",\"language\":\"pa\"}",
+      "priority": 6
+    },
+    {
+      "asset_id": "SSA2",
+      "line_id": "S4J7",
+      "type": "primary",
+      "data": "ਕਿਤੁ ਕਿਤੁ ਬਿਧਿ ਜਗੁ ਉਪਜੈ ਪੁਰਖਾ; ਕਿਤੁ ਕਿਤੁ ਦੁਖਿ ਬਿਨਸਿ ਜਾਈ ॥",
+      "additional": "{\"type\":\"primary\",\"page\":946,\"line\":2}",
+      "priority": 1
+    },
+    {
+      "asset_id": "DSSK",
+      "line_id": "SFHH",
+      "type": "translation",
+      "data": "Reflect upon this in your mind, and see; O Nanak, without the Name, there is no liberation. ||72||",
+      "additional": "{\"type\":\"translation\",\"language\":\"en\"}",
+      "priority": 4
+    },
+    {
+      "asset_id": "PSST",
+      "line_id": "SFHH",
+      "type": "translation",
+      "data": "ਹੇ ਨਾਨਕ! ਮਨ ਵਿਚ ਵਿਚਾਰ ਕਰ ਕੇ ਵੇਖ ਲਵੋ, 'ਨਾਮ' ਤੋਂ ਬਿਨਾ ਮੁਕਤੀ ਨਹੀਂ ਮਿਲਦੀ (ਭਾਵ, ਤੁਹਾਡਾ ਆਪਣਾ ਜ਼ਾਤੀ ਤਜਰਬਾ ਦੱਸ ਦੇਵੇਗਾ ਕਿ ਨਾਮ ਸਿਮਰਨ ਤੋਂ ਬਿਨਾ ਹਉਮੈ ਤੋਂ ਖ਼ਲਾਸੀ ਨਹੀਂ ਹੁੰਦੀ)।੭੨)॥੭੨॥",
+      "additional": "{\"type\":\"translation\",\"language\":\"pa\"}",
+      "priority": 6
+    },
+    {
+      "asset_id": "SSA2",
+      "line_id": "SFHH",
+      "type": "primary",
+      "data": "ਕਰਿ ਬੀਚਾਰੁ ਮਨਿ ਦੇਖਹੁ ਨਾਨਕ; ਬਿਨੁ ਨਾਵੈ ਮੁਕਤਿ. ਨ ਹੋਈ ॥੭੨॥",
+      "additional": "{\"type\":\"primary\",\"page\":946,\"line\":15}",
+      "priority": 1
+    },
+    {
+      "asset_id": "DSSK",
+      "line_id": "TUMF",
+      "type": "translation",
+      "data": "You alone know Your state and extent, Lord; What can anyone say about it?",
+      "additional": "{\"type\":\"translation\",\"language\":\"en\"}",
+      "priority": 4
+    },
+    {
+      "asset_id": "PSST",
+      "line_id": "TUMF",
+      "type": "translation",
+      "data": "ਤੂੰ ਕਿਹੋ ਜਿਹਾ ਹੈਂ ਤੇ ਕੇਡਾ ਵੱਡਾ ਹੈਂ, ਹੇ ਪ੍ਰਭੂ! ਇਹ ਗੱਲ ਤੂੰ ਆਪ ਹੀ ਜਾਣਦਾ ਹੈ। ਕੋਈ ਹੋਰ ਕੀਹ ਕਹਿ ਕੇ ਦੱਸ ਸਕਦਾ ਹੈ?",
+      "additional": "{\"type\":\"translation\",\"language\":\"pa\"}",
+      "priority": 6
+    },
+    {
+      "asset_id": "SSA2",
+      "line_id": "TUMF",
+      "type": "primary",
+      "data": "ਤੇਰੀ ਗਤਿ ਮਿਤਿ ਤੂਹੈ ਜਾਣਹਿ; ਕਿਆ ਕੋ ਆਖਿ ਵਖਾਣੈ ॥",
+      "additional": "{\"type\":\"primary\",\"page\":946,\"line\":16}",
+      "priority": 1
+    },
+    {
+      "asset_id": "DSSK",
+      "line_id": "TXW9",
+      "type": "translation",
+      "data": "Those who are attuned to the Name, remain intoxicated night and day; through the Name, they find peace.",
+      "additional": "{\"type\":\"translation\",\"language\":\"en\"}",
+      "priority": 4
+    },
+    {
+      "asset_id": "PSST",
+      "line_id": "TXW9",
+      "type": "translation",
+      "data": "ਜੋ 'ਨਾਮ' ਵਿਚ ਰੱਤੇ ਹੋਏ ਹਨ ਉਹੀ ਹਰ ਵੇਲੇ ਮਤਵਾਲੇ ਹਨ। 'ਨਾਮ' ਤੋਂ ਹੀ ਸੁਖ ਮਿਲਦਾ ਹੈ।",
+      "additional": "{\"type\":\"translation\",\"language\":\"pa\"}",
+      "priority": 6
+    },
+    {
+      "asset_id": "SSA2",
+      "line_id": "TXW9",
+      "type": "primary",
+      "data": "ਨਾਮੇ ਰਾਤੇ ਅਨਦਿਨੁ ਮਾਤੇ; ਨਾਮੈ ਤੇ ਸੁਖੁ ਹੋਈ ॥",
+      "additional": "{\"type\":\"primary\",\"page\":946,\"line\":13}",
+      "priority": 1
+    },
+    {
+      "asset_id": "DSSK",
+      "line_id": "URZV",
+      "type": "translation",
+      "data": "One who becomes Gurmukh contemplates the essence of spiritual wisdom; through the Shabad, he burns away his egotism.",
+      "additional": "{\"type\":\"translation\",\"language\":\"en\"}",
+      "priority": 4
+    },
+    {
+      "asset_id": "PSST",
+      "line_id": "URZV",
+      "type": "translation",
+      "data": "ਜੋ ਮਨੁੱਖ ਗੁਰੂ ਦੇ ਹੁਕਮ ਵਿਚ ਤੁਰਦਾ ਹੈ, ਉਹ ਤੱਤ-ਗਿਆਨ ਨੂੰ ਵਿਚਾਰਦਾ ਹੈ ਤੇ (ਆਪਣੀ) ਹਉਮੈ ਗੁਰੂ ਦੇ ਸ਼ਬਦ ਦੀ ਰਾਹੀਂ ਸਾੜਦਾ ਹੈ,",
+      "additional": "{\"type\":\"translation\",\"language\":\"pa\"}",
+      "priority": 6
+    },
+    {
+      "asset_id": "SSA2",
+      "line_id": "URZV",
+      "type": "primary",
+      "data": "ਗੁਰਮੁਖਿ ਹੋਵੈ. ਸੁ ਗਿਆਨੁ ਤਤੁ ਬੀਚਾਰੈ; ਹਉਮੈ ਸਬਦਿ ਜਲਾਏ ॥",
+      "additional": "{\"type\":\"primary\",\"page\":946,\"line\":3}",
+      "priority": 1
+    },
+    {
+      "asset_id": "DSSK",
+      "line_id": "UULK",
+      "type": "translation",
+      "data": "Through the Naam, the Name of the Lord, he remains detached; he enshrines the True Name in his heart.",
+      "additional": "{\"type\":\"translation\",\"language\":\"en\"}",
+      "priority": 4
+    },
+    {
+      "asset_id": "PSST",
+      "line_id": "UULK",
+      "type": "translation",
+      "data": "ਉਹ ਮਨੁੱਖ (ਪ੍ਰਭੂ-ਚਰਨਾਂ ਦਾ) ਮਤਵਾਲਾ ਹੋ ਕੇ ਨਿਰੋਲ ਪ੍ਰਭੂ-ਨਾਮ ਵਿਚ ਹੀ ਜੁੜਿਆ ਰਹਿੰਦਾ ਹੈ, ਸਦਾ ਪ੍ਰਭੂ ਨੂੰ ਹਿਰਦੇ ਵਿਚ ਟਿਕਾਈ ਰੱਖਦਾ ਹੈ।",
+      "additional": "{\"type\":\"translation\",\"language\":\"pa\"}",
+      "priority": 6
+    },
+    {
+      "asset_id": "SSA2",
+      "line_id": "UULK",
+      "type": "primary",
+      "data": "ਨਾਮੇ ਨਾਮਿ ਰਹੈ ਬੈਰਾਗੀ; ਸਾਚੁ ਰਖਿਆ ਉਰਿ ਧਾਰੇ ॥",
+      "additional": "{\"type\":\"primary\",\"page\":946,\"line\":4}",
+      "priority": 1
+    },
+    {
+      "asset_id": "DSSK",
+      "line_id": "XMRB",
+      "type": "translation",
+      "data": "Through the Name, everything is revealed; through the Name, understanding is obtained.",
+      "additional": "{\"type\":\"translation\",\"language\":\"en\"}",
+      "priority": 4
+    },
+    {
+      "asset_id": "PSST",
+      "line_id": "XMRB",
+      "type": "translation",
+      "data": "'ਨਾਮ' ਤੋਂ ਹੀ ਪੂਰਨ ਗਿਆਨ ਪ੍ਰਾਪਤ ਹੁੰਦਾ ਹੈ, 'ਨਾਮ' ਤੋਂ ਹੀ ਸਾਰੀ ਸੂਝ ਪੈਂਦੀ ਹੈ।",
+      "additional": "{\"type\":\"translation\",\"language\":\"pa\"}",
+      "priority": 6
+    },
+    {
+      "asset_id": "SSA2",
+      "line_id": "XMRB",
+      "type": "primary",
+      "data": "ਨਾਮੈ ਹੀ ਤੇ ਸਭੁ ਪਰਗਟੁ ਹੋਵੈ; ਨਾਮੇ ਸੋਝੀ ਪਾਈ ॥",
+      "additional": "{\"type\":\"primary\",\"page\":946,\"line\":13}",
+      "priority": 1
+    },
+    {
+      "asset_id": "DSSK",
+      "line_id": "ZR95",
+      "type": "translation",
+      "data": "The Gurmukh is united in God's Union; he alone knows.",
+      "additional": "{\"type\":\"translation\",\"language\":\"en\"}",
+      "priority": 4
+    },
+    {
+      "asset_id": "PSST",
+      "line_id": "ZR95",
+      "type": "translation",
+      "data": "ਗੁਰਮੁਖ ਮਨੁੱਖ ਨੂੰ ਪ੍ਰਭੂ ਸੰਜੋਗ ਬਣਾ ਕੇ (ਆਪਣੇ ਵਿਚ) ਮਿਲਾ ਲੈਂਦਾ ਹੈ (ਇਸ ਭੇਤ ਨੂੰ) ਉਹ ਗੁਰਮੁਖ (ਹੀ) ਸਮਝਦਾ ਹੈ।",
+      "additional": "{\"type\":\"translation\",\"language\":\"pa\"}",
+      "priority": 6
+    },
+    {
+      "asset_id": "SSA2",
+      "line_id": "ZR95",
+      "type": "primary",
+      "data": "ਗੁਰਮੁਖਿ ਮੇਲਿ ਮਿਲਾਏ; ਸੋੁ ਜਾਣੈ ॥",
+      "additional": "{\"type\":\"primary\",\"page\":946,\"line\":11}",
+      "priority": 1
+    }
+  ],
+  "banis": [
+    {
+      "id": "SGST",
+      "name": "{\"Latn\":\"Sidh Gosht\",\"Guru\":\"ਸਿਧ ਗੋਸਟਿ\"}"
+    }
+  ],
+  "bani_lines": [
+    {
+      "bani_id": "SGST",
+      "line_id": "PF2N",
+      "section_order": 1,
+      "line_order": 1
+    },
+    {
+      "bani_id": "SGST",
+      "line_id": "473D",
+      "section_order": 1,
+      "line_order": 2
+    },
+    {
+      "bani_id": "SGST",
+      "line_id": "P7ZE",
+      "section_order": 1,
+      "line_order": 3
+    },
+    {
+      "bani_id": "SGST",
+      "line_id": "NTKK",
+      "section_order": 1,
+      "line_order": 4
+    },
+    {
+      "bani_id": "SGST",
+      "line_id": "F8TP",
+      "section_order": 1,
+      "line_order": 369
+    },
+    {
+      "bani_id": "SGST",
+      "line_id": "4490",
+      "section_order": 1,
+      "line_order": 370
+    },
+    {
+      "bani_id": "SGST",
+      "line_id": "S4J7",
+      "section_order": 1,
+      "line_order": 371
+    },
+    {
+      "bani_id": "SGST",
+      "line_id": "BJE1",
+      "section_order": 1,
+      "line_order": 372
+    },
+    {
+      "bani_id": "SGST",
+      "line_id": "URZV",
+      "section_order": 1,
+      "line_order": 373
+    },
+    {
+      "bani_id": "SGST",
+      "line_id": "99LS",
+      "section_order": 1,
+      "line_order": 374
+    },
+    {
+      "bani_id": "SGST",
+      "line_id": "UULK",
+      "section_order": 1,
+      "line_order": 375
+    },
+    {
+      "bani_id": "SGST",
+      "line_id": "7YX0",
+      "section_order": 1,
+      "line_order": 376
+    },
+    {
+      "bani_id": "SGST",
+      "line_id": "HLWB",
+      "section_order": 1,
+      "line_order": 377
+    },
+    {
+      "bani_id": "SGST",
+      "line_id": "QCFQ",
+      "section_order": 1,
+      "line_order": 378
+    },
+    {
+      "bani_id": "SGST",
+      "line_id": "PWJ0",
+      "section_order": 1,
+      "line_order": 379
+    },
+    {
+      "bani_id": "SGST",
+      "line_id": "AQ01",
+      "section_order": 1,
+      "line_order": 380
+    },
+    {
+      "bani_id": "SGST",
+      "line_id": "L1JE",
+      "section_order": 1,
+      "line_order": 381
+    },
+    {
+      "bani_id": "SGST",
+      "line_id": "EV8S",
+      "section_order": 1,
+      "line_order": 382
+    },
+    {
+      "bani_id": "SGST",
+      "line_id": "1LDG",
+      "section_order": 1,
+      "line_order": 383
+    },
+    {
+      "bani_id": "SGST",
+      "line_id": "LB86",
+      "section_order": 1,
+      "line_order": 384
+    },
+    {
+      "bani_id": "SGST",
+      "line_id": "A7H8",
+      "section_order": 1,
+      "line_order": 385
+    },
+    {
+      "bani_id": "SGST",
+      "line_id": "7TEQ",
+      "section_order": 1,
+      "line_order": 386
+    },
+    {
+      "bani_id": "SGST",
+      "line_id": "1PNK",
+      "section_order": 1,
+      "line_order": 387
+    },
+    {
+      "bani_id": "SGST",
+      "line_id": "3QNM",
+      "section_order": 1,
+      "line_order": 388
+    },
+    {
+      "bani_id": "SGST",
+      "line_id": "05MZ",
+      "section_order": 1,
+      "line_order": 389
+    },
+    {
+      "bani_id": "SGST",
+      "line_id": "8UNW",
+      "section_order": 1,
+      "line_order": 390
+    },
+    {
+      "bani_id": "SGST",
+      "line_id": "12NL",
+      "section_order": 1,
+      "line_order": 391
+    },
+    {
+      "bani_id": "SGST",
+      "line_id": "0EXX",
+      "section_order": 1,
+      "line_order": 392
+    },
+    {
+      "bani_id": "SGST",
+      "line_id": "ZR95",
+      "section_order": 1,
+      "line_order": 393
+    },
+    {
+      "bani_id": "SGST",
+      "line_id": "CKWW",
+      "section_order": 1,
+      "line_order": 394
+    },
+    {
+      "bani_id": "SGST",
+      "line_id": "8Q41",
+      "section_order": 1,
+      "line_order": 395
+    },
+    {
+      "bani_id": "SGST",
+      "line_id": "TXW9",
+      "section_order": 1,
+      "line_order": 396
+    },
+    {
+      "bani_id": "SGST",
+      "line_id": "XMRB",
+      "section_order": 1,
+      "line_order": 397
+    },
+    {
+      "bani_id": "SGST",
+      "line_id": "ET9F",
+      "section_order": 1,
+      "line_order": 398
+    },
+    {
+      "bani_id": "SGST",
+      "line_id": "7A69",
+      "section_order": 1,
+      "line_order": 399
+    },
+    {
+      "bani_id": "SGST",
+      "line_id": "SFHH",
+      "section_order": 1,
+      "line_order": 400
+    },
+    {
+      "bani_id": "SGST",
+      "line_id": "TUMF",
+      "section_order": 1,
+      "line_order": 401
+    },
+    {
+      "bani_id": "SGST",
+      "line_id": "CQB4",
+      "section_order": 1,
+      "line_order": 402
+    },
+    {
+      "bani_id": "SGST",
+      "line_id": "8AB3",
+      "section_order": 1,
+      "line_order": 403
+    },
+    {
+      "bani_id": "SGST",
+      "line_id": "N8YB",
+      "section_order": 1,
+      "line_order": 404
+    },
+    {
+      "bani_id": "SGST",
+      "line_id": "041Z",
+      "section_order": 1,
+      "line_order": 405
+    },
+    {
+      "bani_id": "SGST",
+      "line_id": "BC9S",
+      "section_order": 1,
+      "line_order": 406
+    }
+  ]
+}

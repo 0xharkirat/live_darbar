@@ -605,6 +605,12 @@ abstract class AppLocalizations {
   /// **'Line meanings by {meanings}. Pauses by {pauses}. From {source}.'**
   String hukamnama_lines_credit(String meanings, String pauses, String source);
 
+  /// Credit under the Hukamnama when the meanings under the lines come from another source. SGPC chose the Hukamnama and gave its text.
+  ///
+  /// In en, this message translates to:
+  /// **'Hukamnama from {source}'**
+  String hukamnama_source(String source);
+
   /// Credit under the Hukamnama text
   ///
   /// In en, this message translates to:
@@ -641,11 +647,107 @@ abstract class AppLocalizations {
   /// **'Today’s Hukamnama is not out yet. This is the one from {date}.'**
   String hukamnama_not_out(String date);
 
+  /// Screen reader hint for the date line at the top of the Hukamnama reader. The line is a button that opens the sheet to pick an earlier day
+  ///
+  /// In en, this message translates to:
+  /// **'Choose another day'**
+  String get hukamnama_pick_day;
+
+  /// Title of the sheet where the listener picks an earlier day to read
+  ///
+  /// In en, this message translates to:
+  /// **'Earlier Hukamnama'**
+  String get archive_title;
+
+  /// Line under the title of the archive sheet on the phone apps
+  ///
+  /// In en, this message translates to:
+  /// **'Pick a day to read its Hukamnama.'**
+  String get archive_body;
+
+  /// Line under the title of the archive sheet on the web, where only the last days are kept. The number arrives already written: Gurmukhi digits in Punjabi, Latin digits in English
+  ///
+  /// In en, this message translates to:
+  /// **'Pick a day from the last {days} days.'**
+  String archive_body_web(String days);
+
+  /// The gold button of the archive sheet. It opens the Hukamnama of the day on the wheel
+  ///
+  /// In en, this message translates to:
+  /// **'Open'**
+  String get archive_open;
+
+  /// The quiet button of the archive sheet. It opens the Hukamnama of the day before today
+  ///
+  /// In en, this message translates to:
+  /// **'Yesterday'**
+  String get archive_yesterday;
+
+  /// Shown in the reader when an earlier day has no Hukamnama text: SGPC has none, or the web copy does not reach back that far
+  ///
+  /// In en, this message translates to:
+  /// **'There is no Hukamnama for this day.'**
+  String get archive_none;
+
+  /// Shown in the reader when an earlier day's text fails to load, for example with no network
+  ///
+  /// In en, this message translates to:
+  /// **'This Hukamnama could not be loaded'**
+  String get archive_failed;
+
+  /// Text button under the message in the reader when an earlier day has no Hukamnama. It opens the archive sheet
+  ///
+  /// In en, this message translates to:
+  /// **'Choose another day'**
+  String get archive_other_day;
+
   /// Heading above the explanation of the Hukamnama
   ///
   /// In en, this message translates to:
   /// **'Meaning'**
   String get meaning;
+
+  /// Title of the page with the Sangrand Hukamnama: the pauri of Barah Maha Maajh for the Sikh month
+  ///
+  /// In en, this message translates to:
+  /// **'Sangrand Hukamnama'**
+  String get sangrand_title;
+
+  /// The name of the bani Barah Maha, on the Sangrand page: Barah Maha · Katak · Ang 135
+  ///
+  /// In en, this message translates to:
+  /// **'Barah Maha'**
+  String get barah_maha;
+
+  /// Small label on the Home row that opens the Sangrand Hukamnama of the Sikh month. English writes it in capitals
+  ///
+  /// In en, this message translates to:
+  /// **'Sangrand · {month}'**
+  String sangrand_row(String month);
+
+  /// The Home row's label on Sangrand day itself, the 1st of the Sikh month. English writes it in capitals
+  ///
+  /// In en, this message translates to:
+  /// **'Today is Sangrand · {month}'**
+  String sangrand_row_today(String month);
+
+  /// The Aa button in the Hukamnama reader, and the title of the sheet it opens: text size and meanings
+  ///
+  /// In en, this message translates to:
+  /// **'Reading options'**
+  String get reader_options;
+
+  /// Label above the smaller and larger text buttons in the reading options
+  ///
+  /// In en, this message translates to:
+  /// **'Text size'**
+  String get reader_text_size;
+
+  /// Label before the 2 switches that show the Punjabi and the English meaning under each line of the Hukamnama
+  ///
+  /// In en, this message translates to:
+  /// **'Meanings'**
+  String get reader_meanings;
 
   /// Web only: link to SGPC's site, shown beside Retry when the Hukamnama text could not be loaded
   ///
@@ -1024,6 +1126,84 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'This version is too old to work well. Update it from the store to go on.'**
   String get update_required_body;
+
+  /// Heading in About over the share and rate rows
+  ///
+  /// In en, this message translates to:
+  /// **'Help others find it'**
+  String get support_heading;
+
+  /// Line under the heading in About. It asks for nothing but a share or a rating: the app takes no money
+  ///
+  /// In en, this message translates to:
+  /// **'Live Darbar is free and will stay free, with no ads. Sharing it or rating it helps more of the sangat find it.'**
+  String get support_body;
+
+  /// Row in About and link on Home that opens the share sheet with a link to the app
+  ///
+  /// In en, this message translates to:
+  /// **'Share Live Darbar'**
+  String get share_app;
+
+  /// First line of the text that Share Live Darbar sends. The site and the store links follow it
+  ///
+  /// In en, this message translates to:
+  /// **'Live kirtan from Sri Darbar Sahib, Amritsar, and the daily Hukamnama and Katha. Free, with no ads.'**
+  String get share_app_message;
+
+  /// Row in About that opens the app's page in the store
+  ///
+  /// In en, this message translates to:
+  /// **'Rate Live Darbar'**
+  String get rate_app;
+
+  /// Button beside Listen on the Hukamnama reader
+  ///
+  /// In en, this message translates to:
+  /// **'Share'**
+  String get share;
+
+  /// Screen reader label for the Share button on the Hukamnama reader
+  ///
+  /// In en, this message translates to:
+  /// **'Share this Hukamnama'**
+  String get share_hukamnama;
+
+  /// First line of the shared Hukamnama text. {date} is the day of the Hukamnama, for example 6 November, and may be followed by the Ang
+  ///
+  /// In en, this message translates to:
+  /// **'Hukamnama from Sri Darbar Sahib, {date}'**
+  String share_hukamnama_title(String date);
+
+  /// Last line of the shared Hukamnama text. The darbar.live link follows it
+  ///
+  /// In en, this message translates to:
+  /// **'Read it all and listen:'**
+  String get share_hukamnama_footer;
+
+  /// Last line of the shared text for an earlier day's Hukamnama. The link to that day follows it. There is no recording for an earlier day, so it does not say listen
+  ///
+  /// In en, this message translates to:
+  /// **'Read it all:'**
+  String get share_hukamnama_footer_day;
+
+  /// Short note when the phone or browser has no share sheet and the text was copied instead
+  ///
+  /// In en, this message translates to:
+  /// **'Copied. Paste it to share.'**
+  String get link_copied;
+
+  /// Label of the Home row that opens SGPC's live video of Sri Harmandir Sahib in the YouTube app. The row shows only while a video stream is live, as a check of YouTube every 5 minutes says. With no fresh check, it shows at the usual times of the stream
+  ///
+  /// In en, this message translates to:
+  /// **'Watch live on YouTube'**
+  String get youtube_live;
+
+  /// What a screen reader says for the Home row that opens the live video on YouTube. It also says the row leaves this app
+  ///
+  /// In en, this message translates to:
+  /// **'Watch live video from Sri Harmandir Sahib on YouTube. Opens the YouTube app.'**
+  String get youtube_live_semantics;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
