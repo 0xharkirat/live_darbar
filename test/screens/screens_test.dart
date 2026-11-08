@@ -66,6 +66,7 @@ import '../support/load_fonts.dart';
 /// The images land in build/screens/. They are for looking at, in review and
 /// for store screenshots; nothing is compared, so they never fail a build.
 void main() {
+  _RealShadowsBinding();
   setUpAll(() async {
     SharedPreferences.setMockInitialValues({});
     await loadAppFonts();
@@ -104,6 +105,30 @@ void main() {
       );
       await tester.pump(const Duration(seconds: 1));
       await _shot(tester, 'history_$locale');
+    });
+  }
+
+  // The search field of the history screen with a query typed: a typo in
+  // English, the first letters in Gurmukhi, and a query that finds nothing.
+  for (final (locale, name, query) in [
+    ('en', 'typo', 'banda singh bahdur'),
+    ('en', 'vaisakhi', 'baisakhi'),
+    ('pa', 'first_letters', 'ਬਛਦ'),
+    ('pa', 'english_in_pa', 'tegh bahadur'),
+    ('en', 'none', 'xyzzy'),
+  ]) {
+    testWidgets('history, search $name, $locale', (tester) async {
+      await _pump(
+        tester,
+        const HistoryScreen(),
+        locale: locale,
+        at: DateTime.utc(2026, 11, 3, 6),
+      );
+      await tester.pump(const Duration(seconds: 1));
+      await tester.enterText(find.byType(CupertinoTextField), query);
+      await tester.pump();
+      await tester.pump(const Duration(seconds: 1));
+      await _shot(tester, 'history_search_${name}_$locale');
     });
   }
 
@@ -290,6 +315,47 @@ void main() {
       );
       await tester.pump(const Duration(seconds: 1));
       await _shot(tester, 'hukamnama_meaning_$locale');
+    });
+  }
+
+  // The archive: an earlier day in the same reader, and the sheet that picks
+  // the day. The date line at the top opens the sheet.
+  final earlierDay = hukamnamaForDayProvider.overrideWith((ref, day) async {
+    final json = jsonDecode(
+      File('test/fixtures/sgpc_hukamnama_2026_11_02.json').readAsStringSync(),
+    ) as Map<String, dynamic>;
+    final text = json['hukamnama'] as Map<String, dynamic>;
+    text['date'] = sgpcDayIso(day);
+    text['ang'] = '${600 + day.day}';
+    return Hukamnama.fromSgpc(json);
+  });
+  final sevenNovember = DateTime.utc(2026, 11, 7, 6);
+
+  for (final locale in ['en', 'pa']) {
+    testWidgets('hukamnama, an earlier day, $locale', (tester) async {
+      await _pump(
+        tester,
+        HukamnamaScreen(day: DateTime.utc(2026, 11, 1)),
+        locale: locale,
+        at: sevenNovember,
+        overrides: [earlierDay],
+      );
+      await tester.pump(const Duration(seconds: 1));
+      await _shot(tester, 'hukamnama_earlier_$locale');
+    });
+
+    testWidgets('hukamnama, archive sheet, $locale', (tester) async {
+      await _pump(
+        tester,
+        const HukamnamaScreen(),
+        locale: locale,
+        at: sevenNovember,
+        overrides: [earlierDay],
+      );
+      await tester.tap(find.byKey(const ValueKey('reader-date')));
+      await tester.pump();
+      await tester.pump(const Duration(seconds: 1));
+      await _shot(tester, 'hukamnama_archive_sheet_$locale');
     });
   }
 
@@ -572,7 +638,7 @@ Future<void> _pump(
           connectivityController.overrideWith(_Online.new),
           updateController.overrideWith(_NoUpdate.new),
           localeController.overrideWith(() => _Locale(locale)),
-          appVersionProvider.overrideWith((ref) async => '3.0.0 (10)'),
+          appVersionProvider.overrideWith((ref) async => _version),
           // The renders show the reminder, which a phone offers.
           reminderPlatformProvider
               .overrideWithValue(reminders ?? FakeReminderPlatform()),
@@ -659,6 +725,26 @@ Future<void> _precache(WidgetTester tester) async {
   if (animated) await tester.pump(const Duration(milliseconds: 600));
 }
 
+/// The test binding, with shadows drawn as a phone draws them.
+///
+/// The usual test binding draws a shadow with no blur, as a hard black block.
+/// The 3.0 store pictures showed one under the hero, the player's artwork and
+/// the floating player, where a phone shows a soft shade.
+class _RealShadowsBinding extends AutomatedTestWidgetsFlutterBinding {
+  @override
+  bool get disableShadows => false;
+}
+
+/// The app's version as About shows it, "3.1.0 (11)", from pubspec.yaml, so
+/// the pictures of a release show that release.
+final String _version = () {
+  final line = File('pubspec.yaml')
+      .readAsLinesSync()
+      .firstWhere((l) => l.startsWith('version:'));
+  final match = RegExp(r'version:\s*([\d.]+)\+(\d+)').firstMatch(line)!;
+  return '${match[1]} (${match[2]})';
+}();
+
 Future<void> _shot(WidgetTester tester, String name) async {
   final boundary = tester.renderObject<RenderRepaintBoundary>(
     find.byKey(_shotKey),
@@ -672,12 +758,14 @@ Future<void> _shot(WidgetTester tester, String name) async {
   });
 }
 
-/// The real Hukamnama for 2 November 2026, as SGPC's feed served it.
+/// The real Hukamnama for 2 November 2026, as the mirror serves it: SGPC's
+/// answer with the lines, their meanings and pauses, and the title. So the
+/// store pictures show the reader as a listener sees it (3.1).
 class _Fixture extends HukamnamaController {
   @override
   Future<Hukamnama> build() async {
-    final json =
-        File('test/fixtures/sgpc_hukamnama_2026_11_02.json').readAsStringSync();
+    final json = File('test/fixtures/mirror_hukamnama_2026_11_02.json')
+        .readAsStringSync();
     return Hukamnama.fromSgpc(jsonDecode(json) as Map<String, dynamic>);
   }
 

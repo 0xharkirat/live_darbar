@@ -22,10 +22,12 @@ String readerDate(
   DateTime date, {
   required bool punjabi,
   bool weekday = false,
+  bool year = false,
 }) {
   final locale = punjabi ? 'pa' : 'en';
   final dayAndMonth =
-      '${readerNumber(date.day, punjabi: punjabi)} ${DateFormat('MMMM', locale).format(date)}';
+      '${readerNumber(date.day, punjabi: punjabi)} ${DateFormat('MMMM', locale).format(date)}'
+      '${year ? ' ${readerNumber(date.year, punjabi: punjabi)}' : ''}';
   return weekday
       ? '${DateFormat('EEEE', locale).format(date)}, $dayAndMonth'
       : dayAndMonth;

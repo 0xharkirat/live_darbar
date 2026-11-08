@@ -16,6 +16,9 @@ import 'package:live_darbar/src/core/palette.dart';
 class SourceSwitcher extends ConsumerWidget {
   const SourceSwitcher({super.key});
 
+  /// The 1 pt border and the 3 pt gap around the thumb.
+  static const _edge = 4.0;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
@@ -27,75 +30,83 @@ class SourceSwitcher extends ConsumerWidget {
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        // Inside the 3 px padding on each side.
-        final segment = (constraints.maxWidth - 6) / 3;
-        return Container(
+        // Inside the 1 pt border and the 3 pt gap on each side.
+        final segment = (constraints.maxWidth - 2 * _edge) / 3;
+        // A DecoratedBox, not a Container: a Container pads its child by the
+        // border, which took 2 pt off the target.
+        return SizedBox(
           height: 44,
-          padding: const EdgeInsets.all(3),
-          decoration: ShapeDecoration(
-            color: Palette.surface,
-            shape: RoundedSuperellipseBorder(
-              borderRadius: BorderRadius.circular(14),
-              side: const BorderSide(color: Palette.border),
+          child: DecoratedBox(
+            decoration: ShapeDecoration(
+              color: Palette.surface,
+              shape: RoundedSuperellipseBorder(
+                borderRadius: BorderRadius.circular(14),
+                side: const BorderSide(color: Palette.border),
+              ),
             ),
-          ),
-          child: Stack(
-            children: [
-              AnimatedPositioned(
-                duration: Motion.standard,
-                curve: Motion.easeInOut,
-                left: selected * segment,
-                top: 0,
-                bottom: 0,
-                width: segment,
-                child: DecoratedBox(
-                  decoration: ShapeDecoration(
-                    color: Palette.surfaceHigh,
-                    shape: RoundedSuperellipseBorder(
-                      borderRadius: BorderRadius.circular(11),
-                      side: const BorderSide(color: Palette.border),
+            child: Stack(
+              children: [
+                AnimatedPositioned(
+                  duration: Motion.standard,
+                  curve: Motion.easeInOut,
+                  left: _edge + selected * segment,
+                  top: _edge,
+                  bottom: _edge,
+                  width: segment,
+                  child: DecoratedBox(
+                    decoration: ShapeDecoration(
+                      color: Palette.surfaceHigh,
+                      shape: RoundedSuperellipseBorder(
+                        borderRadius: BorderRadius.circular(11),
+                        side: const BorderSide(color: Palette.border),
+                      ),
                     ),
                   ),
                 ),
-              ),
-              Row(
-                children: [
-                  for (var i = 0; i < 3; i++)
-                    Expanded(
-                      child: Semantics(
-                        button: true,
-                        selected: i == selected,
-                        child: GestureDetector(
-                          behavior: HitTestBehavior.opaque,
-                          onTap: () {
-                            if (i == selected) return;
-                            HapticFeedback.selectionClick();
-                            ref.read(audioController).play(indices[i]);
-                          },
-                          child: Center(
-                            child: AnimatedDefaultTextStyle(
-                              duration: Motion.quick,
-                              style: AppType.footnote.copyWith(
-                                color: i == selected
-                                    ? Palette.foreground
-                                    : Palette.muted,
-                                fontWeight: i == selected
-                                    ? FontWeight.w700
-                                    : FontWeight.w500,
-                              ),
-                              child: Text(
-                                labels[i],
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
+                // The full 44 pt height is the target, edge to edge. The thumb
+                // is 36, inside the edge.
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: _edge),
+                  child: Row(
+                    children: [
+                      for (var i = 0; i < 3; i++)
+                        Expanded(
+                          child: Semantics(
+                            button: true,
+                            selected: i == selected,
+                            child: GestureDetector(
+                              behavior: HitTestBehavior.opaque,
+                              onTap: () {
+                                if (i == selected) return;
+                                HapticFeedback.selectionClick();
+                                ref.read(audioController).play(indices[i]);
+                              },
+                              child: Center(
+                                child: AnimatedDefaultTextStyle(
+                                  duration: Motion.quick,
+                                  style: AppType.footnote.copyWith(
+                                    color: i == selected
+                                        ? Palette.foreground
+                                        : Palette.muted,
+                                    fontWeight: i == selected
+                                        ? FontWeight.w700
+                                        : FontWeight.w500,
+                                  ),
+                                  child: Text(
+                                    labels[i],
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
                               ),
                             ),
                           ),
                         ),
-                      ),
-                    ),
-                ],
-              ),
-            ],
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         );
       },

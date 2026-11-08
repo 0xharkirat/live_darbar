@@ -56,14 +56,16 @@ void main() {
   group('HukamnamaService.fetch', () {
     test('posts the SGPC day to the archive over HTTPS, as a page would',
         () async {
-      late http.Request seen;
+      // The first request. A second one, to the mirror, is tested below.
+      http.Request? first;
       final service = serviceWith((request) async {
-        seen = request;
+        first ??= request;
         return http.Response.bytes(_recorded, 200);
       });
 
       await service.fetch(nov2);
 
+      final seen = first!;
       expect(seen.method, 'POST');
       expect(seen.url.toString(),
           'https://hs.sgpc.net/hssearchhukmanamaTestCalender.php');
@@ -387,22 +389,111 @@ void main() {
   });
 
   group('HukamnamaService off the web', () {
-    test('posts to SGPC and never touches the mirror', () async {
-      final seen = <http.Request>[];
-      final service = serviceWith(
-        (request) async {
+    const mirror = 'https://mirror.test/data';
+    final mirrorDay = File('test/fixtures/mirror_hukamnama_2026_11_02.json')
+        .readAsBytesSync();
+
+    /// A native service: SGPC answers with [sgpc], the mirror with [fromMirror].
+    /// Every request is recorded in [seen].
+    HukamnamaService native(
+      List<http.Request> seen, {
+      http.Response Function()? sgpc,
+      required Future<http.Response> Function() fromMirror,
+      Duration mirrorTimeout = const Duration(seconds: 4),
+    }) {
+      final service = HukamnamaService(
+        client: MockClient((request) async {
           seen.add(request);
-          return http.Response.bytes(_recorded, 200);
-        },
-        mirrorUrl: 'https://mirror.test/data',
+          return request.url.host == 'hs.sgpc.net'
+              ? (sgpc?.call() ?? http.Response.bytes(_recorded, 200))
+              : fromMirror();
+        }),
+        isWeb: false,
+        mirrorUrl: mirror,
+        mirrorTimeout: mirrorTimeout,
+      );
+      addTearDown(service.close);
+      return service;
+    }
+
+    test('posts to SGPC, then reads the lines of that day from the mirror',
+        () async {
+      final seen = <http.Request>[];
+      final service = native(
+        seen,
+        fromMirror: () async => http.Response.bytes(mirrorDay, 200),
       );
 
-      await service.fetch(nov2);
+      final h = await service.fetch(nov2);
 
-      expect(seen, hasLength(1));
-      expect(seen.single.method, 'POST');
-      expect(seen.single.url.host, 'hs.sgpc.net');
-      expect(seen.single.bodyFields, {'selected_date': '2026-11-02'});
+      expect(seen.map((r) => '${r.method} ${r.url}'), [
+        'POST https://hs.sgpc.net/hssearchhukmanamaTestCalender.php',
+        'GET $mirror/hukamnama/2026-11-02.json',
+      ]);
+      expect(seen.first.bodyFields, {'selected_date': '2026-11-02'});
+      // SGPC's text is SGPC's, and the lines with their meanings come along.
+      expect(h.lines, hasLength(10));
+      expect(h.lines.first.english, isNull);
+      expect(h.shabad, isNotNull);
+      expect(h.shabad!.lines.first.english, startsWith('The Lord, Har, Har'));
+      expect(h.shabad!.lines.first.punjabi, isNotNull);
+    });
+
+    test('keeps SGPC\'s day when the mirror has no file for it yet', () async {
+      final service =
+          native([], fromMirror: () async => http.Response('', 404));
+      final h = await service.fetch(nov2);
+      expect(h.date, nov2);
+      expect(h.lines, hasLength(10));
+      expect(h.shabad, isNull);
+    });
+
+    test('keeps SGPC\'s day when the mirror fails, is slow, or is damaged',
+        () async {
+      for (final fromMirror in <Future<http.Response> Function()>[
+        () async => throw http.ClientException('offline'),
+        () => Completer<http.Response>().future,
+        () async => http.Response('{not json', 200),
+        () async => http.Response('[]', 200),
+        () async => http.Response('', 500),
+      ]) {
+        final service = native(
+          [],
+          fromMirror: fromMirror,
+          mirrorTimeout: const Duration(milliseconds: 20),
+        );
+        final h = await service.fetch(nov2);
+        expect(h.date, nov2);
+        expect(h.shabad, isNull);
+      }
+    });
+
+    test('ignores a mirror file that holds another day', () async {
+      final json = jsonDecode(utf8.decode(mirrorDay)) as Map<String, dynamic>;
+      (json['hukamnama'] as Map<String, dynamic>)['date'] = '2026-11-01';
+      final service = native(
+        [],
+        fromMirror: () async => http.Response(jsonEncode(json), 200),
+      );
+      expect((await service.fetch(nov2)).shabad, isNull);
+    });
+
+    test('does not ask the mirror for a day SGPC has not posted', () async {
+      final seen = <http.Request>[];
+      final service = native(
+        seen,
+        sgpc: () => http.Response.bytes(_notPublished, 200),
+        fromMirror: () async => http.Response.bytes(mirrorDay, 200),
+      );
+      await expectLater(
+        service.fetch(DateTime.utc(2026, 11, 3)),
+        throwsA(isA<HukamnamaNotPublishedException>()),
+      );
+      expect(seen.map((r) => r.url.host), ['hs.sgpc.net']);
+    });
+
+    test('waits 4 seconds at most for the mirror by default', () {
+      expect(HukamnamaService().mirrorTimeout, const Duration(seconds: 4));
     });
 
     test(

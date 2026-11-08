@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:live_darbar/l10n/app_localizations.dart';
 import 'package:live_darbar/src/controllers/widget_placement_controller.dart';
 import 'package:live_darbar/src/core/app_type.dart';
+import 'package:live_darbar/src/core/motion.dart';
 import 'package:live_darbar/src/core/palette.dart';
 import 'package:live_darbar/src/core/reader_numbers.dart';
 import 'package:live_darbar/src/home_screen_widget/widget_install.dart';
@@ -29,11 +30,21 @@ const _filmWidth = 172.0;
 Future<void> showWidgetStepsSheet(BuildContext context) =>
     showAppSheet<void>(context, (_) => const WidgetStepsSheet());
 
-class WidgetStepsSheet extends ConsumerWidget {
+class WidgetStepsSheet extends ConsumerStatefulWidget {
   const WidgetStepsSheet({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<WidgetStepsSheet> createState() => _WidgetStepsSheetState();
+}
+
+class _WidgetStepsSheetState extends ConsumerState<WidgetStepsSheet> {
+  /// The step the film shows now, whose number is lit. Hark, 6 November: the
+  /// film and the numbered list belong together, so the number of the step on
+  /// screen fills in, quietly.
+  int? _onScreen;
+
+  @override
+  Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final punjabi = Localizations.localeOf(context).languageCode == 'pa';
     final iphone = ref.watch(widgetInstallProvider).isIphone;
@@ -55,6 +66,9 @@ class WidgetStepsSheet extends ConsumerWidget {
           child: DemoFilmView(
             film: iphone ? DemoFilm.iphone : DemoFilm.android,
             width: _filmWidth,
+            onStep: (step) {
+              if (mounted) setState(() => _onScreen = step);
+            },
           ),
         ),
         const SizedBox(height: 20),
@@ -63,8 +77,10 @@ class WidgetStepsSheet extends ConsumerWidget {
         for (final (i, step) in steps.indexed) ...[
           if (i > 0) const SizedBox(height: 12),
           _Step(
+            key: ValueKey('widget-step-$i'),
             number: readerNumber(i + 1, punjabi: punjabi),
             text: step,
+            lit: _onScreen == i,
           ),
         ],
         const SizedBox(height: 24),
@@ -77,12 +93,19 @@ class WidgetStepsSheet extends ConsumerWidget {
   }
 }
 
-/// A step: a number in a gold circle, and the words.
+/// A step: a number in a gold circle, and the words. While the film shows the
+/// step, the circle fills with gold.
 class _Step extends StatelessWidget {
-  const _Step({required this.number, required this.text});
+  const _Step({
+    super.key,
+    required this.number,
+    required this.text,
+    required this.lit,
+  });
 
   final String number;
   final String text;
+  final bool lit;
 
   @override
   Widget build(BuildContext context) {
@@ -94,21 +117,28 @@ class _Step extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
+            // A colour change only, so nothing moves while the listener
+            // reads, and it eases as the film moves on.
+            AnimatedContainer(
+              duration: Motion.standard,
+              curve: Motion.easeOut,
               width: 28,
               height: 28,
               alignment: Alignment.center,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: Palette.gold.withValues(alpha: 0.14),
+                color:
+                    lit ? Palette.gold : Palette.gold.withValues(alpha: 0.14),
               ),
-              child: Text(
-                number,
+              child: AnimatedDefaultTextStyle(
+                duration: Motion.standard,
+                curve: Motion.easeOut,
                 style: AppType.callout.copyWith(
-                  color: Palette.gold,
+                  color: lit ? Palette.onGold : Palette.gold,
                   fontWeight: FontWeight.w700,
                   height: 1,
                 ),
+                child: Text(number),
               ),
             ),
             const SizedBox(width: 14),

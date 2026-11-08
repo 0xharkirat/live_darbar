@@ -19,7 +19,8 @@ class LanguageSwitch extends ConsumerWidget {
   static const _languages = {'en': 'English', 'pa': 'ਪੰਜਾਬੀ'};
 
   /// The height of an option at the default text size. It grows from there.
-  static const _optionHeight = 34.0;
+  /// With the frame's edge, which is part of each target, it is 44.
+  static const _optionHeight = 38.0;
   static const _optionPadding = 12.0;
   static const _framePadding = 3.0;
 
@@ -36,7 +37,7 @@ class LanguageSwitch extends ConsumerWidget {
   static double widthOf(BuildContext context) {
     final scaler = MediaQuery.textScalerOf(context);
     final textDirection = Directionality.of(context);
-    var width = 2 * (_framePadding + 1);
+    var width = 2 * _framePadding;
     for (final label in _languages.values) {
       final painter = TextPainter(
         text: TextSpan(text: label, style: _style(active: true)),
@@ -55,7 +56,7 @@ class LanguageSwitch extends ConsumerWidget {
     final locale = ref.watch(localeController);
     final l10n = AppLocalizations.of(context)!;
 
-    Widget option(String code, String label) {
+    Widget option(String code, String label, {required bool first}) {
       final active = locale == code;
       return Semantics(
         selected: active,
@@ -71,26 +72,37 @@ class LanguageSwitch extends ConsumerWidget {
                   HapticFeedback.selectionClick();
                   ref.read(localeController.notifier).toggleLocale();
                 },
-          child: AnimatedContainer(
-            duration: Motion.quick,
-            curve: Motion.easeOut,
-            constraints: const BoxConstraints(minHeight: _optionHeight),
-            padding: const EdgeInsets.symmetric(horizontal: _optionPadding),
-            alignment: Alignment.center,
-            decoration: ShapeDecoration(
-              color: active ? Palette.surfaceHigh : Colors.transparent,
-              shape: RoundedSuperellipseBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
+          // The frame's edge is part of the target, so a tap anywhere in the
+          // frame lands.
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(
+              first ? _framePadding : 0,
+              _framePadding,
+              first ? 0 : _framePadding,
+              _framePadding,
             ),
-            child: Text(label, style: _style(active: active)),
+            child: AnimatedContainer(
+              duration: Motion.quick,
+              curve: Motion.easeOut,
+              constraints: const BoxConstraints(minHeight: _optionHeight),
+              padding: const EdgeInsets.symmetric(horizontal: _optionPadding),
+              alignment: Alignment.center,
+              decoration: ShapeDecoration(
+                color: active ? Palette.surfaceHigh : Colors.transparent,
+                shape: RoundedSuperellipseBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+              child: Text(label, style: _style(active: active)),
+            ),
           ),
         ),
       );
     }
 
-    return Container(
-      padding: const EdgeInsets.all(_framePadding),
+    // A DecoratedBox, not a Container, which would pad by the border: the
+    // frame is the 44 pt target, edge to edge.
+    return DecoratedBox(
       decoration: ShapeDecoration(
         shape: RoundedSuperellipseBorder(
           borderRadius: BorderRadius.circular(13),
@@ -100,8 +112,8 @@ class LanguageSwitch extends ConsumerWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          for (final language in _languages.entries)
-            option(language.key, language.value),
+          for (final (i, language) in _languages.entries.indexed)
+            option(language.key, language.value, first: i == 0),
         ],
       ),
     );

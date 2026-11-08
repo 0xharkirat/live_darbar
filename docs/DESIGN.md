@@ -62,7 +62,7 @@ All tokens live in `lib/src/core/`.
 | --- | --- | --- |
 | `Pressable` | `views/widgets/pressable.dart` | Every tappable thing bigger than an icon. Sinks to 97% on touch-down, on a spring (`Motion.pressSpring`, back on `Motion.releaseSpring`) that starts from the current scale and speed, so a quick tap does not stutter. Small targets add a `PressFill`, and a row in a group takes scale 1 and the fill alone. Choices set `selected` for the screen reader. |
 | `showAppSheet` | `views/widgets/app_sheet.dart` | Every small bottom sheet, through 1 route (`AppSheetRoute`). It moves on a spring, in on `Motion.sheet` and out on the faster `Motion.sheetExit`. A finger moves it 1:1 from anywhere on it. On release the sheet keeps the finger's speed: a flick down closes it, a flick up keeps it, and a slow drag closes it past halfway. Pulled up, it resists. A list in a sheet takes `appSheetScrollController(context)`, so a swipe down at the top of the list moves the sheet. Reduce Motion: the sheet stays put and fades, and a finger still moves it. A tap on the dimmed area closes it. |
-| `AppRoutes` | `views/app_router.dart` | Every pushed page, by name: `/hukamnama`, `/about`, `/history`. Push with `Navigator.pushNamed`, never with a bare route, so the web shows the page in the address bar. |
+| `AppRoutes` | `views/app_router.dart` | Every pushed page, by name: `/hukamnama`, `/hukamnama/YYYY-MM-DD` (an earlier day), `/about`, `/history`. Push with `Navigator.pushNamed`, never with a bare route, so the web shows the page in the address bar. |
 | `FadePageRoute` | `views/widgets/fade_page_route.dart` | How a page arrives on the web: a fade, 180 ms in and 120 ms out. iOS and Android keep the Cupertino slide and swipe back. |
 | `AppNavBar` | `views/widgets/app_nav_bar.dart` | The bar of a pushed page. On the web it lines up with the page's column, and its back control always names the page it returns to. |
 | `KeepScreenAwake` | `views/widgets/keep_screen_awake.dart` | Keeps the screen on while a page is open and the app is in front. Only the Hukamnama reader uses it: the listener reads it slowly with no touch. Every other page lets the phone lock, for privacy and battery. The SGPC PDF opens in the in-app browser, which the app cannot keep awake. |
@@ -91,6 +91,7 @@ All tokens live in `lib/src/core/`.
 | `DemoFilmView` | `views/widgets/demo_film.dart` | A film in a phone frame like the film on darbar.live: muted, looped, with the taps drawn over it. The poster shows first, on an error, and under Reduce Motion. |
 | `SettingsGroup` | `views/widgets/settings_group.dart` | An inset group of rows with hairlines, iOS Settings style. About and the Sikh history screen use it. |
 | `WidgetSetting` | `views/widgets/widget_setting.dart` | The permanent "Home screen widget" row in the About group. |
+| `HukamnamaDaySheet` | `views/widgets/hukamnama_day_sheet.dart` | The sheet where the listener picks an earlier day: a date wheel, a gold "Open" and a quiet "Yesterday". The reader's date line opens it. See Earlier Hukamnama. |
 | `SheetFrame` | `views/widgets/sheet_parts.dart` | The surface, grabber and padding of a small sheet, with its gold and quiet buttons. The reminder and the widget steps use it. |
 
 ## Screens
@@ -99,8 +100,8 @@ All tokens live in `lib/src/core/`.
 | --- | --- | --- |
 | Home | `views/screens/home_screen.dart` | 1 hero, 2 tiles, 1 text card. Not a stack of equal rows. The "add the widget" card sits last, shows once, and never changes the order above it. |
 | Now Playing | `views/screens/now_playing_screen.dart` | An iOS sheet over home, and the page behind it scales back. Drag down from anywhere on its top part, or tap the dimmed home above it, to close. 3 groups: the artwork and the title, the timeline and the controls, the source switch with the line about the stream. See Player spacing. |
-| Hukamnama | `views/screens/hukamnama_screen.dart` | Gurmukhi first, meaning under each line. The top bar holds the reminder bell and the text size control. |
-| Sikh history | `views/screens/history_screen.dart` | The whole Nanakshahi year of events, by month, like a calendar. Home's history line opens it. See Today in Sikh history. |
+| Hukamnama | `views/screens/hukamnama_screen.dart` | Gurmukhi first, meaning under each line. The top bar holds the reminder bell and the text size control. The date line opens an earlier day. See Earlier Hukamnama. |
+| Sikh history | `views/screens/history_screen.dart` | The whole Nanakshahi year of events, by month, like a calendar, with a search field. Home's history line opens it. See Today in Sikh history. |
 | About | `views/screens/about_screen.dart` | 1 scrolling page with grouped link rows. |
 
 ## List ends
@@ -445,6 +446,7 @@ The line on home has no setting. The notification is the listener's choice: a sw
 | Part | Rule |
 | --- | --- |
 | Top | The title "Sikh history" (short, so the large title fits), a line that names the year and the source, and the "Today in Sikh history notification" switch in a `SettingsGroup`. The switch is where the platform can notify, as in About. |
+| Search | A quiet field under the title that stays in place while the page scrolls, because the page opens in the middle of the year. See Search. |
 | Months | A gold heading for each month ("NOVEMBER 2026"), then 1 row for each day that has an event. Months run from March. |
 | Row | The day on the left in the serif, with its weekday under it, and the titles on the right. An event of several days is on its first day, with the range ("12-14"). Titles wrap and are never cut. |
 | Past | Muted text. |
@@ -455,6 +457,29 @@ The line on home has no setting. The notification is the listener's choice: a sw
 The notification switch sits above the first month, so the page opens below it. Scroll up to reach it.
 
 `lib/src/core/history_calendar.dart` builds the year (`buildHistoryYear`), and `lib/src/controllers/history_year_controller.dart` gives it to the screen.
+
+### Search
+
+The field finds an event by its name. It searches the English and the Punjabi title of every event, whatever language the app is in. It searches the year that the page lists: every checked event of the Nanakshahi year that the bundled calendar covers. Nothing goes to the network.
+
+- While the field holds text, the rows that fit replace the months, best first. The intro and the notification switch go with the months. Each row keeps the look of a day row. Its line under the date names the month too ("Sun, Nov"), because no heading stands above it.
+- Clearing the field brings the months back, opened on today. A new query starts at the top of the results.
+- Nothing animates as the words change. A swipe on the results puts the keyboard away. The clear button is a 44 point target. A screen reader hears how many events fit.
+- Autocorrect is off: it would "correct" a Punjabi word in Latin letters into an English one. The field sets its own letter spacing to 0, because Cupertino gives a field -0.41 and Gurmukhi takes none.
+- The hint and the message for no result are in `lib/l10n/*.arb`.
+
+How a query fits (`lib/src/core/fuzzy_search.dart`, `lib/src/core/search_fold.dart`, both pure Dart):
+
+| Rule | Example |
+| --- | --- |
+| Case, diacritics and doubled letters do not matter. | "Bandī Chhoṛ" is "bandi chor". |
+| An h after a consonant goes. v, w and b are 1 letter, so are z and j, f and p, e and i, o and u, and aa, ee, oo and their short forms. | "bandhi chor", "Diwali", "Divali", "Zorawar" and "Jorawar". |
+| A word of 4 or more letters may have 1 typo, and a word of 8 or more may have 2. The last word may also be the typo-ridden beginning of a longer one. | "bahdur" finds "Bahadur". |
+| The words may run together or come apart. | "bandichhor". |
+| In Gurmukhi, nukta, tippi, bindi, addak and the subscript sign do not matter. Vowel signs that sound alike are 1 sign (ਿ ੀ, ੁ ੂ, ੇ ੈ, ੋ ੌ). ੜ is read as ਡ. | "ਬਦੀ ਛੋਡ" finds "ਬੰਦੀ ਛੋੜ". |
+| Gurmukhi consonants only, 2 or more, also fit the first letters of the words, as in Chet's first letter search. | "ਬਛਦ" finds "ਬੰਦੀ ਛੋੜ ਦਿਵਸ". |
+
+The order, best first: the title begins with the query, then whole words, then letters inside a title, then typos. Inside a step, fewer letters off, then words side by side, then a match nearer the start. A tie keeps the order of the calendar.
 
 ### The notification
 
@@ -467,6 +492,36 @@ The notification switch sits above the first month, so the page opens below it. 
 - A tap opens the app. It does not open the Hukamnama reader.
 
 `lib/src/controllers/sikh_history_controller.dart` holds the rules. `ReminderPlatform` is the only code that knows the plugin.
+
+## Earlier Hukamnama
+
+A listener can read the Hukamnama of an earlier day in the same reader as today's.
+Hark, 7 November 2026: "archive of earlier hukamnama as well", "if someone needs to read previous, like Chet app".
+
+### The way in
+
+- The date line at the top of the reader ("Ang 946 · 22 Katak 558 · 7 November") is a button, with a small gold calendar. The reader has no new control.
+- It opens `HukamnamaDaySheet`: a date wheel, "Open", and "Yesterday" as 1 quick choice. The wheel starts on yesterday, or on the day on screen.
+- The wheel is Cupertino's. In Punjabi it has Punjabi month names, but it writes the day and the year in Latin digits. The rest of the reader uses Gurmukhi digits.
+- From today's reader the day opens over it, so back returns to today. From an earlier day it takes that reader's place, so the days do not stack. Today, from an earlier day, goes back to today's reader.
+
+### How far back
+
+| Where | Floor | Why |
+| --- | --- | --- |
+| Android and iPhone | 1 January 2012 | SGPC's archive has gaps in every year before 2012. A sample of 1 day in 6 found none from 2012 to 7 November 2026. A day with no text shows a calm note. |
+| Web | 30 days | The web reads a copy of SGPC's answer, and the copy keeps 31 days (`kKeepDays` in `tool/hukamnama_mirror.dart`). |
+
+`hukamnamaArchiveFloor` (`core/hukamnama_archive.dart`) holds both.
+
+### The reader for an earlier day
+
+- The address is `/app/hukamnama/2026-11-01` (`AppRoutes.hukamnamaOn`). A day that does not exist, or that is today or later, opens today's reader.
+- `hukamnamaForDayProvider` reads the day. It keeps a text that was read for the session, stores nothing on disk, and keeps no failure.
+- The date line names the day, with the year when it is not this year.
+- There is no Listen: the player has today's recording and Katha, and no other day's. There is no SGPC PDF link: SGPC's page builds today's PDF.
+- Share sends a link to that day, so it opens the shabad that was shared.
+- On a day that was a Sangrand the reader shows that month's pauri, as today's does. The Sikh date comes from the table of month starts, which reaches back to March 2025. Before it there is no Sikh date and no pauri.
 
 ## Motion
 

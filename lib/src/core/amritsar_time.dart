@@ -37,3 +37,23 @@ ReminderTime onListenersClock(
   final local = instant.add(offset(instant));
   return ReminderTime(local.hour, local.minute);
 }
+
+/// [time], a time on the listener's own clock, as the clock in Amritsar reads
+/// at that moment on the SGPC day [day].
+///
+/// The reverse of [onListenersClock]: 1:30 PM in Sydney in summer is 8:00 AM
+/// in Amritsar. The reminder sheet shows it under the wheel as the wheel turns.
+ReminderTime inAmritsar(
+  ReminderTime time,
+  DateTime day, {
+  LocalOffset offset = deviceOffset,
+}) {
+  final wall =
+      DateTime.utc(day.year, day.month, day.day, time.hour, time.minute);
+  // The offset is the one in force at that moment, so it is read at the wall
+  // time moved back by a first guess of itself. Only the hour around a
+  // daylight saving change can tell the two reads apart.
+  final instant = wall.subtract(offset(wall.subtract(offset(wall))));
+  final there = instant.add(kIndiaOffset);
+  return ReminderTime(there.hour, there.minute, zone: ReminderZone.amritsar);
+}

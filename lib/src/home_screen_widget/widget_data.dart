@@ -61,6 +61,15 @@ abstract final class WidgetKeys {
   /// The Rahao line, or the first verse when there is no Rahao.
   static const line = 'ld_line';
 
+  /// The pauses of [line], as JSON: the index of each word that comes before
+  /// a pause, and its kind, `{"1": "short", "4": "long"}`. The widget colours
+  /// those words as the reader does. `{}` when the line has none.
+  static const linePauses = 'ld_line_pauses';
+
+  /// The English meaning of [line], for 1 line under it. Empty when the
+  /// line has none, so an earlier line's meaning never stays under this one.
+  static const lineMeaning = 'ld_line_meaning';
+
   /// The rest of the top line beside [line]: its own day and Ang,
   /// `2 Nov · Ang 668`. So a line from an earlier day shows its own date.
   static const hukamnamaMeta = 'ld_hukamnama_meta';
@@ -79,7 +88,7 @@ abstract final class WidgetKeys {
   /// The keys that belong to the Hukamnama. When there is no text to write,
   /// these are left alone, so a good line from earlier is never replaced by
   /// an empty one.
-  static const hukamnamaKeys = [line, hukamnamaMeta];
+  static const hukamnamaKeys = [line, linePauses, lineMeaning, hukamnamaMeta];
 }
 
 /// The language a widget is written in. Anything the app does not have is
@@ -163,7 +172,7 @@ Map<String, String> buildWidgetData({
     WidgetKeys.labels: jsonEncode(widgetLabels(l10n)),
   };
 
-  final line = hukamnama == null ? null : hukamnamaPreviewLine(hukamnama);
+  final line = hukamnama == null ? null : widgetLine(hukamnama);
   if (hukamnama == null || line == null) return data;
 
   final ang = hukamnama.ang == null
@@ -173,8 +182,32 @@ Map<String, String> buildWidgetData({
         );
   return data
     ..[WidgetKeys.line] = line.gurmukhi
+    ..[WidgetKeys.linePauses] = jsonEncode(widgetPauses(line))
+    ..[WidgetKeys.lineMeaning] = line.english ?? ''
     ..[WidgetKeys.hukamnamaMeta] = [
       widgetDate(hukamnama.date, language: language),
       if (ang != null) ang,
     ].join(' · ');
 }
+
+/// The line the widget shows: the Rahao line, by the rule of
+/// [hukamnamaPreviewLine]. It comes from the mirror's lines when the day has
+/// them, because those carry the pauses and the meanings.
+HukamnamaLine? widgetLine(Hukamnama hukamnama) {
+  final shabad = hukamnama.shabad;
+  if (shabad != null) {
+    return hukamnamaPreviewLine(
+      Hukamnama(date: hukamnama.date, lines: shabad.lines),
+    );
+  }
+  return hukamnamaPreviewLine(hukamnama);
+}
+
+/// The pauses of [line] for the widget: each word's index, and `short` for a
+/// light pause or `long` for a medium or heavy one. The reader colours them
+/// the same way (Palette.pauseShort and Palette.pauseLong).
+Map<String, String> widgetPauses(HukamnamaLine line) => {
+      for (final pause in line.vishraam)
+        '${pause.after}':
+            pause.weight == HukamnamaPause.light ? 'short' : 'long',
+    };

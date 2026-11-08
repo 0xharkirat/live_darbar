@@ -163,6 +163,17 @@ class AppLocalizationsPa extends AppLocalizations {
   }
 
   @override
+  String get update_check_title => 'ਅੱਪਡੇਟ ਦੀ ਜਾਂਚ ਕਰੋ';
+
+  @override
+  String update_check_latest(String version) {
+    return 'ਤੁਹਾਡੇ ਕੋਲ ਸਭ ਤੋਂ ਨਵਾਂ ਵਰਜਨ ਹੈ, $version।';
+  }
+
+  @override
+  String get update_check_failed => 'ਜਾਂਚ ਨਹੀਂ ਹੋ ਸਕੀ। ਇੰਟਰਨੈੱਟ ਨਾਲ ਜੁੜ ਕੇ ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ।';
+
+  @override
   String get update_now => 'ਹੁਣੇ ਅੱਪਡੇਟ ਕਰੋ';
 
   @override
@@ -258,6 +269,16 @@ class AppLocalizationsPa extends AppLocalizations {
   }
 
   @override
+  String hukamnama_lines_credit(String meanings, String pauses, String source) {
+    return 'ਹਰ ਤੁਕ ਦੇ ਅਰਥ: $meanings। ਵਿਸ਼ਰਾਮ: $pauses। ਸਰੋਤ: $source।';
+  }
+
+  @override
+  String hukamnama_source(String source) {
+    return 'ਹੁਕਮਨਾਮਾ $source ਤੋਂ';
+  }
+
+  @override
   String text_source(String source) {
     return 'ਪਾਠ ਅਤੇ ਅਰਥ $source ਤੋਂ';
   }
@@ -282,7 +303,61 @@ class AppLocalizationsPa extends AppLocalizations {
   }
 
   @override
+  String get hukamnama_pick_day => 'ਹੋਰ ਦਿਨ ਚੁਣੋ';
+
+  @override
+  String get archive_title => 'ਪਿਛਲੇ ਦਿਨਾਂ ਦਾ ਹੁਕਮਨਾਮਾ';
+
+  @override
+  String get archive_body => 'ਹੁਕਮਨਾਮਾ ਪੜ੍ਹਨ ਲਈ ਦਿਨ ਚੁਣੋ।';
+
+  @override
+  String archive_body_web(String days) {
+    return 'ਪਿਛਲੇ $days ਦਿਨਾਂ ਵਿੱਚੋਂ ਦਿਨ ਚੁਣੋ।';
+  }
+
+  @override
+  String get archive_open => 'ਖੋਲ੍ਹੋ';
+
+  @override
+  String get archive_yesterday => 'ਬੀਤਿਆ ਕੱਲ੍ਹ';
+
+  @override
+  String get archive_none => 'ਇਸ ਦਿਨ ਦਾ ਹੁਕਮਨਾਮਾ ਨਹੀਂ ਮਿਲਿਆ।';
+
+  @override
+  String get archive_failed => 'ਇਹ ਹੁਕਮਨਾਮਾ ਲੋਡ ਨਹੀਂ ਹੋ ਸਕਿਆ';
+
+  @override
+  String get archive_other_day => 'ਹੋਰ ਦਿਨ ਚੁਣੋ';
+
+  @override
   String get meaning => 'ਅਰਥ';
+
+  @override
+  String get sangrand_title => 'ਸੰਗਰਾਂਦ ਦਾ ਹੁਕਮਨਾਮਾ';
+
+  @override
+  String get barah_maha => 'ਬਾਰਹ ਮਾਹਾ';
+
+  @override
+  String sangrand_row(String month) {
+    return 'ਸੰਗਰਾਂਦ · $month';
+  }
+
+  @override
+  String sangrand_row_today(String month) {
+    return 'ਅੱਜ ਸੰਗਰਾਂਦ ਹੈ · $month';
+  }
+
+  @override
+  String get reader_options => 'ਪੜ੍ਹਨ ਦੀਆਂ ਚੋਣਾਂ';
+
+  @override
+  String get reader_text_size => 'ਅੱਖਰਾਂ ਦਾ ਆਕਾਰ';
+
+  @override
+  String get reader_meanings => 'ਅਰਥ';
 
   @override
   String get open_on_sgpc => 'SGPC ਦੀ ਵੈੱਬਸਾਈਟ ਉੱਤੇ ਪੜ੍ਹੋ';
@@ -324,6 +399,11 @@ class AppLocalizationsPa extends AppLocalizations {
   @override
   String reminder_time_amritsar(String amritsar, String here) {
     return 'ਅੰਮ੍ਰਿਤਸਰ ਵਿੱਚ $amritsar, ਇੱਥੇ $here';
+  }
+
+  @override
+  String reminder_wheel_amritsar(String here, String amritsar) {
+    return 'ਇੱਥੇ $here ਵੇਲੇ ਅੰਮ੍ਰਿਤਸਰ ਵਿੱਚ $amritsar';
   }
 
   @override
@@ -426,6 +506,28 @@ class AppLocalizationsPa extends AppLocalizations {
   String get history_empty => 'ਇਸ ਸਾਲ ਲਈ ਸਿੱਖ ਇਤਿਹਾਸ ਦਾ ਕੋਈ ਦਿਨ ਸੂਚੀਬੱਧ ਨਹੀਂ ਹੈ।';
 
   @override
+  String get history_search_hint => 'ਸਿੱਖ ਇਤਿਹਾਸ ਵਿੱਚ ਖੋਜੋ';
+
+  @override
+  String get history_search_clear => 'ਖੋਜ ਸਾਫ਼ ਕਰੋ';
+
+  @override
+  String history_search_empty(String query) {
+    return '“$query” ਲਈ ਕੁਝ ਨਹੀਂ ਮਿਲਿਆ। ਘੱਟ ਅੱਖਰ ਲਿਖ ਕੇ ਵੇਖੋ।';
+  }
+
+  @override
+  String history_search_count(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count ਨਤੀਜੇ',
+      one: '1 ਨਤੀਜਾ',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String history_and_more(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
@@ -503,4 +605,53 @@ class AppLocalizationsPa extends AppLocalizations {
 
   @override
   String get update_required_body => 'ਇਹ ਵਰਜਨ ਬਹੁਤ ਪੁਰਾਣਾ ਹੈ ਅਤੇ ਠੀਕ ਨਹੀਂ ਚੱਲਦਾ। ਅੱਗੇ ਵਧਣ ਲਈ ਇਸਨੂੰ ਸਟੋਰ ਤੋਂ ਅੱਪਡੇਟ ਕਰੋ।';
+
+  @override
+  String get support_heading => 'ਹੋਰਾਂ ਤੱਕ ਪਹੁੰਚਾਓ';
+
+  @override
+  String get support_body => 'ਲਾਈਵ ਦਰਬਾਰ ਮੁਫ਼ਤ ਹੈ ਅਤੇ ਮੁਫ਼ਤ ਹੀ ਰਹੇਗੀ, ਬਿਨਾਂ ਇਸ਼ਤਿਹਾਰਾਂ ਦੇ। ਇਸਨੂੰ ਸਾਂਝਾ ਕਰਨ ਜਾਂ ਰੇਟਿੰਗ ਦੇਣ ਨਾਲ ਹੋਰ ਸੰਗਤ ਤੱਕ ਪਹੁੰਚਦੀ ਹੈ।';
+
+  @override
+  String get share_app => 'ਲਾਈਵ ਦਰਬਾਰ ਸਾਂਝਾ ਕਰੋ';
+
+  @override
+  String get share_app_message => 'ਸ੍ਰੀ ਦਰਬਾਰ ਸਾਹਿਬ, ਅੰਮ੍ਰਿਤਸਰ ਤੋਂ ਲਾਈਵ ਕੀਰਤਨ, ਅਤੇ ਰੋਜ਼ਾਨਾ ਹੁਕਮਨਾਮਾ ਤੇ ਕਥਾ। ਮੁਫ਼ਤ, ਬਿਨਾਂ ਇਸ਼ਤਿਹਾਰਾਂ ਦੇ।';
+
+  @override
+  String get rate_app => 'ਲਾਈਵ ਦਰਬਾਰ ਨੂੰ ਰੇਟਿੰਗ ਦਿਓ';
+
+  @override
+  String get share => 'ਸਾਂਝਾ ਕਰੋ';
+
+  @override
+  String get share_hukamnama => 'ਇਹ ਹੁਕਮਨਾਮਾ ਸਾਂਝਾ ਕਰੋ';
+
+  @override
+  String share_hukamnama_title(String date) {
+    return 'ਸ੍ਰੀ ਦਰਬਾਰ ਸਾਹਿਬ ਤੋਂ ਹੁਕਮਨਾਮਾ, $date';
+  }
+
+  @override
+  String get share_hukamnama_footer => 'ਪੂਰਾ ਪੜ੍ਹੋ ਅਤੇ ਸੁਣੋ:';
+
+  @override
+  String get share_hukamnama_footer_day => 'ਪੂਰਾ ਪੜ੍ਹੋ:';
+
+  @override
+  String get link_copied => 'ਕਾਪੀ ਹੋ ਗਿਆ। ਸਾਂਝਾ ਕਰਨ ਲਈ ਪੇਸਟ ਕਰੋ।';
+
+  @override
+  String get youtube_live => 'YouTube ਉੱਤੇ ਲਾਈਵ ਦੇਖੋ';
+
+  @override
+  String get youtube_live_semantics => 'ਸ੍ਰੀ ਹਰਿਮੰਦਰ ਸਾਹਿਬ ਦੀ ਲਾਈਵ ਵੀਡੀਓ YouTube ਉੱਤੇ ਦੇਖੋ। YouTube ਐਪ ਖੁੱਲ੍ਹੇਗੀ।';
+
+  @override
+  String get scrubber_label => 'ਚੱਲ ਰਹੀ ਥਾਂ';
+
+  @override
+  String scrubber_value(String elapsed, String total) {
+    return '$total ਵਿੱਚੋਂ $elapsed';
+  }
 }

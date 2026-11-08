@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:live_darbar/src/models/hukamnama.dart';
 import 'package:live_darbar/src/services/hukamnama_cache.dart';
@@ -60,8 +61,7 @@ void main() {
 
     test('returns a parsed SGPC response whole', () async {
       final parsed = Hukamnama.fromSgpc(jsonDecode(
-        File('test/fixtures/sgpc_hukamnama_2026_11_02.json')
-            .readAsStringSync(),
+        File('test/fixtures/sgpc_hukamnama_2026_11_02.json').readAsStringSync(),
       ) as Map<String, dynamic>);
       await cache.write(parsed);
 
@@ -159,6 +159,52 @@ void main() {
 
     test('sweeps temp files a crash left behind', () async {
       final leftover = File('${dir.path}/hukamnama_2026_10_30.json.tmp');
+      await leftover.writeAsString('{"half a wri');
+      await leftover.setLastModified(
+        DateTime.now().subtract(const Duration(hours: 3)),
+      );
+
+      await cache.write(textFor(nov2));
+
+      expect(filesOnDisk(), ['hukamnama_2026_11_02.json']);
+    });
+
+    // 6 November: the app and the widget's background refresh can store the
+    // same day at the same moment. With 1 shared temp name, the second rename
+    // found no file, and the 2 writes could mix in it.
+    test('stores the same day twice at once, whole, and fails neither',
+        () async {
+      final failures = <String>[];
+      final original = debugPrint;
+      debugPrint = (message, {wrapWidth}) {
+        if (message != null && message.contains('failed')) {
+          failures.add(message);
+        }
+      };
+      addTearDown(() => debugPrint = original);
+
+      for (var round = 0; round < 10; round++) {
+        final a =
+            textFor(nov2, line: 'ਪਹਿਲੀ ${List.filled(400, 'ਤੁਕ').join(' ')}');
+        final b =
+            textFor(nov2, line: 'ਦੂਜੀ ${List.filled(400, 'ਤੁਕ').join(' ')}');
+        await Future.wait([cache.write(a), cache.write(b)]);
+
+        final stored = await cache.read(nov2);
+        expect(stored, isNotNull, reason: 'round $round: the file is whole');
+        expect(
+          [a.lines.single.gurmukhi, b.lines.single.gurmukhi],
+          contains(stored!.lines.single.gurmukhi),
+          reason: 'round $round: 1 of the 2 writes, not a mix',
+        );
+      }
+      expect(failures, isEmpty);
+      expect(filesOnDisk(), ['hukamnama_2026_11_02.json']);
+    });
+
+    test('sweeps an old temp file of any write, whatever its name', () async {
+      final leftover =
+          File('${dir.path}/hukamnama_2026_10_30.json.1762390000-42.tmp');
       await leftover.writeAsString('{"half a wri');
       await leftover.setLastModified(
         DateTime.now().subtract(const Duration(hours: 3)),

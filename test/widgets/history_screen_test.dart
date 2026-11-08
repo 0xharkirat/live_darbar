@@ -494,4 +494,439 @@ void main() {
       expect(title.overflow, isNull);
     });
   });
+
+  group('search', () {
+    final field = find.byType(CupertinoTextField);
+    final clear = find.byIcon(CupertinoIcons.xmark_circle_fill);
+
+    /// Types [text] into the field, as a listener's keyboard does.
+    Future<void> type(WidgetTester tester, String text) async {
+      await tester.enterText(field, text);
+      await tester.pump();
+    }
+
+    double top(WidgetTester tester, String title) =>
+        tester.getTopLeft(find.text(title)).dy;
+
+    testWidgets('has a field with a hint, in English and in Punjabi', (
+      tester,
+    ) async {
+      await pump(tester);
+      expect(field, findsOneWidget);
+      expect(find.text(en.history_search_hint), findsOneWidget);
+
+      await tester.pumpWidget(const SizedBox());
+      await pump(tester, locale: 'pa');
+      expect(find.text(pa.history_search_hint), findsOneWidget);
+      expect(find.text(en.history_search_hint), findsNothing);
+    });
+
+    testWidgets('names the field for a screen reader', (tester) async {
+      final handle = tester.ensureSemantics();
+      await pump(tester);
+
+      final node = tester.getSemantics(field);
+      expect(node.label, contains(en.history_search_hint));
+      expect(node.flagsCollection.isTextField, isTrue);
+      handle.dispose();
+    });
+
+    testWidgets('stays in reach while the page is scrolled to today', (
+      tester,
+    ) async {
+      await pump(tester);
+
+      // The page opens far down the year, and the field is still on screen,
+      // under the nav bar.
+      expect(field.hitTestable(), findsOneWidget);
+      expect(tester.getTopLeft(find.text('TODAY')).dy,
+          greaterThan(tester.getBottomLeft(field).dy));
+      expect(tester.getTopLeft(field).dy,
+          lessThan(viewport(tester).height * 0.25));
+    });
+
+    testWidgets('keeps the days above today in view as it did before', (
+      tester,
+    ) async {
+      await pump(tester);
+
+      // 1 November is above today on the screen, and under the field's
+      // bottom edge it would be hidden.
+      final field0 = tester.getBottomLeft(field).dy;
+      expect(top(tester, 'Punjabi Suba Divas'), greaterThan(field0));
+    });
+
+    testWidgets('has no clear button until there is something to clear', (
+      tester,
+    ) async {
+      await pump(tester);
+      expect(clear, findsNothing);
+
+      await type(tester, 'ban');
+      expect(clear, findsOneWidget);
+    });
+
+    testWidgets('a query shows the events that fit, and the months go', (
+      tester,
+    ) async {
+      await pump(tester);
+      await type(tester, 'bandi chhor');
+
+      expect(find.text('Bandi Chhor Divas (Diwali)'), findsOneWidget);
+      expect(find.text('TODAY', skipOffstage: false), findsNothing);
+      expect(find.text('NOVEMBER 2026', skipOffstage: false), findsNothing);
+      expect(
+          find.text('Punjabi Suba Divas', skipOffstage: false), findsNothing);
+      expect(find.text(en.history_setting, skipOffstage: false), findsNothing,
+          reason: 'the switch is for the months');
+      expect(find.text(en.history_screen_intro('558'), skipOffstage: false),
+          findsNothing);
+    });
+
+    testWidgets('a typo finds it as well: bandhi chor', (tester) async {
+      await pump(tester);
+      await type(tester, 'bandhi chor');
+
+      expect(find.text('Bandi Chhor Divas (Diwali)'), findsOneWidget);
+    });
+
+    testWidgets('each result shows its date, weekday and month', (
+      tester,
+    ) async {
+      await pump(tester);
+      await type(tester, 'bandi chhor');
+
+      expect(find.text('8'), findsOneWidget);
+      expect(find.text('Sun, Nov'), findsOneWidget);
+    });
+
+    testWidgets('a result is as a row of the months is: muted when past', (
+      tester,
+    ) async {
+      await pump(tester);
+      await type(tester, 'punjabi suba');
+
+      expect(colorOf(tester, 'Punjabi Suba Divas'), Palette.muted,
+          reason: '1 November is past');
+
+      await type(tester, 'bandi chhor');
+      expect(colorOf(tester, 'Bandi Chhor Divas (Diwali)'), Palette.foreground,
+          reason: '8 November is to come');
+
+      await type(tester, 'Janam Dihada Mata Sahib');
+      expect(find.text('TODAY'), findsOneWidget, reason: '3 November');
+    });
+
+    testWidgets('lists the best match first', (tester) async {
+      await pump(tester);
+      await type(tester, 'baisakhi');
+
+      expect(find.text('Khalsa Sajna Divas (Vaisakhi)'), findsOneWidget);
+      expect(find.text('Sangrand Vaisakh'), findsOneWidget);
+      expect(
+        top(tester, 'Khalsa Sajna Divas (Vaisakhi)'),
+        lessThan(top(tester, 'Sangrand Vaisakh')),
+        reason: 'the festival, then the month: both fall on 14 April, and the '
+            'calendar lists the month first',
+      );
+    });
+
+    testWidgets('finds by the Punjabi name in an English app', (tester) async {
+      await pump(tester);
+      await type(tester, 'ਬੰਦੀ ਛੋੜ');
+
+      // The row is in the app's language.
+      expect(find.text('Bandi Chhor Divas (Diwali)'), findsOneWidget);
+    });
+
+    testWidgets('finds by the English name in a Punjabi app', (tester) async {
+      await pump(tester, locale: 'pa');
+      await type(tester, 'bandi chhor');
+
+      expect(find.text('ਬੰਦੀ ਛੋੜ ਦਿਵਸ (ਦਿਵਾਲੀ)'), findsOneWidget);
+      expect(find.text('੮'), findsOneWidget, reason: 'the day, in Gurmukhi');
+    });
+
+    testWidgets('finds by the first letters of the Punjabi words', (
+      tester,
+    ) async {
+      await pump(tester);
+      await type(tester, 'ਬਛਦ');
+
+      expect(find.text('Bandi Chhor Divas (Diwali)'), findsOneWidget);
+    });
+
+    testWidgets('a near miss in Gurmukhi finds it', (tester) async {
+      await pump(tester, locale: 'pa');
+      await type(tester, 'ਬਦੀ ਛੋਡ ਦੀਵਾਲੀ');
+
+      expect(find.text('ਬੰਦੀ ਛੋੜ ਦਿਵਸ (ਦਿਵਾਲੀ)'), findsOneWidget);
+    });
+
+    testWidgets('says so when nothing fits, with the words that were typed', (
+      tester,
+    ) async {
+      await pump(tester);
+      await type(tester, 'xyzzy');
+
+      expect(find.text(en.history_search_empty('xyzzy')), findsOneWidget);
+      expect(find.text('TODAY', skipOffstage: false), findsNothing);
+    });
+
+    testWidgets('says so in Punjabi', (tester) async {
+      await pump(tester, locale: 'pa');
+      await type(tester, 'ਹੈਲੀਕਾਪਟਰ');
+
+      expect(find.text(pa.history_search_empty('ਹੈਲੀਕਾਪਟਰ')), findsOneWidget);
+    });
+
+    testWidgets('an empty field, or only spaces, is the normal screen', (
+      tester,
+    ) async {
+      await pump(tester);
+
+      await type(tester, '   ');
+      expect(find.text('TODAY'), findsOneWidget);
+      expect(find.text(en.history_search_empty('')), findsNothing);
+    });
+
+    testWidgets('clearing with the button brings the months back, on today', (
+      tester,
+    ) async {
+      await pump(tester);
+      await type(tester, 'bandi chhor');
+      expect(find.text('TODAY', skipOffstage: false), findsNothing);
+
+      await tester.tap(clear);
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 500));
+
+      expect(tester.widget<CupertinoTextField>(field).controller!.text, '');
+      expect(find.text('TODAY'), findsOneWidget);
+      expect(find.text('Punjabi Suba Divas'), findsOneWidget);
+      expect(find.text('Bandi Chhor Divas (Diwali)'), findsOneWidget,
+          reason: 'in the months again');
+      expect(find.text('NOVEMBER 2026'), findsOneWidget);
+      expect(clear, findsNothing);
+    });
+
+    testWidgets('clearing by deleting the words does the same', (
+      tester,
+    ) async {
+      await pump(tester);
+      await type(tester, 'ban');
+      await type(tester, '');
+      await tester.pump(const Duration(milliseconds: 500));
+
+      expect(find.text('TODAY'), findsOneWidget);
+      expect(find.text('NOVEMBER 2026'), findsOneWidget);
+    });
+
+    testWidgets('the switch and the intro are back after clearing', (
+      tester,
+    ) async {
+      await pump(tester);
+      await type(tester, 'ban');
+      await type(tester, '');
+      await tester.pump(const Duration(milliseconds: 500));
+      await scrollToTop(tester);
+
+      expect(find.text(en.history_setting), findsOneWidget);
+      expect(find.text(en.history_screen_intro('558')), findsOneWidget);
+    });
+
+    testWidgets('the clear button keeps the keyboard up', (tester) async {
+      await pump(tester);
+      await type(tester, 'ban');
+      expect(tester.testTextInput.isVisible, isTrue);
+
+      await tester.tap(clear);
+      await tester.pump();
+
+      expect(tester.testTextInput.isVisible, isTrue);
+    });
+
+    testWidgets('a swipe on the results puts the keyboard away', (
+      tester,
+    ) async {
+      await pump(tester);
+      await type(tester, 'b');
+      expect(tester.testTextInput.isVisible, isTrue);
+
+      expect(
+        tester
+            .widget<CustomScrollView>(find.byType(CustomScrollView))
+            .keyboardDismissBehavior,
+        ScrollViewKeyboardDismissBehavior.onDrag,
+      );
+      await tester.drag(find.byType(CustomScrollView), const Offset(0, -200));
+      await tester.pump();
+
+      expect(tester.testTextInput.isVisible, isFalse);
+    });
+
+    testWidgets('a new query starts at the top of the results', (
+      tester,
+    ) async {
+      await pump(tester);
+      await type(tester, 's');
+      final scrollable = tester.state<ScrollableState>(
+        find.byType(Scrollable).first,
+      );
+      scrollable.position.jumpTo(600);
+      await tester.pump();
+      expect(scrollable.position.pixels, greaterThan(0));
+
+      await type(tester, 'sa');
+      await tester.pump();
+
+      expect(scrollable.position.pixels, 0);
+    });
+
+    testWidgets('searches only the year the page lists', (tester) async {
+      final table = SgpcEventTable([
+        event('in', DateTime.utc(2026, 11, 3), en: 'Inside the year'),
+        event('out', DateTime.utc(2027, 3, 20), en: 'After the year'),
+      ]);
+      await pump(tester, table: table);
+      await type(tester, 'year');
+
+      expect(find.text('Inside the year'), findsOneWidget);
+      expect(find.text('After the year'), findsNothing);
+    });
+
+    testWidgets('is not there when no calendar covers the year', (
+      tester,
+    ) async {
+      await pump(tester, table: SgpcEventTable.empty);
+
+      expect(field, findsNothing);
+      expect(find.text(en.history_empty), findsOneWidget);
+    });
+
+    testWidgets('an event of several days shows its days', (tester) async {
+      final table = SgpcEventTable([
+        event('mela', DateTime.utc(2026, 10, 7),
+            last: DateTime.utc(2026, 10, 9), en: 'Jor Mela'),
+      ]);
+      await pump(tester, table: table);
+      await type(tester, 'jor mela');
+
+      expect(find.text('7–9'), findsOneWidget);
+      expect(find.text('Wed, Oct'), findsOneWidget);
+    });
+
+    testWidgets('a screen reader hears how many events fit, then the rows', (
+      tester,
+    ) async {
+      final handle = tester.ensureSemantics();
+      await pump(tester);
+      await type(tester, 'bandi chhor');
+
+      expect(find.bySemanticsLabel(en.history_search_count(1)), findsOneWidget);
+      expect(find.bySemanticsLabel(RegExp('Bandi Chhor')), findsWidgets);
+
+      await type(tester, 'tegh bahadur');
+      expect(find.bySemanticsLabel(en.history_search_count(4)), findsOneWidget);
+      handle.dispose();
+    });
+
+    testWidgets('Punjabi: no letter spacing in the field or the rows', (
+      tester,
+    ) async {
+      await pump(tester, locale: 'pa');
+      expect(
+          tester
+                  .widget<Text>(find.text(pa.history_search_hint))
+                  .style!
+                  .letterSpacing ??
+              0,
+          0,
+          reason: 'the hint');
+
+      await type(tester, 'ਬੰਦੀ ਛੋੜ');
+      // The style the words are drawn in, after the Cupertino theme has had its
+      // say: it gives a field a tracking of -0.41.
+      expect(
+          tester
+                  .widget<EditableText>(find.byType(EditableText))
+                  .style
+                  .letterSpacing ??
+              0,
+          0,
+          reason: 'the words typed');
+      expect(
+        tester
+                .widget<Text>(find.text('ਬੰਦੀ ਛੋੜ ਦਿਵਸ (ਦਿਵਾਲੀ)'))
+                .style!
+                .letterSpacing ??
+            0,
+        0,
+        reason: 'the row',
+      );
+    });
+
+    testWidgets('Gurmukhi typed into an English app has room for its marks', (
+      tester,
+    ) async {
+      await pump(tester);
+
+      final style = tester.widget<CupertinoTextField>(field).style!;
+      expect(style.height, greaterThanOrEqualTo(1.6));
+      expect(style.letterSpacing ?? 0, 0);
+    });
+
+    testWidgets('grows with the text size and cuts nothing', (tester) async {
+      await pump(tester, textScale: 2);
+      final large = tester.getSize(field).height;
+      await type(tester, 'shaheedi dihada baba deep singh ji');
+
+      expect(tester.takeException(), isNull, reason: 'no overflow');
+      expect(find.text('Shaheedi Dihada Baba Deep Singh Ji'), findsOneWidget);
+
+      await tester.pumpWidget(const SizedBox());
+      await pump(tester);
+      expect(large, greaterThan(tester.getSize(field).height * 1.4));
+    });
+
+    testWidgets('is at least 44 points tall', (tester) async {
+      await pump(tester);
+
+      expect(tester.getSize(field).height, greaterThanOrEqualTo(44));
+    });
+
+    testWidgets('the clear button is a target of 44 points', (tester) async {
+      await pump(tester);
+      await type(tester, 'ban');
+
+      final target = find.ancestor(
+        of: clear,
+        matching: find.byWidgetPredicate(
+          (w) => w is SizedBox && w.width == 44 && w.height == 44,
+        ),
+      );
+      expect(target, findsOneWidget);
+    });
+
+    testWidgets('does not ask the phone to correct the words', (tester) async {
+      await pump(tester);
+
+      final input = tester.widget<CupertinoTextField>(field);
+      expect(input.autocorrect, isFalse);
+      expect(input.textInputAction, TextInputAction.search);
+    });
+
+    testWidgets('closes the keyboard on search', (tester) async {
+      await pump(tester);
+      await type(tester, 'ban');
+      expect(tester.testTextInput.isVisible, isTrue);
+
+      await tester.testTextInput.receiveAction(TextInputAction.search);
+      await tester.pump();
+
+      expect(tester.testTextInput.isVisible, isFalse);
+      expect(find.text('Bandi Chhor Divas (Diwali)'), findsOneWidget,
+          reason: 'the results stay');
+    });
+  });
 }

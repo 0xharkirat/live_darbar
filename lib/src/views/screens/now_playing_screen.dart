@@ -38,9 +38,19 @@ import 'package:live_darbar/src/views/widgets/spring_scale.dart';
 /// sign dropped: up is positive. The sheet opens on a spring that starts at
 /// that speed, so a flick throws it open and there is no seam between the
 /// finger and the motion. A tap, with 0, opens it on the same spring from rest.
+///
+/// When the player is already open under the current page, as it is under a
+/// reader opened by its Read button, this goes back to it instead of opening
+/// a second one on top.
 Future<void> showNowPlaying(BuildContext context, {double flickVelocity = 0}) {
+  final navigator = Navigator.of(context, rootNavigator: true);
+  final open = _PlayerSheetRoute._open;
+  if (open != null && open.isActive && open.navigator == navigator) {
+    navigator.popUntil((route) => route == open);
+    return open.popped;
+  }
   final height = MediaQuery.sizeOf(context).height;
-  return Navigator.of(context, rootNavigator: true).push(
+  return navigator.push(
     _PlayerSheetRoute(
       barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
       openVelocity: height > 0 ? math.max(0, flickVelocity) / height : 0,
@@ -68,6 +78,21 @@ class _PlayerSheetRoute extends CupertinoSheetRoute<void> {
         );
 
   final String _barrierLabel;
+
+  /// The player sheet in the navigator now, if there is one.
+  static _PlayerSheetRoute? _open;
+
+  @override
+  void install() {
+    super.install();
+    _open = this;
+  }
+
+  @override
+  void dispose() {
+    if (identical(_open, this)) _open = null;
+    super.dispose();
+  }
 
   /// How fast the sheet was thrown open, in sheet heights per second.
   final double openVelocity;
@@ -178,7 +203,8 @@ class NowPlayingScreen extends ConsumerWidget {
                                 children: [
                                   Expanded(
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         // The badge row is as tall as the Data saver
                                         // pill whether the pill shows or not, and
@@ -414,8 +440,8 @@ class _Transport extends ConsumerWidget {
                 if (p == null) return;
                 final target = p.position + by;
                 await ref.read(audioController).seek(
-                  target < Duration.zero ? Duration.zero : target,
-                );
+                      target < Duration.zero ? Duration.zero : target,
+                    );
               },
               child: SizedBox.square(
                 dimension: 56,
@@ -456,7 +482,7 @@ class _ReadButton extends StatelessWidget {
       onTap: () => Navigator.of(context, rootNavigator: true)
           .pushNamed(AppRoutes.hukamnama),
       child: Container(
-        height: 40,
+        height: 44,
         padding: const EdgeInsets.symmetric(horizontal: 14),
         decoration: ShapeDecoration(
           color: Palette.surfaceHigh,
@@ -470,7 +496,8 @@ class _ReadButton extends StatelessWidget {
           children: [
             const Icon(CupertinoIcons.book, size: 16, color: Palette.gold),
             const SizedBox(width: 6),
-            Text(label, style: AppType.footnote.copyWith(color: Palette.foreground)),
+            Text(label,
+                style: AppType.footnote.copyWith(color: Palette.foreground)),
           ],
         ),
       ),

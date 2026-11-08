@@ -115,6 +115,18 @@ void main() {
     );
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 400));
+    // The PDF is at the end of the text, with SGPC's name (7 November).
+    await tester.scrollUntilVisible(
+      find.text('SGPC PDF'),
+      400,
+      scrollable: find
+          .descendant(
+            of: find.byType(CustomScrollView),
+            matching: find.byType(Scrollable),
+          )
+          .first,
+    );
+    await tester.pump();
   }
 
   Future<void> tapSgpcPdf(WidgetTester tester, _FakeLauncher launcher) async {

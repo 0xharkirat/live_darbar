@@ -30,7 +30,14 @@ Future<Hukamnama> loadLatestHukamnama({
       await cache.write(fresh);
       return fresh;
     } on HukamnamaNotPublishedException {
-      if (have != null && !have.date.isBefore(yesterday)) return have;
+      // A copy with no line meanings is asked for once more: one saved before
+      // the apps read the mirror has none, and the mirror may have them now.
+      // Once a copy has them, this is 1 request, as it was.
+      if (have != null &&
+          !have.date.isBefore(yesterday) &&
+          have.shabad != null) {
+        return have;
+      }
       final fresh = await service.fetch(yesterday);
       await cache.write(fresh);
       return fresh;

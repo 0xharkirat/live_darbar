@@ -14,6 +14,7 @@ import 'package:live_darbar/src/controllers/now_playing_controller.dart';
 import 'package:live_darbar/src/controllers/sgpc_events_controller.dart';
 import 'package:live_darbar/src/controllers/sikh_date_controller.dart';
 import 'package:live_darbar/src/controllers/update_controller.dart';
+import 'package:live_darbar/src/controllers/youtube_live_controller.dart';
 import 'package:live_darbar/src/home_screen_widget/widget_data.dart';
 import 'package:live_darbar/src/core/app_type.dart';
 import 'package:live_darbar/src/core/clock.dart';
@@ -24,6 +25,7 @@ import 'package:live_darbar/src/core/text_scale.dart';
 import 'package:live_darbar/src/core/motion.dart';
 import 'package:live_darbar/src/core/palette.dart';
 import 'package:live_darbar/src/core/reader_numbers.dart';
+import 'package:live_darbar/src/core/share.dart';
 import 'package:live_darbar/src/models/app_update.dart';
 import 'package:live_darbar/src/models/hukamnama.dart';
 import 'package:live_darbar/src/models/sgpc_day.dart';
@@ -39,7 +41,9 @@ import 'package:live_darbar/src/views/widgets/pressable.dart';
 import 'package:live_darbar/src/views/widgets/reminder_sheet.dart';
 import 'package:live_darbar/src/views/widgets/update_sheet.dart';
 import 'package:live_darbar/src/views/widgets/whats_new_sheet.dart';
+import 'package:live_darbar/src/views/widgets/sangrand_row.dart';
 import 'package:live_darbar/src/views/widgets/widget_card.dart';
+import 'package:live_darbar/src/views/widgets/youtube_live_row.dart';
 
 /// Today at Darbar Sahib, on one screen.
 ///
@@ -94,6 +98,9 @@ class HomeScreen extends ConsumerWidget {
                     Text(l10n.app_title, style: AppType.largeTitle),
                     const SizedBox(height: 20),
                     const _LiveHero(),
+                    // Only while SGPC's video stream is on. It follows the
+                    // checked answer, and the usual hours when there is none.
+                    const YoutubeLiveRow(),
                     const SizedBox(height: 32),
                     Text(l10n.today.toUpperCase(), style: AppType.eyebrow),
                     const SizedBox(height: 12),
@@ -109,6 +116,9 @@ class HomeScreen extends ConsumerWidget {
                     ),
                     const SizedBox(height: 16),
                     const _ReadCard(),
+                    // The month's pauri of Barah Maha, the Sangrand
+                    // Hukamnama.
+                    const SangrandRow(),
                     // Empty until the listener has played the Hukamnama and
                     // come back. It sits last, so the order above it stays.
                     const WidgetCard(),
@@ -196,6 +206,10 @@ class _DailyRefreshState extends ConsumerState<_DailyRefresh> {
     // The maintenance banner leaves when the work ends, without a restart.
     ref.invalidate(releaseManifestProvider);
     ref.invalidate(sikhDateProvider);
+    // Ask for the checked answer at once: the 5-minute asks stop in the
+    // background. The row's own timer can lag there too.
+    ref.invalidate(youtubeLiveCheckProvider);
+    ref.invalidate(youtubeLiveProvider);
     ref.read(hukamnamaProvider.notifier).refresh();
   }
 
@@ -802,9 +816,19 @@ class _Footer extends ConsumerWidget {
 
     return Column(
       children: [
-        link(
-          l10n.about_this_app,
-          () => Navigator.of(context).pushNamed(AppRoutes.about),
+        Wrap(
+          alignment: WrapAlignment.center,
+          children: [
+            link(
+              l10n.about_this_app,
+              () => Navigator.of(context).pushNamed(AppRoutes.about),
+            ),
+            // The share sheet points at the button on an iPad, so the
+            // button's own context goes with it.
+            Builder(
+              builder: (button) => link(l10n.share_app, () => shareApp(button)),
+            ),
+          ],
         ),
         // On the web, the site is often someone's first contact with the
         // app, so it offers the real thing.
@@ -818,10 +842,7 @@ class _Footer extends ConsumerWidget {
           ),
         if (version != null) ...[
           const SizedBox(height: 4),
-          Text(
-            l10n.update_version(version),
-            style: AppType.footnote.copyWith(color: Palette.faint),
-          ),
+          Text(l10n.update_version(version), style: AppType.footnote),
         ],
       ],
     );

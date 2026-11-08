@@ -27,6 +27,10 @@ internal data class WidgetContent(
     val meta: String,
     val line: String,
     val hasLine: Boolean,
+    /** The words of [line] before a pause, by word index. Empty for none. */
+    val pauses: Map<Int, PauseKind>,
+    /** The English meaning of [line], or empty. */
+    val meaning: String,
     val openLabel: String,
     val playback: Playback,
     val labels: WidgetLabels,
@@ -79,6 +83,8 @@ internal object WidgetStore {
     private const val TITLE = "ld_title"
     private const val DATES = "ld_dates"
     private const val LINE = "ld_line"
+    private const val LINE_PAUSES = "ld_line_pauses"
+    private const val LINE_MEANING = "ld_line_meaning"
     private const val HUKAMNAMA_META = "ld_hukamnama_meta"
     private const val OPEN_LABEL = "ld_open_label"
     private const val LABELS = "ld_labels"
@@ -92,7 +98,8 @@ internal object WidgetStore {
      * nothing about playback.
      */
     private val KEYS = listOf(
-        LANGUAGE, TITLE, DATES, LINE, HUKAMNAMA_META, OPEN_LABEL, LABELS,
+        LANGUAGE, TITLE, DATES, LINE, LINE_PAUSES, LINE_MEANING, HUKAMNAMA_META,
+        OPEN_LABEL, LABELS,
     )
 
     /** India Standard Time, which has no daylight saving. SGPC's clock. */
@@ -146,6 +153,8 @@ internal object WidgetStore {
             meta = meta,
             line = if (hasLine) line else words.getString(R.string.widget_empty),
             hasLine = hasLine,
+            pauses = if (hasLine) pausesFrom(prefs.getString(LINE_PAUSES, null)) else emptyMap(),
+            meaning = if (hasLine) prefs.getString(LINE_MEANING, null).orEmpty().trim() else "",
             openLabel = prefs.getString(OPEN_LABEL, null)
                 ?: words.getString(R.string.widget_open_label),
             playback = WidgetPlayback.reconcile(
@@ -155,6 +164,26 @@ internal object WidgetStore {
             ),
             labels = labelsFrom(prefs.getString(LABELS, null), words),
         )
+    }
+
+    /**
+     * The pauses Dart wrote, `{"1": "short", "4": "long"}`. Empty when there
+     * are none or they cannot be read: the line then shows in 1 colour.
+     */
+    private fun pausesFrom(text: String?): Map<Int, PauseKind> {
+        if (text.isNullOrEmpty()) return emptyMap()
+        return try {
+            val json = JSONObject(text)
+            buildMap {
+                for (key in json.keys()) {
+                    val index = key.toIntOrNull() ?: continue
+                    val kind = PauseKind.of(json.optString(key)) ?: continue
+                    put(index, kind)
+                }
+            }
+        } catch (e: Exception) {
+            emptyMap()
+        }
     }
 
     /**

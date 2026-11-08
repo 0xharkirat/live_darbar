@@ -53,6 +53,8 @@ class DemoFilm {
     required this.marks,
     required this.outerRadius,
     required this.screenRadius,
+    required this.stepStarts,
+    required this.stepsEnd,
   });
 
   /// The asset of the film: H.264, no sound, looped.
@@ -76,6 +78,24 @@ class DemoFilm {
 
   double get aspect => pixels.width / pixels.height;
 
+  /// When each of the sheet's 3 steps starts in the film, in seconds: a little
+  /// before the step's first tap, so its number lights as the dot sets off.
+  final List<double> stepStarts;
+
+  /// When the last step ends. After it the film shows the widget at work, which
+  /// is no step, so no number is lit.
+  final double stepsEnd;
+
+  /// The step (0, 1 or 2) the film shows at [seconds], or null when it shows
+  /// none.
+  int? stepAt(double seconds) {
+    if (seconds < 0 || seconds >= stepsEnd) return null;
+    for (var i = stepStarts.length - 1; i >= 0; i--) {
+      if (seconds >= stepStarts[i]) return i;
+    }
+    return null;
+  }
+
   /// An iPhone adding the widget: 19.3 s, 540 x 1174.
   ///
   /// It was recorded on an iPhone 17 Pro simulator by the XCUITest driver in
@@ -87,6 +107,10 @@ class DemoFilm {
     seconds: 19.3,
     outerRadius: 0.16,
     screenRadius: 0.135,
+    // Press and hold; Edit and Add Widget; the search and the medium size.
+    // After that, Done and Live Kirtan from the widget.
+    stepStarts: [0, 2.2, 5.5],
+    stepsEnd: 13.4,
     marks: [
       // Press and hold an empty spot, Edit, Add Widget.
       TapMark(0.457, 0.5, 0.55, hold: 1.0),
@@ -110,6 +134,9 @@ class DemoFilm {
     seconds: 16.5,
     outerRadius: 0.115,
     screenRadius: 0.085,
+    // Press and hold; Widgets; Browse, the list, and the drag.
+    stepStarts: [0, 1.9, 4.3],
+    stepsEnd: 14.2,
     marks: [
       // Press and hold the home screen, Widgets, Browse.
       TapMark(0.25, 0.5, 0.405, hold: 0.9),
@@ -243,12 +270,22 @@ class VideoFilmPlayer extends ChangeNotifier implements FilmPlayer {
 /// It shows the 3 steps of the sheet it sits in, so it hides from a screen
 /// reader, and the words say the same.
 class DemoFilmView extends ConsumerStatefulWidget {
-  const DemoFilmView({super.key, required this.film, required this.width});
+  const DemoFilmView({
+    super.key,
+    required this.film,
+    required this.width,
+    this.onStep,
+  });
 
   final DemoFilm film;
 
   /// The width of the whole frame, bezel included.
   final double width;
+
+  /// Called when the film moves to another step ([DemoFilm.stepAt]), so the
+  /// sheet can light that step's number. Null while the film shows no step,
+  /// and while only the poster shows.
+  final ValueChanged<int?>? onStep;
 
   @override
   ConsumerState<DemoFilmView> createState() => _DemoFilmViewState();
@@ -269,10 +306,22 @@ class _DemoFilmViewState extends ConsumerState<DemoFilmView>
   Duration _anchorAt = Duration.zero;
   Duration _lastTick = Duration.zero;
 
+  /// The step last reported to [DemoFilmView.onStep].
+  int? _step;
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    _time.addListener(_stepChanged);
+  }
+
+  void _stepChanged() {
+    final playing = _player?.value.onScreen ?? false;
+    final step = playing ? widget.film.stepAt(_time.value) : null;
+    if (step == _step) return;
+    _step = step;
+    widget.onStep?.call(step);
   }
 
   @override
@@ -330,6 +379,7 @@ class _DemoFilmViewState extends ConsumerState<DemoFilmView>
       if (mounted) setState(() {});
     }
     _ticker.stop();
+    _stepChanged();
     unawaited(_dispose(player));
   }
 
@@ -340,6 +390,7 @@ class _DemoFilmViewState extends ConsumerState<DemoFilmView>
     if (player == null) return;
     _player = null;
     _ticker.stop();
+    _stepChanged();
     unawaited(_dispose(player));
   }
 
@@ -376,6 +427,7 @@ class _DemoFilmViewState extends ConsumerState<DemoFilmView>
     } else {
       _ticker.stop();
     }
+    _stepChanged();
     if (mounted) setState(() {});
   }
 
@@ -573,7 +625,8 @@ abstract final class TapMarks {
       } else {
         final up = d - m.hold;
         if (up < _pressTime) {
-          press = math.min(press, 1 - 0.14 * math.sin(up / _pressTime * math.pi));
+          press =
+              math.min(press, 1 - 0.14 * math.sin(up / _pressTime * math.pi));
         }
       }
       if (d < _ringTime) ring = d / _ringTime;
@@ -637,7 +690,8 @@ class TapMarksPainter extends CustomPainter {
     canvas.drawCircle(
       centre,
       radius,
-      Paint()..color = const Color(0xFFFFFFFF).withValues(alpha: 0.5 * s.opacity),
+      Paint()
+        ..color = const Color(0xFFFFFFFF).withValues(alpha: 0.5 * s.opacity),
     );
     canvas.drawCircle(
       centre,

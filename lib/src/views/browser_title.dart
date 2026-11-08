@@ -53,7 +53,8 @@ final pageNamesProvider = Provider<PageNames>((ref) {
 String browserTitleFor(String? route, AppLocalizations l10n) {
   final app = l10n.app_title;
   return switch (route) {
-    AppRoutes.hukamnama => '${l10n.mukhwak} · $app',
+    // The reader of an earlier day is the reader, in the tab too.
+    _ when AppRoutes.isHukamnama(route) => '${l10n.mukhwak} · $app',
     AppRoutes.about => '${l10n.about_this_app} · $app',
     AppRoutes.history => '${l10n.history_screen_title} · $app',
     _ => app,

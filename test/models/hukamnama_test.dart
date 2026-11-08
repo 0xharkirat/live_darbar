@@ -128,8 +128,8 @@ void main() {
     test('joins the heading lines with a newline', () {
       expect(h.date, DateTime.utc(2026, 10, 16));
       expect(h.ang, 641);
-      expect(h.headingGurmukhi,
-          'ਸੋਰਠਿ ਮਹਲਾ ੫ ਘਰੁ ੨ ਅਸਟਪਦੀਆ\nੴ ਸਤਿਗੁਰ ਪ੍ਰਸਾਦਿ ॥');
+      expect(
+          h.headingGurmukhi, 'ਸੋਰਠਿ ਮਹਲਾ ੫ ਘਰੁ ੨ ਅਸਟਪਦੀਆ\nੴ ਸਤਿਗੁਰ ਪ੍ਰਸਾਦਿ ॥');
       expect(h.headingEnglish, startsWith('SORAT’H, FIFTH MEHL, SECOND HOUSE'));
       expect(h.headingEnglish, contains('\nONE UNIVERSAL CREATOR GOD.'));
     });
@@ -137,8 +137,7 @@ void main() {
     test('keeps a pause marker with its line, and the number after it', () {
       final lines = h.lines.map((l) => l.gurmukhi).toList();
       expect(lines, hasLength(20));
-      expect(
-          lines,
+      expect(lines,
           contains('ਹਾਰਿ ਪਰਿਓ ਸੁਆਮੀ ਕੈ ਦੁਆਰੈ ਦੀਜੈ ਬੁਧਿ ਬਿਬੇਕਾ ॥ ਰਹਾਉ ॥'));
       expect(
           lines.last,
@@ -156,11 +155,13 @@ void main() {
 
   group('splitHukamnamaLines', () {
     test('ends a line at each plain ॥', () {
-      expect(splitHukamnamaLines('ਇਕ ਸਤਰ ॥ ਦੂਜੀ ਸਤਰ ॥'), ['ਇਕ ਸਤਰ ॥', 'ਦੂਜੀ ਸਤਰ ॥']);
+      expect(splitHukamnamaLines('ਇਕ ਸਤਰ ॥ ਦੂਜੀ ਸਤਰ ॥'),
+          ['ਇਕ ਸਤਰ ॥', 'ਦੂਜੀ ਸਤਰ ॥']);
     });
 
     test('keeps a verse number with its line', () {
-      expect(splitHukamnamaLines('ਪਹਿਲੀ ॥੧॥ ਦੂਜੀ ॥੨॥'), ['ਪਹਿਲੀ ॥੧॥', 'ਦੂਜੀ ॥੨॥']);
+      expect(
+          splitHukamnamaLines('ਪਹਿਲੀ ॥੧॥ ਦੂਜੀ ॥੨॥'), ['ਪਹਿਲੀ ॥੧॥', 'ਦੂਜੀ ॥੨॥']);
     });
 
     test('keeps a run of numbers, the verse and the shabad', () {
@@ -239,12 +240,12 @@ void main() {
     });
 
     test('refuses a response with no Hukamnama object', () {
-      expect(() => Hukamnama.fromSgpc({'supported': true}),
-          throwsFormatException);
+      expect(
+          () => Hukamnama.fromSgpc({'supported': true}), throwsFormatException);
       expect(() => Hukamnama.fromSgpc({'supported': true, 'hukamnama': []}),
           throwsFormatException);
-      expect(() => Hukamnama.fromSgpc(<String, dynamic>{}),
-          throwsFormatException);
+      expect(
+          () => Hukamnama.fromSgpc(<String, dynamic>{}), throwsFormatException);
     });
 
     test('refuses a response with no Gurmukhi', () {
@@ -516,6 +517,38 @@ void main() {
       expect(back.shabad!.credits, h.shabad!.credits);
       expect(back.shabad!.writers, h.shabad!.writers);
       expect(back.lines, h.lines);
+    });
+
+    // 7 November 2026: SGPC titled a part of Sidh Gosht "ਦਖਣੀ ਓਅੰਕਾਰ". The
+    // mirror gives the title from the database, with its meanings.
+    test('reads the title lines, with their meanings', () {
+      final h = Hukamnama.fromSgpc(_load('mirror_hukamnama_2026_11_07.json'));
+      expect(h.headingGurmukhi, startsWith('ਰਾਮਕਲੀ ਮਹਲਾ ੧ ਦਖਣੀ ਓਅੰਕਾਰ'));
+      final heading = h.shabad!.heading;
+      expect([
+        for (final l in heading) l.gurmukhi
+      ], [
+        'ਰਾਮਕਲੀ ਮਹਲਾ ੧ ਸਿਧ ਗੋਸਟਿ ॥',
+        'ੴ ਸਤਿਗੁਰ ਪ੍ਰਸਾਦਿ ॥',
+      ]);
+      expect(heading[1].english,
+          'One Universal Creator God. By The Grace Of The True Guru:');
+      expect(heading[1].punjabi, startsWith('ਅਕਾਲ ਪੁਰਖ ਇੱਕ ਹੈ'));
+    });
+
+    test('keeps the title lines in the on-disk cache', () {
+      final h = Hukamnama.fromSgpc(_load('mirror_hukamnama_2026_11_07.json'));
+      final back = Hukamnama.fromJson(
+        jsonDecode(jsonEncode(h.toJson())) as Map<String, dynamic>,
+      );
+      expect(back.shabad!.heading, h.shabad!.heading);
+      expect(back.shabad!.heading, hasLength(2));
+    });
+
+    test('reads a shabad with no title lines, as files before 7 November', () {
+      final json = mirrorFixture();
+      (json['shabad'] as Map).remove('heading');
+      expect(Hukamnama.fromSgpc(json).shabad!.heading, isEmpty);
     });
 
     test('is not in the cache of a day that has none', () {

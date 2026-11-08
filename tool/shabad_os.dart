@@ -53,7 +53,22 @@ const kShabadOsDatabaseBytes = 151965696;
 
 /// Changes whenever the matching rules or the shape of the lines change, so
 /// the mirror looks at every day again once.
-const kMatcherVersion = 1;
+///
+/// 2: the `heading` of the shabad, its title lines with their meanings
+/// (7 November 2026).
+const kMatcherVersion = 2;
+
+/// The most title lines that a shabad or a bani starts with: the raag and
+/// Mehl line, a second name line, and ੴ.
+const kMaxTitleLines = 3;
+
+/// Whether [text], a line as the database writes it, is a title and not a
+/// verse: it has no pause marks and no verse number. "ਧਨਾਸਰੀ ਮਹਲਾ ੪ ॥" and
+/// "ੴ ਸਤਿਗੁਰ ਪ੍ਰਸਾਦਿ ॥" are titles. Every verse of a shabad has a pause mark
+/// or ends in its number.
+bool isTitleLine(String text) =>
+    splitVishraam(text).vishraam.isEmpty &&
+    !RegExp(r'॥\s*[੦-੯0-9]').hasMatch(text);
 
 /// Shabad OS asset id of the Gurmukhi text that all lines come from:
 /// "Shabadaarth", SGPC, Sri Amritsar, 2009 to 2012. It also carries the pause
@@ -628,9 +643,110 @@ ORDER BY page, s.source_order, g.section_order, l.line_group_order
     ];
   }
 
+  /// The lines of the group [groupId], in order.
+  Future<List<ShabadLine>> _groupLines(String groupId) async {
+    final rows = await database.query('''
+SELECT l.id AS id, l.line_group_id AS grp,
+       CAST(json_extract(a.additional, '\$.page') AS INTEGER) AS page,
+       a.data AS text
+FROM lines l
+JOIN asset_lines a ON a.line_id = l.id
+WHERE a.asset_id = '$kGurmukhiAsset' AND a.type = 'primary'
+  AND l.line_group_id = '${_id(groupId)}'
+ORDER BY l.line_group_order
+''');
+    return [for (final row in rows) _lineOf(row)];
+  }
+
+  /// The title lines of the composition that the matched [run] is part of:
+  /// the raag and Mehl line, and ੴ when there is one. Empty when there are
+  /// none to be sure of.
+  ///
+  /// SGPC prints the title apart from the text, and on 7 November 2026 it
+  /// printed the title of the bani before (Dakhni Oankar for a part of Sidh
+  /// Gosht). These come from the database, so they are the Granth's own.
+  ///
+  /// 1. A shabad's title lines open its own group, before the text that SGPC
+  ///    gives. Those are used when there are 1 to [kMaxTitleLines] of them.
+  /// 2. A part of a long bani (Sidh Gosht, Oankar, Sukhmani) starts in a
+  ///    group with no title. Its title opens the bani, so the title lines of
+  ///    the nearest bani that holds the text, in the same section and not
+  ///    after it, are used.
+  Future<List<ShabadLine>> titleFor(List<ShabadLine> run) async {
+    final first = run.first;
+    final own = await _groupLines(first.groupId);
+    final at = own.indexWhere((line) => line.id == first.id);
+    if (at > 0 && at <= kMaxTitleLines) {
+      final before = own.sublist(0, at);
+      if (before.every((line) => isTitleLine(line.text))) return before;
+    }
+    return _baniTitle(first);
+  }
+
+  Future<List<ShabadLine>> _baniTitle(ShabadLine first) async {
+    final holders = await database.query('''
+SELECT b.bani_id AS bani, g.section_id AS section, g.section_order AS so
+FROM bani_lines b
+JOIN lines l ON l.id = b.line_id
+JOIN line_groups g ON g.id = l.line_group_id
+WHERE b.line_id = '${_id(first.id)}'
+''');
+    List<ShabadLine>? best;
+    int? bestOrder;
+    for (final holder in holders) {
+      final rows = await database.query('''
+SELECT l.id AS id, l.line_group_id AS grp,
+       CAST(json_extract(a.additional, '\$.page') AS INTEGER) AS page,
+       a.data AS text, g.section_id AS section, g.section_order AS so
+FROM bani_lines b
+JOIN lines l ON l.id = b.line_id
+JOIN line_groups g ON g.id = l.line_group_id
+JOIN asset_lines a ON a.line_id = l.id
+WHERE a.asset_id = '$kGurmukhiAsset' AND a.type = 'primary'
+  AND b.bani_id = '${_id(holder['bani'])}'
+ORDER BY b.section_order, b.line_order
+LIMIT ${kMaxTitleLines + 1}
+''');
+      if (rows.isEmpty) continue;
+      // The bani must open in the text's own section, at or before it. A
+      // collection such as Rehras opens elsewhere, and its title is not the
+      // text's.
+      final start = rows.first;
+      final order = start['so'] as int?;
+      if (start['section'] != holder['section'] ||
+          order == null ||
+          order > (holder['so'] as int? ?? -1)) {
+        continue;
+      }
+      final title = <ShabadLine>[];
+      for (final row in rows) {
+        final line = _lineOf(row);
+        if (!isTitleLine(line.text)) break;
+        title.add(line);
+      }
+      // A title, and a verse after it.
+      if (title.isEmpty || title.length == rows.length) continue;
+      if (bestOrder == null || order > bestOrder) {
+        best = title;
+        bestOrder = order;
+      }
+    }
+    return best ?? const [];
+  }
+
+  ShabadLine _lineOf(Map<String, dynamic> row) => ShabadLine(
+        id: _id(row['id']),
+        groupId: _id(row['grp']),
+        page: row['page'] as int,
+        text: row['text'] as String,
+      );
+
   /// Adds the meanings and the facts to the matched [run].
   Future<LinesResult> buildResult(List<ShabadLine> run, double score) async {
-    final lineIds = [for (final line in run) _id(line.id)];
+    final title = await titleFor(run);
+    final lineIds = [
+      for (final line in [...title, ...run]) _id(line.id)
+    ];
     final groupIds = {for (final line in run) _id(line.groupId)}.toList();
 
     final meanings = await database.query('''
@@ -672,10 +788,9 @@ WHERE g.id IN (${_quoted(groupIds)})
       }
     }
 
-    final lines = <Map<String, Object?>>[];
-    for (final line in run) {
+    Map<String, Object?> lineJson(ShabadLine line) {
       final marked = splitVishraam(line.text);
-      lines.add({
+      return {
         'id': line.id,
         'ang': line.page,
         'gurmukhi': marked.text,
@@ -683,8 +798,10 @@ WHERE g.id IN (${_quoted(groupIds)})
           'vishraam': [for (final v in marked.vishraam) v.toJson()],
         if (english[line.id] != null) 'english': english[line.id],
         if (punjabi[line.id] != null) 'punjabi': punjabi[line.id],
-      });
+      };
     }
+
+    final lines = [for (final line in run) lineJson(line)];
 
     return LinesResult({
       ...stamp,
@@ -695,6 +812,8 @@ WHERE g.id IN (${_quoted(groupIds)})
       'angEnd': run.last.page,
       'sections': sections,
       'writers': writers,
+      if (title.isNotEmpty)
+        'heading': [for (final line in title) lineJson(line)],
       'assets': {
         'gurmukhi': kGurmukhiAsset,
         'english': kEnglishAsset,

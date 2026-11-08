@@ -275,6 +275,41 @@ void main() {
       expect(find.text(en.reminder_use_amritsar), findsNothing);
     });
 
+    testWidgets('says the wheel’s time in Amritsar, and follows the wheel', (
+      tester,
+    ) async {
+      await pump(
+        tester,
+        saved: {
+          'reminder_asked': true,
+          'reminder_enabled': true,
+          'reminder_minutes': 6 * 60 + 30,
+          'reminder_zone': 'local',
+        },
+      );
+      await openSheet(tester);
+
+      // Sydney in summer is 5:30 ahead of Amritsar.
+      expect(
+        find.text(en.reminder_wheel_amritsar('6:30 AM', '1:00 AM')),
+        findsOneWidget,
+      );
+
+      tester
+          .widget<CupertinoDatePicker>(find.byType(CupertinoDatePicker))
+          .onDateTimeChanged(DateTime(2026, 1, 1, 13, 30));
+      await tester.pump();
+
+      expect(
+        find.text(en.reminder_wheel_amritsar('1:30 PM', '8:00 AM')),
+        findsOneWidget,
+      );
+      expect(
+        find.text(en.reminder_wheel_amritsar('6:30 AM', '1:00 AM')),
+        findsNothing,
+      );
+    });
+
     testWidgets('a pick is the listener’s own clock, and stays there', (
       tester,
     ) async {
