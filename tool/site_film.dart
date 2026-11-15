@@ -163,8 +163,9 @@ Future<void> main(List<String> args) async {
       stdout.writeln(
           '  ${name.padRight(10)} tap ${rawTap[name]!.toStringAsFixed(3)} s, '
           'playing ${rawPlay[name]!.toStringAsFixed(3)} s, wait ${wait.toStringAsFixed(2)} s');
-      if (wait > _maxWait)
+      if (wait > _maxWait) {
         cuts.add(_findCut(raw.small, name, tapF, playF, wait));
+      }
     }
     for (final c in cuts) {
       stdout.writeln(
@@ -230,8 +231,9 @@ Future<void> main(List<String> args) async {
         slack: 0.3,
         halfWidth: tapHalfWidth(name),
       );
-      if (frame == null)
+      if (frame == null) {
         _fail('No change found in the film for the tap "${pass}_$name".');
+      }
       tap[name] = frame / _filmFps;
     }
     final play = <String, double>{};
