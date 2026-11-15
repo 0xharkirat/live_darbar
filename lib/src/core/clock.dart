@@ -30,9 +30,29 @@ DateTime Function() appClock() {
 /// For a provider or a screen that must change exactly at midnight in
 /// Amritsar. A second is added so the change lands after midnight, not on it.
 Duration untilNextSgpcDay(DateTime now) {
-  final india = now.toUtc().add(kIndiaOffset);
+  final india = amritsarWallClock(now);
   // Midnight IST, written on the shifted clock, then moved back to real UTC.
   final nextMidnight = DateTime.utc(india.year, india.month, india.day + 1)
       .subtract(kIndiaOffset);
   return nextMidnight.difference(now.toUtc()) + const Duration(seconds: 1);
 }
+
+/// How long until the next whole minute, counted from [now].
+///
+/// For a clock on screen that must change when the real minute changes. The
+/// India offset is a whole number of minutes, so the minute changes at the
+/// same moment in Amritsar and in UTC.
+Duration untilNextMinute(DateTime now) =>
+    const Duration(minutes: 1) -
+    Duration(
+      seconds: now.second,
+      milliseconds: now.millisecond,
+      microseconds: now.microsecond,
+    );
+
+/// The wall clock in Amritsar at [now], wherever the phone is.
+///
+/// Read only its fields (year to second). It is a UTC [DateTime] moved 5:30
+/// ahead, so it names no real instant: never compare it with one, and never
+/// call `toLocal` on it.
+DateTime amritsarWallClock(DateTime now) => now.toUtc().add(kIndiaOffset);

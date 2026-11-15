@@ -1205,6 +1205,18 @@ abstract class AppLocalizations {
   /// **'Watch live video from Sri Harmandir Sahib on YouTube. Opens the YouTube app.'**
   String get youtube_live_semantics;
 
+  /// Small label on the Live Kirtan card on Home, on the row of the LIVE badge. It shows the time now at Sri Harmandir Sahib, so a listener abroad knows which part of the day's programme plays. The time is already written for the listener, for example 7:43 PM or 19:43
+  ///
+  /// In en, this message translates to:
+  /// **'{time} in Amritsar'**
+  String amritsar_time_now(String time);
+
+  /// What a screen reader says for the time in Amritsar on the Live Kirtan card, for example Time in Amritsar, 7:43 PM
+  ///
+  /// In en, this message translates to:
+  /// **'Time in Amritsar, {time}'**
+  String amritsar_time_now_semantics(String time);
+
   /// What a screen reader calls the bar under a recording in the player. A swipe up or down on it moves 15 seconds
   ///
   /// In en, this message translates to:

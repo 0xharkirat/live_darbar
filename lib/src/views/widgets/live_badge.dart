@@ -3,6 +3,7 @@ import 'package:live_darbar/l10n/app_localizations.dart';
 import 'package:live_darbar/src/core/app_type.dart';
 import 'package:live_darbar/src/core/palette.dart';
 import 'package:live_darbar/src/views/widgets/equalizer.dart';
+import 'package:live_darbar/src/views/widgets/on_image_chip.dart';
 
 /// The "LIVE" mark: a red dot and the word, or moving bars once it plays.
 ///
@@ -43,17 +44,9 @@ class LiveBadge extends StatelessWidget {
     );
 
     if (!onImage) return content;
-    return DecoratedBox(
-      decoration: ShapeDecoration(
-        color: const Color(0xB30C0A09),
-        shape: RoundedSuperellipseBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(9, 6, 10, 6),
-        child: content,
-      ),
+    return OnImageChip(
+      padding: const EdgeInsets.fromLTRB(9, 6, 10, 6),
+      child: content,
     );
   }
 }

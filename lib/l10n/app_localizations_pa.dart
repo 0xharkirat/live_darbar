@@ -648,6 +648,16 @@ class AppLocalizationsPa extends AppLocalizations {
   String get youtube_live_semantics => 'ਸ੍ਰੀ ਹਰਿਮੰਦਰ ਸਾਹਿਬ ਦੀ ਲਾਈਵ ਵੀਡੀਓ YouTube ਉੱਤੇ ਦੇਖੋ। YouTube ਐਪ ਖੁੱਲ੍ਹੇਗੀ।';
 
   @override
+  String amritsar_time_now(String time) {
+    return 'ਅੰਮ੍ਰਿਤਸਰ ਵਿੱਚ $time';
+  }
+
+  @override
+  String amritsar_time_now_semantics(String time) {
+    return 'ਅੰਮ੍ਰਿਤਸਰ ਦਾ ਸਮਾਂ, $time';
+  }
+
+  @override
   String get scrubber_label => 'ਚੱਲ ਰਹੀ ਥਾਂ';
 
   @override

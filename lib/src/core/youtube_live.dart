@@ -26,7 +26,7 @@
 ///   early or runs late is still covered.
 library;
 
-import 'package:live_darbar/src/models/sgpc_day.dart';
+import 'package:live_darbar/src/core/clock.dart';
 import 'package:live_darbar/src/models/youtube_live_check.dart';
 
 /// The ID of SGPC's official channel, "SGPC, Sri Amritsar" (@SGPCSriAmritsar).
@@ -68,7 +68,7 @@ const kYoutubeWindows = <YoutubeWindow>[
 
 /// How long after midnight [now] is in India, whatever the zone of [now].
 Duration _sinceIndiaMidnight(DateTime now) {
-  final india = now.toUtc().add(kIndiaOffset);
+  final india = amritsarWallClock(now);
   return india.difference(DateTime.utc(india.year, india.month, india.day));
 }
 
