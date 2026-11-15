@@ -150,11 +150,13 @@ const desktop = Size(1280, 800);
 /// [update] is a newer release, for the update sheet to offer at launch.
 /// [clock] fixes the moment; the app otherwise reads the real one, and Home
 /// does not show the YouTube row. [readClock] is a clock that moves, for a
-/// test that steps time; it wins over [clock]. [youtubeLive] is the service behind that
-/// row's file of live streams; by default the file is not there (404), so the
-/// row follows the timetable, and nothing goes to the network. [sikh] is
-/// the Sikh date on home, and [events] is the calendar of Sikh history, which
-/// is empty unless a test gives one.
+/// test that steps time. It wins over [clock], and it also gets the real
+/// YouTube rule. [pixelRatio] overrides the ratio that [size] implies.
+/// [youtubeLive] is the service behind that row's file of live streams; by
+/// default the file is not there (404), so the row follows the timetable,
+/// and nothing goes to the network. [sikh] is the Sikh date on home, and
+/// [events] is the calendar of Sikh history, which is empty unless a test
+/// gives one.
 /// [widgetInstall] is the phone behind the "add the widget" card. By default
 /// the platform has no home screen widgets, so home and About show what they
 /// showed before the card existed. [films] stands in for the video player
@@ -182,6 +184,7 @@ Future<void> pumpApp(
   WidgetTester tester, {
   String locale = 'en',
   Size size = phone,
+  double? pixelRatio,
   bool web = false,
   String initialRoute = AppRoutes.home,
   NowPlaying now = idle,
@@ -209,7 +212,7 @@ Future<void> pumpApp(
   AppType.tracking = locale != 'pa';
   addTearDown(() => AppType.tracking = true);
   tester.view.physicalSize = size;
-  tester.view.devicePixelRatio = size == phone ? 3 : 1;
+  tester.view.devicePixelRatio = pixelRatio ?? (size == phone ? 3 : 1);
   addTearDown(tester.view.reset);
 
   final allOverrides = <Override>[
@@ -241,9 +244,9 @@ Future<void> pumpApp(
       clockProvider.overrideWithValue(() => clock),
     // The YouTube row follows the checked answer, and with none it shows only
     // in the hours of SGPC's stream. With the real clock, whether Home has it
-    // would depend on when the suite runs. A test that gives [clock] gets the
-    // real rule at that moment. Nothing asks the network: without
-    // [youtubeLive], the published file is not there.
+    // would depend on when the suite runs. A test that gives [clock] or
+    // [readClock] gets the real rule at that moment. Nothing asks the
+    // network: without [youtubeLive], the published file is not there.
     if (clock == null && readClock == null && youtubeLive == null)
       youtubeLiveProvider.overrideWithValue(null),
     youtubeLiveServiceProvider.overrideWithValue(

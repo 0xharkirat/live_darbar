@@ -15,25 +15,14 @@ import 'package:live_darbar/src/models/reminder_time.dart';
 import 'package:live_darbar/src/models/sgpc_day.dart';
 import 'package:live_darbar/src/services/reminder_platform.dart';
 import 'package:live_darbar/src/views/widgets/app_sheet.dart';
+import 'package:live_darbar/src/views/widgets/clock_label.dart';
 import 'package:live_darbar/src/views/widgets/sheet_parts.dart';
 
-/// Whether the time is written on a 24-hour clock: when the phone is set to
-/// one, and in Punjabi, whose Material format is 24-hour ("19:00"). The label
-/// and the wheel both ask this, so they never disagree.
-bool _uses24Hour(BuildContext context) {
-  final format = MaterialLocalizations.of(context).timeOfDayFormat(
-    alwaysUse24HourFormat: MediaQuery.alwaysUse24HourFormatOf(context),
-  );
-  return hourFormat(of: format) != HourFormat.h;
-}
-
 /// [time] as the listener writes the time: "7:00 AM", or "7:00" and "19:00"
-/// on a 24-hour clock. It names no zone.
+/// on a 24-hour clock. It names no zone. The label and the wheel both follow
+/// [uses24HourClock], so they never disagree.
 String reminderClockLabel(BuildContext context, ReminderTime time) =>
-    MaterialLocalizations.of(context).formatTimeOfDay(
-      TimeOfDay(hour: time.hour, minute: time.minute),
-      alwaysUse24HourFormat: _uses24Hour(context),
-    );
+    clockLabel(context, time.hour, time.minute);
 
 /// When the reminder comes, for the listener to read.
 ///
@@ -360,7 +349,7 @@ class _ReminderTimeSheetState extends ConsumerState<_ReminderTimeSheet> {
             mode: CupertinoDatePickerMode.time,
             // Only the time of day is read, so the date is any date.
             initialDateTime: DateTime(2026, 1, 1, _start.hour, _start.minute),
-            use24hFormat: _uses24Hour(context),
+            use24hFormat: uses24HourClock(context),
             // Each tick redraws the line under the wheel, with no animation:
             // it changes as often as the wheel clicks.
             onDateTimeChanged: (picked) => setState(
