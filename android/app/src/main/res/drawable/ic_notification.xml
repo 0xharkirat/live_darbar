@@ -3,9 +3,16 @@
     The small icon in the status bar and on the notification.
 
     Android paints it as a silhouette, so only the shape counts and the colour
-    is ignored. The launcher icon has a coloured background, which turns into a
-    solid white square when it is used this way. A music note is the plain
-    mark that every media app uses here.
+    is ignored. The launcher icon has a coloured background and thin outlines,
+    which turn into a solid white square when they are used this way. So the
+    mark here is the Darbar Sahib as 1 filled path: the wall with an open door
+    and a ledge along its top, the central dome, and the 2 side cupolas, each
+    with its finial.
+
+    It is 1 path so that Android fills it in 1 pass, with no seam where the
+    domes meet the ledge. The door winds the other way from the rest, so the
+    default fill cuts it out. test/tool/notification_icon_test.dart checks the
+    shape.
 -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="24dp"
@@ -14,5 +21,5 @@
     android:viewportHeight="24">
     <path
         android:fillColor="#FFFFFFFF"
-        android:pathData="M12,3v10.55c-0.59,-0.34 -1.27,-0.55 -2,-0.55 -2.21,0 -4,1.79 -4,4s1.79,4 4,4 4,-1.79 4,-4V7h4V3h-6z" />
+        android:pathData="M4,11 H20 V21 H4 Z M2,10 H22 V12 H2 Z M10,16 V21 H14 V16 A2,2 0 0 0 10,16 Z M8.5,10 V8.8 C8.5,6.6 9.8,5.4 12,4.2 C14.2,5.4 15.5,6.6 15.5,8.8 V10 Z M11.25,5 V2 H12.75 V5 Z M3,10 V7 A2,2 0 0 1 7,7 V10 Z M4.25,5.5 V3 H5.75 V5.5 Z M17,10 V7 A2,2 0 0 1 21,7 V10 Z M18.25,5.5 V3 H19.75 V5.5 Z" />
 </vector>
