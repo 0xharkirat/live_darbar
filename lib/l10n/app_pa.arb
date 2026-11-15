@@ -647,6 +647,24 @@
     "@youtube_live_semantics": {
         "description": "ਸਕ੍ਰੀਨ ਰੀਡਰ YouTube ਉੱਤੇ ਲਾਈਵ ਵੀਡੀਓ ਵਾਲੀ ਸਤਰ ਬਾਰੇ ਕੀ ਬੋਲਦਾ ਹੈ। ਇਹ ਵੀ ਦੱਸਦਾ ਹੈ ਕਿ ਸਤਰ ਇਸ ਐਪ ਤੋਂ ਬਾਹਰ ਲੈ ਜਾਂਦੀ ਹੈ"
     },
+    "amritsar_time_now": "ਅੰਮ੍ਰਿਤਸਰ ਵਿੱਚ {time}",
+    "@amritsar_time_now": {
+        "description": "ਮੁੱਖ ਸਕ੍ਰੀਨ ਦੇ ਲਾਈਵ ਕੀਰਤਨ ਕਾਰਡ ਉੱਤੇ, ਲਾਈਵ ਨਿਸ਼ਾਨ ਵਾਲੀ ਸਤਰ ਵਿੱਚ, ਸ੍ਰੀ ਹਰਿਮੰਦਰ ਸਾਹਿਬ ਦਾ ਹੁਣ ਦਾ ਸਮਾਂ",
+        "placeholders": {
+            "time": {
+                "type": "String"
+            }
+        }
+    },
+    "amritsar_time_now_semantics": "ਅੰਮ੍ਰਿਤਸਰ ਦਾ ਸਮਾਂ, {time}",
+    "@amritsar_time_now_semantics": {
+        "description": "ਸਕ੍ਰੀਨ ਰੀਡਰ ਲਾਈਵ ਕੀਰਤਨ ਕਾਰਡ ਉੱਤੇ ਅੰਮ੍ਰਿਤਸਰ ਦੇ ਸਮੇਂ ਬਾਰੇ ਕੀ ਬੋਲਦਾ ਹੈ",
+        "placeholders": {
+            "time": {
+                "type": "String"
+            }
+        }
+    },
     "scrubber_label": "ਚੱਲ ਰਹੀ ਥਾਂ",
     "scrubber_value": "{total} ਵਿੱਚੋਂ {elapsed}"
 }

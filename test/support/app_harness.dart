@@ -149,7 +149,8 @@ const desktop = Size(1280, 800);
 /// [initialRoute] is what a browser hands the app after the `#`.
 /// [update] is a newer release, for the update sheet to offer at launch.
 /// [clock] fixes the moment; the app otherwise reads the real one, and Home
-/// does not show the YouTube row. [youtubeLive] is the service behind that
+/// does not show the YouTube row. [readClock] is a clock that moves, for a
+/// test that steps time; it wins over [clock]. [youtubeLive] is the service behind that
 /// row's file of live streams; by default the file is not there (404), so the
 /// row follows the timetable, and nothing goes to the network. [sikh] is
 /// the Sikh date on home, and [events] is the calendar of Sikh history, which
@@ -186,6 +187,7 @@ Future<void> pumpApp(
   NowPlaying now = idle,
   AppUpdate? update,
   DateTime? clock,
+  DateTime Function()? readClock,
   YoutubeLiveService? youtubeLive,
   SikhDate? sikh,
   SgpcEventTable? events,
@@ -233,13 +235,16 @@ Future<void> pumpApp(
     sangrandTableProvider.overrideWith((ref) async => sangrandTable),
     sgpcEventsProvider.overrideWith((ref) async => events ?? SgpcEventTable.empty),
     sikhDateProvider.overrideWith((ref) async => sikh),
-    if (clock != null) clockProvider.overrideWithValue(() => clock),
+    if (readClock != null)
+      clockProvider.overrideWithValue(readClock)
+    else if (clock != null)
+      clockProvider.overrideWithValue(() => clock),
     // The YouTube row follows the checked answer, and with none it shows only
     // in the hours of SGPC's stream. With the real clock, whether Home has it
     // would depend on when the suite runs. A test that gives [clock] gets the
     // real rule at that moment. Nothing asks the network: without
     // [youtubeLive], the published file is not there.
-    if (clock == null && youtubeLive == null)
+    if (clock == null && readClock == null && youtubeLive == null)
       youtubeLiveProvider.overrideWithValue(null),
     youtubeLiveServiceProvider.overrideWithValue(
       youtubeLive ??

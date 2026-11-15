@@ -31,6 +31,7 @@ import 'package:live_darbar/src/models/hukamnama.dart';
 import 'package:live_darbar/src/models/sgpc_day.dart';
 import 'package:live_darbar/src/models/sikh_date.dart';
 import 'package:live_darbar/src/views/app_router.dart';
+import 'package:live_darbar/src/views/widgets/amritsar_clock.dart';
 import 'package:live_darbar/src/views/widgets/artwork.dart';
 import 'package:live_darbar/src/views/widgets/equalizer.dart';
 import 'package:live_darbar/src/views/widgets/language_switch.dart';
@@ -540,7 +541,26 @@ class _LiveHero extends ConsumerWidget {
                 Positioned(
                   top: 16,
                   left: 16,
-                  child: _Painted(child: LiveBadge(playing: playing, onImage: true)),
+                  right: 16,
+                  child: _Painted(
+                    child: Row(
+                      children: [
+                        LiveBadge(playing: playing, onImage: true),
+                        const SizedBox(width: 12),
+                        // Large text on a small phone shrinks the time to fit,
+                        // rather than cut it or push it into the badge.
+                        const Expanded(
+                          child: Align(
+                            alignment: AlignmentDirectional.centerEnd,
+                            child: FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: AmritsarClock(),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
                 Positioned(
                   left: 20,

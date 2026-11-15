@@ -36,3 +36,19 @@ Duration untilNextSgpcDay(DateTime now) {
       .subtract(kIndiaOffset);
   return nextMidnight.difference(now.toUtc()) + const Duration(seconds: 1);
 }
+
+/// How long until the next whole minute, counted from [now].
+///
+/// For a clock on screen that must change when the real minute changes. The
+/// India offset is a whole number of minutes, so the minute changes at the
+/// same moment in Amritsar and in UTC.
+Duration untilNextMinute(DateTime now) =>
+    const Duration(minutes: 1) -
+    Duration(
+      seconds: now.second,
+      milliseconds: now.millisecond,
+      microseconds: now.microsecond,
+    );
+
+/// The wall clock in Amritsar at [now], wherever the phone is.
+DateTime amritsarWallClock(DateTime now) => now.toUtc().add(kIndiaOffset);

@@ -648,6 +648,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get youtube_live_semantics => 'Watch live video from Sri Harmandir Sahib on YouTube. Opens the YouTube app.';
 
   @override
+  String amritsar_time_now(String time) {
+    return '$time in Amritsar';
+  }
+
+  @override
+  String amritsar_time_now_semantics(String time) {
+    return 'Time in Amritsar, $time';
+  }
+
+  @override
   String get scrubber_label => 'Playback position';
 
   @override
