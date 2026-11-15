@@ -53,7 +53,8 @@ void main() {
     test('stops live that plays or is still opening', () {
       for (final state in [WidgetPlayState.playing, WidgetPlayState.loading]) {
         expect(
-          widgetTapFor(WidgetLink.live, WidgetPlayback(state, WidgetSource.live)),
+          widgetTapFor(
+              WidgetLink.live, WidgetPlayback(state, WidgetSource.live)),
           WidgetTap.stop,
         );
       }

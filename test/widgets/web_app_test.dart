@@ -252,7 +252,8 @@ void main() {
       expect(property('og:url'), 'https://darbar.live/app/');
     });
 
-    test('has an image the preview can fetch: absolute, https, with a size', () {
+    test('has an image the preview can fetch: absolute, https, with a size',
+        () {
       expect(property('og:image'), startsWith('https://darbar.live/'));
       expect(property('og:image:width'), '1200');
       expect(property('og:image:height'), '630');
@@ -277,7 +278,8 @@ void main() {
     });
 
     test('names the page, for a crawler that reads only the address', () {
-      expect(html, contains('<link rel="canonical" href="https://darbar.live/app/">'));
+      expect(html,
+          contains('<link rel="canonical" href="https://darbar.live/app/">'));
     });
   });
 }

@@ -85,7 +85,8 @@ class MiniPlayer extends ConsumerWidget {
                   padding: const EdgeInsets.fromLTRB(10, 10, 6, 10),
                   child: Row(
                     children: [
-                      Artwork(index: now.index, radius: 12, width: 48, height: 48),
+                      Artwork(
+                          index: now.index, radius: 12, width: 48, height: 48),
                       const SizedBox(width: 12),
                       Expanded(
                         child: Column(
@@ -201,9 +202,8 @@ class _ProgressEdge extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final p = ref.watch(audioProgressProvider).value;
     final total = p?.totalDuration?.inMilliseconds ?? 0;
-    final f = total <= 0
-        ? 0.0
-        : (p!.position.inMilliseconds / total).clamp(0.0, 1.0);
+    final f =
+        total <= 0 ? 0.0 : (p!.position.inMilliseconds / total).clamp(0.0, 1.0);
     return Align(
       alignment: Alignment.centerLeft,
       child: FractionallySizedBox(

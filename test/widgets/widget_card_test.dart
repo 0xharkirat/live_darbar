@@ -55,7 +55,8 @@ Future<void> _pumpHome(
 
 /// Whether a [CustomPaint] is the one that draws a film's taps.
 bool _isMarks(Element e) =>
-    e.widget is CustomPaint && (e.widget as CustomPaint).painter is TapMarksPainter;
+    e.widget is CustomPaint &&
+    (e.widget as CustomPaint).painter is TapMarksPainter;
 
 /// The app goes to the background and comes back, as when the listener adds
 /// the widget on the home screen.
@@ -454,7 +455,8 @@ void main() {
         expect(videoOpacity(tester), 1);
         expect(posterAsset(tester), DemoFilm.iphone.poster,
             reason: 'the poster stays under the film');
-        expect(find.byType(CustomPaint).evaluate().where(_isMarks), hasLength(1));
+        expect(
+            find.byType(CustomPaint).evaluate().where(_isMarks), hasLength(1));
       });
 
       testWidgets('draws the taps over the film, and moves them with it', (
@@ -545,8 +547,10 @@ void main() {
         expect(player.playing, isFalse);
 
         tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.hidden);
-        tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.inactive);
-        tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+        tester.binding
+            .handleAppLifecycleStateChanged(AppLifecycleState.inactive);
+        tester.binding
+            .handleAppLifecycleStateChanged(AppLifecycleState.resumed);
         await tester.pump();
         expect(player.plays, greaterThan(plays));
         expect(player.playing, isTrue);
@@ -636,18 +640,18 @@ void main() {
           }
         });
 
-        test('are all that the app carries: 2 films, 2 posters, under 1 MB', () {
-          final files = Directory('assets/videos')
-              .listSync()
-              .whereType<File>()
-              .toList();
+        test('are all that the app carries: 2 films, 2 posters, under 1 MB',
+            () {
+          final files =
+              Directory('assets/videos').listSync().whereType<File>().toList();
           expect(files, hasLength(4));
           final total = files.fold<int>(0, (s, f) => s + f.lengthSync());
           expect(total, lessThan(1000 * 1000), reason: '$total bytes');
         });
 
         test('replace the animated clip, which is gone', () {
-          expect(File('assets/images/add_widget_demo.webp').existsSync(), isFalse);
+          expect(
+              File('assets/images/add_widget_demo.webp').existsSync(), isFalse);
           expect(
             File('assets/images/add_widget_demo_still.webp').existsSync(),
             isFalse,

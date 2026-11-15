@@ -168,8 +168,10 @@ class WidgetPlaybackSync {
   bool _disposed = false;
 
   void start() {
-    _subscription ??= Rx.combineLatest2<PlaybackState, MediaItem?,
-        WidgetPlayback>(playbackState, mediaItem, widgetPlaybackFor).listen(
+    _subscription ??=
+        Rx.combineLatest2<PlaybackState, MediaItem?, WidgetPlayback>(
+                playbackState, mediaItem, widgetPlaybackFor)
+            .listen(
       _changed,
     );
   }

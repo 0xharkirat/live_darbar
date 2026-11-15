@@ -13,7 +13,8 @@ void main() {
   group('resolvePlayAction', () {
     test('a source that is not playing offers play', () {
       expect(
-        resolvePlayAction(state(false, ProcessingState.ready), kKathaIndex, null),
+        resolvePlayAction(
+            state(false, ProcessingState.ready), kKathaIndex, null),
         PlayAction.play,
       );
     });
@@ -38,7 +39,8 @@ void main() {
 
     test('loading after a tap shows work in progress', () {
       expect(
-        resolvePlayAction(state(true, ProcessingState.loading), kLiveIndex, null),
+        resolvePlayAction(
+            state(true, ProcessingState.loading), kLiveIndex, null),
         PlayAction.working,
       );
     });
@@ -82,7 +84,8 @@ void main() {
         reconnectAttempt: 1,
       );
       expect(
-        resolvePlayAction(state(true, ProcessingState.buffering), kLiveIndex, live),
+        resolvePlayAction(
+            state(true, ProcessingState.buffering), kLiveIndex, live),
         PlayAction.working,
       );
     });

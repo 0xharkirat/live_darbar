@@ -159,8 +159,10 @@ void main() {
           locale: locale,
           at: DateTime.utc(day.year, day.month, day.day, 6),
         );
-        tops[day.toIso8601String()] =
-            tester.getTopLeft(find.text(locale == 'pa' ? 'ਲਾਈਵ ਦਰਬਾਰ' : 'Live Darbar')).dy;
+        tops[day.toIso8601String()] = tester
+            .getTopLeft(
+                find.text(locale == 'pa' ? 'ਲਾਈਵ ਦਰਬਾਰ' : 'Live Darbar'))
+            .dy;
       }
       expect(tops.values.toSet(), hasLength(1), reason: '$locale: $tops');
     }
@@ -295,7 +297,8 @@ void main() {
 
   for (final locale in ['en', 'pa']) {
     testWidgets('quality sheet, $locale', (tester) async {
-      await _pump(tester, const HomeScreen(), now: _livePlaying, locale: locale);
+      await _pump(tester, const HomeScreen(),
+          now: _livePlaying, locale: locale);
       showQualitySheet(tester.element(find.byType(HomeScreen)));
       await tester.pump();
       await tester.pump(const Duration(seconds: 1));
@@ -460,7 +463,8 @@ void _noop() {}
 /// A listener who played the Hukamnama recording on an earlier visit, so the
 /// card is due.
 void _widgetCardDue() {
-  SharedPreferences.setMockInitialValues({WidgetCardController.playedKey: true});
+  SharedPreferences.setMockInitialValues(
+      {WidgetCardController.playedKey: true});
   addTearDown(() => SharedPreferences.setMockInitialValues({}));
 }
 
@@ -664,7 +668,8 @@ Future<void> _shot(WidgetTester tester, String name) async {
     find.byKey(_shotKey),
   );
   await tester.runAsync(() async {
-    final image = await boundary.toImage(pixelRatio: _targets[_shotTarget]!.dpr);
+    final image =
+        await boundary.toImage(pixelRatio: _targets[_shotTarget]!.dpr);
     final bytes = await image.toByteData(format: ui.ImageByteFormat.png);
     File('$_shotDir/$name.png')
       ..createSync(recursive: true)

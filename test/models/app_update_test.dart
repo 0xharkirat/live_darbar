@@ -35,7 +35,8 @@ void main() {
 
   group('AppUpdate.fromManifest', () {
     test('offers a genuinely newer build', () {
-      final update = AppUpdate.fromManifest(manifest(build: 9), currentBuild: 6);
+      final update =
+          AppUpdate.fromManifest(manifest(build: 9), currentBuild: 6);
       expect(update, isNotNull);
       expect(update!.build, 9);
       expect(update.version, '2.1.0');
@@ -43,13 +44,15 @@ void main() {
     });
 
     test('says nothing when the installed build is current', () {
-      expect(AppUpdate.fromManifest(manifest(build: 6), currentBuild: 6), isNull);
+      expect(
+          AppUpdate.fromManifest(manifest(build: 6), currentBuild: 6), isNull);
     });
 
     test('says nothing when the installed build is somehow newer', () {
       // Happens on internal builds and sideloads. Offering a "newer" release
       // that is actually older would send someone backwards.
-      expect(AppUpdate.fromManifest(manifest(build: 5), currentBuild: 6), isNull);
+      expect(
+          AppUpdate.fromManifest(manifest(build: 5), currentBuild: 6), isNull);
     });
 
     test('compares build numbers, not version strings', () {

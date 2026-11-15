@@ -126,9 +126,8 @@ class PlayButton extends ConsumerWidget {
               // it takes the dark symbol colour there.
               LoadingRing(
                 size: size - 4,
-                color: look == PlayButtonLook.gold
-                    ? Palette.onGold
-                    : Palette.gold,
+                color:
+                    look == PlayButtonLook.gold ? Palette.onGold : Palette.gold,
               ),
           ],
         ),

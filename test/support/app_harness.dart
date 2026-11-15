@@ -204,7 +204,8 @@ Future<void> pumpApp(
     ),
     localeController.overrideWith(() => _Locale(locale)),
     sangrandTableProvider.overrideWith((ref) async => null),
-    sgpcEventsProvider.overrideWith((ref) async => events ?? SgpcEventTable.empty),
+    sgpcEventsProvider
+        .overrideWith((ref) async => events ?? SgpcEventTable.empty),
     sikhDateProvider.overrideWith((ref) async => sikh),
     if (clock != null) clockProvider.overrideWithValue(() => clock),
     hukamnamaProvider.overrideWith(FixtureHukamnama.new),
@@ -224,8 +225,10 @@ Future<void> pumpApp(
     screenAwakeProvider.overrideWithValue(
       ScreenAwake((screenAwake ?? FakeScreenAwake()).toggle),
     ),
-    filmPlayerFactoryProvider.overrideWithValue((films ?? FakeFilmPlayers()).call),
-    whatsNewLoaderProvider.overrideWithValue((release) async => whatsNew[release]),
+    filmPlayerFactoryProvider
+        .overrideWithValue((films ?? FakeFilmPlayers()).call),
+    whatsNewLoaderProvider
+        .overrideWithValue((release) async => whatsNew[release]),
     whatsNewSettleProvider.overrideWithValue(whatsNewSettle),
     maintenanceProvider.overrideWith((ref) async => maintenance),
   ];

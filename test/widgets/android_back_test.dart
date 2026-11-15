@@ -147,7 +147,8 @@ void main() {
         final calls = _platformCalls(tester);
         await pumpApp(tester, now: livePlaying);
         // The app tells the phone only once it has been in front.
-        tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+        tester.binding
+            .handleAppLifecycleStateChanged(AppLifecycleState.resumed);
 
         await _open(tester, open);
         expect(calls.last, 'handlesBack:true');

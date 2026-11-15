@@ -1,6 +1,7 @@
 import 'dart:convert';
 
-import 'package:flutter/services.dart' show AssetBundle, AssetManifest, rootBundle;
+import 'package:flutter/services.dart'
+    show AssetBundle, AssetManifest, rootBundle;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:live_darbar/src/core/app_version.dart';
 import 'package:live_darbar/src/core/whats_new_rules.dart';
@@ -102,7 +103,6 @@ class WhatsNewController extends AsyncNotifier<WhatsNew?> {
   }
 }
 
-final whatsNewController =
-    AsyncNotifierProvider<WhatsNewController, WhatsNew?>(
+final whatsNewController = AsyncNotifierProvider<WhatsNewController, WhatsNew?>(
   WhatsNewController.new,
 );

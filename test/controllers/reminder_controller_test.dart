@@ -40,7 +40,8 @@ void main() {
   });
 
   group('asking once', () {
-    test('a new listener has not been asked, and the reminder is off at 7:00 in '
+    test(
+        'a new listener has not been asked, and the reminder is off at 7:00 in '
         'Amritsar', () async {
       final settings = await settingsOf(containerFor(phone));
 
@@ -101,7 +102,8 @@ void main() {
   });
 
   group('turning it on', () {
-    test('asks the phone first, then sets 7:00 in Amritsar, in English', () async {
+    test('asks the phone first, then sets 7:00 in Amritsar, in English',
+        () async {
       final container = containerFor(phone);
 
       final problem = await controllerOf(container).turnOn();
@@ -231,7 +233,8 @@ void main() {
       expect(next.scheduled, const ReminderTime(18, 45));
     });
 
-    test('starts as 7:00 in Amritsar, which the phone keeps in Amritsar', () async {
+    test('starts as 7:00 in Amritsar, which the phone keeps in Amritsar',
+        () async {
       final container = containerFor(phone);
 
       final time = (await settingsOf(container)).time;
@@ -263,8 +266,8 @@ void main() {
 
       final prefs = await SharedPreferences.getInstance();
       expect(prefs.getString('reminder_zone'), 'amritsar');
-      expect((await settingsOf(containerFor(phone))).time,
-          ReminderTime.standard);
+      expect(
+          (await settingsOf(containerFor(phone))).time, ReminderTime.standard);
     });
 
     test('is 7:00 again when the saved value is damaged', () async {

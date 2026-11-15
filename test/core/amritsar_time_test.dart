@@ -88,7 +88,10 @@ void main() {
   group('a time on the listener’s own clock', () {
     test('is returned as it is, on any day', () {
       const picked = ReminderTime(21, 5);
-      for (final day in [DateTime.utc(2026, 10, 3), DateTime.utc(2026, 10, 5)]) {
+      for (final day in [
+        DateTime.utc(2026, 10, 3),
+        DateTime.utc(2026, 10, 5)
+      ]) {
         expect(
           onListenersClock(picked, day, offset: offsetOf('Australia/Sydney')),
           picked,

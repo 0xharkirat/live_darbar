@@ -95,7 +95,8 @@ class _BarsPainter extends CustomPainter {
     const gap = 2.0;
     final paint = Paint()..color = color;
     for (var i = 0; i < 3; i++) {
-      final wave = 0.5 + 0.5 * math.sin((t * _speed[i] + _phase[i]) * 2 * math.pi);
+      final wave =
+          0.5 + 0.5 * math.sin((t * _speed[i] + _phase[i]) * 2 * math.pi);
       final f = active ? 0.3 + 0.7 * wave : _rest[i] * 0.6;
       final h = size.height * f;
       final x = i * (barWidth + gap);

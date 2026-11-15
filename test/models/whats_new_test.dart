@@ -43,9 +43,15 @@ void main() {
         'release': '3.1',
         'items': [
           item('1'),
-          {'title': {'en': 'Only English'}},
-          {'title': {'pa': 'ਸਿਰਫ਼ ਪੰਜਾਬੀ'}},
-          {'title': {'en': 'null', 'pa': 'ਸਿਰਲੇਖ'}},
+          {
+            'title': {'en': 'Only English'}
+          },
+          {
+            'title': {'pa': 'ਸਿਰਫ਼ ਪੰਜਾਬੀ'}
+          },
+          {
+            'title': {'en': 'null', 'pa': 'ਸਿਰਲੇਖ'}
+          },
           'not an item',
           item('2'),
         ],
@@ -76,8 +82,17 @@ void main() {
     test('is null with no release, no items, or no usable item', () {
       expect(WhatsNew.fromJson(null), isNull);
       expect(WhatsNew.fromJson('text'), isNull);
-      expect(WhatsNew.fromJson({'items': [item('1')]}), isNull);
-      expect(WhatsNew.fromJson({'release': 'null', 'items': [item('1')]}), isNull);
+      expect(
+          WhatsNew.fromJson({
+            'items': [item('1')]
+          }),
+          isNull);
+      expect(
+          WhatsNew.fromJson({
+            'release': 'null',
+            'items': [item('1')]
+          }),
+          isNull);
       expect(WhatsNew.fromJson({'release': '3.1'}), isNull);
       expect(WhatsNew.fromJson({'release': '3.1', 'items': []}), isNull);
       expect(
@@ -96,8 +111,14 @@ void main() {
         'release': '3.1',
         'items': [
           item('all'),
-          {...item('ios'), 'only': ['ios']},
-          {...item('phones'), 'only': ['android', 'ios']},
+          {
+            ...item('ios'),
+            'only': ['ios']
+          },
+          {
+            ...item('phones'),
+            'only': ['android', 'ios']
+          },
           {...item('one name'), 'only': 'android'},
         ],
       };
@@ -123,7 +144,10 @@ void main() {
           {
             'release': '3.1',
             'items': [
-              {...item('1'), 'only': ['ios']},
+              {
+                ...item('1'),
+                'only': ['ios']
+              },
             ],
           },
           platform: 'web',
@@ -137,7 +161,11 @@ void main() {
         {
           'release': '3.1',
           'items': [
-            for (var n = 0; n < 3; n++) {...item('ios $n'), 'only': ['ios']},
+            for (var n = 0; n < 3; n++)
+              {
+                ...item('ios $n'),
+                'only': ['ios']
+              },
             for (var n = 0; n < 5; n++) item('$n'),
           ],
         },
@@ -188,7 +216,11 @@ void main() {
 
         // Each phone gets 3 to 5. The web has no widget and no reminder, so it
         // may get fewer, but never none.
-        for (final (platform, least) in [('android', 3), ('ios', 3), ('web', 1)]) {
+        for (final (platform, least) in [
+          ('android', 3),
+          ('ios', 3),
+          ('web', 1)
+        ]) {
           test('has $least to 5 new things on $platform, as the sheet is calm',
               () {
             final mine = WhatsNew.fromJson(

@@ -158,18 +158,18 @@ void main() {
         'assets/images/2.jpg': 'two',
       };
 
-      final uris =
-          await store(isAndroid: true, contents: contents).prepare();
+      final uris = await store(isAndroid: true, contents: contents).prepare();
 
       expect(uris.keys, unorderedEquals([0, 2]));
     });
 
     test('the authority matches the manifest', () {
-      final manifest = File('android/app/src/main/AndroidManifest.xml')
-          .readAsStringSync();
-      expect(manifest, contains('android:authorities="\${applicationId}.artwork"'));
-      expect(ArtworkStore.providerAuthority,
-          'com.hsi.harki.live_darbar.artwork');
+      final manifest =
+          File('android/app/src/main/AndroidManifest.xml').readAsStringSync();
+      expect(manifest,
+          contains('android:authorities="\${applicationId}.artwork"'));
+      expect(
+          ArtworkStore.providerAuthority, 'com.hsi.harki.live_darbar.artwork');
     });
   });
 

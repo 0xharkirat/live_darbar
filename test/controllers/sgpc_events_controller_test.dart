@@ -198,7 +198,8 @@ void main() {
 
       expect(history.isToday, isFalse);
       expect(history.day, DateTime.utc(2026, 11, 8));
-      expect(history.events.map((e) => e.titleEn), ['Bandi Chhor Divas (Diwali)']);
+      expect(
+          history.events.map((e) => e.titleEn), ['Bandi Chhor Divas (Diwali)']);
     });
 
     test('is null when no event is left in any file', () async {
@@ -208,7 +209,8 @@ void main() {
     });
 
     test('reads the next year’s file when it is loaded', () async {
-      final next = SgpcEventTable.fromJsonString(_file('ns559-001', '2027-03-20'));
+      final next =
+          SgpcEventTable.fromJsonString(_file('ns559-001', '2027-03-20'));
       final container = containerAt(
         DateTime.utc(2027, 2, 22, 6),
         table: SgpcEventTable.merge([_shipped(), next]),
@@ -241,7 +243,8 @@ void main() {
         ),
       );
 
-      expect((await container.read(homeHistoryProvider.future))!.isToday, isTrue,
+      expect(
+          (await container.read(homeHistoryProvider.future))!.isToday, isTrue,
           reason: 'the Sikh date says 3 November, so the line does too');
     });
 

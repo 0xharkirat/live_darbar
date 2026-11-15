@@ -118,9 +118,8 @@ void main() {
 
     /// Whether the dates were cut short. The top line is the Sikh date and the
     /// next is the everyday date.
-    bool cut(WidgetTester tester, String text) => tester
-        .renderObject<RenderParagraph>(find.text(text))
-        .didExceedMaxLines;
+    bool cut(WidgetTester tester, String text) =>
+        tester.renderObject<RenderParagraph>(find.text(text)).didExceedMaxLines;
 
     testWidgets('sits beside the dates at the default size', (tester) async {
       await pumpDated(tester, 'en');
@@ -133,7 +132,8 @@ void main() {
       expect(switchTop, lessThan(tester.getBottomLeft(date).dy));
     });
 
-    testWidgets('drops under the dates at the largest size, and they read '
+    testWidgets(
+        'drops under the dates at the largest size, and they read '
         'whole', (tester) async {
       _phoneTextScale(tester, kMaxTextScale);
 

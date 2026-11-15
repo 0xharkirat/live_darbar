@@ -82,7 +82,8 @@ void main() {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 400));
 
-      expect(find.textContaining(RegExp('null', caseSensitive: false)), findsNothing);
+      expect(find.textContaining(RegExp('null', caseSensitive: false)),
+          findsNothing);
       // The text itself is still there.
       expect(find.textContaining('ਹਰਿ ਹਰਿ ਬੂੰਦ'), findsWidgets);
     });

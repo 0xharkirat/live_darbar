@@ -15,7 +15,8 @@ const playingLive = WidgetPlayback(WidgetPlayState.playing, WidgetSource.live);
 const playingHukamnama =
     WidgetPlayback(WidgetPlayState.playing, WidgetSource.hukamnama);
 
-PlaybackState session(AudioProcessingState processing, {bool playing = false}) =>
+PlaybackState session(AudioProcessingState processing,
+        {bool playing = false}) =>
     PlaybackState(processingState: processing, playing: playing);
 
 MediaItem item(int index) => MediaCatalog.item(index);

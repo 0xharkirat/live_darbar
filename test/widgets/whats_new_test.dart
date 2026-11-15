@@ -128,7 +128,12 @@ void main() {
 
       // The next launch.
       await tester.pumpWidget(const SizedBox());
-      await pumpApp(tester, prefs: {..._updated, ...{'whats_new_seen_release': '2.2'}}, whatsNew: _notes);
+      await pumpApp(tester,
+          prefs: {
+            ..._updated,
+            ...{'whats_new_seen_release': '2.2'}
+          },
+          whatsNew: _notes);
       await _settle(tester);
       expect(_title, findsNothing);
     });

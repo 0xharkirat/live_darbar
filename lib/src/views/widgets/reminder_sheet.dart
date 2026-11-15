@@ -56,7 +56,8 @@ String reminderWhenLabel(
       reminderClockLabel(context, ReminderTime(time.hour, time.minute));
   return here.minutes == time.minutes
       ? l10n.reminder_time_amritsar_only(amritsar)
-      : l10n.reminder_time_amritsar(amritsar, reminderClockLabel(context, here));
+      : l10n.reminder_time_amritsar(
+          amritsar, reminderClockLabel(context, here));
 }
 
 /// How long the reader must be calm, on top and at rest, before the question
@@ -192,8 +193,7 @@ class ReminderPrompt extends ConsumerStatefulWidget {
 class _ReminderPromptState extends ConsumerState<ReminderPrompt> {
   /// Whether the reminder was on when the sheet opened. The sheet keeps its
   /// shape while it closes after "Remind me", so it does not flash the other.
-  late final bool _wasOn =
-      ref.read(reminderProvider).value?.enabled ?? false;
+  late final bool _wasOn = ref.read(reminderProvider).value?.enabled ?? false;
 
   bool _busy = false;
   ReminderProblem _problem = ReminderProblem.none;
@@ -245,9 +245,8 @@ class _ReminderPromptState extends ConsumerState<ReminderPrompt> {
         : ReminderProblem.none;
     final shown = failed ? _problem : liveProblem;
     final message = switch (shown) {
-      ReminderProblem.none => _wasOn
-          ? l10n.reminder_on_body(when)
-          : l10n.reminder_prompt_body(when),
+      ReminderProblem.none =>
+        _wasOn ? l10n.reminder_on_body(when) : l10n.reminder_prompt_body(when),
       ReminderProblem.blocked => l10n.reminder_blocked_hint,
       ReminderProblem.failed => l10n.reminder_failed_hint,
     };

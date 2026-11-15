@@ -201,7 +201,8 @@ class AudioController {
   ///
   /// Artwork is a `file:` URI to a local copy of the painting, or null when
   /// there is none (web, or the copy failed). See [ArtworkStore].
-  MediaItem _tag(int index) => MediaCatalog.item(index, artUri: _artUris[index]);
+  MediaItem _tag(int index) =>
+      MediaCatalog.item(index, artUri: _artUris[index]);
 
   /// The daily recording behind [index], or null for the live stream.
   DailyAsset? _assetFor(int index) => switch (index) {
@@ -969,8 +970,8 @@ class AudioController {
   /// nested `BackdropFilter`s, to draw a bar that live playback renders at zero
   /// width anyway. 200 ms is finer than anyone can see on a progress bar.
   Stream<AudioProgressState> get positionDataStream {
-    return _progressStream ??= Rx.combineLatest3<Duration, Duration, Duration?,
-        AudioProgressState>(
+    return _progressStream ??=
+        Rx.combineLatest3<Duration, Duration, Duration?, AudioProgressState>(
       _player.createPositionStream(
         steps: 800,
         minPeriod: const Duration(milliseconds: 200),

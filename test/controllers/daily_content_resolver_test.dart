@@ -90,8 +90,7 @@ void main() {
         DailyAsset.katha.urlFor(yesterday),
       ]);
 
-      pending[DailyAsset.katha.urlFor(today)]!
-          .complete(http.Response('', 404));
+      pending[DailyAsset.katha.urlFor(today)]!.complete(http.Response('', 404));
       pending[DailyAsset.katha.urlFor(yesterday)]!
           .complete(http.Response('', 200));
       expect((await result).freshness, DailyFreshness.previousDay);

@@ -53,7 +53,8 @@ void main() {
       const Duration(minutes: 20),
     );
     expect(
-      point.startFor(1, t0.add(ResumePoint.maxAge + const Duration(seconds: 1))),
+      point.startFor(
+          1, t0.add(ResumePoint.maxAge + const Duration(seconds: 1))),
       isNull,
     );
   });

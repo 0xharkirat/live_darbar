@@ -128,8 +128,8 @@ void main() {
     test('joins the heading lines with a newline', () {
       expect(h.date, DateTime.utc(2026, 10, 16));
       expect(h.ang, 641);
-      expect(h.headingGurmukhi,
-          'ਸੋਰਠਿ ਮਹਲਾ ੫ ਘਰੁ ੨ ਅਸਟਪਦੀਆ\nੴ ਸਤਿਗੁਰ ਪ੍ਰਸਾਦਿ ॥');
+      expect(
+          h.headingGurmukhi, 'ਸੋਰਠਿ ਮਹਲਾ ੫ ਘਰੁ ੨ ਅਸਟਪਦੀਆ\nੴ ਸਤਿਗੁਰ ਪ੍ਰਸਾਦਿ ॥');
       expect(h.headingEnglish, startsWith('SORAT’H, FIFTH MEHL, SECOND HOUSE'));
       expect(h.headingEnglish, contains('\nONE UNIVERSAL CREATOR GOD.'));
     });
@@ -137,8 +137,7 @@ void main() {
     test('keeps a pause marker with its line, and the number after it', () {
       final lines = h.lines.map((l) => l.gurmukhi).toList();
       expect(lines, hasLength(20));
-      expect(
-          lines,
+      expect(lines,
           contains('ਹਾਰਿ ਪਰਿਓ ਸੁਆਮੀ ਕੈ ਦੁਆਰੈ ਦੀਜੈ ਬੁਧਿ ਬਿਬੇਕਾ ॥ ਰਹਾਉ ॥'));
       expect(
           lines.last,
@@ -156,11 +155,13 @@ void main() {
 
   group('splitHukamnamaLines', () {
     test('ends a line at each plain ॥', () {
-      expect(splitHukamnamaLines('ਇਕ ਸਤਰ ॥ ਦੂਜੀ ਸਤਰ ॥'), ['ਇਕ ਸਤਰ ॥', 'ਦੂਜੀ ਸਤਰ ॥']);
+      expect(splitHukamnamaLines('ਇਕ ਸਤਰ ॥ ਦੂਜੀ ਸਤਰ ॥'),
+          ['ਇਕ ਸਤਰ ॥', 'ਦੂਜੀ ਸਤਰ ॥']);
     });
 
     test('keeps a verse number with its line', () {
-      expect(splitHukamnamaLines('ਪਹਿਲੀ ॥੧॥ ਦੂਜੀ ॥੨॥'), ['ਪਹਿਲੀ ॥੧॥', 'ਦੂਜੀ ॥੨॥']);
+      expect(
+          splitHukamnamaLines('ਪਹਿਲੀ ॥੧॥ ਦੂਜੀ ॥੨॥'), ['ਪਹਿਲੀ ॥੧॥', 'ਦੂਜੀ ॥੨॥']);
     });
 
     test('keeps a run of numbers, the verse and the shabad', () {
@@ -239,12 +240,12 @@ void main() {
     });
 
     test('refuses a response with no Hukamnama object', () {
-      expect(() => Hukamnama.fromSgpc({'supported': true}),
-          throwsFormatException);
+      expect(
+          () => Hukamnama.fromSgpc({'supported': true}), throwsFormatException);
       expect(() => Hukamnama.fromSgpc({'supported': true, 'hukamnama': []}),
           throwsFormatException);
-      expect(() => Hukamnama.fromSgpc(<String, dynamic>{}),
-          throwsFormatException);
+      expect(
+          () => Hukamnama.fromSgpc(<String, dynamic>{}), throwsFormatException);
     });
 
     test('refuses a response with no Gurmukhi', () {

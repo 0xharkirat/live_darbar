@@ -17,8 +17,12 @@ class _Recorder implements WidgetPublisher {
   final List<Map<String, String>> writes = [];
   bool failNext = false;
 
+  /// Every call to [publish], the failed ones too.
+  int attempts = 0;
+
   @override
   Future<void> publish(Map<String, String> data) async {
+    attempts++;
     if (failNext) {
       failNext = false;
       throw StateError('launcher not ready');
@@ -98,15 +102,28 @@ void main() {
     return container;
   }
 
+  /// A short pause, for a test that proves no write happens.
   Future<void> settled() async {
-    // Let the providers load, then the timers and the write run.
     await Future<void>.delayed(const Duration(milliseconds: 50));
+  }
+
+  /// Waits until the sync has tried [n] writes in all. The providers load
+  /// and the settle timer runs on real time, which a busy machine stretches,
+  /// so a fixed pause makes the test flaky.
+  Future<void> attempted(int n) async {
+    final deadline = DateTime.now().add(const Duration(seconds: 10));
+    while (recorder.attempts < n) {
+      if (DateTime.now().isAfter(deadline)) {
+        fail('the sync tried ${recorder.attempts} writes in 10 s, not $n');
+      }
+      await Future<void>.delayed(const Duration(milliseconds: 10));
+    }
   }
 
   test('writes the date and the Rahao line once the Hukamnama has loaded',
       () async {
     launch();
-    await settled();
+    await attempted(1);
 
     final last = recorder.writes.last;
     expect(last[WidgetKeys.language], 'en');
@@ -120,11 +137,11 @@ void main() {
 
   test('writes again when a newer Hukamnama arrives', () async {
     final container = launch(text: _recorded(on: DateTime.utc(2026, 11, 1)));
-    await settled();
+    await attempted(1);
     expect(recorder.writes.last[WidgetKeys.hukamnamaMeta], startsWith('1 Nov'));
 
     (container.read(hukamnamaProvider.notifier) as _Text).show(_recorded());
-    await settled();
+    await attempted(2);
 
     expect(recorder.writes.last[WidgetKeys.hukamnamaMeta], startsWith('2 Nov'));
   });
@@ -132,7 +149,7 @@ void main() {
   test('does not write again when nothing the widget shows has changed',
       () async {
     final container = launch();
-    await settled();
+    await attempted(1);
     final count = recorder.writes.length;
 
     // A refresh goes loading and then lands on the same text.
@@ -147,11 +164,11 @@ void main() {
 
   test('writes in Punjabi when the language changes', () async {
     final container = launch();
-    await settled();
+    await attempted(1);
     expect(recorder.writes.last[WidgetKeys.language], 'en');
 
     await container.read(localeController.notifier).changeLocale('pa');
-    await settled();
+    await attempted(2);
 
     final last = recorder.writes.last;
     expect(last[WidgetKeys.language], 'pa');
@@ -173,6 +190,7 @@ void main() {
     text.show(_recorded());
     await container.read(localeController.notifier).changeLocale('pa');
 
+    await attempted(1);
     await Future<void>.delayed(const Duration(milliseconds: 300));
     expect(recorder.writes, hasLength(1));
     expect(recorder.writes.single[WidgetKeys.language], 'pa');
@@ -182,11 +200,11 @@ void main() {
   test('tries a failed write again on the next change', () async {
     recorder.failNext = true;
     final container = launch();
-    await settled();
+    await attempted(1);
     expect(recorder.writes, isEmpty);
 
     await container.read(localeController.notifier).changeLocale('pa');
-    await settled();
+    await attempted(2);
 
     expect(recorder.writes, hasLength(1));
     expect(recorder.writes.single[WidgetKeys.language], 'pa');
@@ -194,7 +212,7 @@ void main() {
 
   test('writes the new day after SGPC midnight', () async {
     final container = launch();
-    await settled();
+    await attempted(1);
     expect(
       (jsonDecode(recorder.writes.last[WidgetKeys.dates]!) as Map).keys.first,
       '2026-11-02',
@@ -204,10 +222,9 @@ void main() {
     // here the test does what the timer does.
     now = DateTime.utc(2026, 11, 2, 18, 40);
     container.invalidate(sikhDateProvider);
-    await settled();
+    await attempted(2);
 
-    final dates =
-        jsonDecode(recorder.writes.last[WidgetKeys.dates]!) as Map;
+    final dates = jsonDecode(recorder.writes.last[WidgetKeys.dates]!) as Map;
     expect(dates.keys.first, '2026-11-03');
     expect(dates['2026-11-03'], '3 Nov');
     // The Hukamnama is still the 2nd's. The widget says so by the day.

@@ -158,7 +158,8 @@ void main() {
       final year = buildHistoryYear(table, d(2027, 3, 1))!;
 
       expect(year.focus!.events.single.id, 'later');
-      expect(year.days.every((day) => day.tense(year.today) == HistoryTense.past),
+      expect(
+          year.days.every((day) => day.tense(year.today) == HistoryTense.past),
           isTrue);
     });
 

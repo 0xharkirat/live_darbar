@@ -137,7 +137,8 @@ final List<Override> _pinnedDate = [
       gregorian: DateTime.utc(2026, 11, 2),
     ),
   ),
-  if (_hukamnamaFixture.isNotEmpty) hukamnamaProvider.overrideWith(_Fixture.new),
+  if (_hukamnamaFixture.isNotEmpty)
+    hukamnamaProvider.overrideWith(_Fixture.new),
 ];
 
 void main() {

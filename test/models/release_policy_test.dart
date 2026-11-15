@@ -72,7 +72,8 @@ void main() {
       expect(update.forced, isFalse, reason: 'a soft update to build 11');
     });
 
-    test('does not force a build above the minimum, nor offer a current one', () {
+    test('does not force a build above the minimum, nor offer a current one',
+        () {
       expect(on(TargetPlatform.android, forced, 11), isNull);
       expect(on(TargetPlatform.android, forced, 15), isNull);
     });
@@ -140,13 +141,15 @@ void main() {
       expect(
         Maintenance.fromManifest({
           'maintenance': {'en': 'English only'},
-        })!.messageFor('pa'),
+        })!
+            .messageFor('pa'),
         'English only',
       );
       expect(
         Maintenance.fromManifest({
           'maintenance': {'pa': 'ਸਿਰਫ਼ ਪੰਜਾਬੀ'},
-        })!.messageFor('en'),
+        })!
+            .messageFor('en'),
         'ਸਿਰਫ਼ ਪੰਜਾਬੀ',
       );
     });

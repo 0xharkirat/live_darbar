@@ -18,7 +18,8 @@ void main() {
     });
 
     test('splits Punjabi after each verse marker', () {
-      final p = meaningParagraphs('ਪਹਿਲੀ ਤੁਕ।੧। ਦੂਜੀ ਤੁਕ। ਰਹਾਉ। ਤੀਜੀ ਤੁਕ । ਰਹਾਉ ਦੂਜਾ ।');
+      final p = meaningParagraphs(
+          'ਪਹਿਲੀ ਤੁਕ।੧। ਦੂਜੀ ਤੁਕ। ਰਹਾਉ। ਤੀਜੀ ਤੁਕ । ਰਹਾਉ ਦੂਜਾ ।');
       expect(p, [
         'ਪਹਿਲੀ ਤੁਕ।੧।',
         'ਦੂਜੀ ਤੁਕ।ਰਹਾਉ।',
@@ -27,7 +28,8 @@ void main() {
     });
 
     test('a sentence full stop alone does not split', () {
-      expect(meaningParagraphs('ਹੇ ਹਰੀ! ਮੇਹਰ ਕਰ। ਨਾਮ ਦੇਹ।੧।'), ['ਹੇ ਹਰੀ! ਮੇਹਰ ਕਰ। ਨਾਮ ਦੇਹ।੧।']);
+      expect(meaningParagraphs('ਹੇ ਹਰੀ! ਮੇਹਰ ਕਰ। ਨਾਮ ਦੇਹ।੧।'),
+          ['ਹੇ ਹਰੀ! ਮੇਹਰ ਕਰ। ਨਾਮ ਦੇਹ।੧।']);
     });
 
     test('text with no markers stays 1 paragraph', () {

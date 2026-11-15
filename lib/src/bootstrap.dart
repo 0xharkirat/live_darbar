@@ -32,7 +32,8 @@ Future<void> bootstrap<T>({
     _Bootstrap<T>(prepare: prepare, build: build, launch: launch).attempt();
 
 class _Bootstrap<T> {
-  _Bootstrap({required this.prepare, required this.build, required this.launch});
+  _Bootstrap(
+      {required this.prepare, required this.build, required this.launch});
 
   final Future<T> Function() prepare;
   final Widget Function(T prepared) build;

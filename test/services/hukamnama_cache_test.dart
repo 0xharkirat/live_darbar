@@ -60,8 +60,7 @@ void main() {
 
     test('returns a parsed SGPC response whole', () async {
       final parsed = Hukamnama.fromSgpc(jsonDecode(
-        File('test/fixtures/sgpc_hukamnama_2026_11_02.json')
-            .readAsStringSync(),
+        File('test/fixtures/sgpc_hukamnama_2026_11_02.json').readAsStringSync(),
       ) as Map<String, dynamic>);
       await cache.write(parsed);
 
