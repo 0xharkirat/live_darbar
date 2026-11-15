@@ -9,6 +9,8 @@ It runs on Android, iPhone, and the web (darbar.live/app). Android also has a ho
 
 ## Check loop
 
+Before a task counts as done, run `tool/verify`, then the `verify-live-darbar` skill for each feature the change touches.
+
 The `dart-flutter` plugin gives you the Dart MCP server and the Dart and Flutter skills.
 Use its tools instead of the CLI. Load them with ToolSearch, and call them by short name.
 
