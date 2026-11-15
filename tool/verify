@@ -6,19 +6,28 @@
 #
 # Steps, in order. The script stops at the first step that fails, and exits 0
 # only when every step passes.
-#   1. dart format, as a check. The generated lib/l10n files are left out.
-#   2. flutter analyze --fatal-infos.
-#   3. flutter test on the test files the branch touches, or the full suite
-#      when it touches none.
-#   4. The screens render (test/screens, tag `screens`) when the branch
-#      touches the UI code: lib/ui or lib/src/views. The full suite in step 3
-#      already renders them, so the step runs only after a filtered step 3.
+#   1. flutter pub get, so dart format reads the package's language version.
+#   2. dart format, as a check. The generated lib/l10n files are left out.
+#   3. flutter analyze --fatal-infos.
+#   4. flutter test on the tests the branch touches: each changed test file,
+#      and each test that imports a changed lib file. It runs the full suite
+#      when that set is empty, or when shared test code or packages change.
+#      tool/verify_plan.dart holds these rules, and its test proves them.
+#   5. The screens render (test/screens, tag `screens`) when the branch
+#      changes code the screens draw. A full-suite run in step 4 renders them
+#      already, so the step runs only after a filtered step 4.
 #
-# "Touches" means changed since the merge base with $BASE, committed or not,
+# "Changed" means changed since the merge base with $BASE, committed or not,
 # plus untracked files. Heavy steps run under `taskpolicy -b` with 4 workers.
 set -uo pipefail
 
 cd "$(dirname "$0")/.."
+
+fail() { printf '\nverify: FAILED at %s\n' "$1" >&2; exit 1; }
+step() { printf '\n== verify: %s\n' "$1"; }
+
+command -v taskpolicy >/dev/null ||
+  { echo "verify: taskpolicy not found. tool/verify runs on macOS only." >&2; exit 2; }
 
 base="${BASE:-}"
 if [[ -z "$base" ]]; then
@@ -26,47 +35,42 @@ if [[ -z "$base" ]]; then
     if git rev-parse --verify --quiet "$ref" >/dev/null; then base="$ref"; break; fi
   done
 fi
-if [[ -z "$base" ]]; then
-  echo "verify: no main or origin/main ref. Set BASE=<ref>." >&2
-  exit 2
-fi
-merge_base="$(git merge-base "$base" HEAD)"
+[[ -n "$base" ]] || { echo "verify: no main or origin/main ref. Set BASE=<ref>." >&2; exit 2; }
+merge_base="$(git merge-base "$base" HEAD)" && [[ -n "$merge_base" ]] ||
+  { echo "verify: no merge base between $base and HEAD." >&2; exit 2; }
 
-# Paths that exist now and differ from the merge base.
-changed="$(
-  {
-    git diff --name-only --diff-filter=d "$merge_base"
-    git ls-files --others --exclude-standard
-  } | sort -u
-)"
+committed="$(git diff --name-only --diff-filter=d "$merge_base")" ||
+  { echo "verify: git diff against $merge_base failed." >&2; exit 2; }
+untracked="$(git ls-files --others --exclude-standard)" ||
+  { echo "verify: git ls-files failed." >&2; exit 2; }
+changed="$(printf '%s\n%s\n' "$committed" "$untracked" | sort -u)"
 
-step() { printf '\n== verify: %s\n' "$1"; }
-fail() { printf '\nverify: FAILED at %s\n' "$1" >&2; exit 1; }
+step "flutter pub get"
+flutter pub get >/dev/null || fail "flutter pub get"
 
 step "dart format (check)"
-format_paths=(lib/src lib/main.dart test tool)
+format_paths=(lib/src lib/main.dart test tool integration_test)
 dart format --output=none --set-exit-if-changed "${format_paths[@]}" ||
-  fail "dart format. Run: dart format ${format_paths[*]}"
+  fail "dart format. Fix any syntax error it names, or run: dart format ${format_paths[*]}"
 
 step "flutter analyze --fatal-infos"
-flutter analyze --fatal-infos || fail "flutter analyze"
+flutter analyze --fatal-infos --no-pub || fail "flutter analyze"
 
-tests=()
-while IFS= read -r path; do
-  [[ -n "$path" ]] && tests+=("$path")
-done < <(grep -E '^test/.*_test\.dart$' <<<"$changed" || true)
+plan="$(printf '%s\n' "$changed" | dart tool/verify_plan.dart)" || fail "tool/verify_plan.dart"
 
-if ((${#tests[@]} == 0)); then
-  step "flutter test (full suite: the branch touches no test file)"
-  taskpolicy -b flutter test -j 4 || fail "flutter test"
+if grep -qx full <<<"$plan"; then
+  step "flutter test (full suite)"
+  taskpolicy -b flutter test -j 4 --no-pub || fail "flutter test"
 else
+  tests=()
+  while IFS= read -r path; do tests+=("$path"); done < <(sed -n 's/^test //p' <<<"$plan")
   step "flutter test (${#tests[@]} touched test files)"
   printf '  %s\n' "${tests[@]}"
-  taskpolicy -b flutter test -j 4 "${tests[@]}" || fail "flutter test"
+  taskpolicy -b flutter test -j 4 --no-pub "${tests[@]}" || fail "flutter test"
 
-  if grep -qE '^lib/(ui|src/views)/' <<<"$changed"; then
-    step "screens render (the branch touches UI code)"
-    taskpolicy -b flutter test -j 4 test/screens --tags screens ||
+  if grep -qx screens <<<"$plan"; then
+    step "screens render (the branch changes code the screens draw)"
+    taskpolicy -b flutter test -j 4 --no-pub test/screens --tags screens ||
       fail "screens render"
     echo "  images: build/screens/"
   fi

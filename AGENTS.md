@@ -23,7 +23,7 @@ Start every chat for this app in the repo root.
 
 1. After an edit, run `analyze_files` on the changed paths. Done when it reports 0 issues.
 2. Run only the tests the change touches, in 1 call: `taskpolicy -b flutter test -j 4 <files>`.
-3. Run the full suite only before a release.
+3. Run the full suite only before a release, or when `tool/verify` picks it. Steps 1-3 are the edit loop; `tool/verify` is the CLI gate at the end.
 4. For a UI change with the app running, call `dtd` with `listDtdUris`, then `connect`.
    `flutter run --print-dtd` prints the DTD URI.
 5. Call `hot_reload`, then `get_runtime_errors`.

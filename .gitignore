@@ -51,14 +51,17 @@ app.*.map.json
 .research/
 
 # Local agent tooling: worktrees created inside the repo, and any skills
-# installed here for project scope. Deliberately all of .claude/, because
-# none of it is this app's source and none of it should follow a clone.
-# The 1 exception is the app's own verify skill, which Codex and agy also
-# load through the .agents/skills link.
+# installed here for project scope. None of it is this app's source, and none
+# of it should follow a clone. The 1 exception is the app's own verify skill,
+# which Codex and agy load through the .agents/skills link.
 .claude/*
 !.claude/skills/
 .claude/skills/*
 !.claude/skills/verify-live-darbar/
+.agents/*
+!.agents/skills/
+.agents/skills/*
+!.agents/skills/verify-live-darbar
 
 # Local agent and tool state
 .codex/
