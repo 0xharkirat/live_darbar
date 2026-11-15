@@ -99,7 +99,8 @@ void main() {
     expect(asked, isEmpty);
   });
 
-  test('just after midnight it keeps yesterday\'s text and says it is not '
+  test(
+      'just after midnight it keeps yesterday\'s text and says it is not '
       'today\'s', () async {
     final refresh = await run(now: justAfterMidnight, posted: {nov1});
 

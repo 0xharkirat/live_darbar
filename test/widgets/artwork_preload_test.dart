@@ -19,14 +19,15 @@ void main() {
       .toList();
 
   /// Whether the painting has a decoded picture to draw this frame.
-  bool decoded(WidgetTester tester, Element painting) => tester
-      .widget<RawImage>(
-        find.descendant(
-          of: find.byWidget(painting.widget),
-          matching: find.byType(RawImage),
-        ),
-      )
-      .image !=
+  bool decoded(WidgetTester tester, Element painting) =>
+      tester
+          .widget<RawImage>(
+            find.descendant(
+              of: find.byWidget(painting.widget),
+              matching: find.byType(RawImage),
+            ),
+          )
+          .image !=
       null;
 
   testWidgets('without the preload, Home draws no painting at first', (

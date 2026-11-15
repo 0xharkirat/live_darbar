@@ -123,7 +123,8 @@ class _YearListState extends State<_YearList> {
       final focus = _focusKey.currentContext;
       if (focus != null) {
         // Today a little below the top, so a few past days show above it.
-        Scrollable.ensureVisible(focus, alignment: 0.2, duration: Duration.zero);
+        Scrollable.ensureVisible(focus,
+            alignment: 0.2, duration: Duration.zero);
       }
       setState(() => _placed = true);
     });
@@ -186,7 +187,8 @@ class _MonthHeading extends StatelessWidget {
       padding: EdgeInsets.fromLTRB(12, first ? 12 : 32, 12, 8),
       child: Semantics(
         header: true,
-        child: Text(punjabi ? text : text.toUpperCase(), style: AppType.eyebrow),
+        child:
+            Text(punjabi ? text : text.toUpperCase(), style: AppType.eyebrow),
       ),
     );
   }

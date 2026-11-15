@@ -43,11 +43,13 @@ void main() {
 
       expect(find.text('Please update'), findsOneWidget);
       expect(
-        find.text('This version is too old to work well. Update it from the store to go on.'),
+        find.text(
+            'This version is too old to work well. Update it from the store to go on.'),
         findsOneWidget,
       );
       expect(find.text('Version 3.1.0'), findsOneWidget);
-      expect(find.text('A fix for a problem that stops playback.'), findsOneWidget);
+      expect(find.text('A fix for a problem that stops playback.'),
+          findsOneWidget);
     });
 
     testWidgets('offers the store and nothing else', (tester) async {
@@ -76,7 +78,8 @@ void main() {
     testWidgets('a swipe down does not close it', (tester) async {
       await _opensAtLaunch(tester);
 
-      await tester.fling(find.text('Please update'), const Offset(0, 600), 2500);
+      await tester.fling(
+          find.text('Please update'), const Offset(0, 600), 2500);
       await _settle(tester);
 
       expect(find.text('Please update'), findsOneWidget);
@@ -99,7 +102,8 @@ void main() {
       reduceMotion(tester);
       await _opensAtLaunch(tester);
 
-      await tester.fling(find.text('Please update'), const Offset(0, 600), 2500);
+      await tester.fling(
+          find.text('Please update'), const Offset(0, 600), 2500);
       await tester.tapAt(const Offset(20, 20));
       await tester.binding.handlePopRoute();
       await _settle(tester);
@@ -142,7 +146,8 @@ void main() {
       expect(find.byIcon(CupertinoIcons.wrench), findsNothing);
     });
 
-    testWidgets('says the message, in the listener\'s language', (tester) async {
+    testWidgets('says the message, in the listener\'s language',
+        (tester) async {
       await pumpApp(tester, maintenance: message);
       await _settle(tester);
 

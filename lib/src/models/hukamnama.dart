@@ -596,7 +596,8 @@ Map<String, dynamic>? _map(Object? value) =>
 String? _joinLines(List<Object?> values) {
   final parts = <String>[
     for (final value in values)
-      if (displayText(value) case final text?) text.replaceAll(RegExp(r'\s+'), ' '),
+      if (displayText(value) case final text?)
+        text.replaceAll(RegExp(r'\s+'), ' '),
   ];
   return parts.isEmpty ? null : parts.join('\n');
 }

@@ -112,7 +112,9 @@ void main() {
   /// Jumps back to the top, where the intro and the switch are. The page
   /// opens far below them, on today.
   Future<void> scrollToTop(WidgetTester tester) async {
-    tester.state<ScrollableState>(find.byType(Scrollable).first).position
+    tester
+        .state<ScrollableState>(find.byType(Scrollable).first)
+        .position
         .jumpTo(0);
     await tester.pumpAndSettle();
   }
@@ -142,7 +144,8 @@ void main() {
         'DECEMBER 2026',
         'JANUARY 2027',
       ]) {
-        expect(find.text(month, skipOffstage: false), findsOneWidget, reason: month);
+        expect(find.text(month, skipOffstage: false), findsOneWidget,
+            reason: month);
       }
     });
 
@@ -168,7 +171,8 @@ void main() {
           reason: 'the days it runs, on its first day');
     });
 
-    testWidgets('shows English titles, falling back to Punjabi', (tester) async {
+    testWidgets('shows English titles, falling back to Punjabi',
+        (tester) async {
       final table = SgpcEventTable([
         SgpcEvent(
           id: 'only-pa',
@@ -191,7 +195,8 @@ void main() {
   });
 
   group('past, today and to come', () {
-    testWidgets('mutes the past, highlights today, and leaves the rest bright', (
+    testWidgets('mutes the past, highlights today, and leaves the rest bright',
+        (
       tester,
     ) async {
       await pump(tester);
@@ -229,7 +234,8 @@ void main() {
 
       expect(find.text('TODAY'), findsNothing);
       expect(colorOf(tester, 'Gurgaddi Divas Sri Guru Harkrishan Sahib Ji'),
-          Palette.muted, reason: '3 November is past on 4 November');
+          Palette.muted,
+          reason: '3 November is past on 4 November');
     });
 
     testWidgets('moves on with the day in Amritsar, not the phone’s', (
@@ -354,7 +360,8 @@ void main() {
   });
 
   group('the notification switch', () {
-    testWidgets('is on the screen, above the months, where the phone can '
+    testWidgets(
+        'is on the screen, above the months, where the phone can '
         'notify', (tester) async {
       await pump(tester);
       await scrollToTop(tester);
@@ -419,7 +426,8 @@ void main() {
       }
     });
 
-    testWidgets('Punjabi: the intro writes the year in Gurmukhi', (tester) async {
+    testWidgets('Punjabi: the intro writes the year in Gurmukhi',
+        (tester) async {
       await pump(tester, locale: 'pa');
       await scrollToTop(tester);
 

@@ -403,9 +403,9 @@ class _TodayInHistory extends ConsumerWidget {
     // 2 lines of the line's own type, so the row is the same height whatever
     // the day. It grows with the listener's text size.
     final type = AppType.callout;
-    final twoLines = MediaQuery.textScalerOf(context)
-        .scale(type.fontSize! * type.height!) *
-        2;
+    final twoLines =
+        MediaQuery.textScalerOf(context).scale(type.fontSize! * type.height!) *
+            2;
 
     return Padding(
       padding: const EdgeInsets.only(top: 6, bottom: 4),
@@ -526,13 +526,15 @@ class _LiveHero extends ConsumerWidget {
                 Positioned(
                   top: 16,
                   left: 16,
-                  child: _Painted(child: LiveBadge(playing: playing, onImage: true)),
+                  child: _Painted(
+                      child: LiveBadge(playing: playing, onImage: true)),
                 ),
                 Positioned(
                   left: 20,
                   right: 16,
                   bottom: 18,
-                  child: _Painted(child: Row(
+                  child: _Painted(
+                      child: Row(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Expanded(

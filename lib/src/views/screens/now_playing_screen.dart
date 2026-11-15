@@ -178,7 +178,8 @@ class NowPlayingScreen extends ConsumerWidget {
                                 children: [
                                   Expanded(
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         // The badge row is as tall as the Data saver
                                         // pill whether the pill shows or not, and
@@ -414,8 +415,8 @@ class _Transport extends ConsumerWidget {
                 if (p == null) return;
                 final target = p.position + by;
                 await ref.read(audioController).seek(
-                  target < Duration.zero ? Duration.zero : target,
-                );
+                      target < Duration.zero ? Duration.zero : target,
+                    );
               },
               child: SizedBox.square(
                 dimension: 56,
@@ -470,7 +471,8 @@ class _ReadButton extends StatelessWidget {
           children: [
             const Icon(CupertinoIcons.book, size: 16, color: Palette.gold),
             const SizedBox(width: 6),
-            Text(label, style: AppType.footnote.copyWith(color: Palette.foreground)),
+            Text(label,
+                style: AppType.footnote.copyWith(color: Palette.foreground)),
           ],
         ),
       ),

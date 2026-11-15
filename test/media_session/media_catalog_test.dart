@@ -17,7 +17,8 @@ void main() {
     test('every item is playable and names the artist and the app', () {
       for (final item in MediaCatalog.items()) {
         expect(item.playable, isTrue, reason: item.title);
-        expect(item.artist, 'Sri Harmandir Sahib, Amritsar', reason: item.title);
+        expect(item.artist, 'Sri Harmandir Sahib, Amritsar',
+            reason: item.title);
         expect(item.album, 'Live Darbar', reason: item.title);
       }
     });

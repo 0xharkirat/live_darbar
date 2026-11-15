@@ -37,8 +37,7 @@ Future<T?> showAppSheet<T>(
     AppSheetRoute<T>(
       builder: builder,
       dismissible: dismissible,
-      barrierColor:
-          Theme.of(context).bottomSheetTheme.modalBarrierColor ??
+      barrierColor: Theme.of(context).bottomSheetTheme.modalBarrierColor ??
           Colors.black54,
       barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
       reduced: Motion.reduced(context),
@@ -164,9 +163,7 @@ class AppSheetRoute<T> extends PopupRoute<T> {
     }
     final thrown = released != null && released.abs() >= Motion.flickSpeed;
     return SpringSimulation(
-      forward
-          ? (thrown ? Motion.sheetFlick : Motion.sheet)
-          : Motion.sheetExit,
+      forward ? (thrown ? Motion.sheetFlick : Motion.sheet) : Motion.sheetExit,
       from,
       forward ? 1 : 0,
       // The place falls as the sheet goes down, so down is negative.
@@ -244,11 +241,11 @@ class AppSheetRoute<T> extends PopupRoute<T> {
     final c = controller!;
     c
         .animateWith(
-          SpringSimulation(spring, from, 1, velocity, snapToEnd: true),
-        )
+      SpringSimulation(spring, from, 1, velocity, snapToEnd: true),
+    )
         .whenCompleteOrCancel(() {
-          if (!_popped && c.value == 1) _slid = false;
-        });
+      if (!_popped && c.value == 1) _slid = false;
+    });
   }
 
   // The scroll view's side of the hand-over, in points.
@@ -275,8 +272,7 @@ class AppSheetRoute<T> extends PopupRoute<T> {
       behavior: HitTestBehavior.opaque,
       excludeFromSemantics: true,
       onVerticalDragUpdate: (d) => _dragBy((d.primaryDelta ?? 0) / _height),
-      onVerticalDragEnd: (d) =>
-          _endDrag((d.primaryVelocity ?? 0) / _height),
+      onVerticalDragEnd: (d) => _endDrag((d.primaryVelocity ?? 0) / _height),
       onVerticalDragCancel: () => _endDrag(0),
       child: SizedBox(
         key: _sheetKey,

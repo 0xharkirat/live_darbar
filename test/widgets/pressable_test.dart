@@ -291,7 +291,8 @@ void main() {
       await tester.pumpAndSettle();
     });
 
-    testWidgets('pressed again while springing back, it follows from where '
+    testWidgets(
+        'pressed again while springing back, it follows from where '
         'it is', (tester) async {
       await _pump(tester, scale: 0.9);
       final center = tester.getCenter(find.byKey(_target));

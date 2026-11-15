@@ -51,9 +51,7 @@ Future<bool> showWhatsNewOnFirstOpen(
 
   // The update offer opens its sheet when the check ends. Let it.
   try {
-    await container
-        .read(updateController.future)
-        .timeout(updateCheckLimit);
+    await container.read(updateController.future).timeout(updateCheckLimit);
   } catch (_) {}
   if (!context.mounted || cancel.cancelled) return false;
 

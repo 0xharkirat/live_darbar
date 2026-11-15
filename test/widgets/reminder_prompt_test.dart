@@ -47,21 +47,22 @@ void main() {
     AppUpdate? update,
     Duration settle = Duration.zero,
     Map<String, Object> prefs = const {},
-  }) => pumpApp(
-    tester,
-    locale: locale,
-    update: update,
-    reminders: phone,
-    reminderSettle: settle,
-    prefs: prefs,
-    localOffset: _sydneySummer,
-  );
+  }) =>
+      pumpApp(
+        tester,
+        locale: locale,
+        update: update,
+        reminders: phone,
+        reminderSettle: settle,
+        prefs: prefs,
+        localOffset: _sydneySummer,
+      );
 
   // Home is under the reader once it opens, so it is off stage then.
   ProviderContainer container(WidgetTester tester) => ProviderScope.containerOf(
-    tester.element(find.byType(HomeScreen, skipOffstage: false)),
-    listen: false,
-  );
+        tester.element(find.byType(HomeScreen, skipOffstage: false)),
+        listen: false,
+      );
 
   void background(WidgetTester tester) {
     for (final s in [
@@ -114,7 +115,8 @@ void main() {
   group('on the reader, the first time', () {
     testWidgets('asks, and counts it as asked at once', (tester) async {
       await launch(tester);
-      expect(await state(tester), isNot(predicate<ReminderSettings>((s) => s.asked)));
+      expect(await state(tester),
+          isNot(predicate<ReminderSettings>((s) => s.asked)));
 
       await openReader(tester);
 
@@ -143,7 +145,8 @@ void main() {
       await tester.tap(find.text(l10n.reminder_prompt_yes));
       await tester.pumpAndSettle();
 
-      expect(phone.calls, containsAllInOrder(['request', 'schedule 07:00 IST']));
+      expect(
+          phone.calls, containsAllInOrder(['request', 'schedule 07:00 IST']));
       expect(find.byType(ReminderPrompt), findsNothing);
       expect((await state(tester)).enabled, isTrue);
     });
@@ -285,7 +288,8 @@ void main() {
       (tester) async {
         await launch(tester, update: _update);
         await tester.pump(const Duration(seconds: 2));
-        expect(find.text('A new release.'), findsOneWidget, reason: 'offer is up');
+        expect(find.text('A new release.'), findsOneWidget,
+            reason: 'offer is up');
 
         // The listener answers the offer, then opens the Hukamnama.
         await tester.tap(find.text(l10n.update_later));
@@ -303,7 +307,8 @@ void main() {
       await launch(tester, settle: const Duration(seconds: 1));
       await pushReader(tester);
       await tester.pump(const Duration(milliseconds: 700));
-      expect(find.byType(ReminderPrompt), findsNothing, reason: 'still settling');
+      expect(find.byType(ReminderPrompt), findsNothing,
+          reason: 'still settling');
 
       // The offer arrives late and opens over the reader, as Home's listener
       // does.

@@ -17,8 +17,7 @@ void main() {
   final backButton = find.byType(CupertinoNavigationBarBackButton);
 
   Future<void> open(WidgetTester tester, String route) async {
-    Navigator.of(tester.element(find.byType(HomeScreen)))
-        .pushNamed(route);
+    Navigator.of(tester.element(find.byType(HomeScreen))).pushNamed(route);
     await tester.pumpAndSettle();
   }
 

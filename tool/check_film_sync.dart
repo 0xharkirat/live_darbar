@@ -44,7 +44,8 @@ const _longestStop = 0.8;
 
 Future<void> main(List<String> args) async {
   if (args.isEmpty || args.length.isOdd) {
-    stderr.writeln('Usage: dart tool/check_film_sync.dart film.mp4 film.json [film.mp4 film.json ...]');
+    stderr.writeln(
+        'Usage: dart tool/check_film_sync.dart film.mp4 film.json [film.mp4 film.json ...]');
     exit(2);
   }
   var ok = true;
@@ -69,7 +70,8 @@ class _Tap {
 }
 
 Future<bool> _check(String mp4, String jsonPath) async {
-  final data = jsonDecode(File(jsonPath).readAsStringSync()) as Map<String, dynamic>;
+  final data =
+      jsonDecode(File(jsonPath).readAsStringSync()) as Map<String, dynamic>;
   final taps = [
     for (final t in (data['taps'] as List).cast<Map<String, dynamic>>())
       _Tap(
@@ -93,7 +95,8 @@ Future<bool> _check(String mp4, String jsonPath) async {
   final sound = await readSound(mp4);
   final length = (data['duration'] as num).toDouble();
   if ((frames.duration - length).abs() > 0.1) {
-    stdout.writeln('not ok: the film is ${frames.duration.toStringAsFixed(2)} s long, '
+    stdout.writeln(
+        'not ok: the film is ${frames.duration.toStringAsFixed(2)} s long, '
         'and the data file says ${length.toStringAsFixed(2)} s');
     return false;
   }
@@ -102,24 +105,31 @@ Future<bool> _check(String mp4, String jsonPath) async {
   final screen = <String, double>{};
   for (final t in taps) {
     final f = changeNear(
-      frames.small, fps, Place(t.x, t.y), t.t,
+      frames.small,
+      fps,
+      Place(t.x, t.y),
+      t.t,
       halfWidth: tapHalfWidth(t.id),
     );
     if (f != null) screen[t.id] = f / fps;
   }
 
-  String ms(double v) => '${v >= 0 ? '+' : '-'}${(v.abs() * 1000).round()}'.padLeft(6);
-  String sec(double? v) => v == null ? '     -' : v.toStringAsFixed(3).padLeft(6);
+  String ms(double v) =>
+      '${v >= 0 ? '+' : '-'}${(v.abs() * 1000).round()}'.padLeft(6);
+  String sec(double? v) =>
+      v == null ? '     -' : v.toStringAsFixed(3).padLeft(6);
 
   var ok = true;
-  stdout.writeln('${'tap'.padRight(10)} ${'screen'.padLeft(6)} ${'json'.padLeft(6)} ${'diff ms'.padLeft(7)}'
+  stdout.writeln(
+      '${'tap'.padRight(10)} ${'screen'.padLeft(6)} ${'json'.padLeft(6)} ${'diff ms'.padLeft(7)}'
       '  ${'playing'.padLeft(7)} ${'json'.padLeft(6)} ${'sound'.padLeft(6)} ${'diff ms'.padLeft(7)} ${'vs playing'.padLeft(10)}');
   for (var i = 0; i < taps.length; i++) {
     final t = taps[i];
     final s = screen[t.id];
     final screenDiff = s == null ? null : s - t.t;
     final screenOk = screenDiff != null && screenDiff.abs() <= _tolerance;
-    var line = '${t.id.padRight(10)} ${sec(s)} ${sec(t.t)} ${screenDiff == null ? '   none' : ms(screenDiff).padLeft(7)}';
+    var line =
+        '${t.id.padRight(10)} ${sec(s)} ${sec(t.t)} ${screenDiff == null ? '   none' : ms(screenDiff).padLeft(7)}';
 
     var rowOk = screenOk;
     if (t.audio != null) {
@@ -127,16 +137,20 @@ Future<bool> _check(String mp4, String jsonPath) async {
       double? playing;
       if (s != null && screen[taps[i + 1].id] != null) {
         playing = playingTime(
-          frames.rois[k], fps, tap: s, next: screen[taps[i + 1].id]!,
+          frames.rois[k],
+          fps,
+          tap: s,
+          next: screen[taps[i + 1].id]!,
         );
       }
-      final onset = s == null
-          ? null
-          : audioOnset(sound, tap: s, expected: t.audio!);
+      final onset =
+          s == null ? null : audioOnset(sound, tap: s, expected: t.audio!);
       final soundDiff = onset == null ? null : onset - t.audio!;
-      final againstPlaying = onset == null || playing == null ? null : onset - playing;
+      final againstPlaying =
+          onset == null || playing == null ? null : onset - playing;
       final soundOk = soundDiff != null && soundDiff.abs() <= _tolerance;
-      final playOk = againstPlaying != null && againstPlaying.abs() <= _tolerance;
+      final playOk =
+          againstPlaying != null && againstPlaying.abs() <= _tolerance;
       line += '  ${sec(playing)}  ${sec(t.audio)} ${sec(onset)} '
           '${soundDiff == null ? '   none' : ms(soundDiff).padLeft(7)} '
           '${againstPlaying == null ? '      none' : ms(againstPlaying).padLeft(10)}';
@@ -154,7 +168,8 @@ Future<bool> _check(String mp4, String jsonPath) async {
 
   // The chapters.
   var chaptersOk = true;
-  stdout.writeln('\n${'chapter'.padRight(10)} ${'start'.padLeft(6)} ${'tap'.padRight(10)} ${'screen'.padLeft(6)} ${'start - tap'.padLeft(11)}');
+  stdout.writeln(
+      '\n${'chapter'.padRight(10)} ${'start'.padLeft(6)} ${'tap'.padRight(10)} ${'screen'.padLeft(6)} ${'start - tap'.padLeft(11)}');
   var expectedStart = 0.0;
   for (var i = 0; i < chapters.length; i++) {
     final c = chapters[i];
@@ -166,7 +181,8 @@ Future<bool> _check(String mp4, String jsonPath) async {
     final off = at == null ? null : start - at;
     final startOk = off != null && off.abs() <= _startTolerance;
     final runsOn = (start - expectedStart).abs() < 0.002 && end > start;
-    stdout.writeln('${id.padRight(10)} ${sec(start)} ${(tapId ?? '-').padRight(10)} ${sec(at)} '
+    stdout.writeln(
+        '${id.padRight(10)} ${sec(start)} ${(tapId ?? '-').padRight(10)} ${sec(at)} '
         '${off == null ? '       none' : ms(off).padLeft(8)} ms'
         '${startOk ? '' : '   <-- STARTS TOO FAR FROM ITS TAP'}'
         '${runsOn ? '' : '   <-- DOES NOT RUN ON FROM THE ONE BEFORE'}');
@@ -174,7 +190,8 @@ Future<bool> _check(String mp4, String jsonPath) async {
     expectedStart = end;
   }
   if ((expectedStart - length).abs() > 0.01) {
-    stdout.writeln('the last chapter ends at ${expectedStart.toStringAsFixed(3)} s, '
+    stdout.writeln(
+        'the last chapter ends at ${expectedStart.toStringAsFixed(3)} s, '
         'and the film is ${length.toStringAsFixed(3)} s long');
     chaptersOk = false;
   }
@@ -184,7 +201,8 @@ Future<bool> _check(String mp4, String jsonPath) async {
   ok = ok && chaptersOk;
 
   // The page's chapters.
-  final pageOk = _checkPage(jsonPath, [for (final c in chapters) c['id'] as String]);
+  final pageOk =
+      _checkPage(jsonPath, [for (final c in chapters) c['id'] as String]);
   ok = ok && pageOk;
 
   // Dead time.
@@ -197,7 +215,8 @@ Future<bool> _check(String mp4, String jsonPath) async {
     stdout.writeln('not ok: no sound for $q');
   }
   if (frozen.isEmpty && silent.isEmpty) {
-    stdout.writeln('ok: the picture never stands still, and the film is never silent, '
+    stdout.writeln(
+        'ok: the picture never stands still, and the film is never silent, '
         'for more than $_longestStop s');
   } else {
     ok = false;
@@ -226,7 +245,8 @@ bool _checkPage(String jsonPath, List<String> ids) {
       m.group(1)!,
   ];
   final same = onPage.length == ids.length &&
-      [for (var i = 0; i < ids.length; i++) onPage[i] == ids[i]].every((b) => b);
+      [for (var i = 0; i < ids.length; i++) onPage[i] == ids[i]]
+          .every((b) => b);
   stdout.writeln(same
       ? 'ok: ${page.path} has the chapters ${ids.join(', ')}'
       : 'not ok: ${page.path} has the chapters ${onPage.join(', ')}, '

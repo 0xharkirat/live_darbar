@@ -99,7 +99,8 @@ void main() {
       expect(line('NEXT'), findsNothing);
     });
 
-    testWidgets('Punjabi: "ਅੱਜ", the first title, +2 in Gurmukhi digits, no '
+    testWidgets(
+        'Punjabi: "ਅੱਜ", the first title, +2 in Gurmukhi digits, no '
         'letter spacing', (tester) async {
       await pumpHome(tester, locale: 'pa');
 
@@ -111,7 +112,10 @@ void main() {
       expect(find.text('+੨'), findsOneWidget);
       final span = tester
           .widget<Text>(find.byWidgetPredicate(
-            (w) => w is Text && w.textSpan != null && w.textSpan!.toPlainText().contains('ਅੱਜ'),
+            (w) =>
+                w is Text &&
+                w.textSpan != null &&
+                w.textSpan!.toPlainText().contains('ਅੱਜ'),
           ))
           .textSpan! as TextSpan;
       for (final child in span.children!) {
@@ -143,7 +147,8 @@ void main() {
       ]);
 
       for (final (day, today) in [(7, true), (8, true)]) {
-        await pumpHome(tester, now: DateTime.utc(2026, 10, day, 6), table: table);
+        await pumpHome(tester,
+            now: DateTime.utc(2026, 10, day, 6), table: table);
         expect(line('TODAY'), today ? findsOneWidget : findsNothing,
             reason: 'day $day');
         expect(line('Jor Mela'), findsOneWidget);
@@ -167,7 +172,8 @@ void main() {
           reason: '8 November has 1 event');
     });
 
-    testWidgets('Punjabi: "ਅਗਲਾ", the date in Gurmukhi digits, the Punjabi title',
+    testWidgets(
+        'Punjabi: "ਅਗਲਾ", the date in Gurmukhi digits, the Punjabi title',
         (tester) async {
       await pumpHome(tester, locale: 'pa', now: nov4);
 
@@ -236,7 +242,8 @@ void main() {
       await pumpHome(tester, now: DateTime.utc(2027, 2, 14, 6));
 
       expect(line('NEXT · 19 FEB'), findsOneWidget);
-      expect(line('Parkash Gurpurab Sri Guru Har Rai Sahib Ji'), findsOneWidget);
+      expect(
+          line('Parkash Gurpurab Sri Guru Har Rai Sahib Ji'), findsOneWidget);
     });
 
     testWidgets('with no next year’s file, the line is gone', (tester) async {
@@ -347,7 +354,8 @@ void main() {
       expect(liveDarbarTop(tester), eventDay);
     });
 
-    testWidgets('sits under the Nanakshahi and Gregorian dates, above the '
+    testWidgets(
+        'sits under the Nanakshahi and Gregorian dates, above the '
         'title', (tester) async {
       await pumpHome(tester);
 

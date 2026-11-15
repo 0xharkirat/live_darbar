@@ -126,7 +126,8 @@ Future<void> main(List<String> args) async {
   final crfWebm = Platform.environment['CRF_WEBM'] ?? '41';
 
   final marks = _readMarks(a.need('marks'));
-  Mark m(String name) => marks['${pass}_$name'] ?? _fail('No mark ${pass}_$name.');
+  Mark m(String name) =>
+      marks['${pass}_$name'] ?? _fail('No mark ${pass}_$name.');
   Place place(String name) => Place(m(name).x!, m(name).y!);
   final work = Directory.systemTemp.createTempSync('site_film');
   try {
@@ -137,7 +138,9 @@ Future<void> main(List<String> args) async {
     stdout.writeln('  ${raw.small.length} frames');
 
     final rawTap = _findTaps(raw.small, marks, pass);
-    final tapList = [for (final n in _taps) '$n ${rawTap[n]!.toStringAsFixed(2)} s'];
+    final tapList = [
+      for (final n in _taps) '$n ${rawTap[n]!.toStringAsFixed(2)} s'
+    ];
     stdout.writeln('  taps: ${tapList.join(', ')}');
 
     // ---- 2. Where the app shows that it plays, and the waits to cut ----
@@ -146,7 +149,10 @@ Future<void> main(List<String> args) async {
       final name = audioTaps[i];
       final next = _taps[_taps.indexOf(name) + 1];
       rawPlay[name] = playingTime(
-        raw.rois[i], _detectFps, tap: rawTap[name]!, next: rawTap[next]!,
+        raw.rois[i],
+        _detectFps,
+        tap: rawTap[name]!,
+        next: rawTap[next]!,
       );
     }
     final cuts = <_Cut>[];
@@ -154,17 +160,21 @@ Future<void> main(List<String> args) async {
       final tapF = (rawTap[name]! * _detectFps).round();
       final playF = (rawPlay[name]! * _detectFps).round();
       final wait = (playF - tapF) / _detectFps;
-      stdout.writeln('  ${name.padRight(10)} tap ${rawTap[name]!.toStringAsFixed(3)} s, '
+      stdout.writeln(
+          '  ${name.padRight(10)} tap ${rawTap[name]!.toStringAsFixed(3)} s, '
           'playing ${rawPlay[name]!.toStringAsFixed(3)} s, wait ${wait.toStringAsFixed(2)} s');
-      if (wait > _maxWait) cuts.add(_findCut(raw.small, name, tapF, playF, wait));
+      if (wait > _maxWait)
+        cuts.add(_findCut(raw.small, name, tapF, playF, wait));
     }
     for (final c in cuts) {
-      stdout.writeln('  cut ${c.name}: ${(c.a / _detectFps).toStringAsFixed(3)} s to '
+      stdout.writeln(
+          '  cut ${c.name}: ${(c.a / _detectFps).toStringAsFixed(3)} s to '
           '${(c.b / _detectFps).toStringAsFixed(3)} s, looks alike to ${c.score.toStringAsFixed(2)}');
     }
 
     // ---- 3. The cut: the film, from before the first tap to the end mark ----
-    final startF = math.max(0, ((rawTap['live']! - _leadIn) * _detectFps).round());
+    final startF =
+        math.max(0, ((rawTap['live']! - _leadIn) * _detectFps).round());
     // The film ends a little after the last tap, and before the test ends
     // and the app goes: the first big change after the tap is the app leaving.
     final lastF = (rawTap['language']! * _detectFps).round();
@@ -172,8 +182,11 @@ Future<void> main(List<String> args) async {
       ((rawTap['language']! + _tailAfterLast) * _detectFps).round(),
       raw.small.length,
     );
-    for (var n = lastF + (0.6 * _detectFps).round(); n < endF + _detectFps; n++) {
-      if (n < raw.small.length && meanDifference(raw.small[n - 1], raw.small[n]) > 4) {
+    for (var n = lastF + (0.6 * _detectFps).round();
+        n < endF + _detectFps;
+        n++) {
+      if (n < raw.small.length &&
+          meanDifference(raw.small[n - 1], raw.small[n]) > 4) {
         endF = math.min(endF, n - (0.25 * _detectFps).round());
         break;
       }
@@ -210,11 +223,15 @@ Future<void> main(List<String> args) async {
     for (final name in _taps) {
       final predicted = toFilm(rawTap[name]!);
       final frame = changeNear(
-        film.small, _filmFps, place(name), predicted,
+        film.small,
+        _filmFps,
+        place(name),
+        predicted,
         slack: 0.3,
         halfWidth: tapHalfWidth(name),
       );
-      if (frame == null) _fail('No change found in the film for the tap "${pass}_$name".');
+      if (frame == null)
+        _fail('No change found in the film for the tap "${pass}_$name".');
       tap[name] = frame / _filmFps;
     }
     final play = <String, double>{};
@@ -222,7 +239,10 @@ Future<void> main(List<String> args) async {
       final name = audioTaps[i];
       final next = _taps[_taps.indexOf(name) + 1];
       play[name] = playingTime(
-        film.rois[i], _filmFps, tap: tap[name]!, next: tap[next]!,
+        film.rois[i],
+        _filmFps,
+        tap: tap[name]!,
+        next: tap[next]!,
       );
     }
     stdout.writeln('Film: ${(startF / _detectFps).toStringAsFixed(2)} s to '
@@ -230,7 +250,8 @@ Future<void> main(List<String> args) async {
         '${duration.toStringAsFixed(2)} s long');
     for (final name in _taps) {
       final wait = play.containsKey(name) ? play[name]! - tap[name]! : null;
-      stdout.writeln('  ${name.padRight(10)} tap ${tap[name]!.toStringAsFixed(3)} s'
+      stdout.writeln(
+          '  ${name.padRight(10)} tap ${tap[name]!.toStringAsFixed(3)} s'
           '${wait == null ? '' : '  playing ${play[name]!.toStringAsFixed(3)} s  wait ${wait.toStringAsFixed(2)} s'}');
       if (wait != null && wait > _maxWait + 0.1) {
         _fail('The wait for "$name" is still ${wait.toStringAsFixed(2)} s.');
@@ -265,7 +286,8 @@ Future<void> main(List<String> args) async {
     for (final name in _taps) {
       final mark = m(name);
       final t = at(name);
-      final depart = name == _taps.first ? 0.0 : math.max(t - _travel, prevT + 0.15);
+      final depart =
+          name == _taps.first ? 0.0 : math.max(t - _travel, prevT + 0.15);
       if (depart > prevT + 0.01) cursor.add([depart, prevX, prevY]);
       cursor.add([t, mark.x!, mark.y!]);
       prevT = t;
@@ -309,41 +331,112 @@ Future<void> main(List<String> args) async {
 
     // ---- 7. The video, both ways ----
     final inputs = ['-i', edited, '-i', soundFile];
-    final map = ['-map', '0:v', '-map', '1:a', '-t', duration.toStringAsFixed(3)];
+    final map = [
+      '-map',
+      '0:v',
+      '-map',
+      '1:a',
+      '-t',
+      duration.toStringAsFixed(3)
+    ];
     await run('ffmpeg', [
-      '-hide_banner', '-loglevel', 'error', '-y', '-threads', '4', ...inputs, ...map,
-      '-c:v', 'libx264', '-preset', 'slow', '-profile:v', 'main', '-level', '3.1',
-      '-crf', crfMp4, '-r', '$_filmFps',
-      '-c:a', 'aac', '-b:a', '64k', '-movflags', '+faststart',
+      '-hide_banner',
+      '-loglevel',
+      'error',
+      '-y',
+      '-threads',
+      '4',
+      ...inputs,
+      ...map,
+      '-c:v',
+      'libx264',
+      '-preset',
+      'slow',
+      '-profile:v',
+      'main',
+      '-level',
+      '3.1',
+      '-crf',
+      crfMp4,
+      '-r',
+      '$_filmFps',
+      '-c:a',
+      'aac',
+      '-b:a',
+      '64k',
+      '-movflags',
+      '+faststart',
       '$out/film$suffix.mp4',
     ]);
     await run('ffmpeg', [
-      '-hide_banner', '-loglevel', 'error', '-y', '-threads', '4', ...inputs, ...map,
-      '-c:v', 'libvpx-vp9', '-b:v', '0', '-crf', crfWebm, '-row-mt', '1',
-      '-deadline', 'good', '-cpu-used', '2', '-r', '$_filmFps',
-      '-c:a', 'libopus', '-b:a', '48k',
+      '-hide_banner',
+      '-loglevel',
+      'error',
+      '-y',
+      '-threads',
+      '4',
+      ...inputs,
+      ...map,
+      '-c:v',
+      'libvpx-vp9',
+      '-b:v',
+      '0',
+      '-crf',
+      crfWebm,
+      '-row-mt',
+      '1',
+      '-deadline',
+      'good',
+      '-cpu-used',
+      '2',
+      '-r',
+      '$_filmFps',
+      '-c:a',
+      'libopus',
+      '-b:a',
+      '48k',
       '$out/film$suffix.webm',
     ]);
 
     // The poster is the first frame, before any compression.
     await run('ffmpeg', [
-      '-hide_banner', '-loglevel', 'error', '-y', '-i', edited, '-frames:v', '1',
+      '-hide_banner',
+      '-loglevel',
+      'error',
+      '-y',
+      '-i',
+      edited,
+      '-frames:v',
+      '1',
       '${work.path}/poster.png',
     ]);
     await run('cwebp', [
-      '-quiet', '-q', '78', '-m', '6', '${work.path}/poster.png',
-      '-o', '$out/film-poster$suffix.webp',
+      '-quiet',
+      '-q',
+      '78',
+      '-m',
+      '6',
+      '${work.path}/poster.png',
+      '-o',
+      '$out/film-poster$suffix.webp',
     ]);
   } finally {
     work.deleteSync(recursive: true);
   }
 
-  for (final f in ['film$suffix.mp4', 'film$suffix.webm', 'film-poster$suffix.webp', 'film$suffix.json']) {
-    stdout.writeln('${File('$out/$f').lengthSync().toString().padLeft(9)}  $out/$f');
+  for (final f in [
+    'film$suffix.mp4',
+    'film$suffix.webm',
+    'film-poster$suffix.webp',
+    'film$suffix.json'
+  ]) {
+    stdout.writeln(
+        '${File('$out/$f').lengthSync().toString().padLeft(9)}  $out/$f');
   }
 }
 
-double _r(double v, [int digits = 3]) => double.parse(v.toStringAsFixed(digits));
+double _r(double v, [int digits = 3]) =>
+    double.parse(v.toStringAsFixed(digits));
 
 /// The time of every tap of [pass] on the recording, by the frame where the
 /// screen first changes round the place that was tapped.
@@ -368,7 +461,8 @@ Map<String, double> _findTaps(
     // amount each time. Look for the first tap anywhere in the first 12
     // seconds, and as a clear change, because the recording's own start-up
     // flickers.
-    final f = firstChange(frames, _detectFps, at('live'), 1.0, 12.0, minimum: 80);
+    final f =
+        firstChange(frames, _detectFps, at('live'), 1.0, 12.0, minimum: 80);
     if (f == null) _fail('No change found for the tap "${pass}_live".');
     firstTap = f / _detectFps;
   } else {
@@ -379,7 +473,11 @@ Map<String, double> _findTaps(
     final predicted =
         lastA + (m(pass, 'live').epoch - m('A', 'language').epoch) / 1000;
     final f = firstChange(
-      frames, _detectFps, at('live'), predicted - 1.5, predicted + 3.0,
+      frames,
+      _detectFps,
+      at('live'),
+      predicted - 1.5,
+      predicted + 3.0,
       minimum: 80,
     );
     if (f == null) _fail('No change found for the tap "${pass}_live".');
@@ -399,13 +497,17 @@ Map<String, double> _findTaps(
     final predicted = prev + gap;
     final slack = math.max(1.2, gap * 0.8);
     final all = changeFrames(
-      frames, _detectFps, at(name),
-      math.max(predicted - slack, prev + 0.6), predicted + slack,
+      frames,
+      _detectFps,
+      at(name),
+      math.max(predicted - slack, prev + 0.6),
+      predicted + slack,
       halfWidth: tapHalfWidth(name),
     );
     if (all.isEmpty) _fail('No change found for the tap "${pass}_$name".');
-    all.sort((a, b) =>
-        (a / _detectFps - predicted).abs().compareTo((b / _detectFps - predicted).abs()));
+    all.sort((a, b) => (a / _detectFps - predicted)
+        .abs()
+        .compareTo((b / _detectFps - predicted).abs()));
     times[name] = all.first / _detectFps;
   }
   return times;
@@ -428,7 +530,8 @@ class _Cut {
 /// from whose pictures match best, and the cut does not show. A cut ends the
 /// wait at about [_keepWait] seconds. It leaves the press and the start of the
 /// ring at the front, and the last 0.1 s of the wait before the glyph morphs.
-_Cut _findCut(List<Uint8List> frames, String name, int tapF, int playF, double wait) {
+_Cut _findCut(
+    List<Uint8List> frames, String name, int tapF, int playF, double wait) {
   final remove = ((wait - _keepWait) * _detectFps).ceil();
   final earliest = tapF + (0.30 * _detectFps).round();
   final latest = tapF + (0.55 * _detectFps).round();
@@ -449,7 +552,8 @@ _Cut _findCut(List<Uint8List> frames, String name, int tapF, int playF, double w
 
 /// The film's frames, with the cuts left out, at [_filmFps]: 1 pass of 540 by
 /// 1174 pixels, nearly lossless.
-Future<void> _renderEdited(String raw, List<(int, int)> keep, String out) async {
+Future<void> _renderEdited(
+    String raw, List<(int, int)> keep, String out) async {
   final g = StringBuffer('[0:v]fps=$_detectFps,split=${keep.length}');
   for (var i = 0; i < keep.length; i++) {
     g.write('[s$i]');
@@ -465,9 +569,26 @@ Future<void> _renderEdited(String raw, List<(int, int)> keep, String out) async 
   g.write('concat=n=${keep.length}:v=1:a=0,fps=$_filmFps,'
       'scale=540:1174:flags=lanczos,format=yuv420p[v]');
   await run('ffmpeg', [
-    '-hide_banner', '-loglevel', 'error', '-y', '-threads', '4', '-i', raw,
-    '-filter_complex', g.toString(), '-map', '[v]',
-    '-c:v', 'libx264', '-preset', 'veryfast', '-crf', '6', '-r', '$_filmFps',
+    '-hide_banner',
+    '-loglevel',
+    'error',
+    '-y',
+    '-threads',
+    '4',
+    '-i',
+    raw,
+    '-filter_complex',
+    g.toString(),
+    '-map',
+    '[v]',
+    '-c:v',
+    'libx264',
+    '-preset',
+    'veryfast',
+    '-crf',
+    '6',
+    '-r',
+    '$_filmFps',
     out,
   ]);
 }
@@ -495,7 +616,8 @@ Future<String> _buildSound({
     return (play[audioTaps[i + 1]]! - stops[name]! - 0.04).clamp(0.02, 0.08);
   }
 
-  const chain = 'aresample=44100,aformat=sample_fmts=fltp:channel_layouts=stereo,'
+  const chain =
+      'aresample=44100,aformat=sample_fmts=fltp:channel_layouts=stereo,'
       'highpass=f=60,loudnorm=I=-19:TP=-2:LRA=9,aresample=44100,'
       'aformat=sample_fmts=fltp:channel_layouts=stereo';
 
@@ -507,8 +629,17 @@ Future<String> _buildSound({
     return decoded[src] ??= await () async {
       final wav = '$work/${src.replaceAll('.', '_')}.wav';
       await run('ffmpeg', [
-        '-hide_banner', '-loglevel', 'error', '-y', '-t', '70', '-i', '$audio/$src',
-        '-c:a', 'pcm_s16le', wav,
+        '-hide_banner',
+        '-loglevel',
+        'error',
+        '-y',
+        '-t',
+        '70',
+        '-i',
+        '$audio/$src',
+        '-c:a',
+        'pcm_s16le',
+        wav,
       ]);
       return wav;
     }();
@@ -526,11 +657,21 @@ Future<String> _buildSound({
     // audioOnset names the middle of the first window that is loud enough.
     final from = taken + math.max(0.0, lead - 0.003);
     await run('ffmpeg', [
-      '-hide_banner', '-loglevel', 'error', '-y',
-      '-ss', from.toStringAsFixed(3), '-t', (seconds + 0.5).toStringAsFixed(3),
-      '-i', wav, '-af',
+      '-hide_banner',
+      '-loglevel',
+      'error',
+      '-y',
+      '-ss',
+      from.toStringAsFixed(3),
+      '-t',
+      (seconds + 0.5).toStringAsFixed(3),
+      '-i',
+      wav,
+      '-af',
       '$chain,atrim=duration=${seconds.toStringAsFixed(3)}',
-      '-c:a', 'pcm_s16le', file,
+      '-c:a',
+      'pcm_s16le',
+      file,
     ]);
     return file;
   }
@@ -561,13 +702,15 @@ Future<String> _buildSound({
       final switchAt = tap['saver']! - onset;
       final fade = stopFade(name);
       place(
-        hi, onset,
+        hi,
+        onset,
         'afade=t=in:st=0:d=$_fadeIn:curve=qsin,'
             'afade=t=out:st=${switchAt.toStringAsFixed(3)}:d=$_crossfade:curve=tri',
         'hi',
       );
       place(
-        lo, onset,
+        lo,
+        onset,
         'afade=t=in:st=${switchAt.toStringAsFixed(3)}:d=$_crossfade:curve=tri,'
             'afade=t=out:st=${(length - fade).toStringAsFixed(3)}:d=${fade.toStringAsFixed(3)}:curve=qsin',
         'lo',
@@ -576,16 +719,18 @@ Future<String> _buildSound({
       final file = await segment(name, length, '$work/$name.wav');
       final fade = stopFade(name);
       place(
-        file, onset,
+        file,
+        onset,
         'afade=t=in:st=0:d=$_fadeIn:curve=qsin,'
-            'afade=t=out:st=${(length - fade).toStringAsFixed(3)}:d=${fade.toStringAsFixed(3)}:curve=qsin',
+        'afade=t=out:st=${(length - fade).toStringAsFixed(3)}:d=${fade.toStringAsFixed(3)}:curve=qsin',
         name,
       );
     }
   }
 
   // One soft click at each tap: the press, and a quieter release 90 ms later.
-  const click = '0.5*(sin(2*PI*1100*t)*exp(-t*70)+0.6*sin(2*PI*520*t)*exp(-t*45))'
+  const click =
+      '0.5*(sin(2*PI*1100*t)*exp(-t*70)+0.6*sin(2*PI*520*t)*exp(-t*45))'
       '*min(1,t/0.003)'
       '+if(gte(t,0.09),0.2*sin(2*PI*900*(t-0.09))*exp(-(t-0.09)*90),0)';
   final clickGraph = StringBuffer(
@@ -605,13 +750,21 @@ Future<String> _buildSound({
   final count = n + _taps.length;
   final out = '$work/sound.wav';
   await run('ffmpeg', [
-    '-hide_banner', '-loglevel', 'error', '-y', ...inputs,
+    '-hide_banner',
+    '-loglevel',
+    'error',
+    '-y',
+    ...inputs,
     '-filter_complex',
     '$graph$clickGraph${mix}amix=inputs=$count:normalize=0:duration=longest,'
         'alimiter=limit=0.9,'
         'afade=t=out:st=${(duration - 0.6).toStringAsFixed(2)}:d=0.6,'
         'atrim=duration=${duration.toStringAsFixed(3)}[a]',
-    '-map', '[a]', '-c:a', 'pcm_s16le', out,
+    '-map',
+    '[a]',
+    '-c:a',
+    'pcm_s16le',
+    out,
   ]);
   return out;
 }
@@ -627,23 +780,42 @@ Future<String> _buildSound({
 Future<String> _dataSaver(String wav, String out) async {
   final dir = File(out).parent.path;
   await run('ffmpeg', [
-    '-hide_banner', '-loglevel', 'error', '-y', '-i', wav,
-    '-af', 'pan=mono|c0=0.5*c0+0.5*c1',
-    '-c:a', 'aac', '-b:a', '28k', '$dir/saver.m4a',
+    '-hide_banner',
+    '-loglevel',
+    'error',
+    '-y',
+    '-i',
+    wav,
+    '-af',
+    'pan=mono|c0=0.5*c0+0.5*c1',
+    '-c:a',
+    'aac',
+    '-b:a',
+    '28k',
+    '$dir/saver.m4a',
   ]);
   // The encoder starts a little late, and the decoder may or may not take the
   // delay off. Measure it, and take it off here.
   final (lag, gain) = await _lagAndGain(wav, '$dir/saver.m4a');
-  stdout.writeln('  28 kbps encode: starts ${(lag * 1000).toStringAsFixed(1)} ms late, '
+  stdout.writeln(
+      '  28 kbps encode: starts ${(lag * 1000).toStringAsFixed(1)} ms late, '
       'level ${(20 * math.log(gain) / math.ln10).toStringAsFixed(2)} dB under the original');
   final shift = lag >= 0
       ? 'atrim=start=${lag.toStringAsFixed(6)},asetpts=PTS-STARTPTS'
       : 'adelay=${(-lag * 1000).toStringAsFixed(3)}|${(-lag * 1000).toStringAsFixed(3)}';
   await run('ffmpeg', [
-    '-hide_banner', '-loglevel', 'error', '-y', '-i', '$dir/saver.m4a',
-    '-af', 'aresample=44100,$shift,volume=${gain.toStringAsFixed(4)},'
+    '-hide_banner',
+    '-loglevel',
+    'error',
+    '-y',
+    '-i',
+    '$dir/saver.m4a',
+    '-af',
+    'aresample=44100,$shift,volume=${gain.toStringAsFixed(4)},'
         'pan=stereo|c0=c0|c1=c0',
-    '-c:a', 'pcm_s16le', out,
+    '-c:a',
+    'pcm_s16le',
+    out,
   ]);
   return out;
 }
@@ -686,7 +858,8 @@ Future<(double, double)> _lagAndGain(String a, String b) async {
     dx += x[i] * x[i];
     dy += y[i + bestLag] * y[i + bestLag];
   }
-  stdout.writeln('  28 kbps encode matches the original at r = ${best.toStringAsFixed(3)}');
+  stdout.writeln(
+      '  28 kbps encode matches the original at r = ${best.toStringAsFixed(3)}');
   return (bestLag / soundRate, math.sqrt(dx / (dy + 1e-9)));
 }
 

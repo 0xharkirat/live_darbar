@@ -70,8 +70,13 @@ class VideoInfo {
 
 Future<VideoInfo> probeVideo(String path) async {
   final r = await Process.run('ffprobe', [
-    '-v', 'error', '-show_entries', 'stream=codec_type,width,height,start_time',
-    '-of', 'json', path,
+    '-v',
+    'error',
+    '-show_entries',
+    'stream=codec_type,width,height,start_time',
+    '-of',
+    'json',
+    path,
   ]);
   if (r.exitCode != 0) fail('ffprobe failed on $path: ${r.stderr}');
   final streams = (jsonDecode(r.stdout as String)['streams'] as List)
@@ -84,7 +89,9 @@ Future<VideoInfo> probeVideo(String path) async {
   return VideoInfo(
     video.isEmpty ? 0 : video.first['width'] as int,
     video.isEmpty ? 0 : video.first['height'] as int,
-    audio.isEmpty || video.isEmpty ? 0.0 : start(audio.first) - start(video.first),
+    audio.isEmpty || video.isEmpty
+        ? 0.0
+        : start(audio.first) - start(video.first),
   );
 }
 
@@ -122,16 +129,30 @@ Future<Frames> readFrames(
     for (var i = 0; i < rois.length; i++) {
       final r = rois[i];
       final side = (2 * r.half * info.width).round().clamp(4, info.width);
-      final x = (r.x * info.width - side / 2).round().clamp(0, info.width - side);
-      final y = (r.y * info.height - side / 2).round().clamp(0, info.height - side);
+      final x =
+          (r.x * info.width - side / 2).round().clamp(0, info.width - side);
+      final y =
+          (r.y * info.height - side / 2).round().clamp(0, info.height - side);
       sides.add(side);
       graph.write(';[s${i + 1}]crop=$side:$side:$x:$y,format=gray[o${i + 1}]');
     }
     final args = [
-      '-hide_banner', '-loglevel', 'error', '-y', '-i', video,
-      '-filter_complex', graph.toString(),
+      '-hide_banner',
+      '-loglevel',
+      'error',
+      '-y',
+      '-i',
+      video,
+      '-filter_complex',
+      graph.toString(),
       for (var i = 0; i < n; i++) ...[
-        '-map', '[o$i]', '-pix_fmt', 'gray', '-f', 'rawvideo', '${tmp.path}/o$i.raw',
+        '-map',
+        '[o$i]',
+        '-pix_fmt',
+        'gray',
+        '-f',
+        'rawvideo',
+        '${tmp.path}/o$i.raw',
       ],
     ];
     await run('ffmpeg', args);
@@ -191,7 +212,8 @@ int? changeNear(
   final all = changeFrames(frames, fps, tap, expected - slack, expected + slack,
       halfWidth: halfWidth, minimum: minimum);
   if (all.isEmpty) return null;
-  all.sort((a, b) => (a / fps - expected).abs().compareTo((b / fps - expected).abs()));
+  all.sort((a, b) =>
+      (a / fps - expected).abs().compareTo((b / fps - expected).abs()));
   return all.first;
 }
 
@@ -291,7 +313,10 @@ double playingTime(
   bool nearAfter(int f) =>
       meanDifference(roi[f], after) < meanDifference(roi[f], before);
   for (var f = first; f + 3 <= last; f++) {
-    if (nearAfter(f) && nearAfter(f + 1) && nearAfter(f + 2) && nearAfter(f + 3)) {
+    if (nearAfter(f) &&
+        nearAfter(f + 1) &&
+        nearAfter(f + 2) &&
+        nearAfter(f + 3)) {
       return f / fps;
     }
   }
@@ -424,12 +449,26 @@ class Sound {
   }
 }
 
-Future<Sound> readSound(String path, {List<String> inputArgs = const []}) async {
+Future<Sound> readSound(String path,
+    {List<String> inputArgs = const []}) async {
   final tmp = Directory.systemTemp.createTempSync('film_sound');
   try {
     await run('ffmpeg', [
-      '-hide_banner', '-loglevel', 'error', '-y', ...inputArgs, '-i', path,
-      '-vn', '-ac', '1', '-ar', '$soundRate', '-f', 's16le', '${tmp.path}/a.pcm',
+      '-hide_banner',
+      '-loglevel',
+      'error',
+      '-y',
+      ...inputArgs,
+      '-i',
+      path,
+      '-vn',
+      '-ac',
+      '1',
+      '-ar',
+      '$soundRate',
+      '-f',
+      's16le',
+      '${tmp.path}/a.pcm',
     ]);
     final bytes = File('${tmp.path}/a.pcm').readAsBytesSync();
     final samples = Int16List.view(
@@ -437,7 +476,8 @@ Future<Sound> readSound(String path, {List<String> inputArgs = const []}) async 
       bytes.offsetInBytes,
       bytes.length ~/ 2,
     );
-    final offset = inputArgs.isEmpty ? (await probeVideo(path)).audioOffset : 0.0;
+    final offset =
+        inputArgs.isEmpty ? (await probeVideo(path)).audioOffset : 0.0;
     return Sound(Int16List.fromList(samples), soundRate, offset);
   } finally {
     tmp.deleteSync(recursive: true);
@@ -463,9 +503,12 @@ double? audioOnset(
 }) {
   const hop = 0.005;
   final env = sound.levels(hop: hop);
-  int at(double t) => ((t - sound.offset) / hop).round().clamp(0, env.length - 1);
+  int at(double t) =>
+      ((t - sound.offset) / hop).round().clamp(0, env.length - 1);
   final steady = <double>[
-    for (var i = at(expected + steadyAt); i <= at(expected + steadyAt + 1.0); i++)
+    for (var i = at(expected + steadyAt);
+        i <= at(expected + steadyAt + 1.0);
+        i++)
       env[i],
   ]..sort();
   final threshold = steady[steady.length ~/ 2] - below;

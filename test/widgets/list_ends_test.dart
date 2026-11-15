@@ -68,7 +68,8 @@ void main() {
         tester,
         find.byType(SingleChildScrollView),
       );
-      final miniPlayer = MiniPlayer.heightOf(tester.element(find.byType(HomeScreen)));
+      final miniPlayer =
+          MiniPlayer.heightOf(tester.element(find.byType(HomeScreen)));
 
       expect(lowest, lessThanOrEqualTo(_viewHeight - _bar - miniPlayer));
     });

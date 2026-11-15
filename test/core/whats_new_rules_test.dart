@@ -40,7 +40,8 @@ void main() {
       expect(decide(seen: '3.0'), WhatsNewAction.show);
     });
 
-    test('shows to a listener who updates from a build that kept no record', () {
+    test('shows to a listener who updates from a build that kept no record',
+        () {
       expect(decide(seen: null, existingInstall: true), WhatsNewAction.show);
     });
 

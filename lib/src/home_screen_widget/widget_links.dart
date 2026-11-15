@@ -61,8 +61,9 @@ WidgetTap widgetTapFor(WidgetLink link, WidgetPlayback now) {
       now.state == WidgetPlayState.loading;
   return switch (link) {
     WidgetLink.open => WidgetTap.openReader,
-    WidgetLink.live =>
-      on && now.source == WidgetSource.live ? WidgetTap.stop : WidgetTap.playLive,
+    WidgetLink.live => on && now.source == WidgetSource.live
+        ? WidgetTap.stop
+        : WidgetTap.playLive,
     WidgetLink.hukamnama => on && now.source == WidgetSource.hukamnama
         ? WidgetTap.pause
         : WidgetTap.playHukamnama,

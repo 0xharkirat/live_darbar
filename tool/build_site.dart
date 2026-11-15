@@ -122,7 +122,8 @@ void _fillRelease(Directory out, File release) {
   for (final path in ['index.html', 'pa/index.html']) {
     final file = File(_join(out.path, path));
     final text = file.readAsStringSync().replaceAll('{{version}}', version);
-    if (text.contains('{{')) _fail('$path has a {{token}} the build does not fill.');
+    if (text.contains('{{'))
+      _fail('$path has a {{token}} the build does not fill.');
     file.writeAsStringSync(text);
   }
 }

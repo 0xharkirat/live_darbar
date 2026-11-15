@@ -573,7 +573,8 @@ abstract final class TapMarks {
       } else {
         final up = d - m.hold;
         if (up < _pressTime) {
-          press = math.min(press, 1 - 0.14 * math.sin(up / _pressTime * math.pi));
+          press =
+              math.min(press, 1 - 0.14 * math.sin(up / _pressTime * math.pi));
         }
       }
       if (d < _ringTime) ring = d / _ringTime;
@@ -637,7 +638,8 @@ class TapMarksPainter extends CustomPainter {
     canvas.drawCircle(
       centre,
       radius,
-      Paint()..color = const Color(0xFFFFFFFF).withValues(alpha: 0.5 * s.opacity),
+      Paint()
+        ..color = const Color(0xFFFFFFFF).withValues(alpha: 0.5 * s.opacity),
     );
     canvas.drawCircle(
       centre,

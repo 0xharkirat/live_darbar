@@ -139,7 +139,8 @@ void main() {
     });
   }
 
-  testWidgets('the line about the stream sits 8 above the switch while it shows',
+  testWidgets(
+      'the line about the stream sits 8 above the switch while it shows',
       (tester) async {
     await _open(
       tester,

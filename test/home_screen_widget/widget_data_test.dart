@@ -107,7 +107,8 @@ void main() {
     test('is in Punjabi when the app is, with Gurmukhi digits', () {
       final data = build(language: 'pa', hukamnama: recorded());
       expect(data[WidgetKeys.language], 'pa');
-      expect(data[WidgetKeys.hukamnamaMeta], matches(RegExp(r'^੨ \S+ · ਅੰਗ ੬੬੮$')));
+      expect(data[WidgetKeys.hukamnamaMeta],
+          matches(RegExp(r'^੨ \S+ · ਅੰਗ ੬੬੮$')));
     });
 
     test('leaves out the Ang when SGPC gave none', () {

@@ -26,7 +26,8 @@ class SettingsGroup extends StatelessWidget {
               if (i > 0)
                 const Padding(
                   padding: EdgeInsets.only(left: 52),
-                  child: Divider(height: 1, thickness: 1, color: Palette.border),
+                  child:
+                      Divider(height: 1, thickness: 1, color: Palette.border),
                 ),
               child,
             ],

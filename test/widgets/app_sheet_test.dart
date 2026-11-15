@@ -78,7 +78,9 @@ void _reduceMotion(WidgetTester tester) {
 
 double _opacity(WidgetTester tester) => tester
     .widget<Opacity>(
-      find.ancestor(of: find.byKey(_sheet), matching: find.byType(Opacity)).first,
+      find
+          .ancestor(of: find.byKey(_sheet), matching: find.byType(Opacity))
+          .first,
     )
     .opacity;
 
@@ -114,7 +116,8 @@ void main() {
       );
     });
 
-    testWidgets('settles on a spring, with no overshoot when it was not thrown', (
+    testWidgets('settles on a spring, with no overshoot when it was not thrown',
+        (
       tester,
     ) async {
       await _open(tester);
@@ -191,7 +194,8 @@ void main() {
         await _open(tester);
         await _settle(tester);
 
-        final top = tester.getTopLeft(find.byKey(_sheet)) + const Offset(200, 6);
+        final top =
+            tester.getTopLeft(find.byKey(_sheet)) + const Offset(200, 6);
         await tester.flingFrom(top, const Offset(0, 80), 1500);
         await _settle(tester);
 
@@ -354,9 +358,11 @@ void main() {
         await _settle(tester);
         final rest = _top(tester);
 
-        await tester.drag(find.byType(ListWheelScrollView), const Offset(0, -60));
+        await tester.drag(
+            find.byType(ListWheelScrollView), const Offset(0, -60));
         await tester.pump();
-        await tester.drag(find.byType(ListWheelScrollView), const Offset(0, 60));
+        await tester.drag(
+            find.byType(ListWheelScrollView), const Offset(0, 60));
         await tester.pump();
 
         expect(_top(tester), rest);

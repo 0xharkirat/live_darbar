@@ -11,8 +11,7 @@ import 'package:live_darbar/src/views/widgets/fade_page_route.dart';
 
 import '../support/app_harness.dart';
 
-NavigatorState _navigator(WidgetTester tester) =>
-    Navigator.of(
+NavigatorState _navigator(WidgetTester tester) => Navigator.of(
       tester.element(find.byType(HomeScreen, skipOffstage: false).first),
     );
 
@@ -24,7 +23,8 @@ ModalRoute<dynamic> _routeOf(WidgetTester tester, Type page) =>
 double _opacity(WidgetTester tester, Type page) => tester
     .widget<FadeTransition>(
       find
-          .ancestor(of: find.byType(page), matching: find.byType(FadeTransition))
+          .ancestor(
+              of: find.byType(page), matching: find.byType(FadeTransition))
           .first,
     )
     .opacity
@@ -172,7 +172,8 @@ void main() {
       expect(calls.last, '/');
     });
 
-    testWidgets('returns to home when the reader opened from the player closes', (
+    testWidgets('returns to home when the reader opened from the player closes',
+        (
       tester,
     ) async {
       final calls = await _record(tester);

@@ -28,7 +28,8 @@ void main() {
       overrides: [
         appVersionProvider.overrideWith((ref) async => version),
         whatsNewLoaderProvider.overrideWithValue(
-          (release) async => withNotes.contains(release) ? _notes(release) : null,
+          (release) async =>
+              withNotes.contains(release) ? _notes(release) : null,
         ),
       ],
     );
@@ -53,7 +54,8 @@ void main() {
     expect(await seen(), '3.0');
   });
 
-  test('returns the notes to a listener whose old build kept no record', () async {
+  test('returns the notes to a listener whose old build kept no record',
+      () async {
     SharedPreferences.setMockInitialValues({'locale': 'pa'});
     final c = container();
 

@@ -206,8 +206,7 @@ void main() {
     container.invalidate(sikhDateProvider);
     await settled();
 
-    final dates =
-        jsonDecode(recorder.writes.last[WidgetKeys.dates]!) as Map;
+    final dates = jsonDecode(recorder.writes.last[WidgetKeys.dates]!) as Map;
     expect(dates.keys.first, '2026-11-03');
     expect(dates['2026-11-03'], '3 Nov');
     // The Hukamnama is still the 2nd's. The widget says so by the day.

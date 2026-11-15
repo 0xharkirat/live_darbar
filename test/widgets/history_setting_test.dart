@@ -117,7 +117,8 @@ void main() {
     await pump(tester);
 
     final node = tester.getSemantics(
-      find.bySemanticsLabel('${en.history_setting}. ${en.history_setting_detail}'),
+      find.bySemanticsLabel(
+          '${en.history_setting}. ${en.history_setting_detail}'),
     );
     expect(node.value, en.reminder_off);
     handle.dispose();

@@ -108,6 +108,7 @@ class _FakeController extends Fake implements AudioController {
     wantsPlayback = false;
     isStopped = true;
   }
+
   @override
   Future<void> seek(Duration duration) async {
     if (seekError != null) throw seekError!;
@@ -339,7 +340,8 @@ void main() {
       await handler.seek(const Duration(minutes: 12));
       await handler.seek(const Duration(hours: 3));
       await handler.seek(const Duration(seconds: -5));
-      expect(controller.calls, ['seek ${12 * 60}', 'seek ${20 * 60}', 'seek 0']);
+      expect(
+          controller.calls, ['seek ${12 * 60}', 'seek ${20 * 60}', 'seek 0']);
     });
 
     test('a recording that is still loading cannot be seeked', () async {

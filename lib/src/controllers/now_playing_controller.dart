@@ -39,8 +39,7 @@ class NowPlaying {
 
   bool get isLive => index == kLiveIndex;
 
-  bool get isPlaying =>
-      action == PlayAction.pause || action == PlayAction.stop;
+  bool get isPlaying => action == PlayAction.pause || action == PlayAction.stop;
 
   bool get isWorking => action == PlayAction.working;
 

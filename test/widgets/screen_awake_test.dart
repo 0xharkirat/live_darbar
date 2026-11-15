@@ -107,7 +107,8 @@ void main() {
     expect(awake.on, isFalse);
   });
 
-  testWidgets('the reader releases it when the app goes to the background, '
+  testWidgets(
+      'the reader releases it when the app goes to the background, '
       'and holds it again on the way back', (tester) async {
     await pump(tester);
     _navigator(tester).pushNamed(AppRoutes.hukamnama);
@@ -120,7 +121,8 @@ void main() {
     expect(awake.on, isTrue, reason: 'back in the reader');
   });
 
-  testWidgets('a reader closed in the background stays released when the app '
+  testWidgets(
+      'a reader closed in the background stays released when the app '
       'returns', (tester) async {
     await pump(tester);
     _navigator(tester).pushNamed(AppRoutes.hukamnama);

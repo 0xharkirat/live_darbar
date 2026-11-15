@@ -215,7 +215,8 @@ void main() {
       expect((sent['scheduledDateTime'] as String).split('T').last, '07:00:00');
     });
 
-    test('keeps Amritsar time in Amritsar’s zone, whatever the phone does', () async {
+    test('keeps Amritsar time in Amritsar’s zone, whatever the phone does',
+        () async {
       // A listener in Sydney, whose clocks change in October and April.
       zone = 'Australia/Sydney';
       final platform = platformOn(TargetPlatform.android);

@@ -60,9 +60,8 @@ class AppNavBar extends ConsumerWidget {
       backgroundColor: Palette.background.withValues(alpha: 0.92),
       border: null,
       trailing: trailing,
-      padding: onWeb
-          ? EdgeInsetsDirectional.only(start: edge, end: edge - 8)
-          : null,
+      padding:
+          onWeb ? EdgeInsetsDirectional.only(start: edge, end: edge - 8) : null,
       leading: onWeb && Navigator.canPop(context)
           ? Transform.translate(
               offset: const Offset(-_chevronInset, 0),

@@ -27,7 +27,8 @@ void main() {
               expect(v, inInclusiveRange(0, 1));
             }
           }
-          expect(last, lessThan(film.seconds), reason: 'all before the film ends');
+          expect(last, lessThan(film.seconds),
+              reason: 'all before the film ends');
         });
 
         test('leave the dot time to reach the next tap', () {
@@ -113,10 +114,13 @@ void main() {
   });
 
   group('the view', () {
-    Future<FakeFilmPlayers> pump(WidgetTester tester, {required bool active}) async {
+    Future<FakeFilmPlayers> pump(WidgetTester tester,
+        {required bool active}) async {
       final films = FakeFilmPlayers();
       Widget app(bool on) => ProviderScope(
-            overrides: [filmPlayerFactoryProvider.overrideWithValue(films.call)],
+            overrides: [
+              filmPlayerFactoryProvider.overrideWithValue(films.call)
+            ],
             child: MaterialApp(
               home: Scaffold(
                 body: TickerMode(
@@ -197,7 +201,8 @@ void main() {
       await player.initialize();
 
       expect(platform.created.single.asset, DemoFilm.iphone.video);
-      expect(platform.calls, containsAllInOrder(['looping true', 'volume 0.0']));
+      expect(
+          platform.calls, containsAllInOrder(['looping true', 'volume 0.0']));
       await player.dispose();
     });
 
@@ -226,7 +231,8 @@ void main() {
       await player.dispose();
     });
 
-    test('mixes with the kirtan on Android, which asks for audio focus', () async {
+    test('mixes with the kirtan on Android, which asks for audio focus',
+        () async {
       debugDefaultTargetPlatformOverride = TargetPlatform.android;
       final player = VideoFilmPlayer(DemoFilm.android.video);
       await player.initialize();
